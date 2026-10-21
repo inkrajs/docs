@@ -22,9 +22,9 @@ await mkdir(notices, { recursive: true });
 for (const [source, destination] of [
   ['LICENSE', 'docs-LICENSE.txt'],
   ['THIRD_PARTY_NOTICES.md', 'docs-THIRD_PARTY_NOTICES.md'],
-  ['node_modules/inkra/LICENSE', 'inkra-LICENSE.txt'],
-  ['node_modules/inkra/THIRD_PARTY_NOTICES.md', 'inkra-THIRD_PARTY_NOTICES.md'],
-  ['node_modules/inkra/Yozai-OFL.txt', 'Yozai-OFL.txt'],
+  ['node_modules/@inkra/react/LICENSE', 'inkra-LICENSE.txt'],
+  ['node_modules/@inkra/react/THIRD_PARTY_NOTICES.md', 'inkra-THIRD_PARTY_NOTICES.md'],
+  ['node_modules/@inkra/react/Yozai-OFL.txt', 'Yozai-OFL.txt'],
 ]) {
   await copyFile(new URL('../' + source, import.meta.url), new URL(destination, notices));
 }

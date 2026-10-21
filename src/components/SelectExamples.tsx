@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Field, PencilIcon, Select, Slider, Switch, Tooltip } from 'inkra';
+import { Button, Field, PencilIcon, Select, Slider, Switch, Tooltip } from '@inkra/react';
 import { __iconData as languagesIcon } from 'lucide-react/dist/esm/icons/languages.mjs';
 import { __iconData as usersIcon } from 'lucide-react/dist/esm/icons/users.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';

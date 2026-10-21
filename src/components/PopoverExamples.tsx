@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useRef, useState } from 'react';
-import { Button, Checkbox, Field, Input, Popover, Slider, Switch } from 'inkra';
+import { Button, Checkbox, Field, Input, Popover, Slider, Switch } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';

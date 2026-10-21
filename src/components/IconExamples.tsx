@@ -1,7 +1,7 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Button, Input, Field, PencilIcon, Switch, Tabs, Tooltip } from 'inkra';
-import type { PencilIconBadge } from 'inkra';
+import { Button, Input, Field, PencilIcon, Switch, Tabs, Tooltip } from '@inkra/react';
+import type { PencilIconBadge } from '@inkra/react';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
@@ -49,7 +49,7 @@ function CompositeIconExample() {
   const { t } = useLocale();
   const [selected, setSelected] = useState(compositeIcons[0].key);
   const item = compositeIcons.find(icon => icon.key === selected)!;
-  const code = `import { PencilIcon } from 'inkra';
+  const code = `import { PencilIcon } from '@inkra/react';
 
 const paths = ${JSON.stringify(item.paths, null, 2)};
 const badgePaths = ${JSON.stringify(item.badgePaths, null, 2)};
@@ -126,7 +126,7 @@ export function IconExamples() {
     && `${icon.key} ${icon.label} ${t(icon.label)}`.toLocaleLowerCase().includes(keyword));
   const badge = composite ? { paths: badgeItem.paths, sourceSize: 24, position: badgePosition, scale: badgeScale / 100 } : undefined;
   const iconLabel = composite ? `${t(item.label)} / ${t(badgeItem.label)}` : t(item.label);
-  const code = `import { PencilIcon } from 'inkra';
+  const code = `import { PencilIcon } from '@inkra/react';
 
 const paths = ${JSON.stringify(item.paths, null, 2)};
 ${composite ? `const badgePaths = ${JSON.stringify(badgeItem.paths, null, 2)};\n` : ''}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PencilLine } from 'inkra';
+import { PencilLine } from '@inkra/react';
 import { __iconData as plus } from 'lucide-react/dist/esm/icons/plus.mjs';
 import { __iconData as search } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as check } from 'lucide-react/dist/esm/icons/check.mjs';
@@ -64,7 +64,7 @@ export function IconDesign() {
         <div aria-live="polite"><PencilText as="h3">{item.label}</PencilText><code>{item.data.name}</code><PencilText as="p">{item.use}</PencilText></div>
       </div>
     </div>
-    <ComponentExample title="图标接入" code={`import { Button, PencilIcon } from 'inkra';
+    <ComponentExample title="图标接入" code={`import { Button, PencilIcon } from '@inkra/react';
 
 const plusPaths = [{ d: 'M12 5v14' }, { d: 'M5 12h14' }];
 

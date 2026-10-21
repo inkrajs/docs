@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button, Field, Input } from 'inkra';
+import { Button, Field, Input } from '@inkra/react';
 
 function InputFixture() {
   const [value, setValue] = useState('controlled');

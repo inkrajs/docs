@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar, JourneyMap, type JourneyPlace } from 'inkra';
+import { Calendar, JourneyMap, type JourneyPlace } from '@inkra/react';
 import { enUS, zhCN } from 'react-day-picker/locale';
 import type { GeoJsonObject } from 'geojson';
 import { useLocale } from '../i18n';

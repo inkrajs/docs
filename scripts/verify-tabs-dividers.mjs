@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 const browser = await chromium.launch();
 try {
   const page = await browser.newPage({ viewport: { width: 1305, height: 954 } });
-  await page.goto('http://127.0.0.1:4180/docs/components/tabs#preview');
+  await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/docs/components/tabs#preview');
   const playground = page.locator('.component-playground').first();
   const tabs = playground.getByRole('tablist', { name: '笔记分类', exact: true });
   assert.equal(await tabs.locator('.inkra-tabs__divider').count(), 0);

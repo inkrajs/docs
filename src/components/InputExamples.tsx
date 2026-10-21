@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Field, Input, Textarea, Switch, Tooltip } from 'inkra';
+import { Button, Field, Input, Textarea, Switch, Tooltip } from '@inkra/react';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
 import { __iconData as mailIcon } from 'lucide-react/dist/esm/icons/mail.mjs';

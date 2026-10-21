@@ -8,7 +8,7 @@ try {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
     page.setDefaultTimeout(15000);
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:4180/components/select#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/select#preview');
     const playground = page.locator('.component-playground').first();
     const controls = playground.locator('.preview-controls');
     const trigger = playground.locator('.preview-stage .inkra-select__trigger');

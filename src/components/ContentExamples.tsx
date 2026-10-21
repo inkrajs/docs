@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Alert, Avatar, Button, Card, DropdownMenu, Input, Switch, Table, type AlertVariant, type CardPadding } from 'inkra';
+import { Alert, Avatar, Button, Card, DropdownMenu, Input, Switch, Table, type AlertVariant, type CardPadding } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';

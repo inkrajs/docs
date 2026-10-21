@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button, Field, Select } from 'inkra';
-import type { SelectContentProps, SelectMultipleRootProps } from 'inkra';
+import { Button, Field, Select } from '@inkra/react';
+import type { SelectContentProps, SelectMultipleRootProps } from '@inkra/react';
 
 const options = [
   { value: 'akl', label: 'Auckland' },

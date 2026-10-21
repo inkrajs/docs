@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { lazy, Suspense, useState, type FormEvent } from 'react';
-import { Button, Checkbox, PencilLine, RadioGroup, RadioGroupItem, Switch } from 'inkra';
+import { Button, Checkbox, PencilLine, RadioGroup, RadioGroupItem, Switch } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
@@ -88,7 +88,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
 const apiRows: Record<FoundationComponent, [string, string][]> = {
   breadcrumb: [['Root', 'native nav props; aria-label defaults to Breadcrumb; dir supports RTL'], ['List / Item', 'native ol / li props; paths wrap in narrow containers'], ['Link', 'ButtonLinkProps; real href, startIcon, disabled; default variant ghost'], ['Page', 'native span props; aria-current=page; noninteractive current location'], ['Separator.children', 'ReactNode; default /; decorative and hidden from assistive technology']],
   icon: [
-    ['import', "import { PencilIcon } from 'inkra'"],
+    ['import', "import { PencilIcon } from '@inkra/react'"],
     ['paths', "readonly { d: string; mode?: 'stroke' | 'wash' | 'scuff' }[]"],
     ['badge.paths', 'readonly PencilIconPath[]; optional corner icon; an empty array hides the badge'],
     ['badge.position', 'top-start | top-end | bottom-start | bottom-end (default); follows dir'],

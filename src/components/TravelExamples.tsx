@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Calendar, DayAgenda, JourneyMap, Switch, type AgendaEvent, type JourneyPlace } from 'inkra';
+import { Calendar, DayAgenda, JourneyMap, Switch, type AgendaEvent, type JourneyPlace } from '@inkra/react';
 import { enUS, zhCN } from 'react-day-picker/locale';
 import type { DateRange } from 'react-day-picker';
 import type { GeoJsonObject } from 'geojson';

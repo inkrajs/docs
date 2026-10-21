@@ -14,7 +14,7 @@ try {
     } } });
     window.open = (...args) => { window.opened.push(args); return null; };
   });
-  await page.goto('http://127.0.0.1:4180/docs/components/input#preview');
+  await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/docs/components/input#preview');
   const coverage = await page.evaluate(async () => {
     const { foundationNames } = await import('/src/components/FoundationPages.tsx');
     const { componentIntroductions } = await import('/src/components/componentIntroductions.ts');

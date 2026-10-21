@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button, Field, InputNumber } from 'inkra';
+import { Button, Field, InputNumber } from '@inkra/react';
 
 function InputNumberFixture() {
   const [value, setValue] = useState<number | null>(2);

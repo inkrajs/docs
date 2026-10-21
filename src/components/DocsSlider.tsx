@@ -1,4 +1,4 @@
-import { Slider } from 'inkra';
+import { Slider } from '@inkra/react';
 import { useId } from 'react';
 import { PencilText, useLocale } from '../i18n';
 

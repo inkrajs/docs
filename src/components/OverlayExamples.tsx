@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useId, useState } from 'react';
-import { Button, Field, Input, Overlay, Popover, Switch } from 'inkra';
+import { Button, Field, Input, Overlay, Popover, Switch } from '@inkra/react';
 import { useLocale } from '../i18n';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';

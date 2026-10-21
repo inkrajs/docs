@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, ButtonGroup, DropdownMenu, Overlay, PencilLine } from 'inkra';
+import { Button, ButtonGroup, DropdownMenu, Overlay, PencilLine } from '@inkra/react';
 import { __iconData as copyIcon } from 'lucide-react/dist/esm/icons/copy.mjs';
 import { __iconData as chevronDownIcon } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
 import { __iconData as fileTextIcon } from 'lucide-react/dist/esm/icons/file-text.mjs';

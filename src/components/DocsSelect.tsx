@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
-import { Select } from 'inkra';
-import type { SelectTriggerProps } from 'inkra';
+import { Select } from '@inkra/react';
+import type { SelectTriggerProps } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 
 export function DocsSelect({ label, value, onValueChange, options, hideLabel = false, startIcon }: {

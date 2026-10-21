@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ComponentProps, type ReactNode } from 'react';
-import { PencilText as BasePencilText } from 'inkra';
+import { PencilText as BasePencilText } from '@inkra/react';
 
 type Locale = 'zh-CN' | 'en';
 const english: Record<string, string> = {

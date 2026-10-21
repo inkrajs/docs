@@ -8,7 +8,7 @@ try {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
     page.setDefaultTimeout(15000);
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:4180/components/input#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/input#preview');
     const playground = page.locator('.component-playground').first();
     const controls = playground.locator('.preview-controls');
     const tabs = controls.getByRole('tablist', { name: '属性分类', exact: true });
@@ -62,7 +62,7 @@ try {
     await page.waitForTimeout(500);
     await page.screenshot({ path: `/tmp/inkra-input-property-tabs-${width}.png` });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no page overflow');
-    await page.goto('http://127.0.0.1:4180/components/select#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/select#preview');
     await page.locator('.property-tabs').getByRole('tab', { name: '基础', exact: true }).waitFor();
     assert.equal(await page.locator('.property-tabs [role="tab"]').count(), 4);
     await page.locator('.property-tabs').getByRole('tab', { name: '状态', exact: true }).click();

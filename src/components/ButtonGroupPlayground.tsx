@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Button, ButtonGroup, Switch, type ButtonSize, type ButtonVariant } from 'inkra';
+import { Button, ButtonGroup, Switch, type ButtonSize, type ButtonVariant } from '@inkra/react';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { useLocale } from '../i18n';

@@ -1,4 +1,4 @@
-import { Tabs } from 'inkra';
+import { Tabs } from '@inkra/react';
 import type { ReactNode } from 'react';
 import { useLocale } from '../i18n';
 import { __iconData as settingsIcon } from 'lucide-react/dist/esm/icons/settings.mjs';

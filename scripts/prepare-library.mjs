@@ -9,7 +9,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 assert(process.argv[2], 'Pass the inkra checkout path containing a verified .release/manifest.json.');
 const source = resolve(process.argv[2]);
 const manifest = JSON.parse(await readFile(resolve(source, '.release/manifest.json'), 'utf8'));
-assert.equal(manifest.name, 'inkra');
+assert.equal(manifest.name, '@inkra/react');
 assert(/^[\w.-]+\.tgz$/.test(manifest.filename), 'Invalid candidate filename');
 const archive = resolve(source, '.release', manifest.filename);
 const sha256 = createHash('sha256').update(await readFile(archive)).digest('hex');
@@ -20,6 +20,7 @@ execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '
 // Vite watches this imported manifest; restart only after the new package is installed.
 await writeFile(resolve(root, 'library-candidate.json'), JSON.stringify({
   repository: 'inkrajs/inkra',
+  name: manifest.name,
   revision: manifest.commit,
   version: manifest.version,
   sha256,

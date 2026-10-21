@@ -1,4 +1,4 @@
-import { Button, PencilSurface } from 'inkra';
+import { Button, PencilSurface } from '@inkra/react';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
 import { PencilText, useLocale } from '../i18n';
 import { DocsIcon } from './DocsIcon';

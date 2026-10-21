@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Breadcrumb, Switch } from 'inkra';
+import { Breadcrumb, Switch } from '@inkra/react';
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';

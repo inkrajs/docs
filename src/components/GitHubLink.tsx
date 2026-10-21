@@ -1,4 +1,4 @@
-import { ButtonLink, PencilIcon, Tooltip } from 'inkra';
+import { ButtonLink, PencilIcon, Tooltip } from '@inkra/react';
 import { useLocale } from '../i18n';
 
 // Feather v4.29.2 GitHub outline; attribution is in THIRD_PARTY_NOTICES.md.

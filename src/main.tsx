@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import 'inkra/tokens.css';
-import 'inkra/styles.css';
+import '@inkra/react/tokens.css';
+import '@inkra/react/styles.css';
 import { App } from './App';
 import { LocaleProvider } from './i18n';
 import './styles.css';

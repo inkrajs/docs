@@ -1,7 +1,7 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Button, Slider, Switch } from 'inkra';
-import type { SliderSize, SliderVariant } from 'inkra';
+import { Button, Slider, Switch } from '@inkra/react';
+import type { SliderSize, SliderVariant } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';

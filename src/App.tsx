@@ -1,4 +1,4 @@
-import { Accordion, Button, ButtonGroup, ButtonLink, Input, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Switch, Tabs } from 'inkra';
+import { Accordion, Button, ButtonGroup, ButtonLink, Input, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Switch, Tabs } from '@inkra/react';
 import { ButtonGroupPlayground } from './components/ButtonGroupPlayground';
 import { DocsSelect } from './components/DocsSelect';
 import { navigationIcon } from './components/iconCatalog';
@@ -6,7 +6,7 @@ import { BrandMark } from './components/BrandMark';
 import { GitHubLink } from './components/GitHubLink';
 import { PencilText, useLocale } from './i18n';
 import { __iconData as languagesIcon } from 'lucide-react/dist/esm/icons/languages.mjs';
-import type { ButtonAlign, ButtonLoadingPosition, ButtonSize, ButtonVariant } from 'inkra';
+import type { ButtonAlign, ButtonLoadingPosition, ButtonSize, ButtonVariant } from '@inkra/react';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
 import { __iconData as arrowLeftIcon } from 'lucide-react/dist/esm/icons/arrow-left.mjs';
 import { __iconData as arrowRightIcon } from 'lucide-react/dist/esm/icons/arrow-right.mjs';
@@ -477,35 +477,35 @@ function CopyButton({ code, onResult }: { code: string; onResult: (message: stri
 const comparisonExamples: Record<ExampleKind, { title: string; code: string }> = {
   appearance: {
     title: '外观',
-    code: `import { Button } from 'inkra';\n\n<Button variant="primary">保存更改</Button>\n<Button variant="secondary">保存更改</Button>\n<Button variant="outline">保存更改</Button>\n<Button variant="ghost">保存更改</Button>\n<Button variant="destructive">删除记录</Button>\n<Button variant="link">查看详情</Button>`,
+    code: `import { Button } from '@inkra/react';\n\n<Button variant="primary">保存更改</Button>\n<Button variant="secondary">保存更改</Button>\n<Button variant="outline">保存更改</Button>\n<Button variant="ghost">保存更改</Button>\n<Button variant="destructive">删除记录</Button>\n<Button variant="link">查看详情</Button>`,
   },
   size: {
     title: '尺寸',
-    code: `import { Button } from 'inkra';\n\n<Button size="xs">保存更改</Button>\n<Button size="sm">保存更改</Button>\n<Button size="md">保存更改</Button>\n<Button size="lg">保存更改</Button>`,
+    code: `import { Button } from '@inkra/react';\n\n<Button size="xs">保存更改</Button>\n<Button size="sm">保存更改</Button>\n<Button size="md">保存更改</Button>\n<Button size="lg">保存更改</Button>`,
   },
   'icon-size': {
     title: '图标尺寸',
-    code: `import { Plus } from 'lucide-react';\nimport { Button } from 'inkra';\n\n<Button aria-label="新建" size="icon-xs"><Plus /></Button>\n<Button aria-label="新建" size="icon-sm"><Plus /></Button>\n<Button aria-label="新建" size="icon"><Plus /></Button>\n<Button aria-label="新建" size="icon-lg"><Plus /></Button>`,
+    code: `import { Plus } from 'lucide-react';\nimport { Button } from '@inkra/react';\n\n<Button aria-label="新建" size="icon-xs"><Plus /></Button>\n<Button aria-label="新建" size="icon-sm"><Plus /></Button>\n<Button aria-label="新建" size="icon"><Plus /></Button>\n<Button aria-label="新建" size="icon-lg"><Plus /></Button>`,
   },
   icons: {
     title: '前后图标',
-    code: `import { ArrowLeft, ArrowRight } from 'lucide-react';\nimport { Button } from 'inkra';\n\n<Button startIcon={<ArrowLeft />}>上一步</Button>\n<Button endIcon={<ArrowRight />}>下一步</Button>`,
+    code: `import { ArrowLeft, ArrowRight } from 'lucide-react';\nimport { Button } from '@inkra/react';\n\n<Button startIcon={<ArrowLeft />}>上一步</Button>\n<Button endIcon={<ArrowRight />}>下一步</Button>`,
   },
   state: {
     title: '状态',
-    code: `import { useState } from 'react';\nimport { Button } from 'inkra';\n\nexport function SaveButton() {\n  const [loading, setLoading] = useState(false);\n  const [status, setStatus] = useState('尚未保存');\n\n  async function save() {\n    setLoading(true);\n    setStatus('保存中');\n    await new Promise(resolve => setTimeout(resolve, 1200));\n    setLoading(false);\n    setStatus('已保存');\n  }\n\n  return <>\n    <Button loading={loading} onClick={save}>保存更改</Button>\n    <span aria-live="polite">{status}</span>\n  </>;\n}`,
+    code: `import { useState } from 'react';\nimport { Button } from '@inkra/react';\n\nexport function SaveButton() {\n  const [loading, setLoading] = useState(false);\n  const [status, setStatus] = useState('尚未保存');\n\n  async function save() {\n    setLoading(true);\n    setStatus('保存中');\n    await new Promise(resolve => setTimeout(resolve, 1200));\n    setLoading(false);\n    setStatus('已保存');\n  }\n\n  return <>\n    <Button loading={loading} onClick={save}>保存更改</Button>\n    <span aria-live="polite">{status}</span>\n  </>;\n}`,
   },
   link: {
     title: '链接',
-    code: `import { ArrowRight } from 'lucide-react';\nimport { ButtonLink } from 'inkra';\n\n<ButtonLink href="/design-standard" endIcon={<ArrowRight />}>设计规范</ButtonLink>\n<ButtonLink disabled href="/design-standard">不可导航</ButtonLink>`,
+    code: `import { ArrowRight } from 'lucide-react';\nimport { ButtonLink } from '@inkra/react';\n\n<ButtonLink href="/design-standard" endIcon={<ArrowRight />}>设计规范</ButtonLink>\n<ButtonLink disabled href="/design-standard">不可导航</ButtonLink>`,
   },
   group: {
     title: '按钮组',
-    code: `import { useState } from 'react';\nimport { Button, ButtonGroup } from 'inkra';\n\nexport function ButtonGroups() {\n  const [align, setAlign] = useState<'start' | 'center' | 'end'>('start');\n  const [step, setStep] = useState(1);\n\n  return <>\n    <ButtonGroup aria-label="文本对齐">\n      <Button aria-pressed={align === 'start'} onClick={() => setAlign('start')} variant="outline">左对齐</Button>\n      <Button aria-pressed={align === 'center'} onClick={() => setAlign('center')} variant="outline">居中</Button>\n      <Button aria-pressed={align === 'end'} onClick={() => setAlign('end')} variant="outline">右对齐</Button>\n    </ButtonGroup>\n    <p style={{ textAlign: align }}>对齐示例文字</p>\n\n    <ButtonGroup aria-label="步骤" orientation="vertical">\n      <Button aria-pressed={step === 1} onClick={() => setStep(1)}>第一步</Button>\n      <Button aria-pressed={step === 2} onClick={() => setStep(2)}>第二步</Button>\n    </ButtonGroup>\n  </>;\n}`,
+    code: `import { useState } from 'react';\nimport { Button, ButtonGroup } from '@inkra/react';\n\nexport function ButtonGroups() {\n  const [align, setAlign] = useState<'start' | 'center' | 'end'>('start');\n  const [step, setStep] = useState(1);\n\n  return <>\n    <ButtonGroup aria-label="文本对齐">\n      <Button aria-pressed={align === 'start'} onClick={() => setAlign('start')} variant="outline">左对齐</Button>\n      <Button aria-pressed={align === 'center'} onClick={() => setAlign('center')} variant="outline">居中</Button>\n      <Button aria-pressed={align === 'end'} onClick={() => setAlign('end')} variant="outline">右对齐</Button>\n    </ButtonGroup>\n    <p style={{ textAlign: align }}>对齐示例文字</p>\n\n    <ButtonGroup aria-label="步骤" orientation="vertical">\n      <Button aria-pressed={step === 1} onClick={() => setStep(1)}>第一步</Button>\n      <Button aria-pressed={step === 2} onClick={() => setStep(2)}>第二步</Button>\n    </ButtonGroup>\n  </>;\n}`,
   },
   rtl: {
     title: 'RTL',
-    code: `import { ArrowLeft } from 'lucide-react';\nimport { Button } from 'inkra';\n\n<div dir="rtl">\n  <Button endIcon={<ArrowLeft />}>继续</Button>\n</div>`,
+    code: `import { ArrowLeft } from 'lucide-react';\nimport { Button } from '@inkra/react';\n\n<div dir="rtl">\n  <Button endIcon={<ArrowLeft />}>继续</Button>\n</div>`,
   },
 };
 
@@ -604,7 +604,7 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
       <section className="content-section getting-started-content">
         <PencilText as="h2" seed="install-heading">安装与样式</PencilText>
         <PencilSurface className="code-sample" seed="install-code" variant="paper">
-          <pre><code>{`import 'inkra/tokens.css';\nimport 'inkra/styles.css';\nimport { Button } from 'inkra';`}</code></pre>
+          <pre><code>{`import '@inkra/react/tokens.css';\nimport '@inkra/react/styles.css';\nimport { Button } from '@inkra/react';`}</code></pre>
         </PencilSurface>
         <PencilText as="p" seed="font-note">文档站使用与参考站相同的 Yozai Light 本地子集。该子集仅含 706 个参考站字符，其余文字按系统手写与楷体顺序回退。</PencilText>
         <Button onClick={() => onNavigate('/components/button')} seed="start-button">{t("查看 Button")}</Button>
@@ -633,7 +633,7 @@ function ButtonPlayground() {
   const code = useMemo(() => {
     const props = [`variant="${variant}"`, `size="${size}"`, `dir="${dir}"`, fullWidth ? 'fullWidth' : '', `align="${align}"`, `loadingPosition="${loadingPosition}"`, customIndicator ? 'loadingIndicator={<LoadingIcon />}' : '', !iconOnly && icons ? 'startIcon={<PlusIcon />} endIcon={<ArrowRightIcon />}' : '', loading ? 'loading' : '', disabled ? 'disabled' : '', 'seed="docs-playground"'].filter(Boolean);
     const iconImports = [iconOnly || icons ? 'Plus as PlusIcon' : '', icons && !iconOnly ? 'ArrowRight as ArrowRightIcon' : '', customIndicator ? 'Sun as LoadingIcon' : ''].filter(Boolean);
-    const imports = `${iconImports.length ? `import { ${iconImports.join(', ')} } from 'lucide-react';\n` : ''}import { Button } from 'inkra';\n\n`;
+    const imports = `${iconImports.length ? `import { ${iconImports.join(', ')} } from 'lucide-react';\n` : ''}import { Button } from '@inkra/react';\n\n`;
     return imports + (iconOnly
       ? `<Button aria-label="${t('新建')}" ${props.join(' ')}><PlusIcon /></Button>`
       : `<Button ${props.join(' ')}>${t('保存草稿')}</Button>`);

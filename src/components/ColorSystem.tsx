@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
-import { Button, PencilSurface, RadioGroup, RadioGroupItem } from 'inkra';
+import { Button, PencilSurface, RadioGroup, RadioGroupItem } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { DocsIcon } from './DocsIcon';
 import { __iconData as notebookIcon } from 'lucide-react/dist/esm/icons/notebook-pen.mjs';

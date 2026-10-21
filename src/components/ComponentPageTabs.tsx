@@ -1,4 +1,4 @@
-import { Tabs } from 'inkra';
+import { Tabs } from '@inkra/react';
 import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.mjs';
 import { __iconData as codeIcon } from 'lucide-react/dist/esm/icons/code-xml.mjs';
 import { __iconData as accessibilityIcon } from 'lucide-react/dist/esm/icons/accessibility.mjs';

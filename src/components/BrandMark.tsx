@@ -1,4 +1,4 @@
-import { PencilIcon, type PencilIconPath } from 'inkra';
+import { PencilIcon, type PencilIconPath } from '@inkra/react';
 
 const paths: readonly PencilIconPath[] = [
   { d: 'M10 30L13 22L27 8L32 13L18 27Z' },

@@ -10,7 +10,7 @@ try {
     const page = await browser.newPage({ viewport: { width, height } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:4180/components/overlay#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/overlay#preview');
     const playground = page.locator('.component-playground').first();
     const trigger = playground.getByRole('button', { name: '编辑笔记', exact: true });
     const dialog = page.getByRole('dialog', { name: '编辑笔记', exact: true });

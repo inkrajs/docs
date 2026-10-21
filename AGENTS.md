@@ -1,7 +1,7 @@
 # Inkra Documentation
 
 This is the independent inkrajs/docs repository. Preserve current changes.
-Use npm and the checked-in lockfile. The library is installed from
+Use npm and the checked-in lockfile. The `@inkra/react` library is installed from
 vendor/inkra.tgz, never aliased to a sibling source directory.
 
 - Read README.md and library-candidate.json before changing the package.

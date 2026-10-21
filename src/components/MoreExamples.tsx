@@ -10,7 +10,7 @@ import {
   Skeleton,
   Switch,
   Tooltip,
-} from 'inkra';
+} from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';

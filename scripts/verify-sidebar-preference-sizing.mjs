@@ -5,7 +5,7 @@ const browser = await chromium.launch();
 try {
   for (const width of [1305, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
-    await page.goto('http://127.0.0.1:4180/components/button#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/button#preview');
     if (width < 768) await page.getByRole('button', { name: '打开文档目录', exact: true }).click();
     const preferences = page.locator(`${width < 768 ? '.mobile-drawer' : '.desktop-sidebar'} .sidebar-preferences`);
     const language = preferences.getByRole('combobox');
@@ -38,7 +38,7 @@ try {
       await page.keyboard.press('Escape');
       await page.locator('.mobile-drawer').waitFor({ state: 'hidden' });
     }
-    await page.goto('http://127.0.0.1:4180/components/select#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/select#preview');
     const defaultSurface = page.locator('.preview-stage .inkra-select__trigger-surface').first();
     await defaultSurface.waitFor();
     assert.equal((await defaultSurface.boundingBox()).height, 44, 'ordinary md Select remains 44px');

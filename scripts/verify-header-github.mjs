@@ -13,7 +13,7 @@ try {
     });
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:4180/components/input-number#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/input-number#preview');
     const link = page.locator('.header-github');
     const label = 'GitHub 仓库（新标签页打开）';
     await page.getByRole('link', { name: label, exact: true }).waitFor();

@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { PencilLine, PencilSurface } from 'inkra';
+import { PencilLine, PencilSurface } from '@inkra/react';
 import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.mjs';
 import { __iconData as codeIcon } from 'lucide-react/dist/esm/icons/code-xml.mjs';
 import { __iconData as copyIcon } from 'lucide-react/dist/esm/icons/copy.mjs';

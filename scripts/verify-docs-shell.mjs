@@ -7,7 +7,7 @@ try {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:4180/components/button#preview');
+    await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/button#preview');
     await page.waitForURL('**/docs/components/button#preview');
     await page.locator('.page-heading__actions').waitFor();
     const nav = page.getByRole('navigation', { name: '主导航', exact: true });
@@ -39,7 +39,7 @@ try {
     await markdown.getByRole('button', { name: '关闭', exact: true }).click();
     await markdown.waitFor({ state: 'hidden' });
     await page.locator('.brand').click();
-    await page.waitForURL('http://127.0.0.1:4180/');
+    await page.waitForURL((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/');
     assert.equal(await page.locator('.desktop-sidebar').count(), 0);
     assert.equal(await page.locator('#main-content h1').innerText(), 'Inkra');
     await page.getByRole('region', { name: '组件示例', exact: true }).waitFor();

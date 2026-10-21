@@ -1,5 +1,5 @@
 import { lazy, Suspense, useId, useState, type ReactNode } from 'react';
-import { Badge, Breadcrumb, Button, ButtonGroup, ButtonLink, Card, Checkbox, Field, Input, InputNumber, Overlay, PencilLine, Progress, Slider, Switch, Tabs, Textarea, Tooltip } from 'inkra';
+import { Badge, Breadcrumb, Button, ButtonGroup, ButtonLink, Card, Checkbox, Field, Input, InputNumber, Overlay, PencilLine, Progress, Slider, Switch, Tabs, Textarea, Tooltip } from '@inkra/react';
 import { __iconData as arrowIcon } from 'lucide-react/dist/esm/icons/arrow-right.mjs';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';

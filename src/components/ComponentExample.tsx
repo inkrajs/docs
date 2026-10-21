@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { PencilLine, PencilSurface } from 'inkra';
+import { PencilLine, PencilSurface } from '@inkra/react';
 import { __iconData as codeIcon } from 'lucide-react/dist/esm/icons/code-xml.mjs';
 import { __iconData as chevronDownIcon } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
 import { DocsIcon } from './DocsIcon';

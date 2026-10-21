@@ -6,6 +6,9 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
+The package name is `@inkra/react`. The local `vendor/inkra.tgz` filename is
+only the stable consumer archive path; it is not an unscoped npm dependency.
+
 ## Local Routes And Page Actions
 
 The brand links to `/`, a half-viewport introduction and interactive component
@@ -65,6 +68,8 @@ chromium` and `npm run test:browser`. This covers selected sidebar, Select, Inpu
 and InputNumber interactions at desktop/mobile sizes, not the full component
 catalog or browser hydration. Additional `scripts/verify-*.mjs` checks are
 historical regressions and may need updates as the docs evolve.
+Set INKRA_DOCS_URL to run the browser smoke suite against another local port
+without interrupting an existing documentation server.
 
 Public hosting is owned by inkrajs/inkrajs.github.io. Its release.json pins this
 repository's exact commit; its Pages workflow builds this application once at

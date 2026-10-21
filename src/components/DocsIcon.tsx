@@ -1,5 +1,5 @@
-import { PencilIcon } from 'inkra';
-import type { PencilIconPath } from 'inkra';
+import { PencilIcon } from '@inkra/react';
+import type { PencilIconPath } from '@inkra/react';
 
 export type LucideIconData = {
   name: string;

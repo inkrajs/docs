@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Button, PencilSurface } from 'inkra';
+import { Button, PencilSurface } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import './GeometrySystem.css';
 
