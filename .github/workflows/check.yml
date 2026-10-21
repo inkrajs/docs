@@ -36,10 +36,10 @@ jobs:
         working-directory: .library
       - run: npm run build
         working-directory: .library
-      - run: npm run check:package
+      - run: GITHUB_SHA="$LIBRARY_REVISION" npm run check:package
         working-directory: .library
         env:
-          GITHUB_SHA: ${{ steps.candidate.outputs.revision }}
+          LIBRARY_REVISION: ${{ steps.candidate.outputs.revision }}
       - run: npm run prepare:library -- .library
       - run: git diff --exit-code -- library-candidate.json package-lock.json
       - run: npm ci --ignore-scripts
