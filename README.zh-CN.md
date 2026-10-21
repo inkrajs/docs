@@ -10,7 +10,11 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-先在组件仓运行 npm ci、npm run build、npm run check:package，再在本仓运行：
+本仓默认从 npm 安装正式的 `@inkra/react@0.1.0`，版本与完整性固定在锁文件中。
+直接运行 `npm ci --ignore-scripts`、`npm run build` 和 `npm run dev -- --port 4180`。
+构建会核对公开包的 SHA-256、SHA-512 和安装来源。
+
+需要验证未发布改动时，先在组件仓运行 npm ci、npm run build、npm run check:package，再在本仓运行：
 
 ```sh
 npm run prepare:library -- /path/to/inkra
@@ -25,8 +29,9 @@ vendor 中的 tarball 不提交。组件仓使用
 
 在 4180 端口运行本地文档后，执行 `npx playwright install chromium` 和
 `npm run test:browser`，检查选定的侧栏、Select、Input 和 InputNumber 桌面与
-移动端交互，不代表全部组件或 SSR 水合验收。Push、PR 和手动 CI 均读取
-候选文件中的精确组件提交号，重建后核对归档与锁文件无漂移，再执行浏览器检查。
+移动端交互，不代表全部组件或 SSR 水合验收。可用 INKRA_DOCS_URL 指定其他本地端口。
+Push、PR 和手动 CI 对正式版本直接安装 npm 包；本地候选模式才按精确组件提交号
+重建并核对归档与锁文件无漂移，两种模式都执行浏览器检查。
 
 公开网站由 inkrajs/inkrajs.github.io 的 release.json 固定本仓精确提交后构建发布。
 首页位于 /，文档位于 /docs；构建生成每条文档路径及旧地址的 HTML 入口，

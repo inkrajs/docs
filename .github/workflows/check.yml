@@ -19,11 +19,14 @@ jobs:
         run: |
           node --input-type=module -e "
             import { readFileSync, appendFileSync } from 'node:fs';
-            const { revision } = JSON.parse(readFileSync('library-candidate.json'));
+            const { revision, source } = JSON.parse(readFileSync('library-candidate.json'));
             if (!/^[0-9a-f]{40}$/.test(revision)) throw Error('Pin an exact library commit');
+            if (source !== undefined && source !== 'registry') throw Error('Unknown library source');
             appendFileSync(process.env.GITHUB_OUTPUT, 'revision=' + revision + '\n');
+            appendFileSync(process.env.GITHUB_OUTPUT, 'source=' + (source || 'candidate') + '\n');
           "
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: steps.candidate.outputs.source != 'registry'
         with:
           repository: inkrajs/inkra
           ref: ${{ steps.candidate.outputs.revision }}
@@ -33,14 +36,18 @@ jobs:
         with:
           node-version: 24
       - run: npm ci --ignore-scripts
+        if: steps.candidate.outputs.source != 'registry'
         working-directory: .library
       - run: npm run build
+        if: steps.candidate.outputs.source != 'registry'
         working-directory: .library
       - run: GITHUB_SHA="$LIBRARY_REVISION" npm run check:package
+        if: steps.candidate.outputs.source != 'registry'
         working-directory: .library
         env:
           LIBRARY_REVISION: ${{ steps.candidate.outputs.revision }}
       - run: npm run prepare:library -- .library
+        if: steps.candidate.outputs.source != 'registry'
       - run: git diff --exit-code -- library-candidate.json package-lock.json
       - run: npm ci --ignore-scripts
       - run: npm run build

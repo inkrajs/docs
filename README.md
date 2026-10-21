@@ -6,8 +6,21 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The package name is `@inkra/react`. The local `vendor/inkra.tgz` filename is
-only the stable consumer archive path; it is not an unscoped npm dependency.
+The package name is `@inkra/react`. This checkout installs the published 0.1.0
+release from npm with an exact version and integrity lock. library-candidate.json
+records its source commit, SHA-256 and SHA-512. Local candidates can still use
+the stable vendor/inkra.tgz path; it is not an unscoped npm dependency.
+
+## Local Development
+
+```sh
+npm ci --ignore-scripts
+npm run build
+npm run dev -- --port 4180
+```
+
+Build verifies the public archive against the recorded release hashes and the
+installed dependency. It does not silently replace the release with source code.
 
 ## Local Routes And Page Actions
 
@@ -59,9 +72,10 @@ source link. Review and commit the exact revision, integrity and lockfile togeth
 ## Checks And Publication
 
 Build checks the candidate, TypeScript, Vite and static route entrypoints.
-Push, PR and manual CI rebuild the exact product commit in library-candidate.json
-and reject archive or lockfile drift before running installed-package browser
-smoke checks. This workflow does not publish npm or deploy the website.
+Push, PR and manual CI install a pinned registry release directly. For a local
+candidate they rebuild the exact product commit in library-candidate.json and
+reject archive or lockfile drift. Both paths run installed-package browser smoke
+checks. This workflow does not publish npm or deploy the website.
 
 With the local dev server running on port 4180, run `npx playwright install
 chromium` and `npm run test:browser`. This covers selected sidebar, Select, Input

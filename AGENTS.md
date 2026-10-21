@@ -2,7 +2,8 @@
 
 This is the independent inkrajs/docs repository. Preserve current changes.
 Use npm and the checked-in lockfile. The `@inkra/react` library is installed from
-vendor/inkra.tgz, never aliased to a sibling source directory.
+the public registry at an exact version, or vendor/inkra.tgz for an explicitly
+prepared local candidate. Never alias to a sibling source directory.
 
 - Read README.md and library-candidate.json before changing the package.
 - Component behavior, types, tokens and design contracts belong to inkrajs/inkra.

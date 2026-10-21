@@ -603,6 +603,9 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
       <PencilLine className="section-divider" seed="getting-started-divider" />
       <section className="content-section getting-started-content">
         <PencilText as="h2" seed="install-heading">安装与样式</PencilText>
+        <PencilSurface className="code-sample" seed="install-command" variant="paper">
+          <pre><code>npm install @inkra/react</code></pre>
+        </PencilSurface>
         <PencilSurface className="code-sample" seed="install-code" variant="paper">
           <pre><code>{`import '@inkra/react/tokens.css';\nimport '@inkra/react/styles.css';\nimport { Button } from '@inkra/react';`}</code></pre>
         </PencilSurface>
