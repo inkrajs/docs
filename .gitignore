@@ -1,0 +1,10 @@
+node_modules/
+dist/
+vendor/*.tgz
+.local/
+.env
+.env.*
+!.env.example
+.DS_Store
+.library/
+HANDOFF.md

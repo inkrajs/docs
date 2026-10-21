@@ -1,0 +1,91 @@
+.geometry-system {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--inkra-space-8);
+}
+
+.geometry-system > * { min-width: 0; }
+
+.geometry-principle { margin: 0; color: var(--inkra-ink-muted); max-width: var(--inkra-reading-width); }
+.geometry-rules { margin-bottom: var(--inkra-space-4); }
+.geometry-rules table { width: 100%; min-width: 0; border-collapse: collapse; table-layout: fixed; }
+.geometry-rules th, .geometry-rules td {
+  padding: var(--inkra-space-3) var(--inkra-space-3) var(--inkra-space-3) 0;
+  text-align: start;
+  vertical-align: top;
+  border-bottom: 1px solid var(--inkra-border);
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.geometry-rules th:first-child { width: 26%; }
+.geometry-rules th:nth-child(2) { width: 27%; }
+.geometry-rules code { font-size: var(--inkra-text-sm); }
+.geometry-rules + .geometry-note { margin-bottom: var(--inkra-space-4); }
+.geometry-scale-details { margin-top: var(--inkra-space-4); }
+.geometry-scale-details summary { cursor: pointer; padding-block: var(--inkra-space-3); }
+
+.design-standard .geometry-system h2 {
+  margin: 0 0 var(--inkra-space-4);
+}
+
+.geometry-examples {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--inkra-space-4);
+  align-items: start;
+}
+
+.geometry-examples figure {
+  min-width: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--inkra-space-3);
+  justify-items: start;
+}
+
+.geometry-examples figcaption {
+  display: grid;
+  gap: var(--inkra-space-1);
+  font-size: var(--inkra-text-xs);
+}
+
+.radius-specimen {
+  width: 100%;
+  max-width: 128px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+}
+
+.space-scale {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--inkra-space-2) var(--inkra-space-6);
+}
+
+.space-scale__row {
+  display: grid;
+  grid-template-columns: 80px 64px 44px;
+  align-items: center;
+  gap: var(--inkra-space-3);
+  font-size: var(--inkra-text-xs);
+}
+
+.space-scale__bar { height: 20px; }
+
+.padding-specimen { width: 100%; max-width: 160px; box-sizing: border-box; }
+.geometry-content {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  background: var(--inkra-surface);
+}
+
+.gap-specimen { display: flex; align-items: center; height: 64px; }
+.gap-specimen__item { width: 24px; height: 44px; flex: 0 0 24px; }
+.geometry-note { color: var(--inkra-ink-muted); margin: var(--inkra-space-4) 0 0; }
+
+@media (max-width: 720px) {
+  .geometry-examples { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--inkra-space-6); }
+  .space-scale { grid-template-columns: minmax(0, 1fr); }
+}

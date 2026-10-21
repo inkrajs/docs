@@ -1,0 +1,13 @@
+.input-examples__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  align-items: start;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+}
+
+.input-examples__status {
+  min-height: 1.45em;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,74 @@
+name: Verify documentation candidate
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Read pinned product revision
+        id: candidate
+        run: |
+          node --input-type=module -e "
+            import { readFileSync, appendFileSync } from 'node:fs';
+            const { revision } = JSON.parse(readFileSync('library-candidate.json'));
+            if (!/^[0-9a-f]{40}$/.test(revision)) throw Error('Pin an exact library commit');
+            appendFileSync(process.env.GITHUB_OUTPUT, 'revision=' + revision + '\n');
+          "
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: inkrajs/inkra
+          ref: ${{ steps.candidate.outputs.revision }}
+          path: .library
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+        working-directory: .library
+      - run: npm run build
+        working-directory: .library
+      - run: npm run check:package
+        working-directory: .library
+        env:
+          GITHUB_SHA: ${{ steps.candidate.outputs.revision }}
+      - run: npm run prepare:library -- .library
+      - run: git diff --exit-code -- library-candidate.json package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Installed-package browser smoke
+        shell: bash
+        run: |
+          npm run dev -- --port 4180 --strictPort > /tmp/inkra-docs-vite.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=false
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4180/ > /dev/null; then
+              ready=true
+              break
+            fi
+            kill -0 "$server_pid" || { cat /tmp/inkra-docs-vite.log; exit 1; }
+            sleep 1
+          done
+          if [[ "$ready" != true ]]; then
+            cat /tmp/inkra-docs-vite.log
+            exit 1
+          fi
+          npm run test:browser
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: docs-candidate
+          path: |
+            dist/
+            library-candidate.json
+          if-no-files-found: error

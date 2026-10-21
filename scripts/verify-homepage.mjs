@@ -1,0 +1,145 @@
+import assert from 'node:assert/strict';
+import { chromium } from 'playwright';
+
+const browser = await chromium.launch();
+const baseURL = process.env.BASE_URL ?? 'http://127.0.0.1:4180';
+try {
+  for (const width of [1600, 1305, 800, 390, 320]) {
+    for (const locale of ['zh-CN', 'en']) {
+      const height = width === 320 ? 568 : 954;
+      const page = await browser.newPage({ viewport: { width, height } });
+      const errors = [];
+      page.on('pageerror', error => errors.push(error.message));
+      await page.addInitScript(({ locale }) => {
+        localStorage.setItem('inkra-docs-locale', locale);
+        localStorage.setItem('inkra-docs-theme', locale === 'en' ? 'dark' : 'light');
+      }, { locale });
+      await page.goto(new URL('/', baseURL).href);
+      await page.locator('.home-showcase').waitFor();
+      await page.locator('.home-calendar .rdp-month').waitFor();
+      await page.locator('.home-map .leaflet-marker-icon').first().waitFor();
+      await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(500);
+      assert.equal(await page.locator('main h1').innerText(), 'Inkra');
+      const brand = await page.locator('.home-intro__brand .brand-mark').boundingBox();
+      const title = await page.locator('main h1').boundingBox();
+      assert(brand.x + brand.width <= title.x && brand.width === 72, 'Brand mark precedes the title');
+      assert.equal(await page.locator('.home-intro > p').innerText(), locale === 'en' ? 'Build your interface like you draw.' : '像画画一样搭建你的界面');
+      assert.equal(await page.locator('.home-specimen').count(), 8);
+      assert.equal(await page.locator('.home-specimen .home-calendar, .home-specimen .home-map, .home-specimen .inkra-breadcrumb').count(), 3);
+      const day = await page.locator('.home-calendar .rdp-day_button').first().boundingBox();
+      assert(Math.abs(day.width - day.height) < 1, 'Homepage dates are square');
+      assert(day.width >= 44, 'Date targets remain at least 44px');
+      assert.equal(await page.locator('.home-calendar .rdp-caption_label .inkra-pencil-text').count(), 1);
+      assert.equal(await page.locator('.home-calendar .rdp-weekday .inkra-pencil-text').count(), 7);
+      assert.equal(await page.locator('.home-calendar .rdp-nav .inkra-button canvas.inkra-pencil-icon').count(), 2);
+      assert.equal(await page.locator('.home-map .inkra-journey-map__places, .home-map .inkra-journey-map__attribution').count(), 0);
+      const introBox = await page.locator('.home-intro').boundingBox();
+      assert(Math.abs(introBox.height - height / 2) < 2, 'Introduction fills half the viewport');
+      assert.equal(await page.locator('.home-specimen .inkra-card__header, .home-specimen .inkra-card__footer').count(), 0);
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `No overflow: ${width}/${locale}`);
+      assert((await page.locator('.home-specimen').first().boundingBox()).y < height - 30, 'First example is visible in the first viewport');
+      const number = page.getByRole('spinbutton');
+      const inputBox = await number.boundingBox();
+      const actionBoxes = await page.locator('.home-type-tools .inkra-input-number button').evaluateAll(nodes => nodes.map(node => ({ y: node.getBoundingClientRect().y })));
+      assert(actionBoxes.every(box => Math.abs(box.y - inputBox.y) < 3), 'Number controls stay on one line');
+      assert(await page.locator('.home-showcase .docs-pencil-icon').first().evaluate(canvas => {
+        const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+        return data.some((value, index) => index % 4 === 3 && value > 20);
+      }), 'Pencil icons are drawn');
+      assert(await page.locator('.inkra-journey-map__ink').evaluate(canvas => {
+        const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+        let count = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i] > 20) count++;
+        return count > 1000;
+      }), 'Map geography canvas is nonblank');
+      await page.screenshot({ path: `/tmp/inkra-home-${width}-${locale}.png`, fullPage: true });
+
+      if (locale === 'zh-CN' && [1305, 390].includes(width)) {
+        const calendar = page.locator('.home-calendar');
+        await calendar.locator('.rdp-day_button').filter({ hasText: /^22$/ }).click();
+        assert.equal(await calendar.locator('.rdp-day[aria-selected="true"] .rdp-day_button').innerText(), '22');
+        assert.equal(await calendar.locator('output').count(), 0);
+        const map = page.locator('.home-map');
+        await map.locator('.leaflet-marker-icon[title="Auckland"]').click();
+        assert.equal(await map.locator('.leaflet-marker-icon[title="Auckland"]').getAttribute('aria-pressed'), 'true');
+        await map.getByRole('button', { name: '地图来源', exact: true }).click();
+        const credits = page.getByRole('dialog', { name: '地图来源', exact: true });
+        await credits.waitFor();
+        assert.match(await credits.innerText(), /ESA WorldCover 2021/);
+        await page.keyboard.press('Escape');
+        await credits.waitFor({ state: 'hidden' });
+        const markerBefore = await map.locator('.leaflet-marker-icon').nth(1).getAttribute('style');
+        await map.getByRole('button', { name: '放大', exact: true }).click();
+        await page.waitForFunction(old => document.querySelectorAll('.home-map .leaflet-marker-icon')[1].getAttribute('style') !== old, markerBefore);
+        await map.getByRole('button', { name: '复位视图', exact: true }).click();
+        const month = await calendar.locator('.rdp-caption_label').innerText();
+        await calendar.locator('.rdp-button_next').click();
+        assert.notEqual(await calendar.locator('.rdp-caption_label').innerText(), month);
+        await calendar.locator('.rdp-button_previous').click();
+        assert.equal(await calendar.locator('.rdp-caption_label').innerText(), month);
+        const form = page.getByRole('region', { name: '新建项目', exact: true });
+        await form.getByRole('button', { name: '创建草稿', exact: true }).click();
+        assert.equal(await form.locator('output').innerText(), '');
+        await form.getByRole('textbox', { name: '项目名称' }).fill('Inkra 示例');
+        await form.getByRole('button', { name: '创建草稿', exact: true }).click();
+        await form.getByText('「Inkra 示例」草稿已创建，仅保留在当前页面。').waitFor();
+        await form.getByRole('combobox').click();
+        await page.getByRole('option', { name: '团队', exact: true }).click();
+        assert.match(await form.getByRole('combobox').innerText(), /团队/);
+        const tasks = page.getByRole('region', { name: '一件一件来', exact: true });
+        await tasks.getByRole('checkbox', { name: '给细节一点耐心' }).click();
+        assert.equal(await tasks.getByRole('progressbar').getAttribute('aria-valuenow'), '2');
+        await number.fill('28');
+        await number.press('Tab');
+        assert.equal(await page.getByRole('slider').getAttribute('aria-valuenow'), '28');
+        await page.getByRole('slider').focus();
+        await page.keyboard.press('ArrowRight');
+        assert.equal(await number.inputValue(), '29');
+        await page.getByRole('button', { name: '居中', exact: true }).click();
+        assert.equal(await page.locator('.home-type-preview').evaluate(node => getComputedStyle(node).textAlign), 'center');
+        const files = page.getByRole('region', { name: '桌面上的几页纸', exact: true });
+        await files.getByRole('tab', { name: '收藏', exact: true }).click();
+        await files.getByRole('button', { name: '取消收藏 没写完的好主意', exact: true }).click();
+        await files.getByText('还没有收藏，留个位置。').waitFor();
+        assert.equal(await files.locator('[aria-current="page"]').innerText(), '收藏');
+        await files.getByRole('link', { name: '我的文件', exact: true }).click();
+        assert.equal(await files.getByRole('tab', { name: '最近', exact: true }).getAttribute('aria-selected'), 'true');
+        await page.getByRole('button', { name: '编辑标题', exact: true }).click();
+        const dialog = page.getByRole('dialog', { name: '换个名字', exact: true });
+        await dialog.getByRole('textbox', { name: '标题' }).fill('新的标题');
+        await dialog.getByRole('button', { name: '保存', exact: true }).click();
+        await dialog.waitFor({ state: 'hidden' });
+        await page.getByRole('heading', { name: '新的标题', exact: true }).waitFor();
+        await page.getByRole('button', { name: '编辑标题', exact: true }).click();
+        await dialog.getByRole('textbox', { name: '标题' }).fill('不保存');
+        await dialog.getByRole('button', { name: '取消', exact: true }).click();
+        await page.getByRole('heading', { name: '新的标题', exact: true }).waitFor();
+        const preferences = page.getByRole('region', { name: '偏好设置', exact: true });
+        await preferences.getByRole('tab', { name: '通知', exact: true }).click();
+        const updates = preferences.getByRole('switch', { name: '接收更新', exact: true });
+        await updates.click();
+        assert.equal(await updates.isChecked(), false);
+        await preferences.getByRole('tab', { name: '外观', exact: true }).click();
+        await preferences.getByRole('radio', { name: '深色主题', exact: true }).click();
+        assert.equal(await page.evaluate(() => localStorage.getItem('inkra-docs-theme')), 'dark');
+        await preferences.getByRole('combobox', { name: '语言', exact: true }).click();
+        await page.getByRole('option', { name: 'English', exact: true }).click();
+        await page.getByRole('link', { name: 'Get started', exact: true }).click();
+        await page.waitForURL('**/docs/getting-started');
+        await page.goto(new URL('/docs/components/breadcrumb#preview', baseURL).href);
+        const breadcrumb = page.getByRole('navigation', { name: '当前位置', exact: true });
+        await breadcrumb.waitFor();
+        await page.getByRole('switch', { name: '从右向左', exact: true }).click();
+        assert.equal(await breadcrumb.getAttribute('dir'), 'rtl');
+        await page.getByRole('switch', { name: '禁用上级链接', exact: true }).click();
+        assert.equal(await breadcrumb.locator('a').nth(1).getAttribute('href'), null);
+        await page.getByRole('tab', { name: 'API', exact: true }).click();
+        await page.getByRole('cell', { name: 'Separator.children', exact: true }).waitFor();
+      }
+      assert.deepEqual(errors, []);
+      await page.close();
+      console.log(`PASS homepage ${width}px ${locale}`);
+    }
+  }
+} finally { await browser.close(); }

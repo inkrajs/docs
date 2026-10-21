@@ -1,0 +1,34 @@
+# Inkra 文档
+
+[English](README.md)
+
+独立维护组件示例、交互属性、搜索与多语言。组件实现、类型和设计契约归
+inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScript 引用源码。
+
+首页使用半屏介绍区与可交互组件展示，包含面包屑、日历和地图，各示例不强制
+使用卡片头尾。示例编辑仅留在当前页面，主题与语言沿用站点持久化偏好。
+文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
+`node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
+
+先在组件仓运行 npm ci、npm run build、npm run check:package，再在本仓运行：
+
+```sh
+npm run prepare:library -- /path/to/inkra
+npm run build
+npm run dev -- --port 4180
+```
+
+准备脚本核对 SHA-256 后安装；同步审查 library-candidate.json 与 lockfile。
+vendor 中的 tarball 不提交。组件仓使用
+`GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 记录精确源码版本，
+再同步本仓候选信息。组件修改后需要重新构建并准备候选包。
+
+在 4180 端口运行本地文档后，执行 `npx playwright install chromium` 和
+`npm run test:browser`，检查选定的侧栏、Select、Input 和 InputNumber 桌面与
+移动端交互，不代表全部组件或 SSR 水合验收。Push、PR 和手动 CI 均读取
+候选文件中的精确组件提交号，重建后核对归档与锁文件无漂移，再执行浏览器检查。
+
+公开网站由 inkrajs/inkrajs.github.io 的 release.json 固定本仓精确提交后构建发布。
+首页位于 /，文档位于 /docs；构建生成每条文档路径及旧地址的 HTML 入口，
+支持 GitHub Pages 直达与刷新，不依赖 404 跳转。网站部署不等于 React 0.1.0
+已发布到 npm。设置 BASE_URL 可对线上运行首页检查。

@@ -1,0 +1,6 @@
+.content-demo-width { width: min(100%, 400px); min-width: 0; }
+.content-demo-stack { display: grid; justify-items: start; gap: 12px; }
+.content-demo-stack output { min-height: 24px; }
+.content-demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.content-demo-width.inkra-table-container { width: min(100%, 520px); }
+.content-demo-width .inkra-table { min-width: 280px; }

@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+
+const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const browser = await chromium.launch();
+const errors = [];
+try {
+  for (const width of [1305, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 954 } });
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto('http://127.0.0.1:4180/components/input#preview');
+    const fixturePath = new URL('./fixtures/input-props.tsx', import.meta.url).pathname;
+    await page.evaluate(async path => (await import(`/@fs${path}`)).mountInputFixture(), fixturePath);
+    const scope = page.locator('#input-fixture');
+    const controlled = scope.getByRole('textbox', { name: 'Controlled', exact: true });
+    assert.equal(await controlled.evaluate(node => node.closest('.inkra-input-root').dataset.variant), 'underline');
+    await controlled.fill('typed');
+    await scope.getByRole('button', { name: 'Clear controlled', exact: true }).click();
+    assert.equal(await controlled.inputValue(), '');
+    assert(await controlled.evaluate(node => node === document.activeElement));
+    const events = JSON.parse(await scope.getByTestId('events').textContent());
+    assert.deepEqual(events, ['native:typed', 'input:typed', 'clear:', 'onClear']);
+    await scope.getByRole('button', { name: 'Clear held', exact: true }).click();
+    assert.equal(await scope.getByRole('textbox', { name: 'Held controlled', exact: true }).inputValue(), 'unchanged');
+    const uncontrolled = scope.getByRole('textbox', { name: 'Uncontrolled', exact: true });
+    await scope.getByRole('button', { name: 'Clear uncontrolled', exact: true }).click();
+    assert.equal(await uncontrolled.inputValue(), '');
+    await scope.getByRole('button', { name: 'Reset uncontrolled', exact: true }).click();
+    assert.equal(await uncontrolled.inputValue(), 'initial');
+    await scope.getByRole('button', { name: 'Clear uncontrolled', exact: true }).waitFor();
+    assert.equal(await uncontrolled.evaluate(input => new FormData(input.form).get('note')), 'initial');
+    await controlled.fill('composition');
+    await controlled.dispatchEvent('compositionstart', { data: '中' });
+    await page.waitForFunction(() => document.querySelector('[aria-label="Clear controlled"]').disabled);
+    await controlled.dispatchEvent('compositionend', { data: '中' });
+    await scope.getByRole('button', { name: 'Clear controlled' }).waitFor();
+    await controlled.press('Escape');
+    assert.equal(await controlled.inputValue(), 'composition', 'Escape is owned by consumer');
+    await scope.getByRole('button', { name: 'Clear controlled' }).focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await controlled.inputValue(), '', 'keyboard clear');
+    await scope.getByRole('button', { name: 'Focus controlled' }).click();
+    assert(await controlled.evaluate(node => node === document.activeElement), 'forwarded native ref');
+    const allSlots = scope.getByRole('textbox', { name: 'All slots' });
+    const before = await allSlots.boundingBox();
+    await scope.getByRole('button', { name: 'Toggle loading' }).click();
+    await allSlots.locator('..').locator('.inkra-input__loading[data-active="true"]').waitFor();
+    const after = await allSlots.boundingBox();
+    assert.equal(before.width, after.width, 'loading reserves layout');
+    assert(before.width >= 40, `input remains usable at ${width}px: ${before.width}`);
+    await allSlots.fill('still editable');
+    assert.equal(await allSlots.inputValue(), 'still editable');
+    assert.equal(await scope.getByRole('textbox', { name: 'Disabled' }).isDisabled(), true);
+    const readonly = scope.getByRole('textbox', { name: 'Readonly' });
+    assert.equal(await readonly.getAttribute('readonly'), '');
+    assert.equal(await readonly.locator('..').locator('.inkra-input__clear').isVisible(), false);
+    const rtl = scope.getByRole('textbox', { name: 'RTL', exact: true });
+    assert.equal(await rtl.evaluate(node => getComputedStyle(node).direction), 'rtl');
+    assert.equal(await rtl.evaluate(node => getComputedStyle(node).textAlign), 'end');
+    const ghost = scope.getByRole('textbox', { name: 'Ghost', exact: true });
+    const ghostId = await ghost.getAttribute('id');
+    await ghost.focus();
+    await page.waitForFunction(id => document.getElementById(id).closest('.inkra-field-control').classList.contains('inkra-pencil-surface--outline'), ghostId);
+    assert.equal(await ghost.evaluate(node => getComputedStyle(node).outlineStyle), 'none');
+    await scope.getByRole('button', { name: 'Clear ghost' }).focus();
+    assert(await ghost.evaluate(node => node.closest('.inkra-field-control').classList.contains('inkra-pencil-surface--outline')));
+    await controlled.focus();
+    await page.waitForFunction(id => document.getElementById(id).closest('.inkra-field-control').classList.contains('inkra-pencil-surface--ghost'), ghostId);
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await page.screenshot({ path: `/tmp/inkra-input-fixture-${width}.png`, fullPage: true });
+    console.log(`PASS Input state, reset, IME, keyboard, RTL, loading and slots at ${width}px`);
+    await page.close();
+  }
+  assert.deepEqual(errors, []);
+} finally {
+  await browser.close();
+}

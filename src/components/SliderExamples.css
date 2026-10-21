@@ -1,0 +1,24 @@
+.slider-demo {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  min-width: 0;
+  width: min(100%, 420px);
+}
+
+.slider-demo[data-orientation="vertical"] {
+  gap: 8px;
+}
+
+.slider-demo__value,
+.slider-demo__commit {
+  min-height: 24px;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.slider-demo__commit {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+}

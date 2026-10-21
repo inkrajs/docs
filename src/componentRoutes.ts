@@ -1,0 +1,1 @@
+export const foundationComponents = ['icon', 'popover', 'overlay', 'tooltip', 'dropdown-menu', 'field', 'input', 'input-number', 'textarea', 'select', 'slider', 'checkbox', 'radio-group', 'switch', 'tabs', 'breadcrumb', 'accordion', 'badge', 'separator', 'skeleton', 'progress', 'alert', 'avatar', 'card', 'table', 'calendar', 'day-agenda', 'journey-map'] as const;

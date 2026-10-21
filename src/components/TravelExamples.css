@@ -1,0 +1,12 @@
+.travel-examples { display: grid; gap: 24px; min-width: 0; }
+.travel-examples .preview-display { height: 520px; min-height: 520px; }
+.travel-examples .preview-stage { align-items: start; align-content: start; justify-content: stretch; overflow: auto; padding: 16px; }
+.travel-examples .inkra-calendar-scroll { justify-self: center; }
+.travel-examples .inkra-agenda, .travel-examples .inkra-journey-map { width: 100%; }
+.travel-examples__detail { min-height: 44px; display: flex; align-items: center; }
+.travel-examples--journey-map .preview-stage { padding: 8px; }
+.travel-examples .code-panel { height: 520px; }
+.travel-examples--calendar .preview-display, .travel-examples--calendar .code-panel,
+.travel-examples--journey-map .preview-display, .travel-examples--journey-map .code-panel { height: 700px; min-height: 700px; }
+.travel-examples--day-agenda .preview-stage { height: 100%; box-sizing: border-box; }
+.travel-examples--calendar .preview-stage, .travel-examples--journey-map .preview-stage { padding: 8px; }

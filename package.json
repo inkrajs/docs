@@ -1,0 +1,32 @@
+{
+  "name": "@inkra-internal/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inkrajs/docs.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "node scripts/check-candidate.mjs && tsc --noEmit && vite build && node --experimental-strip-types scripts/prepare-pages.mjs",
+    "check:candidate": "node scripts/check-candidate.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "prepare:library": "node scripts/prepare-library.mjs",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "inkra": "file:vendor/inkra.tgz",
+    "lucide-react": "1.60.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "playwright": "1.64.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.4"
+  }
+}
