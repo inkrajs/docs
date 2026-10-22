@@ -1,0 +1,19 @@
+.rating-demo,
+.rating-example-list {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--inkra-space-3);
+  max-inline-size: 100%;
+}
+
+.rating-demo__value {
+  color: var(--inkra-ink-muted);
+  min-block-size: 24px;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.rating-example-list {
+  align-items: flex-start;
+}

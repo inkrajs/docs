@@ -3,11 +3,12 @@ import { Select } from '@inkra/react';
 import type { SelectTriggerProps } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 
-export function DocsSelect({ label, value, onValueChange, options, hideLabel = false, startIcon }: {
+export function DocsSelect({ label, value, onValueChange, options, disabled = false, hideLabel = false, startIcon }: {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
   options: readonly (readonly [string, string])[];
+  disabled?: boolean;
   hideLabel?: boolean;
   startIcon?: SelectTriggerProps['startIcon'];
 }) {
@@ -16,8 +17,8 @@ export function DocsSelect({ label, value, onValueChange, options, hideLabel = f
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null);
   return <div className="docs-select">
     {!hideLabel && <PencilText as="label" htmlFor={id}>{label}</PencilText>}
-    <Select.Root value={value} onValueChange={onValueChange}>
-      <Select.Trigger id={id} aria-label={t(label)} ref={setTrigger} startIcon={startIcon}><Select.Value /></Select.Trigger>
+    <Select.Root value={value} onValueChange={onValueChange} disabled={disabled}>
+      <Select.Trigger id={id} aria-label={t(label)} disabled={disabled} ref={setTrigger} startIcon={startIcon}><Select.Value /></Select.Trigger>
       <Select.Portal container={trigger?.closest<HTMLElement>('.mobile-drawer') ?? undefined}>
         <Select.Content position="popper" sideOffset={4} onKeyDown={event => event.stopPropagation()}>
           <Select.ScrollUpButton /><Select.Viewport>

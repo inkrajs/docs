@@ -1,0 +1,80 @@
+.virtual-list-examples__playground {
+  display: grid;
+  gap: var(--inkra-space-3);
+  inline-size: min(100%, 44rem);
+  min-inline-size: 0;
+}
+
+.virtual-list-examples__item-button {
+  min-inline-size: 0;
+}
+
+.virtual-list-examples__item-copy {
+  display: grid;
+  gap: var(--inkra-space-1);
+  inline-size: 100%;
+  min-inline-size: 0;
+  text-align: start;
+}
+
+.virtual-list-examples__item-copy small,
+.virtual-list-examples__detail {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+  line-height: var(--inkra-line-ui);
+  white-space: normal;
+}
+
+.virtual-list-examples__selection {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+  min-block-size: 1.5rem;
+}
+
+.virtual-list-examples__external-viewport {
+  block-size: 20rem;
+  inline-size: min(100%, 44rem);
+  min-inline-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.virtual-list-examples__external-viewport:focus-visible {
+  outline: var(--inkra-focus-width) solid var(--inkra-focus);
+  outline-offset: calc(-1 * var(--inkra-focus-width));
+}
+
+.virtual-list-examples__external-row {
+  align-items: baseline;
+  display: flex;
+  gap: var(--inkra-space-3);
+  justify-content: space-between;
+  min-block-size: var(--inkra-touch-target);
+}
+
+.virtual-list-examples__external-row small {
+  color: var(--inkra-ink-muted);
+  flex: none;
+  font-size: var(--inkra-text-sm);
+}
+
+.virtual-list-examples__empty-frame {
+  inline-size: min(100%, 32rem);
+}
+
+.virtual-list-examples__empty-frame .inkra-virtual-list {
+  block-size: 12rem;
+}
+
+@media (max-width: 36rem) {
+  .virtual-list-examples__external-row {
+    align-items: start;
+    flex-direction: column;
+    gap: var(--inkra-space-1);
+  }
+}
+
+@media (forced-colors: active) {
+  .virtual-list-examples__external-viewport:focus-visible { outline-color: Highlight; }
+}

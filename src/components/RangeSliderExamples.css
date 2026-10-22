@@ -1,0 +1,23 @@
+.range-slider-demo,
+.range-slider-examples__stack {
+  display: grid;
+  gap: var(--inkra-space-3);
+  min-width: 0;
+  width: min(100%, 420px);
+}
+
+.range-slider-demo {
+  justify-items: center;
+}
+
+.range-slider-demo__value,
+.range-slider-demo__commit {
+  min-height: 24px;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.range-slider-demo__commit {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+}

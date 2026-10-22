@@ -71,6 +71,10 @@
   text-align: end;
 }
 
+.more-examples__progress-demo { width: min(100%, 26rem); display: grid; justify-items: center; }
+.more-examples__progress-content { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; text-align: center; }
+.more-examples__ring-examples { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; width: 100%; }
+
 @media (max-width: 30rem) {
   .more-examples__separator-demo {
     min-width: 0;

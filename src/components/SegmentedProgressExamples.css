@@ -1,0 +1,29 @@
+.segmented-progress-examples {
+  display: grid;
+  gap: var(--inkra-space-5);
+  min-inline-size: 0;
+}
+
+.segmented-progress-examples__preview {
+  inline-size: min(100%, 32rem);
+}
+
+.segmented-progress-examples__stack,
+.segmented-progress-examples__boundaries {
+  display: grid;
+  gap: var(--inkra-space-4);
+  inline-size: min(100%, 36rem);
+  min-inline-size: 0;
+}
+
+.segmented-progress-examples__stack > label {
+  display: grid;
+  gap: var(--inkra-space-2);
+  min-inline-size: 0;
+}
+
+@media (max-width: 390px) {
+  .segmented-progress-examples__preview,
+  .segmented-progress-examples__stack,
+  .segmented-progress-examples__boundaries { inline-size: 100%; }
+}

@@ -3,6 +3,9 @@ import { PencilText as BasePencilText } from '@inkra/react';
 
 type Locale = 'zh-CN' | 'en';
 const english: Record<string, string> = {
+  '使用锤子': 'Use hammer', '显示数量': 'Show count', '使用手电筒': 'Use flashlight',
+  '打开地图': 'Open map', '空快捷槽': 'Empty quick slot', '木材': 'Wood', '补给箱': 'Supply crate',
+  '快捷工具': 'Quick tools', '资源槽位': 'Resource slots',
   '任务筛选': 'Task filter', '完成进度': 'Completion progress', '全部完成': 'All done', '查看全部': 'View all',
   '来源显示': 'Credits display', '信息按钮': 'Information button', '地图来源': 'Map credits',
   '使用 nav 与有序列表表达路径，为导航提供本地化名称。上级使用真实链接，当前页使用 aria-current="page"；分隔符对读屏隐藏，不进入 Tab 顺序。长路径自动换行，键盘焦点沿用 ButtonLink。': 'Use a named nav and ordered list for the path. Parent locations are real links; the current page uses aria-current="page". Decorative separators are hidden from assistive technology and skipped by Tab. Long paths wrap; links reuse ButtonLink focus styling.',

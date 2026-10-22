@@ -10,6 +10,8 @@ import {
   Skeleton,
   Switch,
   Tooltip,
+  type ProgressContentPosition,
+  type ProgressRenderState,
 } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
@@ -17,8 +19,9 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { DocsSlider } from './DocsSlider';
 import './MoreExamples.css';
-import { DocsIcon } from './DocsIcon';
+import { DocsIcon, iconPaths } from './DocsIcon';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
+import { __iconData as downloadIcon } from 'lucide-react/dist/esm/icons/download.mjs';
 
 export type MoreExampleKind = 'tooltip' | 'accordion' | 'badge' | 'separator' | 'skeleton' | 'progress';
 
@@ -202,19 +205,39 @@ function SkeletonExamples() {
 }
 
 function ProgressExamples() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const zh = locale !== 'en';
   const [value, setValue] = useState(48);
   const [indeterminate, setIndeterminate] = useState(false);
   const [max, setMax] = useState(100);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [label, setLabel] = useState('Progress');
+  const [shape, setShape] = useState<'linear' | 'circular'>('circular');
+  const [position, setPosition] = useState<ProgressContentPosition>('center');
+  const [diameter, setDiameter] = useState(128);
+  const [customDiameter, setCustomDiameter] = useState(false);
+  const [thickness, setThickness] = useState(6);
+  const [contentMode, setContentMode] = useState('both');
+  const [customText, setCustomText] = useState('Inkra');
   const progressValue = indeterminate ? null : value;
-  const code = `<Progress ${label ? `label={${JSON.stringify(label)}}` : 'aria-label="Progress"'} size="${size}" dir="${dir}" value={${progressValue === null ? 'null' : progressValue}} max={${max}} />`;
+  const contentCode = contentMode === 'none' ? '' : contentMode === 'text' ? JSON.stringify(customText)
+    : contentMode === 'icon' ? '<PencilIcon paths={downloadPaths} sourceSize={24} size={26} />'
+    : `{({ percent }) => ${contentMode === 'both' ? '<span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}><PencilIcon paths={downloadPaths} sourceSize={24} size={26} />' : ''}<PencilText>{percent === null ? '...' : Math.round(percent) + '%'}</PencilText>${contentMode === 'both' ? '</span>' : ''}}`;
+  const code = `${contentMode === 'both' || contentMode === 'icon' ? `const downloadPaths = ${JSON.stringify(iconPaths(downloadIcon))};\n\n` : ''}<Progress ${label ? `label={${JSON.stringify(label)}}` : 'aria-label="Progress"'}\n  shape="${shape}" size="${size}" dir="${dir}"\n  value={${progressValue === null ? 'null' : progressValue}} max={${max}}\n  contentPosition="${position}"${shape === 'circular' ? `${customDiameter ? ` diameter={${diameter}}` : ''} thickness={${thickness}}` : ''}${contentMode === 'none' ? ' />' : `>\n  ${contentMode === 'text' ? `{${contentCode}}` : contentCode}\n</Progress>`}`;
+  const renderContent = ({ percent }: ProgressRenderState) => {
+    if (contentMode === 'none') return null;
+    if (contentMode === 'text') return customText;
+    return <span className="more-examples__progress-content">
+      {(contentMode === 'both' || contentMode === 'icon') && <DocsIcon data={downloadIcon} size={26} />}
+      {contentMode !== 'icon' && <PencilText>{percent === null ? '...' : `${Math.round(percent)}%`}</PencilText>}
+    </span>;
+  };
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
+        <DocsSelect label={zh ? '展示形式' : 'Shape'} value={shape} onValueChange={value => setShape(value as typeof shape)} options={[["linear", zh ? '条形' : 'Linear'], ["circular", zh ? '环状' : 'Circular']]} />
         <DocsSelect label="尺寸" value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "Small"], ["md", "Medium"], ["lg", "Large"]]} />
         <DocsSelect label="阅读方向" value={dir} onValueChange={value => setDir(value as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
         <label><PencilText>名称</PencilText><Input value={label} onChange={event => setLabel(event.target.value)} /></label>
@@ -222,13 +245,38 @@ function ProgressExamples() {
       { label: '内容', content: <>
         <DocsSlider label="最大值" min={10} max={200} step={10} value={max} onValueChange={next => { setMax(next); setValue(current => Math.min(current, next)); }} />
         <DocsSlider label="当前值" min={0} max={max} value={value} disabled={indeterminate} onValueChange={setValue} />
+        <DocsSelect label={zh ? '自定义内容' : 'Custom content'} value={contentMode} onValueChange={setContentMode} options={[
+          ['both', zh ? '图标与数值' : 'Icon and value'], ['percent', zh ? '百分比' : 'Percentage'], ['icon', zh ? '图标' : 'Icon'], ['text', zh ? '文字' : 'Text'], ['none', zh ? '不显示' : 'None'],
+        ]} />
+        {contentMode === 'text' && <label><PencilText>{zh ? '自定义文字' : 'Custom text'}</PencilText><Input value={customText} onChange={event => setCustomText(event.target.value)} /></label>}
+      </> },
+      { label: '布局', content: <>
+        <DocsSelect label={zh ? '内容位置' : 'Content position'} value={position} onValueChange={value => setPosition(value as ProgressContentPosition)} options={[
+          ['center', zh ? '环内（条形时在右侧）' : 'Center (end for linear)'], ['top', zh ? '上方' : 'Top'], ['bottom', zh ? '下方' : 'Bottom'], ['start', zh ? '左侧（RTL 为右）' : 'Start'], ['end', zh ? '右侧（RTL 为左）' : 'End'],
+        ]} />
+        {shape === 'circular' && <>
+          <Switch label={zh ? '自定义直径' : 'Custom diameter'} checked={customDiameter} onCheckedChange={setCustomDiameter} />
+          {customDiameter && <DocsSlider label={zh ? '圆环直径' : 'Ring diameter'} min={64} max={240} step={8} value={diameter} onValueChange={setDiameter} unit="px" />}
+          <DocsSlider label={zh ? '环宽' : 'Ring width'} min={1} max={12} value={thickness} onValueChange={setThickness} unit="px" />
+        </>}
       </> },
       { label: '状态', content: <>
         <Switch label={t('不确定进度')} checked={indeterminate} onCheckedChange={setIndeterminate} />
       </> },
     ]} />}>
-      <div className="more-examples__progress"><Progress label={label || undefined} aria-label={label ? undefined : 'Progress'} value={progressValue} max={max} size={size} dir={dir} /><output>{progressValue === null ? '—' : `${Math.round(progressValue / max * 100)}%`}</output></div>
+      <div className="more-examples__progress-demo"><Progress label={label || undefined} aria-label={label ? undefined : 'Progress'} value={progressValue} max={max} size={size} dir={dir}
+        shape={shape} diameter={customDiameter ? diameter : undefined} thickness={thickness} contentPosition={position}>{renderContent}</Progress></div>
     </ComponentPlayground>
+    <ComponentExample title={zh ? '环内内容与外部说明' : 'Inside and outside the ring'} code={`<Progress shape="circular" value={72} aria-label="Download">\n  {({ percent }) => <PencilText>{Math.round(percent ?? 0)}%</PencilText>}\n</Progress>\n<Progress shape="circular" value={3} max={5} contentPosition="end" aria-label="Files">\n  <span>3 / 5 files</span>\n</Progress>`}>
+      <div className="more-examples__ring-examples">
+        <Progress shape="circular" value={72} aria-label={zh ? '下载进度' : 'Download progress'}>{({ percent }) => `${Math.round(percent ?? 0)}%`}</Progress>
+        <Progress shape="circular" value={3} max={5} contentPosition="end" aria-label={zh ? '文件进度' : 'File progress'}><span className="more-examples__progress-content"><DocsIcon data={downloadIcon} size={28} /><PencilText>{zh ? '3 / 5 个文件' : '3 / 5 files'}</PencilText></span></Progress>
+        <Progress shape="circular" value={100} contentPosition="bottom" aria-label={zh ? '同步完成' : 'Sync complete'}><span className="more-examples__progress-content"><DocsIcon data={checkIcon} size={28} /><PencilText>{zh ? '同步完成' : 'Sync complete'}</PencilText></span></Progress>
+      </div>
+    </ComponentExample>
+    <ComponentExample title={zh ? '空环、闭合与未知进度' : 'Empty, complete and indeterminate'} code={`<Progress shape="circular" value={0} label="0%">0%</Progress>\n<Progress shape="circular" value={100} label="100%">100%</Progress>\n<Progress shape="circular" value={null} label="Loading">...</Progress>`}>
+      <div className="more-examples__ring-examples"><Progress shape="circular" value={0} label="0%">0%</Progress><Progress shape="circular" value={100} label="100%">100%</Progress><Progress shape="circular" value={null} label={zh ? '加载中' : 'Loading'}>...</Progress></div>
+    </ComponentExample>
     <ComponentExample title="状态" code={`<Progress aria-label="Progress" value={24} />\n<Progress aria-label="Progress" value={null} />`}>
       <div className="more-examples__progress-stack"><Progress aria-label="24" value={24} /><Progress aria-label="72" value={72} /><Progress aria-label="Indeterminate" value={null} /></div>
     </ComponentExample>

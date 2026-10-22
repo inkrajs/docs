@@ -1,0 +1,57 @@
+.typewriter-examples {
+  display: grid;
+  gap: var(--inkra-space-5);
+  min-width: 0;
+}
+
+.typewriter-examples__paper {
+  align-content: center;
+  display: grid;
+  gap: var(--inkra-space-4);
+  min-height: 180px;
+  padding: var(--inkra-space-5);
+  width: min(100%, 620px);
+}
+
+.typewriter-examples__paper .inkra-typewriter {
+  font-size: var(--inkra-text-2xl);
+  line-height: var(--inkra-line-body);
+}
+
+.typewriter-examples__status {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+}
+
+.typewriter-examples__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--inkra-space-2);
+}
+
+.typewriter-examples__specimens {
+  display: grid;
+  gap: var(--inkra-space-4);
+  width: min(100%, 620px);
+}
+
+.typewriter-examples__specimens .inkra-typewriter {
+  font-size: var(--inkra-text-xl);
+  line-height: var(--inkra-line-body);
+}
+
+.typewriter-examples__note {
+  align-items: start;
+  display: grid;
+  gap: var(--inkra-space-4);
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 84px;
+  width: min(100%, 620px);
+}
+
+@media (max-width: 34rem) {
+  .typewriter-examples__paper {
+    min-height: 220px;
+  }
+
+}

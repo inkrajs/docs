@@ -1,0 +1,41 @@
+.dockable-panel-example__workspace {
+  block-size: 27rem;
+  inline-size: min(100%, 52rem);
+  max-inline-size: 100%;
+  background: color-mix(in srgb, var(--inkra-paper) 86%, var(--inkra-selection));
+}
+
+.dockable-panel-example__workspace--compact {
+  block-size: 22rem;
+  inline-size: min(100%, 44rem);
+}
+
+.dockable-panel-example__content {
+  display: grid;
+  gap: var(--inkra-space-3);
+  line-height: var(--inkra-line-body);
+  min-inline-size: 0;
+}
+
+.dockable-panel-example__row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--inkra-space-2);
+  justify-content: space-between;
+}
+
+.dockable-panel-example__controlled-layout {
+  display: grid;
+  gap: var(--inkra-space-3);
+  inline-size: min(100%, 44rem);
+}
+
+@media (max-width: 40rem) {
+  .dockable-panel-example__workspace { block-size: 24rem; }
+  .dockable-panel-example__workspace--compact { block-size: 20rem; }
+}
+
+@media (forced-colors: active) {
+  .dockable-panel-example__workspace { background: Canvas; border: 1px solid CanvasText; }
+}

@@ -244,7 +244,7 @@ function SideNavigation({
                   }}
                 >
                   {currentPath === item.path ? <PencilSurface aria-hidden="true" className="selection-backdrop" seed={`nav-selection-${item.path}`} variant="selection" /> : null}
-                  <span className="selection-control-content"><DocsIcon data={navigationIcon(item.label)} size={26} /><PencilText seed={`nav-${item.path}`}>{item.label}</PencilText></span>
+                  <span className="selection-control-content"><DocsIcon data={navigationIcon(item.label)} size={26} /><PencilText ellipsis seed={`nav-${item.path}`}>{item.label}</PencilText></span>
                 </a>
               </li>
             ))}
@@ -720,7 +720,7 @@ function ButtonPlayground() {
       <div className="preview-panel">
           <div className="preview-workspace">
             <div className="preview-display">
-            <div className="preview-stage" hidden={view !== 'preview'} aria-labelledby="button-demo-tab-preview" id="button-demo-panel-preview" role="tabpanel">
+            <div className="preview-stage" aria-hidden={view !== 'preview'} inert={view !== 'preview'} aria-labelledby="button-demo-tab-preview" id="button-demo-panel-preview" role="tabpanel">
               <Button
                 aria-label={iconOnly ? t('新建') : undefined}
                 className={iconOnly ? 'demo-icon-button' : undefined}

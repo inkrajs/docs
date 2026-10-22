@@ -1,0 +1,194 @@
+.pan-zoom-examples {
+  display: grid;
+  gap: var(--inkra-space-5);
+  min-inline-size: 0;
+}
+
+.pan-zoom-examples__frame {
+  inline-size: min(100%, 58rem);
+  max-inline-size: 100%;
+  block-size: 34rem;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.pan-zoom-examples__frame--compact {
+  block-size: 24rem;
+}
+
+.pan-zoom-examples__frame > .inkra-pan-zoom {
+  block-size: 100%;
+}
+
+.pan-zoom-examples__board {
+  position: relative;
+  box-sizing: border-box;
+  inline-size: 62rem;
+  min-block-size: 38rem;
+  padding: var(--inkra-space-8);
+  isolation: isolate;
+}
+
+.pan-zoom-examples__board-paper,
+.pan-zoom-examples__coordinate-paper {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pan-zoom-examples__guides {
+  position: absolute;
+  inset: var(--inkra-space-3);
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.34;
+}
+
+.pan-zoom-examples__guide {
+  position: absolute;
+  color: var(--inkra-border);
+}
+
+.pan-zoom-examples__guide--horizontal {
+  inset-inline: 0;
+}
+
+.pan-zoom-examples__guide--vertical {
+  inset-block: 0;
+}
+
+.pan-zoom-examples__board-heading,
+.pan-zoom-examples__note-content,
+.pan-zoom-examples__controlled-actions {
+  display: flex;
+  gap: var(--inkra-space-3);
+}
+
+.pan-zoom-examples__board-heading {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--inkra-space-7);
+}
+
+.pan-zoom-examples__board-heading h3,
+.pan-zoom-examples__note-content h4 {
+  margin: 0;
+}
+
+.pan-zoom-examples__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(15rem, 1fr));
+  gap: var(--inkra-space-6);
+}
+
+.pan-zoom-examples__note {
+  min-block-size: 18rem;
+}
+
+.pan-zoom-examples__note:nth-child(2) {
+  transform: translateY(4rem) rotate(-1deg);
+}
+
+.pan-zoom-examples__note:nth-child(3) {
+  transform: translateY(1.25rem) rotate(1deg);
+}
+
+.pan-zoom-examples__note-content {
+  align-items: flex-start;
+  flex-direction: column;
+  min-block-size: 100%;
+}
+
+.pan-zoom-examples__note-number {
+  color: var(--inkra-ink-subtle);
+  font-family: var(--inkra-font-mono);
+  font-size: var(--inkra-text-sm);
+}
+
+.pan-zoom-examples__note-content .inkra-button {
+  margin-block-start: auto;
+}
+
+.pan-zoom-examples__control-row,
+.pan-zoom-examples__controlled-actions {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pan-zoom-examples__control-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--inkra-space-2);
+}
+
+.pan-zoom-examples__output {
+  overflow-wrap: anywhere;
+}
+
+.pan-zoom-examples__controlled {
+  display: grid;
+  gap: var(--inkra-space-4);
+  inline-size: min(100%, 52rem);
+}
+
+.pan-zoom-examples__coordinate-board {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 52rem;
+  block-size: 30rem;
+  padding: var(--inkra-space-8);
+  text-align: center;
+  isolation: isolate;
+}
+
+.pan-zoom-examples__coordinate-board > .inkra-pencil-text {
+  position: relative;
+  z-index: 1;
+  max-inline-size: 26rem;
+}
+
+.pan-zoom-examples__anchor {
+  position: absolute;
+  inset-block-start: 30%;
+  inset-inline-start: 68%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--inkra-space-1);
+  inline-size: 5rem;
+  min-block-size: 4.5rem;
+  padding: var(--inkra-space-2);
+  color: var(--inkra-coral);
+  z-index: 1;
+}
+
+.pan-zoom-examples__anchor > .inkra-pencil-text {
+  font-size: var(--inkra-text-sm);
+}
+
+.pan-zoom-examples__controlled-actions output {
+  flex: 1 1 12rem;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 48rem) {
+  .pan-zoom-examples__frame { block-size: 28rem; }
+  .pan-zoom-examples__frame--compact { block-size: 22rem; }
+}
+
+@media (max-width: 390px) {
+  .pan-zoom-examples__frame { inline-size: 100%; block-size: 26rem; }
+  .pan-zoom-examples__frame--compact { block-size: 22rem; }
+  .pan-zoom-examples__board { padding: var(--inkra-space-6); }
+  .pan-zoom-examples__controlled-actions { align-items: stretch; flex-direction: column; }
+  .pan-zoom-examples__controlled-actions output { flex: 0 0 auto; }
+}

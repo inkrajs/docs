@@ -67,7 +67,8 @@ try {
     await search.press('Escape');
     assert.equal(await category.getAttribute('aria-expanded'), 'false', 'clearing search restores expansion');
     await search.fill(locale === 'en' ? 'Data display' : '数据展示');
-    assert.equal(await nav.locator('.nav-link:visible').count(), 8);
+    const dataComponents = componentNavigationGroups.find(group => group.label === '数据展示').components;
+    assert.deepEqual(await nav.locator('.nav-link:visible').evaluateAll(nodes => nodes.map(node => node.getAttribute('href').split('/').at(-1))), dataComponents);
     await search.fill('/components/');
     assert.equal(await nav.locator('.nav-link:visible').count(), components.length);
     assert.deepEqual(await nav.locator('.nav-link:visible').evaluateAll(nodes => nodes.map(node => node.getAttribute('href').split('/').at(-1))), categorized);
@@ -90,7 +91,9 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   for (const component of components) {
     await page.goto(`${base}/docs/components/${component}#preview`);
-    await page.locator('.component-playground, .playground').first().waitFor();
+    await page.locator('.component-playground, .playground').first().waitFor().catch(error => {
+      throw new Error(`${component}: main playground did not appear; page errors: ${errors.join('; ')}`, { cause: error });
+    });
     assert.ok(await page.evaluate(() => {
       const playground = document.querySelector('.component-playground, .playground');
       return [...document.querySelectorAll('.component-example')].every(example => playground.contains(example) || Boolean(playground.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING));

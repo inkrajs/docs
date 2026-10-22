@@ -102,6 +102,36 @@ import { __iconData as commandIcon } from 'lucide-react/dist/esm/icons/command.m
 import { __iconData as toggleGroupIcon } from 'lucide-react/dist/esm/icons/columns-3.mjs';
 import { __iconData as stepsIcon } from 'lucide-react/dist/esm/icons/list-ordered.mjs';
 import { __iconData as timelineIcon } from 'lucide-react/dist/esm/icons/git-commit-horizontal.mjs';
+import { __iconData as slotIcon } from 'lucide-react/dist/esm/icons/square-dashed.mjs';
+import { __iconData as logIcon } from 'lucide-react/dist/esm/icons/scroll-text.mjs';
+import { __iconData as hotkeyIcon } from 'lucide-react/dist/esm/icons/keyboard.mjs';
+import { __iconData as numberTickerIcon } from 'lucide-react/dist/esm/icons/tally-5.mjs';
+import { __iconData as nodeGraphIcon } from 'lucide-react/dist/esm/icons/workflow.mjs';
+import { __iconData as sortableIcon } from 'lucide-react/dist/esm/icons/grip-vertical.mjs';
+import { __iconData as typewriterIcon } from 'lucide-react/dist/esm/icons/text-cursor.mjs';
+import { __iconData as flipIcon } from 'lucide-react/dist/esm/icons/triangles-centerline-dashed-horizontal.mjs';
+import { __iconData as resizableIcon } from 'lucide-react/dist/esm/icons/panel-left-right-dashed.mjs';
+import { __iconData as dockablePanelIcon } from 'lucide-react/dist/esm/icons/panels-top-left.mjs';
+import { __iconData as panZoomIcon } from 'lucide-react/dist/esm/icons/move.mjs';
+import { __iconData as imageViewerIcon } from 'lucide-react/dist/esm/icons/images.mjs';
+import { __iconData as carouselIcon } from 'lucide-react/dist/esm/icons/gallery-horizontal-end.mjs';
+import { __iconData as keypadIcon } from 'lucide-react/dist/esm/icons/calculator.mjs';
+import { __iconData as rangeSliderIcon } from 'lucide-react/dist/esm/icons/sliders-vertical.mjs';
+import { __iconData as choiceGridIcon } from 'lucide-react/dist/esm/icons/layout-grid.mjs';
+import { __iconData as transferIcon } from 'lucide-react/dist/esm/icons/arrow-left-right.mjs';
+import { __iconData as contextMenuIcon } from 'lucide-react/dist/esm/icons/mouse-pointer-click.mjs';
+import { __iconData as hoverCardIcon } from 'lucide-react/dist/esm/icons/square-mouse-pointer.mjs';
+import { __iconData as tagInputIcon } from 'lucide-react/dist/esm/icons/tags.mjs';
+import { __iconData as treeSelectIcon } from 'lucide-react/dist/esm/icons/list-tree.mjs';
+import { __iconData as editableIcon } from 'lucide-react/dist/esm/icons/square-pen.mjs';
+import { __iconData as scrollAreaIcon } from 'lucide-react/dist/esm/icons/scroll.mjs';
+import { __iconData as virtualListIcon } from 'lucide-react/dist/esm/icons/list.mjs';
+import { __iconData as overflowListIcon } from 'lucide-react/dist/esm/icons/list-end.mjs';
+import { __iconData as imageCropperIcon } from 'lucide-react/dist/esm/icons/crop.mjs';
+import { __iconData as audioPlayerIcon } from 'lucide-react/dist/esm/icons/audio-lines.mjs';
+import { __iconData as sparklineIcon } from 'lucide-react/dist/esm/icons/chart-no-axes-combined.mjs';
+import { __iconData as radarIcon } from 'lucide-react/dist/esm/icons/radar.mjs';
+import { __iconData as heatmapIcon } from 'lucide-react/dist/esm/icons/grid-3x3.mjs';
 
 export const iconCategories = [
   ['all', '全部', icon31], ['actions', '操作', icon30], ['appearance', '主题与语言', icon21],
@@ -175,6 +205,36 @@ export const docsIconCatalog = [
   { key: 'list-tree', label: 'Tree', category: 'components', data: treeIcon },
   { key: 'list-ordered', label: 'Steps', category: 'components', data: stepsIcon },
   { key: 'git-commit-horizontal', label: 'Timeline', category: 'components', data: timelineIcon },
+  { key: 'square-dashed', label: 'Slot', category: 'components', data: slotIcon },
+  { key: 'scroll-text', label: 'Log', category: 'components', data: logIcon },
+  { key: 'keyboard', label: 'Hotkey', category: 'components', data: hotkeyIcon },
+  { key: 'tally-5', label: 'NumberTicker', category: 'components', data: numberTickerIcon },
+  { key: 'workflow', label: 'NodeGraph', category: 'components', data: nodeGraphIcon },
+  { key: 'grip-vertical', label: 'Sortable', category: 'components', data: sortableIcon },
+  { key: 'text-cursor', label: 'Typewriter', category: 'components', data: typewriterIcon },
+  { key: 'flip-horizontal-2', label: 'Flip', category: 'components', data: flipIcon },
+  { key: 'panel-left-right-dashed', label: 'Resizable', category: 'components', data: resizableIcon },
+  { key: 'dockable-panels', label: 'DockablePanel', category: 'components', data: dockablePanelIcon },
+  { key: 'move', label: 'PanZoom', category: 'components', data: panZoomIcon },
+  { key: 'images', label: 'ImageViewer', category: 'components', data: imageViewerIcon },
+  { key: 'gallery-horizontal-end', label: 'Carousel', category: 'components', data: carouselIcon },
+  { key: 'calculator', label: 'Keypad', category: 'components', data: keypadIcon },
+  { key: 'sliders-vertical', label: 'RangeSlider', category: 'components', data: rangeSliderIcon },
+  { key: 'layout-grid', label: 'ChoiceGrid', category: 'components', data: choiceGridIcon },
+  { key: 'arrow-left-right', label: 'Transfer', category: 'components', data: transferIcon },
+  { key: 'mouse-pointer-click', label: 'ContextMenu', category: 'components', data: contextMenuIcon },
+  { key: 'square-mouse-pointer', label: 'HoverCard', category: 'components', data: hoverCardIcon },
+  { key: 'tags', label: 'TagInput', category: 'components', data: tagInputIcon },
+  { key: 'tree-select', label: 'TreeSelect', category: 'components', data: treeSelectIcon },
+  { key: 'square-pen', label: 'Editable', category: 'components', data: editableIcon },
+  { key: 'scroll', label: 'ScrollArea', category: 'components', data: scrollAreaIcon },
+  { key: 'list', label: 'VirtualList', category: 'components', data: virtualListIcon },
+  { key: 'list-end', label: 'OverflowList', category: 'components', data: overflowListIcon },
+  { key: 'crop', label: 'ImageCropper', category: 'components', data: imageCropperIcon },
+  { key: 'audio-lines', label: 'AudioPlayer', category: 'components', data: audioPlayerIcon },
+  { key: 'chart-no-axes-combined', label: 'Sparkline', category: 'components', data: sparklineIcon },
+  { key: 'radar', label: 'Radar', category: 'components', data: radarIcon },
+  { key: 'grid-3x3', label: 'Heatmap', category: 'components', data: heatmapIcon },
   { key: 'plane', label: '航班', category: 'travel', data: extraIcon0 },
   { key: 'train-front', label: '火车', category: 'travel', data: extraIcon1 },
   { key: 'bus', label: '公交', category: 'travel', data: extraIcon2 },
@@ -221,6 +281,7 @@ export function navigationIcon(label: string) {
     Avatar: '用户', Upload: '上传', DataTable: 'Table', '开始': '快速开始', '基础': '设计规范',
     '通用': '组件', '表单输入': 'Field', '导航菜单': '菜单', '数据展示': 'Table',
     '反馈状态': 'Alert', '弹层': 'Overlay', '日期与地图': '日历', '设计资源': '设计规范',
+    ColorPicker: '设计规范', Rating: '星标', '视觉交互': 'PanZoom',
   };
   return (docsIconCatalog.find(icon => icon.label === (aliases[label] ?? label)) ?? docsIconCatalog[0]).data;
 }

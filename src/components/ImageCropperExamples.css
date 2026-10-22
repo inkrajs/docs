@@ -1,0 +1,25 @@
+.image-cropper-examples {
+  display: grid;
+  gap: var(--inkra-space-6);
+  min-width: 0;
+}
+
+.image-cropper-examples__status,
+.image-cropper-examples__note {
+  min-height: 24px;
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+  overflow-wrap: anywhere;
+}
+
+.image-cropper-examples__stack {
+  display: grid;
+  gap: var(--inkra-space-5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 48rem) {
+  .image-cropper-examples__stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

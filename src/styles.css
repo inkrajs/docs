@@ -513,7 +513,7 @@ pre {
 .nav-link > .selection-backdrop { inset: 0; }
 .nav-link .selection-control-content { display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: center; justify-content: start; gap: 8px; min-width: 0; width: 100%; }
 .nav-link .docs-pencil-icon { flex: none; }
-.nav-link .inkra-pencil-text { overflow-wrap: anywhere; }
+.nav-link .inkra-pencil-text { min-width: 0; white-space: nowrap; overflow-wrap: normal; }
 
 .nav-link[aria-current="page"] .selection-control-content {
   color: var(--inkra-selection-foreground);
@@ -754,8 +754,11 @@ pre {
   padding: var(--inkra-space-8);
 }
 
-.preview-display { position: relative; min-width: 0; height: 340px; }
-.preview-display > .preview-stage, .preview-display > .code-panel { position: absolute; inset: 0; height: 100%; min-height: 0; overflow: auto; }
+.preview-display { position: relative; display: grid; min-width: 0; min-height: 340px; }
+.preview-display > .preview-stage { min-width: 0; min-height: inherit; }
+/* Keep the preview's intrinsic height while code occupies the same space. */
+.preview-display > .preview-stage[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+.preview-display > .code-panel { position: absolute; inset: 0; height: 100%; min-height: 0; overflow: auto; }
 .preview-display > [hidden] { display: none !important; }
 .preview-display pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 
@@ -765,7 +768,9 @@ pre {
 }
 
 .preview-controls-divider {
+  contain: size;
   align-self: stretch;
+  min-height: 0;
   width: 8px;
   height: 100%;
   color: var(--inkra-ink-muted);
@@ -787,10 +792,14 @@ pre {
   min-width: 0;
 }
 @media (min-width: 64.001rem) {
+  .component-playground .preview-controls-divider,
   .component-playground .preview-controls {
     contain: size;
-    min-height: 0;
+    block-size: 0;
+    min-block-size: 100%;
     align-self: stretch;
+  }
+  .component-playground .preview-controls {
     overflow-y: auto;
     align-content: start;
   }

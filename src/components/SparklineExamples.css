@@ -1,0 +1,4 @@
+.sparkline-examples { display: grid; gap: var(--inkra-space-5); min-inline-size: 0; }
+.sparkline-examples__preview { display: grid; place-items: center; min-block-size: 180px; padding: var(--inkra-space-5); }
+.sparkline-examples .inkra-sparkline { inline-size: min(100%, 420px); }
+.sparkline-examples .inkra-sparkline__svg { inline-size: 100%; }

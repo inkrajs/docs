@@ -1,0 +1,42 @@
+.heatmap-demo {
+  display: grid;
+  gap: var(--inkra-space-4);
+  inline-size: min(100%, 46rem);
+  min-inline-size: 0;
+}
+
+.heatmap-demo__selection {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+  min-block-size: 24px;
+  overflow-wrap: anywhere;
+}
+
+.heatmap-demo__custom-cell {
+  align-items: center;
+  display: flex;
+  gap: var(--inkra-space-1);
+}
+
+.heatmap-demo__custom-cell b {
+  font-size: var(--inkra-text-md);
+  font-weight: 400;
+}
+
+.heatmap-demo__custom-cell b[data-direction="up"] {
+  color: var(--inkra-success-foreground);
+}
+
+.heatmap-demo__custom-cell b[data-direction="down"] {
+  color: var(--inkra-danger);
+}
+
+.heatmap-demo__custom-cell b[data-direction="flat"] {
+  color: var(--inkra-ink-muted);
+}
+
+@media (max-width: 640px) {
+  .heatmap-demo {
+    inline-size: 100%;
+  }
+}

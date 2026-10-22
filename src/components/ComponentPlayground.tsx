@@ -49,7 +49,7 @@ export function ComponentPlayground({ code, controls, children }: { code: string
     <PencilLine className="tool-divider" />
     <div className="preview-workspace">
       <div className="preview-display">
-        <div className="preview-stage" role="tabpanel" tabIndex={0} id={`${id}-panel-preview`} aria-labelledby={`${id}-tab-preview`} hidden={view !== 'preview'}>{children}</div>
+        <div className="preview-stage" role="tabpanel" tabIndex={0} id={`${id}-panel-preview`} aria-labelledby={`${id}-tab-preview`} aria-hidden={view !== 'preview'} inert={view !== 'preview'}>{children}</div>
         <div className="code-panel" role="tabpanel" tabIndex={0} id={`${id}-panel-code`} aria-labelledby={`${id}-tab-code`} hidden={view !== 'code'}>{view === 'code' && <CodeBlock code={code} />}</div>
       </div>
       <PencilLine className="preview-controls-divider" orientation={compact ? 'horizontal' : 'vertical'} />

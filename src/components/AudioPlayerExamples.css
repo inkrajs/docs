@@ -1,0 +1,8 @@
+.audio-player-examples { display: grid; gap: var(--inkra-space-5); min-inline-size: 0; }
+.audio-player-examples__stage { display: grid; gap: var(--inkra-space-3); inline-size: min(100%, 42rem); }
+.audio-player-examples__stage .inkra-audio-player { inline-size: 100%; }
+.audio-player-examples__status { color: var(--inkra-ink-muted); margin: 0; min-block-size: 1.6em; }
+.audio-player-examples__custom-controls { align-items: center; display: flex; flex-wrap: wrap; gap: var(--inkra-space-2); }
+.audio-player-examples__secondary { display: grid; gap: var(--inkra-space-3); inline-size: min(100%, 42rem); }
+.audio-player-examples__secondary p { color: var(--inkra-ink-muted); margin: 0; }
+@media (max-width: 30rem) { .audio-player-examples__stage, .audio-player-examples__secondary { inline-size: 100%; } }

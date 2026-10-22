@@ -1,0 +1,22 @@
+.scroll-area-examples { display: grid; gap: var(--inkra-space-5); min-inline-size: 0; }
+.scroll-area-examples .preview-stage { align-items: stretch; }
+.scroll-area-examples__playground { block-size: 360px; inline-size: min(100%, 720px); min-inline-size: 0; }
+.scroll-area-examples__playground > .inkra-scroll-area { block-size: 100%; }
+.scroll-area-examples__playground[data-axis="vertical"] .inkra-scroll-area__viewport { overflow-x: hidden; }
+.scroll-area-examples__playground[data-axis="horizontal"] .inkra-scroll-area__viewport { overflow-y: hidden; }
+.scroll-area-examples__content { box-sizing: border-box; min-block-size: 100%; min-inline-size: 46rem; padding: var(--inkra-space-5); }
+.scroll-area-examples__content h3 { color: var(--inkra-ink); font-size: var(--inkra-text-lg); font-weight: var(--inkra-weight-regular); margin: 0 0 var(--inkra-space-3); }
+.scroll-area-examples__content p { color: var(--inkra-ink-muted); line-height: var(--inkra-line-body); margin: 0; padding-block: var(--inkra-space-2); }
+.scroll-area-examples__content[data-expanded="true"] { min-block-size: 48rem; }
+.scroll-area-examples__parts { block-size: 180px; inline-size: min(100%, 560px); }
+.scroll-area-examples__parts-root { block-size: 100%; }
+.scroll-area-examples__parts-root .inkra-scroll-area__viewport { padding: var(--inkra-space-4); }
+.scroll-area-examples__parts-root p { margin: 0 0 var(--inkra-space-3); }
+@media (max-width: 480px) {
+  .scroll-area-examples__playground { block-size: 320px; }
+  .scroll-area-examples__content { min-inline-size: 38rem; }
+}
+@media (forced-colors: active) {
+  .scroll-area-examples__playground,
+  .scroll-area-examples__parts { border: 1px solid CanvasText; }
+}

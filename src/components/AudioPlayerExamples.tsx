@@ -1,0 +1,83 @@
+import { useMemo, useState } from 'react';
+import { AudioPlayer, Button, PencilText, Switch } from '@inkra/react';
+import type { AudioPlayerState } from '@inkra/react';
+
+import { useLocale } from '../i18n';
+import { ComponentExample } from './ComponentExample';
+import { ComponentPlayground } from './ComponentPlayground';
+import { PropertyTabs } from './PropertyTabs';
+import './AudioPlayerExamples.css';
+
+function makeSampleAudio() {
+  const sampleRate = 8000;
+  const seconds = 12;
+  const sampleCount = sampleRate * seconds;
+  const bytes = new Uint8Array(44 + sampleCount);
+  const view = new DataView(bytes.buffer);
+  const write = (offset: number, value: string) => value.split('').forEach((character, index) => view.setUint8(offset + index, character.charCodeAt(0)));
+  write(0, 'RIFF');
+  view.setUint32(4, 36 + sampleCount, true);
+  write(8, 'WAVE');
+  write(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate, true);
+  view.setUint16(32, 1, true);
+  view.setUint16(34, 8, true);
+  write(36, 'data');
+  view.setUint32(40, sampleCount, true);
+  for (let index = 0; index < sampleCount; index += 1) {
+    const envelope = Math.min(1, index / sampleRate) * Math.min(1, (sampleCount - index) / sampleRate);
+    bytes[44 + index] = 128 + Math.round(Math.sin(index / sampleRate * Math.PI * 440) * 12 * envelope);
+  }
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  let encoded = '';
+  for (let index = 0; index < bytes.length; index += 3) {
+    const a = bytes[index];
+    const b = bytes[index + 1] ?? 0;
+    const c = bytes[index + 2] ?? 0;
+    encoded += alphabet[a >> 2];
+    encoded += alphabet[((a & 3) << 4) | (b >> 4)];
+    encoded += index + 1 < bytes.length ? alphabet[((b & 15) << 2) | (c >> 6)] : '=';
+    encoded += index + 2 < bytes.length ? alphabet[c & 63] : '=';
+  }
+  return `data:audio/wav;base64,${encoded}`;
+}
+
+const sampleAudio = makeSampleAudio();
+
+export function AudioPlayerExamples() {
+  const { locale } = useLocale();
+  const text = (zh: string, en: string) => locale === 'en' ? en : zh;
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [state, setState] = useState<AudioPlayerState | null>(null);
+  const [custom, setCustom] = useState(false);
+  const code = `<AudioPlayer
+  src={sampleAudio}
+  autoPlay={${autoPlay}}
+  onStateChange={setState}
+  ${custom ? 'renderControls={controls => <YourControls {...controls} />}' : ''}
+/>`;
+  const status = useMemo(() => state ? text(`状态：${state.status}`, `Status: ${state.status}`) : text('等待播放', 'Ready to play'), [state, locale]);
+
+  return <div className="audio-player-examples">
+    <ComponentPlayground code={code} controls={<PropertyTabs groups={[
+      { label: text('基础', 'Basics'), content: <Switch label={text('自动播放', 'Autoplay')} checked={autoPlay} onCheckedChange={setAutoPlay} /> },
+      { label: text('组合', 'Composition'), content: <Switch label={text('自定义控制区', 'Custom controls')} checked={custom} onCheckedChange={setCustom} /> },
+    ]} />}>
+      <div className="audio-player-examples__stage">
+        <AudioPlayer src={sampleAudio} autoPlay={autoPlay} onStateChange={setState} labels={{ play: text('播放', 'Play'), pause: text('暂停', 'Pause'), seek: text('进度', 'Seek'), volume: text('音量', 'Volume'), mute: text('静音', 'Mute'), unmute: text('取消静音', 'Unmute'), rate: text('倍速', 'Speed') }} renderControls={custom ? controls => <div className="audio-player-examples__custom-controls"><Button variant="outline" onClick={() => void controls.togglePlay()}>{controls.state.status === 'playing' ? text('暂停', 'Pause') : text('播放', 'Play')}</Button><Button variant="ghost" onClick={() => controls.seek(0)}>{text('回到开头', 'Restart')}</Button></div> : undefined} />
+        <PencilText as="p" className="audio-player-examples__status" aria-live="polite">{status}</PencilText>
+      </div>
+    </ComponentPlayground>
+
+    <ComponentExample title={text('受控状态回调', 'State callbacks')} code={`<AudioPlayer src={sampleAudio} onTimeChange={setCurrentTime} onError={setError} />`}>
+      <div className="audio-player-examples__secondary">
+        <AudioPlayer src={sampleAudio} preload="none" labels={{ play: text('播放短音频', 'Play short audio'), pause: text('暂停短音频', 'Pause short audio') }} />
+        <p>{text('播放器保留原生 audio 语义；自定义区域只消费 controls 快照和动作。', 'The native audio element remains semantic; custom controls consume the controls snapshot and actions.')}</p>
+      </div>
+    </ComponentExample>
+  </div>;
+}

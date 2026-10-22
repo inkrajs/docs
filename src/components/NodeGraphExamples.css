@@ -1,0 +1,52 @@
+.node-graph-examples {
+  display: grid;
+  gap: var(--inkra-space-5);
+  min-inline-size: 0;
+}
+
+.node-graph-examples__frame {
+  inline-size: min(100%, 62rem);
+  min-inline-size: 0;
+}
+
+.node-graph-examples__frame > .inkra-node-graph {
+  block-size: 34rem;
+}
+
+.node-graph-examples__dependency-node {
+  position: relative;
+  min-inline-size: 11.5rem;
+  max-inline-size: 15rem;
+}
+
+.node-graph-examples__dependency-node[data-selected] > .inkra-card {
+  color: var(--inkra-selection-foreground);
+}
+
+.node-graph-examples__dependency-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--inkra-space-3);
+  min-inline-size: 0;
+}
+
+.node-graph-examples__dependency-content > :first-child {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.node-graph-examples__edge--accent {
+  color: var(--inkra-accent-strong);
+}
+
+@media (max-width: 48rem) {
+  .node-graph-examples__frame > .inkra-node-graph { block-size: 28rem; }
+}
+
+@media (max-width: 390px) {
+  .node-graph-examples__frame { inline-size: 100%; }
+  .node-graph-examples__frame > .inkra-node-graph { block-size: 26rem; }
+  .node-graph-examples__dependency-node { min-inline-size: 9rem; max-inline-size: 11rem; }
+  .node-graph-examples__dependency-content { align-items: flex-start; flex-direction: column; gap: var(--inkra-space-2); }
+}

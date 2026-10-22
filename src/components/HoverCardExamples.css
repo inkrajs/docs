@@ -1,0 +1,94 @@
+.hover-card-demo {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  min-width: 0;
+  width: min(100%, 32rem);
+}
+
+.hover-card-demo__content {
+  width: min(22rem, calc(100vw - 16px));
+}
+
+.hover-card-profile {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 72px minmax(0, 1fr);
+  min-width: 0;
+}
+
+.hover-card-profile > img {
+  aspect-ratio: 1;
+  background: var(--inkra-paper-muted);
+  border-radius: 6px;
+  display: block;
+  height: 72px;
+  object-fit: contain;
+  padding: 8px;
+  width: 72px;
+}
+
+.hover-card-profile__main,
+.hover-card-profile__main > header,
+.hover-card-note {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hover-card-profile__role,
+.hover-card-demo__status {
+  color: var(--inkra-ink-muted);
+  margin: 0;
+}
+
+.hover-card-profile dl {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+}
+
+.hover-card-profile dl > div {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.hover-card-profile dt,
+.hover-card-profile dd {
+  margin: 0;
+}
+
+.hover-card-profile dt {
+  color: var(--inkra-ink-muted);
+}
+
+.hover-card-demo__status {
+  min-height: 24px;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.hover-card-note__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 30rem) {
+  .hover-card-profile {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .hover-card-profile > img {
+    height: 56px;
+    width: 56px;
+  }
+}
+
+@media (forced-colors: active) {
+  .hover-card-profile > img {
+    border: 1px solid CanvasText;
+  }
+}

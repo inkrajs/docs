@@ -1,0 +1,41 @@
+.sortable-example__playground,
+.sortable-example__board {
+  width: min(100%, 920px);
+}
+
+.sortable-example__playground .inkra-sortable__container {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.sortable-example__note-copy {
+  display: grid;
+  gap: var(--inkra-space-1);
+  min-width: 0;
+}
+
+.sortable-example__note-title,
+.sortable-example__column-title,
+.sortable-example__item-with-action {
+  display: flex;
+  align-items: center;
+  gap: var(--inkra-space-2);
+  min-width: 0;
+}
+
+.sortable-example__note-title { justify-content: space-between; }
+.sortable-example__note-detail { color: var(--inkra-ink-muted); font-size: var(--inkra-text-sm); line-height: var(--inkra-line-body); }
+.sortable-example__column-title { justify-content: space-between; }
+.sortable-example__column-title > :first-child { min-width: 0; }
+.sortable-example__item-with-action { justify-content: space-between; }
+.sortable-example__item-with-action .sortable-example__note-copy { flex: 1 1 auto; }
+
+.sortable-example__board .inkra-sortable__container { min-width: min(100%, 220px); }
+.sortable-example__board .inkra-sortable { flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .sortable-example__playground,
+  .sortable-example__board { width: 100%; }
+  .sortable-example__board .inkra-sortable { flex-wrap: nowrap; }
+  .sortable-example__item-with-action { align-items: flex-start; }
+}

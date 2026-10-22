@@ -1,0 +1,20 @@
+.slot-examples__row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--inkra-space-4);
+  justify-content: center;
+  max-inline-size: 100%;
+}
+
+.slot-examples__resource {
+  color: var(--inkra-accent-strong);
+  font-family: "Trip Map Hand", "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", cursive;
+  font-size: var(--inkra-text-lg);
+  letter-spacing: 0;
+  transform: rotate(-18deg);
+}
+
+@media (max-width: 390px) {
+  .slot-examples__row { gap: var(--inkra-space-3); }
+}
