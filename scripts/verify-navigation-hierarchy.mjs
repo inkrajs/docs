@@ -89,8 +89,13 @@ try {
 
   const page = await browser.newPage({ reducedMotion: 'reduce' });
   page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${base}/docs/getting-started`);
+  const routeSearch = page.locator('.desktop-sidebar input[type="search"]');
   for (const component of components) {
-    await page.goto(`${base}/docs/components/${component}#preview`);
+    // Exercise real client navigation without repainting the entire shell 80 times.
+    await routeSearch.fill(`/components/${component}`);
+    await page.locator(`.desktop-sidebar .nav-link[href="/docs/components/${component}"]`).click();
+    await page.locator(`#${component}-panel-preview`).waitFor();
     await page.locator('.component-playground, .playground').first().waitFor().catch(error => {
       throw new Error(`${component}: main playground did not appear; page errors: ${errors.join('; ')}`, { cause: error });
     });
