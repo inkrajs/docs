@@ -27,16 +27,10 @@ function TravelExamples(props: { kind: 'calendar' | 'day-agenda' | 'journey-map'
 }
 import { DocsSelect } from './DocsSelect';
 
-import { foundationComponents } from '../componentRoutes';
-export { foundationComponents };
+import { foundationComponents, foundationNames, isExpansionComponent, type ExpansionComponent } from '../componentRoutes';
+const ExpansionPage = lazy(() => import('./expansion/ExpansionPage'));
+export { foundationComponents, foundationNames };
 export type FoundationComponent = typeof foundationComponents[number];
-export const foundationNames: Record<FoundationComponent, string> = {
-  icon: 'Icon', 'input-number': 'InputNumber', slider: 'Slider', breadcrumb: 'Breadcrumb',
-  calendar: 'Calendar', 'day-agenda': 'DayAgenda', 'journey-map': 'JourneyMap',
-  popover: 'Popover', overlay: 'Overlay', field: 'Field', input: 'Input', textarea: 'Textarea', select: 'Select', checkbox: 'Checkbox', 'radio-group': 'RadioGroup', switch: 'Switch', tabs: 'Tabs',
-  tooltip: 'Tooltip', accordion: 'Accordion', badge: 'Badge', separator: 'Separator', skeleton: 'Skeleton', progress: 'Progress',
-  'dropdown-menu': 'DropdownMenu', alert: 'Alert', avatar: 'Avatar', card: 'Card', table: 'Table',
-};
 
 function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switch' }) {
   const { t } = useLocale();
@@ -85,7 +79,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
 }
 
 
-const apiRows: Record<FoundationComponent, [string, string][]> = {
+const apiRows: Record<Exclude<FoundationComponent, ExpansionComponent>, [string, string][]> = {
   breadcrumb: [['Root', 'native nav props; aria-label defaults to Breadcrumb; dir supports RTL'], ['List / Item', 'native ol / li props; paths wrap in narrow containers'], ['Link', 'ButtonLinkProps; real href, startIcon, disabled; default variant ghost'], ['Page', 'native span props; aria-current=page; noninteractive current location'], ['Separator.children', 'ReactNode; default /; decorative and hidden from assistive technology']],
   icon: [
     ['import', "import { PencilIcon } from '@inkra/react'"],
@@ -220,6 +214,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
 
 export function FoundationPage({ component, activeTab, onTabChange }: { component: FoundationComponent; activeTab: ComponentPageTab; onTabChange: (tab: ComponentPageTab) => void }) {
   const { t } = useLocale();
+  if (isExpansionComponent(component)) return <Suspense fallback={<span role="status">{t('加载中')}</span>}><ExpansionPage component={component} activeTab={activeTab} onTabChange={onTabChange} /></Suspense>;
   return <article className="documentation">
     <PageHeading title={foundationNames[component]} />
     <ComponentPageTabs name={foundationNames[component]} id={component} value={activeTab} onChange={onTabChange} />

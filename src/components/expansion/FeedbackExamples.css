@@ -1,0 +1,9 @@
+.feedback-examples .component-example__preview { min-width: 0; }
+.feedback-toggle-stage { align-items: center; display: flex; flex-direction: column; gap: var(--inkra-space-3); max-width: 100%; min-width: 0; }
+.feedback-examples .inkra-empty { width: min(100%, 42rem); }
+.feedback-examples .inkra-toggle-group { max-width: 100%; }
+
+@media (max-width: 30rem) {
+  .feedback-toggle-stage { align-items: stretch; width: 100%; }
+  .feedback-toggle-stage .inkra-toggle-group { align-self: start; }
+}

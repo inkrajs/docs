@@ -18,9 +18,19 @@ try {
   const coverage = await page.evaluate(async () => {
     const { foundationNames } = await import('/src/components/FoundationPages.tsx');
     const { componentIntroductions } = await import('/src/components/componentIntroductions.ts');
-    return ['Button', ...Object.values(foundationNames)].map(name => ({ name, ...componentIntroductions[name] }));
+    const { feedbackDocs } = await import('/src/components/expansion/FeedbackExamples.tsx');
+    const { overlaysDocs } = await import('/src/components/expansion/OverlaysExamples.tsx');
+    const { datesDocs } = await import('/src/components/expansion/DatesExamples.tsx');
+    const { navigationDocs } = await import('/src/components/expansion/NavigationExamples.tsx');
+    const { dataDocs } = await import('/src/components/expansion/DataExamples.tsx');
+    const { flowsDocs } = await import('/src/components/expansion/FlowsExamples.tsx');
+    const introductions = { ...componentIntroductions };
+    for (const doc of Object.values({ ...feedbackDocs, ...overlaysDocs, ...datesDocs, ...navigationDocs, ...dataDocs, ...flowsDocs })) {
+      introductions[doc.name] = doc.intro;
+    }
+    return ['Button', ...Object.values(foundationNames)].map(name => ({ name, ...introductions[name] }));
   });
-  assert.equal(coverage.length, 29);
+  assert.equal(coverage.length, 43);
   assert(coverage.some(component => component.name === 'Breadcrumb'));
   for (const intro of coverage) assert(intro.zh && intro.en, `Bilingual introduction: ${intro.name}`);
   await page.locator('.page-heading > p').waitFor();
@@ -54,5 +64,5 @@ try {
   const fallback = page.getByRole('dialog', { name: 'Input · Markdown', exact: true });
   await fallback.waitFor();
   assert.match(await fallback.locator('pre').textContent(), /# Input/);
-  console.log('PASS all 29 bilingual descriptions; Markdown, download, clipboard fallback and four assistant destinations (intercepted, no external data sent)');
+  console.log('PASS all 43 bilingual descriptions; Markdown, download, clipboard fallback and four assistant destinations (intercepted, no external data sent)');
 } finally { await browser.close(); }

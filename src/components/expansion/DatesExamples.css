@@ -1,0 +1,48 @@
+.dates-examples {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.dates-examples__stage,
+.dates-examples__form,
+.dates-examples__fields {
+  align-items: start;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  width: 100%;
+}
+
+.dates-examples__fields {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.dates-examples__form {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.dates-examples__form > .inkra-button {
+  align-self: end;
+  justify-self: start;
+}
+
+.dates-examples__status {
+  color: var(--inkra-ink-muted);
+  font-family: var(--inkra-font-mono);
+  min-height: 1.45em;
+  overflow-wrap: anywhere;
+}
+
+.dates-examples__note {
+  line-height: var(--inkra-line-body);
+  margin: 0;
+  max-width: 44rem;
+}
+
+@media (max-width: 40rem) {
+  .dates-examples__form,
+  .dates-examples__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

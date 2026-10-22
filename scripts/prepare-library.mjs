@@ -16,7 +16,7 @@ const sha256 = createHash('sha256').update(await readFile(archive)).digest('hex'
 assert.equal(sha256, manifest.sha256, 'Candidate checksum mismatch');
 await mkdir(resolve(root, 'vendor'), { recursive: true });
 await copyFile(archive, resolve(root, 'vendor/inkra.tgz'));
-execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', './vendor/inkra.tgz'], { cwd: root, stdio: 'inherit' });
+execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--registry=https://registry.npmjs.org', './vendor/inkra.tgz'], { cwd: root, stdio: 'inherit' });
 // Vite watches this imported manifest; restart only after the new package is installed.
 await writeFile(resolve(root, 'library-candidate.json'), JSON.stringify({
   repository: 'inkrajs/inkra',

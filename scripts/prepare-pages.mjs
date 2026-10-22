@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { foundationComponents } from '../src/componentRoutes.ts';
+import { pageTitle } from '../src/pageTitle.ts';
 
 const dist = new URL('../dist/', import.meta.url);
 const html = await readFile(new URL('index.html', dist), 'utf8');
@@ -14,7 +15,10 @@ for (const route of routes) {
   assert(/^[a-z/-]+$/.test(route));
   const directory = new URL(`${route}/`, dist);
   await mkdir(directory, { recursive: true });
-  await writeFile(new URL('index.html', directory), html);
+  const title = pageTitle('/' + route).replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character]);
+  await writeFile(new URL('index.html', directory), html.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`));
 }
 await writeFile(new URL('.nojekyll', dist), '');
 const notices = new URL('licenses/', dist);

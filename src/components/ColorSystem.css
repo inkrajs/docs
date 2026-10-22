@@ -23,18 +23,14 @@
 .color-palette__selection { display: grid; gap: 8px; min-width: 0; }
 .color-palette__selection h4 { font-size: var(--inkra-text-sm); }
 .color-demo { display: grid; gap: 16px; min-width: 0; }
-.color-demo__column { min-width: 0; display: grid; align-content: start; gap: 16px; color: var(--inkra-ink); border-radius: var(--inkra-radius-lg); padding: 16px; }
+.color-demo__column { min-width: 0; display: grid; align-content: start; gap: 16px; color: var(--inkra-ink); background: var(--inkra-paper); padding: 16px; }
 .color-demo__list { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
 .color-demo__list > li { min-width: 0; }
-.color-demo__card { display: grid; gap: 12px; padding: 16px; border-radius: 8px; }
+.color-demo__card { display: grid; gap: 12px; }
 .color-demo__card-heading { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .color-demo__card-heading h4 { flex: 1; min-width: 100px; font-size: var(--inkra-text-lg); color: var(--inkra-ink); }
-.color-demo__description { color: var(--inkra-ink-muted); font-size: var(--inkra-text-md); }
-.color-demo__status { padding: 4px 8px; font-size: var(--inkra-text-xs); }
-.color-demo__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 0 8px; background: var(--inkra-surface-muted); border-radius: 3px; }
+.color-demo__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .color-demo__meta { color: var(--inkra-ink-subtle); font-size: var(--inkra-text-sm); }
-.color-demo__complete { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; font-size: var(--inkra-text-sm); }
-.color-demo__complete input { width: 16px; height: 16px; accent-color: var(--inkra-accent-strong); }
 .color-system__usage { display: grid; gap: 12px; min-width: 0; }
 .color-system__matrix-wrap { max-width: 100%; overflow-x: auto; padding-block: 8px; }
 .color-system__matrix { border-collapse: collapse; font-size: var(--inkra-text-sm); min-width: 640px; width: 100%; }

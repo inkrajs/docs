@@ -1,0 +1,25 @@
+.header-customize { flex: none; }
+.theme-customizer__sample { display: grid; gap: 16px; margin-bottom: 20px; }
+.theme-customizer__sample > h3 { margin: 0; font-size: var(--inkra-text-md); font-weight: 400; }
+.theme-customizer__preview-card { min-width: 0; color: var(--inkra-ink); }
+.theme-customizer__preview-content { display: grid; gap: 16px; justify-items: start; }
+.theme-customizer__preview-content > p { margin: 0; }
+.theme-customizer__separator { display: block; width: 100%; height: 8px; margin-bottom: 20px; }
+.theme-customizer__lettering { margin: 0; font-size: var(--inkra-text-lg); }
+.theme-customizer__line { display: block; width: 100%; height: 8px; }
+.theme-customizer__panel { display: grid; gap: 20px; padding-top: 20px; }
+.theme-customizer__panel h3 { margin: 0; font-size: var(--inkra-text-md); font-weight: 400; }
+.theme-customizer__swatches { display: flex; flex-wrap: wrap; gap: 12px; }
+.theme-customizer__swatches button { position: relative; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; background: none; border: 0; cursor: pointer; }
+.theme-customizer__swatch { width: 28px; height: 28px; }
+.theme-customizer__swatch-outline { position: absolute !important; inset: 0; pointer-events: none; }
+.theme-customizer__control { min-width: 0; }
+.theme-customizer__control > div { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.theme-customizer__control output { font-variant-numeric: tabular-nums; color: var(--inkra-ink-muted); }
+@media (max-width: 30rem) {
+  .theme-customizer__tabs > .inkra-tabs__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 48rem) {
+  .header-customize { margin-inline-start: auto; }
+  .header-inner .header-github { margin-inline-start: 0; }
+}

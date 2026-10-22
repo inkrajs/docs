@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
-import { Button, PencilSurface, RadioGroup, RadioGroupItem } from '@inkra/react';
+import { Badge, Button, Card, Checkbox, Empty, PencilSurface, Progress, RadioGroup, RadioGroupItem, ToggleGroup } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
 import { DocsIcon } from './DocsIcon';
 import { __iconData as notebookIcon } from 'lucide-react/dist/esm/icons/notebook-pen.mjs';
@@ -30,7 +30,7 @@ const inkScale = ['#f5f6f5', '#e6e9e7', '#ced4d0', '#acb7b0', '#85958c', '#64766
 const redScale = ['#fcf3f0', '#f6e2da', '#ecc2b4', '#dfa492', '#cf806b', '#b96350', '#994f3f', '#803c30', '#672e26', '#51251f', '#311510'];
 const greenScale = ['#f1f7f0', '#e0eedc', '#c5ddbd', '#a4c69b', '#82ad7b', '#629568', '#4c7952', '#395e40', '#294a32', '#203b29', '#112218'];
 const scaleSteps = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
-const themeScales = [
+export const themeScales = [
   { id: 'ink', label: '玄墨', values: inkScale.map((hex, index) => [scaleSteps[index], hex] as const) },
   { id: 'ocean', label: '沧浪', values: oceanScale },
   { id: 'red', label: '朱砂', values: redScale.map((hex, index) => [scaleSteps[index], hex] as const) },
@@ -124,7 +124,7 @@ function Scale({ label, values }: { label: string; values: ReadonlyArray<readonl
 
 type Palette = typeof themeScales[number];
 
-function paletteStyle(scale: Palette, theme: ThemeName): TokenStyle {
+export function paletteStyle(scale: Palette, theme: ThemeName): TokenStyle {
   const dark = darkScales[scale.id];
   return {
     '--inkra-accent': theme === 'light' ? scale.values[6][1] : dark[6],
@@ -185,15 +185,6 @@ function paperStyle(paper: string, foreground: string): TokenStyle {
   return style;
 }
 
-function statusStyle(status: string, theme: ThemeName): TokenStyle {
-  return {
-    ...(theme === 'dark' ? { '--inkra-paper': `var(--inkra-${status}-surface)` } : {}),
-    color: `var(--inkra-${status}-foreground)`,
-    '--inkra-accent-soft': `var(--inkra-${status}-pigment)`,
-    '--inkra-border-strong': `var(--inkra-${status}-foreground)`,
-  };
-}
-
 const demoTasks = [
   { id: 'notes', title: '整理灵感笔记', description: '把散落的想法整理成下一次创作的起点。', status: 'success', label: '已完成', meta: '笔记 · 6 条' },
   { id: 'sketch', title: '绘制首页草图', description: '确定内容顺序，留出恰到好处的呼吸空间。', status: 'info', label: '进行中', meta: '设计 · 3 张' },
@@ -205,39 +196,46 @@ export function CardListDemo({ scale = themeScales[0] }: { scale?: Palette }) {
   const { t } = useLocale();
   const [completed, setCompleted] = useState<string[]>(['notes']);
   const [onlyOpen, setOnlyOpen] = useState(false);
+  const visibleTasks = demoTasks.filter(task => !onlyOpen || !completed.includes(task.id));
   return <section className="color-demo" aria-labelledby="color-demo-title">
     <PencilText as="h2" id="color-demo-title">卡片列表</PencilText>
     <div className="color-demo__themes">
-      {themes.map(theme => <PencilSurface as="section" variant="paper" radius={8} seed={`demo-frame-${theme.id}`} key={`${scale.id}-${theme.id}`} className="color-demo__column" data-inkra-theme={theme.id} data-preview-theme={theme.id} style={paletteStyle(scale, theme.id)} aria-label={t(`${theme.label}示例`)}>
+      {themes.map(theme => <section key={`${scale.id}-${theme.id}`} className="color-demo__column" data-inkra-theme={theme.id} data-preview-theme={theme.id} style={paletteStyle(scale, theme.id)} aria-label={t(`${theme.label}示例`)}>
         <header className="color-demo__heading">
           <PencilText as="h3">{theme.label}</PencilText>
-          <Button size="sm" variant={onlyOpen ? 'primary' : 'outline'} aria-pressed={onlyOpen} onClick={() => setOnlyOpen(value => !value)}>{t('仅看未完成')}</Button>
+          <ToggleGroup.Root size="sm" aria-label={t('任务筛选')} value={[onlyOpen ? 'open' : 'all']} onValueChange={values => { if (values.length) setOnlyOpen(values[0] === 'open'); }}>
+            <ToggleGroup.Item value="all">{t('全部')}</ToggleGroup.Item>
+            <ToggleGroup.Item value="open">{t('仅看未完成')}</ToggleGroup.Item>
+          </ToggleGroup.Root>
         </header>
+        <Progress value={completed.length} max={demoTasks.length} aria-label={t('完成进度')} />
         <ul className="color-demo__list">
-          {demoTasks.filter(task => !onlyOpen || !completed.includes(task.id)).map(task => {
+          {visibleTasks.map(task => {
             const done = completed.includes(task.id);
             return <li key={task.id}>
-              <PencilSurface as="article" className="color-demo__card" variant="paper" seed={`demo-card-${task.id}`} style={{ '--inkra-paper': 'var(--inkra-surface)' } as TokenStyle}>
+              <Card.Root seed={`demo-card-${task.id}`} style={{ '--inkra-paper': 'var(--inkra-surface)' } as TokenStyle}>
+                <Card.Content className="color-demo__card">
                 <div className="color-demo__card-heading">
                   <DocsIcon data={notebookIcon} seed={`demo-icon-${task.id}`} size={24} />
-                  <PencilText as="h4">{task.title}</PencilText>
-                  <PencilSurface key={String(done)} className="color-demo__status" variant="quiet" seed={`demo-status-${task.id}`} style={statusStyle(done ? 'success' : task.status === 'success' ? 'info' : task.status, theme.id)}>
-                    <PencilText>{done ? '已完成' : task.status === 'success' ? '进行中' : task.label}</PencilText>
-                  </PencilSurface>
+                  <Card.Title as="h4">{t(task.title)}</Card.Title>
+                  <Badge variant={done ? 'success' : task.status === 'success' ? 'info' : task.status}>{t(done ? '已完成' : task.status === 'success' ? '进行中' : task.label)}</Badge>
                 </div>
-                <PencilText as="p" className="color-demo__description">{task.description}</PencilText>
+                <Card.Description>{t(task.description)}</Card.Description>
                 <footer className="color-demo__footer">
                   <PencilText className="color-demo__meta">{task.meta}</PencilText>
-                  <label className="color-demo__complete">
-                    <input type="checkbox" aria-label={`${t('标记完成')} · ${t(task.title)}`} checked={done} onChange={() => setCompleted(previous => done ? previous.filter(id => id !== task.id) : [...previous, task.id])} />
-                    <PencilText>完成</PencilText>
-                  </label>
+                  <Checkbox label={t('完成')} aria-label={`${t('标记完成')} · ${t(task.title)}`} checked={done} onCheckedChange={checked => setCompleted(previous => checked ? [...new Set([...previous, task.id])] : previous.filter(id => id !== task.id))} />
                 </footer>
-              </PencilSurface>
+                </Card.Content>
+              </Card.Root>
             </li>;
           })}
         </ul>
-      </PencilSurface>)}
+        {!visibleTasks.length && <Empty.Root size="sm">
+          <Empty.Icon><DocsIcon data={notebookIcon} size={32} /></Empty.Icon>
+          <Empty.Title>{t('全部完成')}</Empty.Title>
+          <Empty.Actions><Button variant="outline" onClick={() => setOnlyOpen(false)}>{t('查看全部')}</Button></Empty.Actions>
+        </Empty.Root>}
+      </section>)}
     </div>
   </section>;
 }

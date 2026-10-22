@@ -90,6 +90,18 @@ import { __iconData as extraIcon34 } from 'lucide-react/dist/esm/icons/funnel.mj
 import { __iconData as extraIcon35 } from 'lucide-react/dist/esm/icons/zoom-in.mjs';
 import { __iconData as extraIcon36 } from 'lucide-react/dist/esm/icons/zoom-out.mjs';
 import { iconPaths } from './DocsIcon';
+import { __iconData as toastIcon } from 'lucide-react/dist/esm/icons/bell-ring.mjs';
+import { __iconData as alertDialogIcon } from 'lucide-react/dist/esm/icons/triangle-alert.mjs';
+import { __iconData as drawerIcon } from 'lucide-react/dist/esm/icons/panel-right.mjs';
+import { __iconData as datePickerIcon } from 'lucide-react/dist/esm/icons/calendar-check.mjs';
+import { __iconData as timePickerIcon } from 'lucide-react/dist/esm/icons/clock-3.mjs';
+import { __iconData as paginationIcon } from 'lucide-react/dist/esm/icons/book-open-check.mjs';
+import { __iconData as emptyIcon } from 'lucide-react/dist/esm/icons/inbox.mjs';
+import { __iconData as treeIcon } from 'lucide-react/dist/esm/icons/list-tree.mjs';
+import { __iconData as commandIcon } from 'lucide-react/dist/esm/icons/command.mjs';
+import { __iconData as toggleGroupIcon } from 'lucide-react/dist/esm/icons/columns-3.mjs';
+import { __iconData as stepsIcon } from 'lucide-react/dist/esm/icons/list-ordered.mjs';
+import { __iconData as timelineIcon } from 'lucide-react/dist/esm/icons/git-commit-horizontal.mjs';
 
 export const iconCategories = [
   ['all', '全部', icon31], ['actions', '操作', icon30], ['appearance', '主题与语言', icon21],
@@ -151,6 +163,18 @@ export const docsIconCatalog = [
   { key: 'circle-alert', label: 'Alert', category: 'components', data: icon51 },
   { key: 'square', label: 'Card', category: 'components', data: icon52 },
   { key: 'table-2', label: 'Table', category: 'components', data: icon53 },
+  { key: 'bell-ring', label: 'Toast', category: 'components', data: toastIcon },
+  { key: 'triangle-alert', label: 'AlertDialog', category: 'components', data: alertDialogIcon },
+  { key: 'panel-right', label: 'Drawer', category: 'components', data: drawerIcon },
+  { key: 'calendar-check', label: 'DatePicker', category: 'components', data: datePickerIcon },
+  { key: 'clock-3', label: 'TimePicker', category: 'components', data: timePickerIcon },
+  { key: 'book-open-check', label: 'Pagination', category: 'components', data: paginationIcon },
+  { key: 'inbox', label: 'Empty', category: 'components', data: emptyIcon },
+  { key: 'columns-3', label: 'ToggleGroup', category: 'components', data: toggleGroupIcon },
+  { key: 'command', label: 'Command', category: 'components', data: commandIcon },
+  { key: 'list-tree', label: 'Tree', category: 'components', data: treeIcon },
+  { key: 'list-ordered', label: 'Steps', category: 'components', data: stepsIcon },
+  { key: 'git-commit-horizontal', label: 'Timeline', category: 'components', data: timelineIcon },
   { key: 'plane', label: '航班', category: 'travel', data: extraIcon0 },
   { key: 'train-front', label: '火车', category: 'travel', data: extraIcon1 },
   { key: 'bus', label: '公交', category: 'travel', data: extraIcon2 },
@@ -191,6 +215,11 @@ export const docsIconCatalog = [
 ].map(icon => ({ ...icon, paths: iconPaths(icon.data) }));
 
 export function navigationIcon(label: string) {
-  const aliases: Record<string, string> = { Breadcrumb: '下一项', Calendar: '日历', DayAgenda: '日程', JourneyMap: '地图', Avatar: '用户', '开始': '快速开始', '基础': '设计规范' };
+  const aliases: Record<string, string> = {
+    Breadcrumb: '下一项', Calendar: '日历', DayAgenda: '日程', JourneyMap: '地图',
+    Avatar: '用户', Upload: '上传', DataTable: 'Table', '开始': '快速开始', '基础': '设计规范',
+    '通用': '组件', '表单输入': 'Field', '导航菜单': '菜单', '数据展示': 'Table',
+    '反馈状态': 'Alert', '弹层': 'Overlay', '日期与地图': '日历', '设计资源': '设计规范',
+  };
   return (docsIconCatalog.find(icon => icon.label === (aliases[label] ?? label)) ?? docsIconCatalog[0]).data;
 }

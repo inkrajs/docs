@@ -23,6 +23,7 @@ import {
   type FormEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type RefObject,
+  type ReactNode,
   useEffect,
   useId,
   useMemo,
@@ -34,6 +35,9 @@ import { GeometrySystem } from './components/GeometrySystem';
 import { TypographySystem } from './components/TypographySystem';
 import { UsageGuide } from './components/UsageGuide';
 import { FoundationPage, foundationComponents, foundationNames, type FoundationComponent } from './components/FoundationPages';
+import { componentNavigationGroups } from './componentRoutes';
+import { pageTitle } from './pageTitle';
+import { ThemeCustomizer } from './components/ThemeCustomizer';
 import { ComponentPageTabs } from './components/ComponentPageTabs';
 import { PageHeading } from './components/PageHeading';
 import { HomePage } from './components/HomePage';
@@ -53,22 +57,38 @@ type NavItem = {
   description: string;
 };
 
-const navGroups: Array<{ label: string; items: NavItem[] }> = [
+type NavGroup = { label: string; items: NavItem[]; children?: NavGroup[] };
+
+const navGroups: NavGroup[] = [
   {
     label: '开始',
     items: [{ path: '/getting-started', label: '快速开始', description: '安装、样式与基础用法' }],
   },
+  { label: '组件', items: [], children: componentNavigationGroups.map(group => ({
+    label: group.label,
+    items: group.components.map(name => ({
+      path: `/components/${name}` as RoutePath,
+      label: name === 'button' ? 'Button' : foundationNames[name],
+      description: name === 'button' ? '按钮预览、API 与无障碍' : foundationNames[name],
+    })),
+  })) },
   {
-    label: '组件',
-    items: [{ path: '/components/button', label: 'Button', description: '按钮预览、API 与无障碍' }, ...foundationComponents.map(name => ({ path: `/components/${name}` as RoutePath, label: foundationNames[name], description: foundationNames[name] }))],
-  },
-  {
-    label: '基础',
+    label: '设计资源',
     items: [{ path: '/design-standard', label: '设计规范', description: '色彩、排版与铅笔材质' }, { path: '/usage-guide', label: '使用指南', description: '设计规范的使用规则与示例' }],
   },
 ];
 
-const allNavItems = navGroups.flatMap((group) => group.items);
+function flattenNavGroups(groups: NavGroup[]): NavGroup[] {
+  return groups.flatMap(group => [group, ...flattenNavGroups(group.children ?? [])]);
+}
+
+const flatNavGroups = flattenNavGroups(navGroups);
+const allNavItems = flatNavGroups.flatMap(group => group.items);
+
+function expandedForPath(path: RoutePath): string[] {
+  return flatNavGroups.filter(group => flattenNavGroups([group])
+    .some(child => child.items.some(item => item.path === path))).map(group => group.label);
+}
 
 const themeOptions: Array<{ value: Theme; label: string; icon: LucideIconData }> = [
   { value: 'auto', label: '跟随系统', icon: monitorIcon },
@@ -108,8 +128,10 @@ function readButtonTab(): ButtonTab {
 }
 
 function readInitialTheme(): Theme {
-  const stored = window.localStorage.getItem('inkra-docs-theme');
-  return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'auto';
+  try {
+    const stored = window.localStorage.getItem('inkra-docs-theme');
+    return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'auto';
+  } catch { return 'auto'; }
 }
 
 function useCompactLayout() {
@@ -173,39 +195,38 @@ function SideNavigation({
 }) {
   const { t } = useLocale();
   const [query, setQuery] = useState('');
-  const [expanded, setExpanded] = useState(navGroups.map(group => group.label));
+  const [expanded, setExpanded] = useState(() => expandedForPath(currentPath));
   const [searchClosed, setSearchClosed] = useState<string[]>([]);
   const keyword = query.trim().toLocaleLowerCase();
-  const groups = navGroups.map(group => ({ ...group, items: group.items.filter(item =>
-    `${group.label} ${t(group.label)} ${item.label} ${t(item.label)} ${item.description} ${t(item.description)} ${item.path}`.toLocaleLowerCase().includes(keyword),
-  ) })).filter(group => group.items.length);
-  const visibleGroups = keyword ? groups.filter(group => !searchClosed.includes(group.label)).map(group => group.label) : expanded;
+  const filterGroups = (source: NavGroup[], ancestors = ''): NavGroup[] => source.map(group => {
+    const category = `${ancestors} ${group.label} ${t(group.label)}`;
+    return {
+      ...group,
+      items: group.items.filter(item => `${category} ${item.label} ${t(item.label)} ${item.description} ${t(item.description)} ${item.path}`.toLocaleLowerCase().includes(keyword)),
+      children: group.children ? filterGroups(group.children, category) : undefined,
+    };
+  }).filter(group => group.items.length || group.children?.length);
+  const groups = filterGroups(navGroups);
+  const visibleGroups = keyword ? flattenNavGroups(groups).filter(group => !searchClosed.includes(group.label)).map(group => group.label) : expanded;
+  const firstResult = flattenNavGroups(groups).flatMap(group => group.items)[0];
   const updateQuery = (value: string) => { setQuery(value); setSearchClosed([]); };
   useEffect(() => {
-    const group = navGroups.find(group => group.items.some(item => item.path === currentPath));
-    if (group) setExpanded(previous => previous.includes(group.label) ? previous : [...previous, group.label]);
+    setExpanded(previous => [...new Set([...previous, ...expandedForPath(currentPath)])]);
   }, [currentPath]);
-  return (
-    <nav className="side-navigation" aria-label={t("组件文档目录")}>
-      <div className="side-navigation__search">
-        <Input type="search" aria-label={t('搜索目录')} placeholder={t('搜索目录')} value={query} onValueChange={updateQuery} clearable clearButtonLabel={t('清空目录搜索')} startIcon={<DocsIcon data={searchIcon} size={22} />} onKeyDown={event => {
-          if (event.key === 'Escape' && query) { event.preventDefault(); event.stopPropagation(); updateQuery(''); }
-          if (event.key === 'Enter' && keyword && groups[0]?.items[0]) { event.preventDefault(); onNavigate(groups[0].items[0].path); updateQuery(''); }
-        }} />
-      </div>
-      <div className="side-navigation__groups">
-      <Accordion.Root type="multiple" value={visibleGroups} onValueChange={next => {
-        if (keyword) setSearchClosed(groups.filter(group => !next.includes(group.label)).map(group => group.label));
-        else setExpanded(next);
+  const renderGroups = (source: NavGroup[], depth = 0): ReactNode => {
+    const labels = source.map(group => group.label);
+    return <Accordion.Root type="multiple" value={visibleGroups.filter(label => labels.includes(label))} onValueChange={next => {
+        if (keyword) setSearchClosed(previous => [...previous.filter(label => !labels.includes(label)), ...labels.filter(label => !next.includes(label))]);
+        else setExpanded(previous => [...previous.filter(label => !labels.includes(label)), ...next]);
       }}>
-      {groups.map((group) => (
-        <Accordion.Item className="nav-group" key={group.label} value={group.label} showDivider={false}>
+      {source.map((group) => (
+        <Accordion.Item className={`nav-group${depth ? ' nav-group--nested' : ''}`} key={group.label} value={group.label} showDivider={false}>
           <Accordion.Header>
             <Accordion.Trigger className="nav-group-label">
               <DocsIcon data={navigationIcon(group.label)} size={26} /><PencilText>{group.label}</PencilText>
             </Accordion.Trigger>
           </Accordion.Header>
-          <Accordion.Content contentClassName="nav-group__content"><ul>
+          <Accordion.Content contentClassName="nav-group__content">{group.children ? renderGroups(group.children, depth + 1) : <ul>
             {group.items.map((item) => (
               <li key={item.path}>
                 <a
@@ -224,10 +245,21 @@ function SideNavigation({
                 </a>
               </li>
             ))}
-          </ul></Accordion.Content>
+          </ul>}</Accordion.Content>
         </Accordion.Item>
       ))}
-      </Accordion.Root>
+      </Accordion.Root>;
+  };
+  return (
+    <nav className="side-navigation" aria-label={t("组件文档目录")}>
+      <div className="side-navigation__search">
+        <Input type="search" aria-label={t('搜索目录')} placeholder={t('搜索目录')} value={query} onValueChange={updateQuery} clearable clearButtonLabel={t('清空目录搜索')} startIcon={<DocsIcon data={searchIcon} size={22} />} onKeyDown={event => {
+          if (event.key === 'Escape' && query) { event.preventDefault(); event.stopPropagation(); updateQuery(''); }
+          if (event.key === 'Enter' && keyword && firstResult) { event.preventDefault(); onNavigate(firstResult.path); updateQuery(''); }
+        }} />
+      </div>
+      <div className="side-navigation__groups">
+      {renderGroups(groups)}
       {!groups.length && <PencilText as="p" role="status" className="side-navigation__empty">没有匹配的目录</PencilText>}
       </div>
     </nav>
@@ -336,11 +368,15 @@ function SidebarPreferences({ theme, onThemeChange }: { theme: Theme; onThemeCha
 }
 
 function AppHeader({
+  theme,
+  onThemeChange,
   currentPath,
   menuButtonRef,
   onNavigate,
   onOpenMenu,
 }: {
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
   currentPath: RoutePath;
   menuButtonRef: RefObject<HTMLButtonElement | null>;
   onNavigate: (path: RoutePath) => void;
@@ -374,6 +410,8 @@ function AppHeader({
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-search-divider" />
         <SearchBox onNavigate={onNavigate} />
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-actions-divider" />
+        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} />
+        <PencilLine className="header-action-divider" orientation="vertical" seed="header-github-divider" />
         <GitHubLink />
       </div>
       <PencilLine className="header-divider" seed="header-divider" roughness={0.7} />
@@ -600,7 +638,6 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
   return (
     <article className="documentation">
       <PageHeading title="快速开始" description="在 React 项目中引入 Inkra 的主题与组件，保留原生语义，再让彩铅材质增强界面。" />
-      <PencilLine className="section-divider" seed="getting-started-divider" />
       <section className="content-section getting-started-content">
         <PencilText as="h2" seed="install-heading">安装与样式</PencilText>
         <PencilSurface className="code-sample" seed="install-command" variant="paper">
@@ -776,7 +813,6 @@ function DesignStandardPage({ theme }: { theme: Theme }) {
   return (
     <article className="documentation documentation--standard">
       <PageHeading title="设计规范" />
-      <PencilLine className="section-divider" seed="standard-divider" />
       <Tabs.Root value={section} onValueChange={setSection}>
       <Tabs.List className="standard-tabs" aria-label={t('设计规范分类')}>
         {sections.map(item => <Tabs.Trigger key={item.id} value={item.id}>{t(item.label)}</Tabs.Trigger>)}
@@ -806,9 +842,13 @@ export function App() {
   const { t } = useLocale();
 
   useEffect(() => {
+    document.title = pageTitle(route, t);
+  }, [route, t]);
+
+  useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.inkraTheme = theme;
-    window.localStorage.setItem('inkra-docs-theme', theme);
+    try { window.localStorage.setItem('inkra-docs-theme', theme); } catch { /* Theme changes do not require storage. */ }
   }, [theme]);
 
   useEffect(() => {
@@ -854,12 +894,12 @@ export function App() {
   return (
     <div className="app-shell">
       <PencilSurface aria-hidden="true" className="page-paper" seed="docs-viewport-paper" variant="full" />
-      <AppHeader currentPath={route} menuButtonRef={menuButtonRef} onNavigate={navigate} onOpenMenu={() => setDrawerOpen(true)} />
+      <AppHeader currentPath={route} menuButtonRef={menuButtonRef} onNavigate={navigate} onOpenMenu={() => setDrawerOpen(true)} theme={theme} onThemeChange={setTheme} />
       {isDocs && <MobileDrawer currentPath={route} onClose={closeDrawer} onNavigate={navigate} onThemeChange={setTheme} open={drawerOpen} theme={theme} />}
       {isDocs ? <div className="docs-layout">
         <aside className="desktop-sidebar"><SideNavigation currentPath={route} onNavigate={navigate} /><SidebarPreferences theme={theme} onThemeChange={setTheme} /><PencilLine className="sidebar-divider" orientation="vertical" seed="sidebar-divider" /></aside>
         <main id="main-content">
-          {route === '/components/button' ? <ButtonPage activeTab={buttonTab} onTabChange={changeButtonTab} /> : route.startsWith('/components/') ? <FoundationPage key={route} component={route.slice('/components/'.length) as FoundationComponent} activeTab={buttonTab} onTabChange={changeButtonTab} /> : route === '/design-standard' ? <DesignStandardPage theme={theme} /> : route === '/usage-guide' ? <article className="documentation"><PageHeading title="使用指南" /><PencilLine className="section-divider" seed="usage-divider" /><section className="content-section"><UsageGuide theme={theme} /></section></article> : <GettingStartedPage onNavigate={navigate} />}
+          {route === '/components/button' ? <ButtonPage activeTab={buttonTab} onTabChange={changeButtonTab} /> : route.startsWith('/components/') ? <FoundationPage key={route} component={route.slice('/components/'.length) as FoundationComponent} activeTab={buttonTab} onTabChange={changeButtonTab} /> : route === '/design-standard' ? <DesignStandardPage theme={theme} /> : route === '/usage-guide' ? <article className="documentation"><PageHeading title="使用指南" /><section className="content-section"><UsageGuide theme={theme} /></section></article> : <GettingStartedPage onNavigate={navigate} />}
         </main>
       </div> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : <main id="main-content" className="site-section" aria-label={t(route === '/blog' ? '博客' : '生态')}>
         <h1 className="visually-hidden">{t(route === '/blog' ? '博客' : '生态')}</h1>

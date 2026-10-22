@@ -1,0 +1,9 @@
+.data-examples { display: grid; gap: 20px; width: 100%; min-width: 0; }
+.data-demo-width { width: min(100%, 760px); min-width: 0; }
+.data-demo-table .inkra-table { min-width: 520px; }
+.data-demo-tree-wrap { display: grid; gap: 12px; width: min(100%, 560px); min-width: 0; }
+.data-demo-tree { width: 100%; min-width: 0; }
+.data-demo-output { min-height: 24px; color: var(--inkra-ink-muted); overflow-wrap: anywhere; }
+@media (max-width: 40rem) {
+  .data-demo-table .inkra-table { min-width: 480px; }
+}

@@ -1,39 +1,59 @@
 import assert from 'node:assert/strict';
+import { chromium } from 'playwright';
 
-const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
-try {
-  for (const width of [1305, 390]) {
-    const page = await browser.newPage({ viewport: { width, height: 954 } });
-    for (const route of ['components/input#preview', 'components/button#preview', 'components/select#api', 'getting-started', 'design-standard']) {
-      await page.goto(`http://127.0.0.1:4180/${route}`);
-      await page.locator('.documentation > .page-heading').waitFor();
-      const spacing = await page.evaluate(() => {
-        const article = document.querySelector('.documentation');
-        const heading = article.querySelector('.page-heading');
-        const section = article.querySelector('.content-section');
-        const tabs = article.querySelector('.page-tabs');
-        const examples = article.querySelector('.component-examples');
-        const style = getComputedStyle(article);
-        return {
-          padding: [style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft],
-          heading: getComputedStyle(heading).paddingBottom,
-          content: getComputedStyle(section).paddingTop,
-          tabs: tabs && getComputedStyle(tabs).marginBottom,
-          gap: examples && getComputedStyle(examples).rowGap,
-          overflow: document.documentElement.scrollWidth > innerWidth,
-        };
-      });
-      assert.deepEqual(spacing.padding, ['20px', '20px', '20px', '20px'], route);
-      assert.equal(spacing.heading, '20px', route);
-      assert.equal(spacing.content, '20px', route);
-      if (spacing.tabs) assert.equal(spacing.tabs, '20px', route);
-      if (spacing.gap) assert.equal(spacing.gap, '20px', route);
-      assert.equal(spacing.overflow, false, route);
-      console.log(`PASS ${route} at ${width}px: page spacing 20px`);
-    }
-    await page.close();
-  }
-} finally {
-  await browser.close();
+const errors = [];
+async function gap(page, before, after, expected = 20) {
+  const spacing = await page.locator('.documentation').evaluate(article => {
+    const style = getComputedStyle(article);
+    const examples = article.querySelector('.component-examples');
+    return { padding: [style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft], examples: examples && getComputedStyle(examples).rowGap };
+  });
+  assert.deepEqual(spacing.padding, ['20px', '20px', '20px', '20px']);
+  if (spacing.examples) assert.equal(spacing.examples, '20px');
+  const result = await page.evaluate(({ before, after }) => {
+    const a = document.querySelector(before).getBoundingClientRect();
+    const b = document.querySelector(after).getBoundingClientRect();
+    return b.top - a.bottom;
+  }, { before, after });
+  assert.ok(Math.abs(result - expected) < 1, `${before} -> ${after}: expected ${expected}px, got ${result}px`);
 }
+try {
+  for (const width of [1305, 390, 320]) {
+    for (const locale of ['zh-CN', 'en']) {
+      const context = await browser.newContext({ viewport: { width, height: 954 }, reducedMotion: 'reduce' });
+      await context.addInitScript(locale => localStorage.setItem('inkra-docs-locale', locale), locale);
+      const page = await context.newPage();
+      page.on('pageerror', error => errors.push(error.message));
+      for (const [route, target] of [['getting-started', '.getting-started-content > h2'], ['usage-guide', '.usage-guide__rules'], ['design-standard', '.standard-tabs button']]) {
+        await page.goto(`${base}/docs/${route}`);
+        await page.locator(target).first().waitFor();
+        await gap(page, '.page-heading__divider', target);
+        assert.equal(await page.locator('.page-heading + .section-divider').count(), 0, 'no duplicate heading divider');
+        if (route === 'design-standard') {
+          for (const tab of await page.locator('.standard-tabs [role="tab"]').all()) {
+            await tab.click();
+            await gap(page, '.standard-tabs-divider', '.design-standard:not([hidden]) > :first-child');
+          }
+          await page.locator('.standard-tabs [role="tab"]').first().click();
+          await gap(page, '.standard-tabs-divider', '.color-palette__heading h2');
+        }
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        if (locale === 'zh-CN') await page.screenshot({ path: `/tmp/inkra-spacing-${route}-${width}.png` });
+      }
+      for (const component of ['button', 'select', 'data-table']) {
+        await page.goto(`${base}/docs/components/${component}#preview`);
+        await page.locator('.component-playground').first().waitFor();
+        await gap(page, '.page-heading__divider', '.page-tabs button');
+        for (const tab of await page.locator('.page-tabs [role="tab"]').all()) {
+          await tab.click();
+          await gap(page, '.documentation > .section-divider', '.content-section > :first-child');
+        }
+      }
+      await context.close();
+      console.log(`PASS spacing: three resource pages, all design tabs and three component page layouts, ${locale} ${width}px`);
+    }
+  }
+  assert.deepEqual(errors, []);
+} finally { await browser.close(); }

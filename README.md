@@ -6,21 +6,18 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The package name is `@inkra/react`. This checkout installs the published 0.1.0
-release from npm with an exact version and integrity lock. library-candidate.json
-records its source commit, SHA-256 and SHA-512. Local candidates can still use
-the stable vendor/inkra.tgz path; it is not an unscoped npm dependency.
+The package name is `@inkra/react`. This revision previews an unpublished
+candidate, including components not yet in npm 0.1.0. library-candidate.json
+pins its exact source commit, SHA-256 and SHA-512. The verified archive is
+installed from vendor/inkra.tgz; it is not a source alias.
 
 ## Local Development
 
-```sh
-npm ci --ignore-scripts
-npm run build
-npm run dev -- --port 4180
-```
-
-Build verifies the public archive against the recorded release hashes and the
-installed dependency. It does not silently replace the release with source code.
+First follow **Prepare The Unpublished Candidate** below. Check out the library
+revision recorded in library-candidate.json before building it; the ignored
+vendor archive must exist before `npm ci` can run in a fresh docs checkout.
+Build verifies the archive against the recorded hashes and installed dependency.
+It does not silently substitute the published 0.1.0 package.
 
 ## Local Routes And Page Actions
 
@@ -70,6 +67,23 @@ Rebuild the product and prepare again after library edits; there is no implicit
 source link. Review and commit the exact revision, integrity and lockfile together.
 
 ## Checks And Publication
+
+The header theme customizer uses the installed Drawer, Tabs and Slider components.
+Theme mode, palette, lettering, stroke and fill edits affect only the preview Card until
+Save applies them globally and persists them locally. Cancel, Escape and closing
+discard drafts; Reset changes only the draft until saved. A separate divider
+separates the preview from settings. Tokens affect actual library canvas renderers
+without remounting the page. Storage failure is reported while the saved changes
+still apply for the current session. The usage-guide task example uses Card, Badge, Checkbox,
+ToggleGroup, Progress and Empty, with shared light/dark sample state.
+
+Browser smoke checks include `verify-docs-spacing.mjs` and
+`verify-theme-customizer.mjs`. Spacing checks measure actual element boundaries,
+not just individual padding values: heading and standalone dividers own their
+20px trailing space, and content must not add another top gap. Customizer checks
+cover draft isolation and zero background canvas redraws on preview/close,
+save/cancel/reset, border/icon/fill pixel changes, persistence, storage failures, focus return,
+forced colors, responsive headers and the task-list interactions.
 
 Build checks the candidate, TypeScript, Vite and static route entrypoints.
 Push, PR and manual CI install a pinned registry release directly. For a local

@@ -10,11 +10,12 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-本仓默认从 npm 安装正式的 `@inkra/react@0.1.0`，版本与完整性固定在锁文件中。
-直接运行 `npm ci --ignore-scripts`、`npm run build` 和 `npm run dev -- --port 4180`。
-构建会核对公开包的 SHA-256、SHA-512 和安装来源。
+本次提交预览尚未发布的 `@inkra/react` 候选包，包含 npm 0.1.0 中没有的新增组件。
+源码提交、SHA-256 与 SHA-512 固定在 library-candidate.json 中。新检出文档仓库时，
+先按下述步骤准备被忽略的 vendor 归档，再运行 npm ci；不能用同版本的公开包替代。
 
-需要验证未发布改动时，先在组件仓运行 npm ci、npm run build、npm run check:package，再在本仓运行：
+先在组件仓检出 library-candidate.json 中的精确提交，运行 npm ci、npm run build，
+再用 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 打包。在本仓运行：
 
 ```sh
 npm run prepare:library -- /path/to/inkra
