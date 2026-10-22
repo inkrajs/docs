@@ -104,8 +104,10 @@ try {
     for (const dir of ['ltr', 'rtl']) {
       for (const contentPosition of ['center', 'top', 'bottom', 'start', 'end']) {
         await page.evaluate(props => window.renderProgress(props), { dir, contentPosition, children: '72%' });
-        const graphic = await ring.boundingBox();
-        const content = await progress.locator('.inkra-progress__content').boundingBox();
+        const { graphic, content } = await progress.evaluate(node => ({
+          graphic: node.querySelector('.inkra-progress__ring').getBoundingClientRect().toJSON(),
+          content: node.querySelector('.inkra-progress__content').getBoundingClientRect().toJSON(),
+        }));
         if (contentPosition === 'center') {
           assert(Math.abs(content.x + content.width / 2 - graphic.x - graphic.width / 2) < 1);
           assert(Math.abs(content.y + content.height / 2 - graphic.y - graphic.height / 2) < 1);
@@ -143,9 +145,13 @@ try {
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     }
     await page.evaluate(() => window.renderProgress({ label: 'A long label above the circle', diameter: 96, children: '40%' }));
-    const labeledRing = await ring.boundingBox();
-    const center = await progress.locator('.inkra-progress__content').boundingBox();
-    assert(Math.abs(center.x + center.width / 2 - labeledRing.x - labeledRing.width / 2) < 1);
+    // Compare a single layout snapshot; font loading can move both between protocol calls.
+    const { labeledRing, center } = await progress.evaluate(node => ({
+      labeledRing: node.querySelector('.inkra-progress__ring').getBoundingClientRect().toJSON(),
+      center: node.querySelector('.inkra-progress__content').getBoundingClientRect().toJSON(),
+    }));
+    assert(Math.abs(center.x + center.width / 2 - labeledRing.x - labeledRing.width / 2) < 1,
+      JSON.stringify({ width, theme, labeledRing, center }));
     assert(center.width < labeledRing.width, 'long external label cannot enlarge center content over the ring');
     await page.evaluate(() => window.renderProgress({ shape: 'linear', size: 'lg', value: 75, children: undefined }));
     assert.equal((await progress.locator('.inkra-progress__track').boundingBox()).height, 24);
