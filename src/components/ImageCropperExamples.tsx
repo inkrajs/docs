@@ -1,8 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import { Button, ImageCropper, Switch } from '@inkra/react';
 import type { ImageCropperHandle, ImageCropperSelection } from '@inkra/react';
-import previewLight from '../../../../assets/preview-light.png';
-import previewDark from '../../../../assets/preview-dark.png';
+import previewLight from '../assets/preview-light.png';
+import previewDark from '../assets/preview-dark.png';
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';

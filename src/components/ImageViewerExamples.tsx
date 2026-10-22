@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { Button, Switch } from '@inkra/react';
 
 import { ImageViewer, type ImageViewerItem } from '@inkra/react';
-import inkraArtwork from '../../../../assets/inkra.png';
-import previewDark from '../../../../assets/preview-dark.png';
-import previewLight from '../../../../assets/preview-light.png';
+import inkraArtwork from '../assets/inkra.png';
+import previewDark from '../assets/preview-dark.png';
+import previewLight from '../assets/preview-light.png';
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
