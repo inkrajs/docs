@@ -13,6 +13,7 @@ for (const script of [
   'verify-theme-customizer',
   'verify-navigation-hierarchy',
   'verify-header-github',
+  'verify-home-header-actions',
   'verify-docs-shell',
   'verify-page-titles',
   'verify-docs-actions',

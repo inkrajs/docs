@@ -190,7 +190,7 @@ const english: Record<string, string> = {
   '批量编辑': 'Batch edit', '整理笔记名称': 'Organize note titles',
   '跟随系统': 'System theme', '浅色主题': 'Light theme', '深色主题': 'Dark theme', '主题模式': 'Theme mode',
   '打开文档目录': 'Open navigation', '关闭文档目录': 'Close navigation', '打开目录': 'Open navigation', '关闭目录': 'Close navigation', '文档目录': 'Navigation', '主题': 'Theme',
-  '语言': 'Language', '设计规范分类': 'Design standard categories',
+  '语言': 'Language', '页面操作': 'Page actions', '设计规范分类': 'Design standard categories',
   '色彩': 'Color', '尺寸与间距': 'Sizing and spacing', '排版与材质': 'Typography and materials',
   '继承参考站的手写字形、压力笔触、纸张纤维与疏朗信息层级，而不是模拟几条装饰曲线。': 'Handwritten lettering, pressure-sensitive strokes, paper fibers and a clear visual hierarchy.',
   '色彩系统': 'Color system', '原始色阶': 'Color scales', '沧浪': 'Canglang', '宣墨': 'Xuanmo',

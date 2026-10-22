@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Button, Card, Drawer, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Slider, Tabs, Tooltip } from '@inkra/react';
 import { __iconData as paletteIcon } from 'lucide-react/dist/esm/icons/palette.mjs';
 import { __iconData as typeIcon } from 'lucide-react/dist/esm/icons/type.mjs';
@@ -46,7 +46,11 @@ function readSettings(): Settings {
   } catch { return defaults; }
 }
 
-export function ThemeCustomizer({ theme, onThemeChange }: { theme: 'auto' | 'light' | 'dark'; onThemeChange: (theme: 'auto' | 'light' | 'dark') => void }) {
+export function ThemeCustomizer({ theme, onThemeChange, renderTrigger }: {
+  theme: 'auto' | 'light' | 'dark';
+  onThemeChange: (theme: 'auto' | 'light' | 'dark') => void;
+  renderTrigger?: (trigger: ReactNode) => ReactNode;
+}) {
   const { locale, t } = useLocale();
   const en = locale === 'en';
   const label = en ? 'Customize theme' : '主题定制';
@@ -115,15 +119,16 @@ export function ThemeCustomizer({ theme, onThemeChange }: { theme: 'auto' | 'lig
     } catch { setStorageError(true); }
   }
 
-  return <Drawer.Root open={open} onOpenChange={changeOpen}>
-    <Tooltip.Provider><Tooltip.Root>
+  const trigger = <Tooltip.Provider><Tooltip.Root>
       <Tooltip.Trigger asChild><Drawer.Trigger asChild>
         <Button className="header-customize" size="icon" variant="outline" aria-label={label}>
           <DocsIcon data={paletteIcon} size={30} />
         </Button>
       </Drawer.Trigger></Tooltip.Trigger>
       <Tooltip.Portal><Tooltip.Content side="bottom">{label}</Tooltip.Content></Tooltip.Portal>
-    </Tooltip.Root></Tooltip.Provider>
+    </Tooltip.Root></Tooltip.Provider>;
+  return <Drawer.Root open={open} onOpenChange={changeOpen}>
+    {renderTrigger ? renderTrigger(trigger) : trigger}
     <Drawer.Portal>
       <Drawer.Backdrop />
       <Drawer.Content className="theme-customizer" size="md" aria-describedby={undefined}>

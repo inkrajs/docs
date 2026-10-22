@@ -1,4 +1,4 @@
-import { Accordion, Button, ButtonGroup, ButtonLink, Input, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Switch, Tabs } from '@inkra/react';
+import { Accordion, Button, ButtonGroup, ButtonLink, DropdownMenu, Input, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Switch, Tabs, Tooltip } from '@inkra/react';
 import { ButtonGroupPlayground } from './components/ButtonGroupPlayground';
 import { DocsSelect } from './components/DocsSelect';
 import { navigationIcon } from './components/iconCatalog';
@@ -370,6 +370,27 @@ function SidebarPreferences({ theme, onThemeChange }: { theme: Theme; onThemeCha
   return <div className="sidebar-preferences"><PencilLine seed="preferences-divider" /><LanguageControl /><ThemeControl theme={theme} onChange={onThemeChange} /></div>;
 }
 
+function HomeLanguageMenu() {
+  const { locale, setLocale, t } = useLocale();
+  const label = t('语言');
+  return <DropdownMenu.Root>
+    <Tooltip.Provider><Tooltip.Root>
+      <Tooltip.Trigger asChild><DropdownMenu.Trigger asChild>
+        <Button className="header-language" size="icon" variant="outline" aria-label={label}>
+          <DocsIcon data={languagesIcon} seed="header-language" size={30} />
+        </Button>
+      </DropdownMenu.Trigger></Tooltip.Trigger>
+      <Tooltip.Portal><Tooltip.Content side="bottom">{label}</Tooltip.Content></Tooltip.Portal>
+    </Tooltip.Root></Tooltip.Provider>
+    <DropdownMenu.Portal><DropdownMenu.Content align="end" sideOffset={8} aria-label={label}>
+      <DropdownMenu.RadioGroup value={locale} onValueChange={value => setLocale(value === 'en' ? 'en' : 'zh-CN')}>
+        <DropdownMenu.RadioItem value="zh-CN">中文</DropdownMenu.RadioItem>
+        <DropdownMenu.RadioItem value="en">English</DropdownMenu.RadioItem>
+      </DropdownMenu.RadioGroup>
+    </DropdownMenu.Content></DropdownMenu.Portal>
+  </DropdownMenu.Root>;
+}
+
 function AppHeader({
   theme,
   onThemeChange,
@@ -387,6 +408,7 @@ function AppHeader({
 }) {
   const { t } = useLocale();
   const docsActive = currentPath !== '/' && currentPath !== '/blog' && currentPath !== '/ecosystem';
+  const home = currentPath === '/';
   const links = [{ path: '/getting-started', label: '文档' }, { path: '/blog', label: '博客' }, { path: '/ecosystem', label: '生态' }] as const;
   return (
     <header className="app-header">
@@ -413,9 +435,10 @@ function AppHeader({
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-search-divider" />
         <SearchBox onNavigate={onNavigate} />
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-actions-divider" />
-        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} />
-        <PencilLine className="header-action-divider" orientation="vertical" seed="header-github-divider" />
-        <GitHubLink />
+        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} renderTrigger={trigger =>
+          <ButtonGroup className="header-action-group" aria-label={t('页面操作')}>
+            {home && <HomeLanguageMenu />}{trigger}<GitHubLink />
+          </ButtonGroup>} />
       </div>
       <PencilLine className="header-divider" seed="header-divider" roughness={0.7} />
     </header>
