@@ -19,6 +19,16 @@ async function waitForInputValue(locator, expected) {
   );
 }
 
+async function waitForFocus(locator) {
+  await locator.evaluate(async node => {
+    for (let i = 0; i < 100; i++) {
+      if (node === document.activeElement) return;
+      await new Promise(resolve => setTimeout(resolve, 20));
+    }
+    throw new Error('Expected focus to return after popup dismissal');
+  });
+}
+
 async function verifyCurrentCodeCopy(page, playground, expectedFragments, forbiddenFragments = []) {
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(baseUrl).origin });
   await playground.getByRole('tab', { name: /代码|Code/ }).click();
@@ -43,6 +53,7 @@ try {
     assert(await selectedDay.evaluate(node => node === document.activeElement), 'opening focuses the selected date');
     await selectedDay.press('ArrowRight');
     await datePage.locator('.inkra-date-picker__popover .rdp-day_button:focus').press('Enter');
+    await waitForFocus(dateTrigger);
     assert(await dateTrigger.evaluate(node => node === document.activeElement), 'selection closes and returns focus');
     assert.match(await datePlayground.locator('.dates-examples__status').textContent(), /^2026-10-2[3-9]$/);
 
@@ -103,41 +114,82 @@ try {
     await openDocs(timePage, 'time-picker', 'TimePicker');
     const timePlayground = timePage.locator('.component-playground');
     const controlledTime = timePlayground.locator('input[type="time"]');
+    const timeTrigger = timePlayground.locator('.inkra-time-picker__trigger');
+    const popup = timePage.locator('.inkra-time-picker__popover');
+    const choose = async (label, value) => {
+      await popup.getByRole('group', { name: label, exact: true }).getByRole('radio', { name: value, exact: true }).check();
+    };
     assert.equal(await controlledTime.inputValue(), '09:30');
-    await controlledTime.fill('10:45');
-    assert.equal(await timePlayground.locator('.dates-examples__status').textContent(), '10:45');
+    assert.equal(await controlledTime.getAttribute('aria-hidden'), 'true', 'native time input is only the form proxy');
+    assert.equal(await controlledTime.evaluate(node => getComputedStyle(node).opacity), '0');
+    assert.equal(await controlledTime.evaluate(node => getComputedStyle(node).pointerEvents), 'none');
+    await timeTrigger.click({ position: { x: 12, y: 22 } });
+    await popup.waitFor();
+    assert(await popup.getByRole('group', { name: '时', exact: true }).getByRole('radio', { name: '09', exact: true }).isChecked());
+    assert(await popup.getByRole('group', { name: '时', exact: true }).getByRole('radio', { name: '09', exact: true }).evaluate(node => node === document.activeElement));
+    assert(await popup.locator('.inkra-pencil-text[data-pencil-ready="true"]').count() > 0);
+    await timePage.screenshot({ path: `/tmp/inkra-time-picker-${width}.png`, animations: 'disabled' });
+    await choose('时', '10');
+    await choose('分', '45');
+    assert.equal(await controlledTime.inputValue(), '09:30', 'draft selection does not submit');
+    await popup.getByRole('button', { name: '确定', exact: true }).click();
+    await waitForInputValue(controlledTime, '10:45');
+    assert(await timeTrigger.evaluate(node => node === document.activeElement), 'apply returns focus');
+    await timeTrigger.press('Enter');
+    await popup.waitFor();
+    await choose('时', '11');
+    await timePage.keyboard.press('Escape');
+    assert.equal(await controlledTime.inputValue(), '10:45', 'Escape discards draft');
+    assert(await timeTrigger.evaluate(node => node === document.activeElement));
+    await timeTrigger.press('Space');
+    await popup.waitFor();
+    await choose('时', '12');
+    await popup.getByRole('button', { name: '取消', exact: true }).click();
+    assert.equal(await controlledTime.inputValue(), '10:45', 'Cancel discards draft');
     await timePlayground.getByRole('button', { name: /清空时间|Clear time/ }).click();
     assert.equal(await controlledTime.inputValue(), '');
-    assert(await controlledTime.evaluate(node => node === document.activeElement), 'time clear returns focus');
-    await controlledTime.fill('09:30');
+    assert(await timeTrigger.evaluate(node => node === document.activeElement), 'clear returns focus to visible trigger');
+
+    await timeTrigger.click();
+    await choose('时', '09');
+    await choose('分', '30');
+    await popup.getByRole('button', { name: '确定', exact: true }).click();
 
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /状态|States?/ }).click();
     await timePlayground.getByRole('switch', { name: /只读|Read only/ }).click();
     assert.equal(await controlledTime.getAttribute('readonly'), '');
-    assert(await timePlayground.locator('.inkra-time-picker__clear').isDisabled(), 'readOnly inherited state disables clear');
+    assert(await timePlayground.locator('.inkra-time-picker__clear').isDisabled());
+    await timeTrigger.click();
+    assert.equal(await popup.count(), 0, 'read-only cannot open editor');
     await timePlayground.getByRole('switch', { name: /只读|Read only/ }).click();
     await timePlayground.getByRole('switch', { name: /禁用|Disabled/ }).click();
     assert(await controlledTime.isDisabled());
-    assert(await timePlayground.locator('.inkra-time-picker__clear').isDisabled(), 'disabled inherited state disables clear');
+    assert(await timeTrigger.isDisabled());
     await verifyCurrentCodeCopy(timePage, timePlayground, [
-      "const [time, setTime] = useState('09:30')",
-      'locale="zh-CN"',
-      'value={time}',
-      'hourCycle="h24"',
-      'showSeconds={false}',
-      'clearable={true}',
-      'disabled={true}',
-      'readOnly={false}',
-      'onValueChange={(next: string) => setTime(next)}',
-    ], ['value="09:30"', 'onValueChange={setValue}']);
+      "const [time, setTime] = useState('09:30')", 'locale="zh-CN"', 'value={time}',
+      'hourCycle="h24"', 'showSeconds={false}', 'clearable={true}', 'disabled={true}',
+      'readOnly={false}', 'onValueChange={(next: string) => setTime(next)}',
+    ]);
+    await timePlayground.locator('.preview-controls').getByRole('tab', { name: /状态|States?/ }).click();
+    await timePlayground.getByRole('switch', { name: /禁用|Disabled/ }).click();
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /基础|Basic/ }).click();
     await timePlayground.getByRole('switch', { name: /显示秒|Show seconds/ }).click();
-    await timePlayground.getByRole('switch', { name: /可清空|Clearable/ }).click();
-    await verifyCurrentCodeCopy(timePage, timePlayground, [
-      "const [time, setTime] = useState('09:30:00')",
-      'showSeconds={true}',
-      'clearable={false}',
-    ]);
+    await timePlayground.getByRole('combobox', { name: /小时制|Hour cycle/ }).click();
+    await timePage.getByRole('option', { name: /12 小时|12 hour/, exact: true }).click();
+    await timeTrigger.click();
+    await choose('时段', '下午');
+    await choose('秒', '15');
+    await popup.getByRole('button', { name: '确定', exact: true }).click();
+    await waitForInputValue(controlledTime, '21:30:15');
+    assert.match(await timeTrigger.textContent(), /下午.*09:30:15|09:30:15.*下午/);
+    assert(await timeTrigger.locator('.inkra-pencil-text').count() > 0);
+
+    const basic = timePage.locator('.component-example').first();
+    const basicRoot = basic.locator('.inkra-time-picker');
+    const basicTrigger = await basicRoot.locator('.inkra-time-picker__trigger').boundingBox();
+    const basicClear = await basicRoot.locator('.inkra-time-picker__clear').boundingBox();
+    assert(Math.abs(basicTrigger.y + basicTrigger.height / 2 - basicClear.y - basicClear.height / 2) < 1, 'time and clear stay on one line');
+    assert(basicTrigger.width > 120, 'basic example is not min-content sized');
 
     const limitsExample = timePage.locator('.component-example').nth(1);
     const limited = limitsExample.locator('input[type="time"]').first();
@@ -146,23 +198,41 @@ try {
     assert.equal(await limited.getAttribute('max'), '18:00');
     assert.equal(await limited.getAttribute('step'), '900');
     assert.equal(await seconds.getAttribute('step'), '1');
-    await limited.fill('07:45');
-    assert(await limited.evaluate(node => node.validity.rangeUnderflow), 'native min validation remains active');
-    await limited.fill('18:15');
-    assert(await limited.evaluate(node => node.validity.rangeOverflow), 'native max validation remains active');
-    await limited.fill('09:37');
-    assert(await limited.evaluate(node => node.validity.stepMismatch), 'native step validation remains active');
+    await limitsExample.locator('.inkra-time-picker__trigger').first().click();
+    await choose('时', '07');
+    await choose('分', '45');
+    assert(await popup.getByRole('button', { name: '确定', exact: true }).isDisabled());
+    assert.equal(await limited.inputValue(), '09:30');
+    await choose('时', '09');
+    await choose('分', '37');
+    assert(await popup.getByRole('button', { name: '确定', exact: true }).isDisabled(), 'step mismatch cannot apply');
+    await choose('分', '45');
+    await popup.getByRole('button', { name: '确定', exact: true }).click();
+    await waitForInputValue(limited, '09:45');
+    const validity = await limited.evaluate(node => {
+      const original = node.value;
+      node.value = '07:45'; const underflow = node.validity.rangeUnderflow;
+      node.value = '18:15'; const overflow = node.validity.rangeOverflow;
+      node.value = '09:37'; const step = node.validity.stepMismatch;
+      node.value = original;
+      return { underflow, overflow, step };
+    });
+    assert.deepEqual(validity, { underflow: true, overflow: true, step: true });
 
     const resetExample = timePage.locator('.component-example').nth(2);
     const resetTime = resetExample.locator('input[name="meetingTime"]');
-    await resetTime.fill('12:15');
+    await resetExample.locator('.inkra-time-picker__trigger').click();
+    await choose('时', '12');
+    await choose('分', '15');
+    await popup.getByRole('button', { name: '确定', exact: true }).click();
+    await waitForInputValue(resetTime, '12:15');
     await resetExample.getByRole('button', { name: /重置|Reset/ }).click();
     await waitForInputValue(resetTime, '09:30');
     assert.equal(await resetExample.locator('form').evaluate(node => new FormData(node).get('meetingTime')), '09:30');
 
     await timePage.evaluate(() => { document.documentElement.dir = 'rtl'; });
-    assert.equal(await controlledTime.evaluate(node => getComputedStyle(node.closest('.inkra-input-root')).direction), 'rtl');
-    assert(await timePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'TimePicker page has no horizontal overflow');
+    assert.equal(await timeTrigger.evaluate(node => getComputedStyle(node).direction), 'rtl');
+    assert(await timePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await timePage.close();
     console.log(`PASS dates expansion keyboard, focus, forms, reset, native limits, inherited state and responsive layout at ${width}px`);
   }

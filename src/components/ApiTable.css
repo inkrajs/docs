@@ -1,0 +1,7 @@
+.docs-api-table { padding-bottom: 4px; }
+.docs-api-table .inkra-table { font-size: var(--inkra-text-md); }
+.docs-api-table code { font-family: inherit; }
+.docs-api-table .inkra-pencil-text { white-space: pre-wrap; }
+.docs-api-table .inkra-table:has(th:nth-child(4)) { min-width: 640px; }
+.docs-api-table .inkra-table { min-width: 600px; }
+.docs-api-table th:last-child { width: 40%; }

@@ -20,7 +20,7 @@ try {
     const panelBox = await controls.boundingBox();
     const displayBox = await playground.locator('.preview-display').boundingBox();
     if (width > 1024) {
-      assert(Math.abs(panelBox.width - displayBox.width) < 1, 'preview and properties have equal width');
+      assert(Math.abs(panelBox.width * 2 - displayBox.width) < 1, 'properties occupy one third of the content width');
       assert(Math.abs(panelBox.y - displayBox.y) < 1, 'desktop properties beside preview');
       assert(displayBox.width >= 390, 'preview retains usable width');
       const tabTop = (await tabs.boundingBox()).y;

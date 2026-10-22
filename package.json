@@ -21,10 +21,12 @@
   "dependencies": {
     "@inkra/react": "file:vendor/inkra.tgz",
     "lucide-react": "1.60.0",
+    "prismjs": "1.30.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@types/prismjs": "1.26.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "playwright": "1.64.1",

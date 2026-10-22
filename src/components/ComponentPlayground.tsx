@@ -4,6 +4,7 @@ import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.m
 import { __iconData as codeIcon } from 'lucide-react/dist/esm/icons/code-xml.mjs';
 import { __iconData as copyIcon } from 'lucide-react/dist/esm/icons/copy.mjs';
 import { DocsIcon } from './DocsIcon';
+import { CodeBlock } from './CodeBlock';
 import { PencilText, useLocale } from '../i18n';
 import './ComponentExample.css';
 
@@ -49,7 +50,7 @@ export function ComponentPlayground({ code, controls, children }: { code: string
     <div className="preview-workspace">
       <div className="preview-display">
         <div className="preview-stage" role="tabpanel" tabIndex={0} id={`${id}-panel-preview`} aria-labelledby={`${id}-tab-preview`} hidden={view !== 'preview'}>{children}</div>
-        <div className="code-panel" role="tabpanel" tabIndex={0} id={`${id}-panel-code`} aria-labelledby={`${id}-tab-code`} hidden={view !== 'code'}><pre><code>{code}</code></pre></div>
+        <div className="code-panel" role="tabpanel" tabIndex={0} id={`${id}-panel-code`} aria-labelledby={`${id}-tab-code`} hidden={view !== 'code'}>{view === 'code' && <CodeBlock code={code} />}</div>
       </div>
       <PencilLine className="preview-controls-divider" orientation={compact ? 'horizontal' : 'vertical'} />
       <div className="preview-controls" role="group" aria-label={t('属性')}>{controls}</div>

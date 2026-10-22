@@ -473,10 +473,9 @@ pre {
 .nav-group-label .inkra-accordion__trigger-icon { flex-basis: 16px; width: 16px; }
 
 .nav-group + .nav-group {
-  margin-top: var(--inkra-space-4);
+  margin-top: 0;
 }
 
-.nav-group--nested + .nav-group--nested { margin-top: var(--inkra-space-1); }
 .nav-group--nested .nav-link { padding-inline-start: calc(var(--inkra-space-2) + 2 * var(--nav-indent)); }
 
 .nav-group .nav-group-label {
@@ -625,6 +624,7 @@ pre {
 .getting-started-content > p,
 .getting-started-content > .code-sample { margin: 0; }
 .getting-started-content > .code-sample { width: 100%; }
+.content-section.getting-started-content > p { width: 100%; max-width: none; }
 
 .standard-tabs {
   padding-bottom: var(--inkra-space-5);
@@ -653,11 +653,14 @@ pre {
 }
 
 .code-sample {
-  display: block !important;
   margin: var(--inkra-space-5) 0;
-  padding: var(--inkra-space-5);
-  overflow-x: auto;
+  min-width: 0;
+  max-width: 100%;
 }
+
+.code-sample > .code-sample__header { padding: var(--inkra-space-2) var(--inkra-space-5); }
+.code-sample__language { display: flex; align-items: center; gap: var(--inkra-space-2); }
+.code-sample > .code-sample__body { padding: var(--inkra-space-5); overflow-x: auto; min-width: 0; }
 
 .code-sample pre,
 .code-panel pre {
@@ -735,7 +738,7 @@ pre {
 
 .preview-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 8px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) 8px minmax(0, 1fr);
   min-height: 18rem;
 }
 
@@ -969,7 +972,7 @@ pre {
   overflow-x: auto;
 }
 
-table {
+table:not(.inkra-table):not(.rdp-month_grid) {
   width: 100%;
   min-width: 42rem;
   border-collapse: collapse;
@@ -977,19 +980,19 @@ table {
   text-align: left;
 }
 
-th,
-td {
+table:not(.inkra-table):not(.rdp-month_grid) th,
+table:not(.inkra-table):not(.rdp-month_grid) td {
   padding: var(--inkra-space-3) var(--inkra-space-4);
   vertical-align: top;
 }
 
-thead th,
-tbody th {
+table:not(.inkra-table):not(.rdp-month_grid) thead th,
+table:not(.inkra-table):not(.rdp-month_grid) tbody th {
   color: var(--inkra-ink-muted);
   font-weight: 400;
 }
 
-tbody tr:nth-child(odd) {
+table:not(.inkra-table):not(.rdp-month_grid) tbody tr:nth-child(odd) {
   background: color-mix(in srgb, var(--inkra-surface-muted) 28%, transparent);
 }
 
@@ -1234,8 +1237,7 @@ tbody tr:nth-child(odd) {
   .inkra-pencil-surface__ink,
   .inkra-pencil-surface__border,
   .inkra-pencil-text > canvas,
-  .inkra-pencil-icon,
-  .inkra-pencil-line {
+  .inkra-pencil-icon {
     display: none !important;
   }
 

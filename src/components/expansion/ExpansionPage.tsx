@@ -3,16 +3,18 @@ import type { ExpansionComponent } from '../../componentRoutes';
 import { PencilText, useLocale } from '../../i18n';
 import { ComponentPageTabs, type ComponentPageTab } from '../ComponentPageTabs';
 import { PageHeading } from '../PageHeading';
+import { ApiTable } from '../ApiTable';
 import { feedbackDocs } from './FeedbackExamples';
 import { overlaysDocs } from './OverlaysExamples';
 import { datesDocs } from './DatesExamples';
 import { navigationDocs } from './NavigationExamples';
 import { dataDocs } from './DataExamples';
 import { flowsDocs } from './FlowsExamples';
+import { layoutDocs } from './LayoutExamples';
 import type { ExpansionDoc } from './types';
 
 const pages: Record<string, ExpansionDoc> = {
-  ...feedbackDocs, ...overlaysDocs, ...datesDocs, ...navigationDocs, ...dataDocs, ...flowsDocs,
+  ...feedbackDocs, ...overlaysDocs, ...datesDocs, ...navigationDocs, ...dataDocs, ...flowsDocs, ...layoutDocs,
 };
 
 export default function ExpansionPage({ component, activeTab, onTabChange }: {
@@ -20,7 +22,7 @@ export default function ExpansionPage({ component, activeTab, onTabChange }: {
   activeTab: ComponentPageTab;
   onTabChange: (value: ComponentPageTab) => void;
 }) {
-  const { locale, t } = useLocale();
+  const { locale } = useLocale();
   const doc = pages[component];
   const language = locale === 'en' ? 'en' : 'zh';
   const Examples = doc.Examples;
@@ -31,13 +33,10 @@ export default function ExpansionPage({ component, activeTab, onTabChange }: {
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>
       {activeTab === 'preview' && <Examples />}
       {activeTab === 'api' && <section className="component-api">
-        <PencilText as="h2">API</PencilText>
-        <table><thead><tr><th>{t('属性')}</th><th>{t('类型')}</th></tr></thead>
-          <tbody>{doc.api.map(([name, contract]) => <tr key={name}><td><code>{name}</code></td><td><code>{contract}</code></td></tr>)}</tbody>
-        </table>
+        <ApiTable rows={doc.api.map(row => row.length === 4 ? [row[0], row[1], row[language === 'zh' ? 2 : 3]] : row)} component={component} label={`${doc.name} API`} />
       </section>}
       {activeTab === 'accessibility' && <section className="component-api">
-        <PencilText as="h2">无障碍</PencilText><PencilText as="p">{doc.a11y[language]}</PencilText>
+        <PencilText as="p">{doc.a11y[language]}</PencilText>
       </section>}
     </section>
   </article>;

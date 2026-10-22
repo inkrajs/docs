@@ -41,10 +41,6 @@
 .component-demo-stack > h2, .component-demo-stack > p { margin: 0; }
 .component-api { display: grid; gap: 16px; min-width: 0; }
 .content-section .component-api > h2, .content-section .component-api > p { margin: 0; }
-.component-api table { width: 100%; min-width: 0; table-layout: fixed; border-collapse: collapse; }
-.component-api td, .component-api th { padding: 12px; text-align: start; vertical-align: top; overflow-wrap: anywhere; }
-.component-api th { font-weight: 400; }
-.component-api tr:nth-child(even) { background: color-mix(in srgb, var(--inkra-ink) 4%, transparent); }
 @media (max-width: 480px) {
   .component-example__header { padding-inline: 16px; }
   .component-example__preview { padding: 16px; gap: 16px; }

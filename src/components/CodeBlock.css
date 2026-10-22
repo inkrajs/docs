@@ -1,0 +1,32 @@
+.docs-code,
+.docs-code code {
+  font-family: "Trip Map Hand", var(--inkra-font-hand);
+  font-size: var(--inkra-text-md);
+  line-height: 1.8;
+  font-weight: 400;
+  tab-size: 2;
+}
+.docs-code {
+  margin: 0;
+  max-width: 100%;
+  color: var(--inkra-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.docs-code .token-comment,
+.docs-code .token-prolog { color: var(--inkra-ink-muted); }
+.docs-code .token-keyword,
+.docs-code .token-tag { color: var(--inkra-danger); }
+.docs-code .token-function,
+.docs-code .token-class-name { color: var(--inkra-info-foreground); }
+.docs-code .token-attr-name,
+.docs-code .token-property { color: var(--inkra-info-foreground); }
+.docs-code .token-string,
+.docs-code .token-attr-value { color: var(--inkra-success-foreground); }
+.docs-code .token-number,
+.docs-code .token-boolean { color: var(--inkra-warning-foreground); }
+.docs-code .token-punctuation,
+.docs-code .token-operator { color: var(--inkra-ink); }
+@media (forced-colors: active) {
+  .docs-code .inkra-pencil-text { color: CanvasText; }
+}

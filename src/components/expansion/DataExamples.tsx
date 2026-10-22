@@ -25,7 +25,9 @@ interface NoteRow {
   items: number;
 }
 
-const folderIcon = [{ d: 'M 3 7 L 9 7 L 11 10 L 21 10 L 21 19 L 3 19 Z' }] as const;
+// Lucide Folder and FolderOpen geometry, rendered by the shared pencil engine.
+const folderIcon = [{ d: 'M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z' }] as const;
+const folderOpenIcon = [{ d: 'm6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2' }] as const;
 const fileIcon = [{ d: 'M 6 3 L 15 3 L 20 8 L 20 21 L 6 21 Z M 15 3 L 15 8 L 20 8' }] as const;
 
 function DataTableExamples() {
@@ -176,17 +178,28 @@ function TreeExamples() {
   const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(new Set<TreeKey>(['drafts']));
   const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(new Set<TreeKey>(['workspace', 'assets']));
   const [disableArchive, setDisableArchive] = useState(true);
+  const [disclosureStyle, setDisclosureStyle] = useState<'folder' | 'chevron'>('folder');
   const selectedText = selectedKeys === 'all' ? '*' : [...selectedKeys].map(String).join(', ') || text.nothing;
   const selectedKeysCode = selectedKeys === 'all' ? "'all'" : `new Set<TreeKey>(${JSON.stringify([...selectedKeys])})`;
   const expandedKeysCode = `new Set<TreeKey>(${JSON.stringify([...expandedKeys])})`;
-  const icon = (paths: typeof folderIcon | typeof fileIcon, seed: string) => <PencilIcon paths={paths} size={22} sourceSize={24} seed={seed} />;
-  const itemContent = (title: string, description: string | undefined, itemIcon: ReactNode) => <Tree.ItemContent icon={itemIcon} expandLabel={text.expand} collapseLabel={text.collapse}>
+  const icon = (paths: readonly { d: string }[], seed: string) => <PencilIcon paths={paths} size={22} sourceSize={24} seed={seed} />;
+  const itemContent = (title: string, description: string | undefined, itemIcon: ReactNode, branch = false) => <Tree.ItemContent
+    icon={branch && disclosureStyle === 'folder' ? undefined : itemIcon}
+    disclosureIcon={branch && disclosureStyle === 'folder' ? ({ isExpanded }) => <span data-folder-state={isExpanded ? 'open' : 'closed'}>{icon(isExpanded ? folderOpenIcon : folderIcon, title)}</span> : undefined}
+    expandLabel={text.expand} collapseLabel={text.collapse}>
     <Tree.ItemTitle>{title}</Tree.ItemTitle>
     {description && <Tree.ItemDescription>{description}</Tree.ItemDescription>}
   </Tree.ItemContent>;
-  const basicCode = `<Tree.Root aria-label="${text.label}" defaultExpandedKeys={['workspace']} defaultSelectedKeys={['drafts']}>
+  const iconCode = `const folderIcon = ${JSON.stringify(folderIcon)};
+const folderOpenIcon = ${JSON.stringify(folderOpenIcon)};
+`;
+  const branchProps = disclosureStyle === 'folder'
+    ? ' disclosureIcon={({ isExpanded }) => <PencilIcon paths={isExpanded ? folderOpenIcon : folderIcon} size={22} sourceSize={24} />}'
+    : ' icon={<PencilIcon paths={folderIcon} size={22} sourceSize={24} />}';
+  const basicCode = `${iconCode}
+<Tree.Root aria-label="${text.label}" defaultExpandedKeys={['workspace']} defaultSelectedKeys={['drafts']}>
   <Tree.Item id="workspace" textValue="${text.workspace}">
-    <Tree.ItemContent>
+    <Tree.ItemContent${branchProps}>
       <Tree.ItemTitle>${text.workspace}</Tree.ItemTitle>
       <Tree.ItemDescription>${text.workspaceDescription}</Tree.ItemDescription>
     </Tree.ItemContent>
@@ -198,7 +211,8 @@ function TreeExamples() {
     </Tree.Item>
   </Tree.Item>
 </Tree.Root>`;
-  const code = `const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(${expandedKeysCode});
+  const code = `${iconCode}
+const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(${expandedKeysCode});
 const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCode});
 
 <Tree.Root
@@ -211,7 +225,7 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
   disabledKeys={${disableArchive ? "['archive']" : '[]'}}
 >
   <Tree.Item id="workspace" textValue="${text.workspace}">
-    <Tree.ItemContent>
+    <Tree.ItemContent${branchProps}>
       <Tree.ItemTitle>${text.workspace}</Tree.ItemTitle>
       <Tree.ItemDescription>${text.workspaceDescription}</Tree.ItemDescription>
     </Tree.ItemContent>
@@ -232,17 +246,19 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
     </Tree.Item>
   </Tree.Item>
   <Tree.Item id="assets" textValue="${text.assets}">
-    <Tree.ItemContent><Tree.ItemTitle>${text.assets}</Tree.ItemTitle></Tree.ItemContent>
+    <Tree.ItemContent${branchProps}><Tree.ItemTitle>${text.assets}</Tree.ItemTitle></Tree.ItemContent>
     <Tree.Item id="images" textValue="${text.images}">
       <Tree.ItemContent><Tree.ItemTitle>${text.images}</Tree.ItemTitle></Tree.ItemContent>
     </Tree.Item>
   </Tree.Item>
 </Tree.Root>`;
 
-  return <div className="data-examples">
+  return <div className="data-examples data-examples--tree">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '交互', content: <>
         <DocsSelect label={text.selectionMode} value={selectionMode} onValueChange={value => setSelectionMode(value as typeof selectionMode)} options={[["none", text.none], ["single", text.single], ["multiple", text.multiple]]} />
+        <DocsSelect label={zh ? '展开图标' : 'Disclosure icon'} value={disclosureStyle} onValueChange={value => setDisclosureStyle(value as typeof disclosureStyle)}
+          options={[['folder', zh ? '文件夹' : 'Folder'], ['chevron', zh ? '箭头' : 'Chevron']]} />
       </> },
       { label: '状态', content: <Switch label={text.disableArchive} checked={disableArchive} onCheckedChange={setDisableArchive} /> },
     ]} />}>
@@ -258,13 +274,13 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
           disabledKeys={disableArchive ? ['archive'] : []}
         >
           <Tree.Item id="workspace" textValue={text.workspace}>
-            {itemContent(text.workspace, text.workspaceDescription, icon(folderIcon, 'workspace'))}
+            {itemContent(text.workspace, text.workspaceDescription, icon(folderIcon, 'workspace'), true)}
             <Tree.Item id="drafts" textValue={text.drafts}>{itemContent(text.drafts, text.draftsDescription, icon(fileIcon, 'drafts'))}</Tree.Item>
             <Tree.Item id="published" textValue={text.published}>{itemContent(text.published, undefined, icon(fileIcon, 'published'))}</Tree.Item>
             <Tree.Item id="archive" textValue={text.archive}>{itemContent(text.archive, text.archiveDescription, icon(folderIcon, 'archive'))}</Tree.Item>
           </Tree.Item>
           <Tree.Item id="assets" textValue={text.assets}>
-            {itemContent(text.assets, undefined, icon(folderIcon, 'assets'))}
+            {itemContent(text.assets, undefined, icon(folderIcon, 'assets'), true)}
             <Tree.Item id="images" textValue={text.images}>{itemContent(text.images, undefined, icon(fileIcon, 'images'))}</Tree.Item>
           </Tree.Item>
         </Tree.Root>
@@ -274,7 +290,7 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
     <ComponentExample title={text.basic} code={basicCode}>
       <Tree.Root className="data-demo-tree" aria-label={text.label} defaultExpandedKeys={['workspace']} defaultSelectedKeys={['drafts']}>
         <Tree.Item id="workspace" textValue={text.workspace}>
-          {itemContent(text.workspace, text.workspaceDescription, icon(folderIcon, 'basic-workspace'))}
+          {itemContent(text.workspace, text.workspaceDescription, icon(folderIcon, 'basic-workspace'), true)}
           <Tree.Item id="drafts" textValue={text.drafts}>{itemContent(text.drafts, undefined, icon(fileIcon, 'basic-drafts'))}</Tree.Item>
           <Tree.Item id="published" textValue={text.published}>{itemContent(text.published, undefined, icon(fileIcon, 'basic-published'))}</Tree.Item>
         </Tree.Item>
@@ -315,6 +331,8 @@ export const dataDocs: Record<string, ExpansionDoc> = {
       ['Tree.Root', 'selectionMode, selectedKeys, expandedKeys, disabledKeys and matching default/onChange props'],
       ['Tree.Item', 'stable id, required textValue, isDisabled and nested Tree.Item children'],
       ['Tree.ItemContent', 'disclosure, indentation, optional icon, localized expand/collapse labels'],
+      ['Tree.ItemContent.disclosureIcon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '替换展开图标；根据 isExpanded 显示打开或关闭的文件夹。不传时使用无外框箭头。', 'Replace the disclosure icon; use isExpanded to switch open/closed folders. Defaults to an unframed chevron.'],
+      ['Tree.ItemContent.icon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '可选的行图标，也可读取展开、选择、禁用与子项状态。用文件夹作为展开图标时可以省略，避免重复。', 'Optional row icon, with expansion, selection, disabled and child state. Omit it when the folder already serves as the disclosure icon.'],
       ['Tree.ItemTitle / Description', 'visible selectable text slots'],
     ],
     a11y: {

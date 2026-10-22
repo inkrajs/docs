@@ -17,6 +17,7 @@ const browser = await chromium.launch();
 const errors = [];
 
 async function assertAlignment(nav) {
+  assert(await nav.locator('.nav-group + .nav-group').evaluateAll(nodes => nodes.every(node => getComputedStyle(node).marginTop === '0px')), 'navigation groups do not add gaps');
   const positions = await nav.locator('.nav-group-label:visible, .nav-link:visible').evaluateAll(nodes => nodes.map(node => {
     const group = node.closest('.nav-group');
     const parent = node.classList.contains('nav-link') ? group : group.parentElement.closest('.nav-group');

@@ -30,6 +30,13 @@ try {
         await page.goto(`${base}/docs/${route}`);
         await page.locator(target).first().waitFor();
         await gap(page, '.page-heading__divider', target);
+        if (route === 'getting-started') {
+          const widths = await page.locator('.getting-started-content').evaluate(node => ({
+            content: node.getBoundingClientRect().width,
+            paragraph: node.querySelector('p').getBoundingClientRect().width,
+          }));
+          assert(Math.abs(widths.content - widths.paragraph) < 1, 'getting-started paragraph fills the content width');
+        }
         assert.equal(await page.locator('.page-heading + .section-divider').count(), 0, 'no duplicate heading divider');
         if (route === 'design-standard') {
           for (const tab of await page.locator('.standard-tabs [role="tab"]').all()) {

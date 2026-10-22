@@ -24,14 +24,17 @@ try {
     const { navigationDocs } = await import('/src/components/expansion/NavigationExamples.tsx');
     const { dataDocs } = await import('/src/components/expansion/DataExamples.tsx');
     const { flowsDocs } = await import('/src/components/expansion/FlowsExamples.tsx');
+    const { layoutDocs } = await import('/src/components/expansion/LayoutExamples.tsx');
     const introductions = { ...componentIntroductions };
-    for (const doc of Object.values({ ...feedbackDocs, ...overlaysDocs, ...datesDocs, ...navigationDocs, ...dataDocs, ...flowsDocs })) {
+    for (const doc of Object.values({ ...feedbackDocs, ...overlaysDocs, ...datesDocs, ...navigationDocs, ...dataDocs, ...flowsDocs, ...layoutDocs })) {
       introductions[doc.name] = doc.intro;
     }
     return ['Button', ...Object.values(foundationNames)].map(name => ({ name, ...introductions[name] }));
   });
-  assert.equal(coverage.length, 43);
-  assert(coverage.some(component => component.name === 'Breadcrumb'));
+  assert.equal(new Set(coverage.map(component => component.name)).size, coverage.length);
+  for (const name of ['Button', 'Breadcrumb', 'Stack', 'Flex', 'Grid', 'Container', 'Layout']) {
+    assert(coverage.some(component => component.name === name), `Introduction coverage includes ${name}`);
+  }
   for (const intro of coverage) assert(intro.zh && intro.en, `Bilingual introduction: ${intro.name}`);
   await page.locator('.page-heading > p').waitFor();
   await page.locator('.preview-stage:visible input').first().fill('PRIVATE-DEMO-SENTINEL');
@@ -64,5 +67,5 @@ try {
   const fallback = page.getByRole('dialog', { name: 'Input · Markdown', exact: true });
   await fallback.waitFor();
   assert.match(await fallback.locator('pre').textContent(), /# Input/);
-  console.log('PASS all 43 bilingual descriptions; Markdown, download, clipboard fallback and four assistant destinations (intercepted, no external data sent)');
+  console.log(`PASS all ${coverage.length} bilingual descriptions; Markdown, download, clipboard fallback and four assistant destinations (intercepted, no external data sent)`);
 } finally { await browser.close(); }

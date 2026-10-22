@@ -3,6 +3,7 @@ import { PencilLine, PencilSurface } from '@inkra/react';
 import { __iconData as codeIcon } from 'lucide-react/dist/esm/icons/code-xml.mjs';
 import { __iconData as chevronDownIcon } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
 import { DocsIcon } from './DocsIcon';
+import { CodeBlock } from './CodeBlock';
 import { PencilText, useLocale } from '../i18n';
 import './ComponentExample.css';
 
@@ -20,7 +21,7 @@ export function ComponentExample({ title, code, children }: { title: string; cod
         <PencilText>{t(expanded ? '隐藏源码' : '查看源码')}</PencilText>
         <span style={{ transform: expanded ? 'rotate(180deg)' : undefined }}><DocsIcon data={chevronDownIcon} size={16} /></span>
       </button>
-      {expanded && <pre className="component-example__code"><code>{code}</code></pre>}
+      {expanded && <CodeBlock className="component-example__code" code={code} />}
     </PencilSurface>
   </section>;
 }

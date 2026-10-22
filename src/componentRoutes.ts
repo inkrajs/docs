@@ -1,4 +1,4 @@
-export const expansionComponents = ['toast', 'alert-dialog', 'drawer', 'date-picker', 'time-picker', 'pagination', 'empty', 'toggle-group', 'command', 'upload', 'data-table', 'tree', 'steps', 'timeline'] as const;
+export const expansionComponents = ['toast', 'alert-dialog', 'drawer', 'date-picker', 'time-picker', 'pagination', 'empty', 'toggle-group', 'command', 'upload', 'data-table', 'tree', 'steps', 'timeline', 'stack', 'flex', 'grid', 'container', 'layout'] as const;
 export type ExpansionComponent = typeof expansionComponents[number];
 
 export const foundationComponents = ['icon', 'popover', 'overlay', 'tooltip', 'dropdown-menu', 'field', 'input', 'input-number', 'textarea', 'select', 'slider', 'checkbox', 'radio-group', 'switch', 'tabs', 'breadcrumb', 'accordion', 'badge', 'separator', 'skeleton', 'progress', 'alert', 'avatar', 'card', 'table', 'calendar', 'day-agenda', 'journey-map', ...expansionComponents] as const;
@@ -14,11 +14,13 @@ export const foundationNames: Record<typeof foundationComponents[number], string
   toast: 'Toast', 'alert-dialog': 'AlertDialog', drawer: 'Drawer', 'date-picker': 'DatePicker',
   'time-picker': 'TimePicker', pagination: 'Pagination', empty: 'Empty', 'toggle-group': 'ToggleGroup',
   command: 'Command', upload: 'Upload', 'data-table': 'DataTable', tree: 'Tree', steps: 'Steps', timeline: 'Timeline',
+  stack: 'Stack', flex: 'Flex', grid: 'Grid', container: 'Container', layout: 'Layout',
 };
 
 // Ordered for discovery by purpose, independently of route registration order.
 export const componentNavigationGroups = [
   { label: '通用', components: ['button', 'icon', 'separator'] },
+  { label: '布局', components: ['stack', 'flex', 'grid', 'container', 'layout'] },
   { label: '表单输入', components: ['input', 'select', 'textarea', 'input-number', 'checkbox', 'radio-group', 'switch', 'date-picker', 'time-picker', 'slider', 'toggle-group', 'upload', 'field'] },
   { label: '导航菜单', components: ['tabs', 'dropdown-menu', 'breadcrumb', 'pagination', 'command', 'steps'] },
   { label: '数据展示', components: ['card', 'table', 'data-table', 'badge', 'avatar', 'accordion', 'tree', 'timeline'] },

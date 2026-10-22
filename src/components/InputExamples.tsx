@@ -278,11 +278,19 @@ export function InputExamples() {
 }
 
 export function TextareaExamples() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [value, setValue] = useState('');
   const [size, setSize] = useState<InputSize>('md');
   const [rows, setRows] = useState(3);
   const [maxLength, setMaxLength] = useState('120');
+  const [countMode, setCountMode] = useState<'remaining' | 'fraction' | 'progress' | 'none'>('remaining');
+  const [countDisplay, setCountDisplay] = useState<'auto' | 'always'>('auto');
+  const [countThreshold, setCountThreshold] = useState('0.8');
+  const [resizable, setResizable] = useState(false);
+  const zh = locale === 'zh-CN';
+  const countLabel = ({ remaining }: { remaining: number }) => zh
+    ? remaining < 0 ? `超出 ${-remaining}` : `剩余 ${remaining}`
+    : remaining < 0 ? `${-remaining} over limit` : `${remaining} remaining`;
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [invalid, setInvalid] = useState(false);
@@ -297,6 +305,9 @@ const [status, setStatus] = useState('');
 }}>
   <Field label=${quote(t('笔记内容'))}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t('请输入笔记内容'))}` : ''}>
     <Textarea name="notes" size="${size}" rows={${rows}}${maxLength !== 'none' ? ` maxLength={${maxLength}}` : ''}
+      countMode="${countMode}" countDisplay="${countDisplay}" countThreshold={${countThreshold}} resize="${resizable ? 'vertical' : 'none'}"
+      resizeLabel=${quote(zh ? '调整输入框高度' : 'Resize text area')}
+      ${zh ? 'getCountLabel={({ remaining }) => remaining < 0 ? `超出 ${-remaining}` : `剩余 ${remaining}`}' : ''}
       value={value} onChange={event => setValue(event.target.value)}
       placeholder=${quote(t('写下你的想法'))}${readOnly ? ' readOnly' : ''}${disabled ? ' disabled' : ''}
     />
@@ -312,6 +323,15 @@ const [status, setStatus] = useState('');
         <DocsSelect label="行数" value={String(rows)} onValueChange={next => setRows(Number(next))} options={[["2", "2"], ["3", "3"], ["5", "5"]]} />
         <DocsSelect label="最大长度" value={maxLength} onValueChange={setMaxLength} options={[["none", "不限"], ["40", "40"], ["120", "120"], ["240", "240"]]} />
       </> },
+      { label: '交互', content: <>
+        <DocsSelect label={zh ? '长度提示' : 'Length indicator'} value={countMode} onValueChange={next => setCountMode(next as typeof countMode)}
+          options={[['remaining', zh ? '剩余字数' : 'Remaining'], ['fraction', zh ? '已输入 / 上限' : 'Count / limit'], ['progress', zh ? '进度条' : 'Progress'], ['none', zh ? '隐藏' : 'Hidden']]} />
+        <DocsSelect label={zh ? '显示时机' : 'Visibility'} value={countDisplay} onValueChange={next => setCountDisplay(next as typeof countDisplay)}
+          options={[['auto', zh ? '接近上限时' : 'Near the limit'], ['always', zh ? '始终显示' : 'Always']]} />
+        {countDisplay === 'auto' && <DocsSelect label={zh ? '提示阈值' : 'Threshold'} value={countThreshold} onValueChange={setCountThreshold}
+          options={[['0.5', '50%'], ['0.8', '80%'], ['0.9', '90%'], ['1', '100%']]} />}
+        <Switch label={zh ? '手绘高度调节' : 'Pencil resize handle'} checked={resizable} onCheckedChange={setResizable} />
+      </> },
       { label: '状态', content: <>
         <Switch label={t('必填')} checked={required} onCheckedChange={setRequired} />
         <Switch label={t('只读')} checked={readOnly} onCheckedChange={setReadOnly} />
@@ -320,15 +340,16 @@ const [status, setStatus] = useState('');
       </> },
     ]} />}>
       <form className="component-demo-form" noValidate onReset={() => { setValue(''); setStatus(''); }} onSubmit={event => { event.preventDefault(); setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))); }}>
-        <Field label={t('笔记内容')} required={required} invalid={invalid} error={invalid ? t('请输入笔记内容') : undefined}><Textarea name="notes" size={size} rows={rows} maxLength={maxLength === 'none' ? undefined : Number(maxLength)} value={value} onChange={event => setValue(event.target.value)} placeholder={t('写下你的想法')} readOnly={readOnly} disabled={disabled} /></Field>
+        <Field label={t('笔记内容')} required={required} invalid={invalid} error={invalid ? t('请输入笔记内容') : undefined}><Textarea name="notes" size={size} rows={rows} maxLength={maxLength === 'none' ? undefined : Number(maxLength)} value={value} onChange={event => setValue(event.target.value)} placeholder={t('写下你的想法')} readOnly={readOnly} disabled={disabled}
+          countMode={countMode} countDisplay={countDisplay} countThreshold={Number(countThreshold)} getCountLabel={countLabel} resize={resizable ? 'vertical' : 'none'} resizeLabel={zh ? '调整输入框高度' : 'Resize text area'} /></Field>
         <div className="component-demo-row"><Button type="submit" disabled={disabled}>{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
         <output aria-live="polite" className="component-demo-status input-examples__status">{status}</output>
       </form>
     </ComponentPlayground>
-    <ComponentExample title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} defaultValue="Inkra" /></Field>`}>
+    <ComponentExample title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
       <div className="input-examples__fields">
-        <Field label={t('简短备注')} description={t('最多 40 个 UTF-16 码元')}><Textarea rows={2} maxLength={40} placeholder={t('写下你的想法')} /></Field>
-        <Field label={t('笔记内容')} description={t('最多 120 个 UTF-16 码元')}><Textarea rows={5} maxLength={120} defaultValue="Inkra" /></Field>
+        <Field label={t('简短备注')} description={t('最多 40 个 UTF-16 码元')}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder={t('写下你的想法')} /></Field>
+        <Field label={t('笔记内容')} description={t('最多 120 个 UTF-16 码元')}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>
       </div>
     </ComponentExample>
     <ComponentExample title="状态" code={`<Field label=${quote(t('只读'))}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field>\n<Field label=${quote(t('禁用'))} disabled><Textarea rows={3} defaultValue="Inkra" /></Field>`}>

@@ -6,6 +6,7 @@ import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentPageTabs, type ComponentPageTab } from './ComponentPageTabs';
 import { PageHeading } from './PageHeading';
+import { ApiTable } from './ApiTable';
 import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.mjs';
 import { __iconData as sunIcon } from 'lucide-react/dist/esm/icons/sun.mjs';
 import { __iconData as moonIcon } from 'lucide-react/dist/esm/icons/moon.mjs';
@@ -182,7 +183,17 @@ const apiRows: Record<Exclude<FoundationComponent, ExpansionComponent>, [string,
     ['minLength / maxLength', 'number; native UTF-16 code-unit limits'],
     ['ref / className / style', 'native HTMLInputElement / native input class / native input style'],
   ],
-  textarea: [['size', 'sm | md (default) | lg'], ['value / defaultValue', 'string'], ['onChange', 'ChangeEventHandler<HTMLTextAreaElement>'], ['rows / cols', 'number'], ['minLength / maxLength', 'number; native UTF-16 code-unit limits'], ['disabled / readOnly / required / invalid', 'boolean; inherits Field state'], ['name / form / placeholder / autoComplete', 'native textarea props'], ['ref', 'HTMLTextAreaElement']],
+  textarea: [
+    ['size', 'sm | md (default) | lg'], ['value / defaultValue', 'string'],
+    ['onChange', 'ChangeEventHandler<HTMLTextAreaElement>'], ['rows / cols', 'number'],
+    ['minLength / maxLength', 'number; native UTF-16 code-unit limits'],
+    ['countMode', 'remaining (default) | fraction | progress | none'],
+    ['countDisplay', 'auto (default) | always'], ['countThreshold', 'number (0..1, default 0.8)'],
+    ['getCountLabel', '({ count, maxLength, remaining }: TextareaCountDetails) => string'],
+    ['resize', 'none (default) | vertical'], ['resizeLabel', 'string'],
+    ['disabled / readOnly / required / invalid', 'boolean; inherits Field state'],
+    ['name / form / placeholder / autoComplete', 'native textarea props'], ['ref', 'HTMLTextAreaElement'],
+  ],
   checkbox: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['indeterminate', 'boolean'], ['label / description', 'ReactNode'], ['name / value', 'string']],
   'radio-group': [['value / defaultValue', 'string'], ['onValueChange', '(value: string) => void'], ['variant', 'radio | segmented'], ['orientation', 'horizontal | vertical'], ['RadioGroupItem.icon', 'ReactNode'], ['name', 'string'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean']],
   switch: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['name / value', 'string']],
@@ -224,8 +235,8 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
       {activeTab === 'preview' && component !== 'breadcrumb' && <>
       {component === 'icon' ? <IconExamples /> : component === 'input-number' ? <InputNumberExamples /> : component === 'slider' ? <SliderExamples /> : component === 'calendar' || component === 'day-agenda' || component === 'journey-map' ? <TravelExamples key={component} kind={component} /> : component === 'dropdown-menu' || component === 'alert' || component === 'avatar' || component === 'card' || component === 'table' ? <ContentExamples kind={component} /> : component === 'tooltip' || component === 'accordion' || component === 'badge' || component === 'separator' || component === 'skeleton' || component === 'progress' ? <MoreExamples kind={component} /> : component === 'tabs' ? <TabsExamples /> : component === 'select' ? <SelectExamples /> : component === 'popover' ? <PopoverExamples /> : component === 'overlay' ? <OverlayExamples /> : component === 'field' || component === 'input' || component === 'textarea' ? <FormInputExamples key={component} kind={component} /> : <SelectionExamples key={component} kind={component} />}
       </>}
-      {activeTab === 'api' && <section className="component-api"><PencilText as="h2">API</PencilText><table><thead><tr><th>{t('属性')}</th><th>{t('类型')}</th></tr></thead><tbody>{apiRows[component].map(([name, type]) => <tr key={name}><td><code>{name}</code></td><td><code>{type}</code></td></tr>)}</tbody></table></section>}
-      {activeTab === 'accessibility' && <section className="component-api"><PencilText as="h2">无障碍</PencilText><PencilText as="p">{additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。')}</PencilText></section>}
+      {activeTab === 'api' && <section className="component-api"><ApiTable rows={apiRows[component]} component={component} label={`${foundationNames[component]} API`} /></section>}
+      {activeTab === 'accessibility' && <section className="component-api"><PencilText as="p">{additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。')}</PencilText></section>}
     </section>
   </article>;
 }

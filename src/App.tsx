@@ -40,6 +40,9 @@ import { pageTitle } from './pageTitle';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
 import { ComponentPageTabs } from './components/ComponentPageTabs';
 import { PageHeading } from './components/PageHeading';
+import { ApiTable } from './components/ApiTable';
+import { CodeBlock } from './components/CodeBlock';
+import { CodeSample } from './components/CodeSample';
 import { HomePage } from './components/HomePage';
 import { PropertyTabs } from './components/PropertyTabs';
 import { __iconData as chevronDownIcon } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
@@ -626,7 +629,7 @@ function ComparisonGroup({ kind }: { kind: ExampleKind }) {
           </button>
           {showCode && <CopyButton code={example.code} onResult={setAnnouncement} />}
         </footer>
-        <div className="comparison-code" id={`comparison-code-${kind}`} hidden={!showCode}><pre><code>{example.code}</code></pre></div>
+        <div className="comparison-code" id={`comparison-code-${kind}`} hidden={!showCode}>{showCode && <CodeBlock code={example.code} />}</div>
       </PencilSurface>
       <span aria-live="polite" className="visually-hidden">{announcement}</span>
     </section>
@@ -640,12 +643,8 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
       <PageHeading title="快速开始" description="在 React 项目中引入 Inkra 的主题与组件，保留原生语义，再让彩铅材质增强界面。" />
       <section className="content-section getting-started-content">
         <PencilText as="h2" seed="install-heading">安装与样式</PencilText>
-        <PencilSurface className="code-sample" seed="install-command" variant="paper">
-          <pre><code>npm install @inkra/react</code></pre>
-        </PencilSurface>
-        <PencilSurface className="code-sample" seed="install-code" variant="paper">
-          <pre><code>{`import '@inkra/react/tokens.css';\nimport '@inkra/react/styles.css';\nimport { Button } from '@inkra/react';`}</code></pre>
-        </PencilSurface>
+        <CodeSample seed="install-command" language="bash" code="npm install @inkra/react" />
+        <CodeSample seed="install-code" code={`import '@inkra/react/tokens.css';\nimport '@inkra/react/styles.css';\nimport { Button } from '@inkra/react';`} />
         <PencilText as="p" seed="font-note">文档站使用与参考站相同的 Yozai Light 本地子集。该子集仅含 706 个参考站字符，其余文字按系统手写与楷体顺序回退。</PencilText>
         <Button onClick={() => onNavigate('/components/button')} seed="start-button">{t("查看 Button")}</Button>
       </section>
@@ -721,7 +720,7 @@ function ButtonPlayground() {
               </Button>
               <PencilText className="preview-feedback" seed={`preview-feedback-${clicks}`}>{clicks ? `已保存 ${clicks} 次` : '尚未保存'}</PencilText>
             </div>
-            <div className="code-panel" hidden={view !== 'code'} aria-labelledby="button-demo-tab-code" id="button-demo-panel-code" role="tabpanel"><pre><code>{code}</code></pre></div>
+            <div className="code-panel" hidden={view !== 'code'} aria-labelledby="button-demo-tab-code" id="button-demo-panel-code" role="tabpanel">{view === 'code' && <CodeBlock code={code} />}</div>
             </div>
             <PencilLine className="preview-controls-divider" orientation={compactLayout ? 'horizontal' : 'vertical'} seed="preview-controls-divider" />
             <div className="preview-controls" aria-label={t("Button 属性控制")}>
@@ -774,28 +773,29 @@ function ButtonPage({ activeTab, onTabChange }: { activeTab: ButtonTab; onTabCha
         <section aria-labelledby="button-tab-api" className="content-section" id="button-panel-api" role="tabpanel">
           <PencilText as="p" seed="api-intro">Button 透传原生 button 属性；ButtonLink 透传原生 anchor 属性。</PencilText>
           <PencilText as="h2" seed="button-api-title">Button / ButtonLink</PencilText>
-          <div className="api-table-wrap"><table><thead><tr><th>{t("属性")}</th><th>{t("类型")}</th><th>{t("默认值")}</th><th>{t("说明")}</th></tr></thead><tbody>
-            <tr><th><code>variant</code></th><td><code>'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link'</code></td><td><code>'primary'</code></td><td>{t("视觉与语义层级")}</td></tr>
-            <tr><th><code>size</code></th><td><code>'xs' | 'sm' | 'md' | 'lg' | 'icon-xs' | 'icon-sm' | 'icon' | 'icon-lg'</code></td><td><code>'md'</code></td><td>{t("文字或纯图标尺寸")}</td></tr>
-            <tr><th><code>startIcon</code></th><td><code>ReactNode</code></td><td>{t("无")}</td><td>{t("逻辑起始侧图标")}</td></tr>
-            <tr><th><code>endIcon</code></th><td><code>ReactNode</code></td><td>{t("无")}</td><td>{t("逻辑结束侧图标")}</td></tr>
-            <tr><th><code>loading</code></th><td><code>boolean</code></td><td><code>false</code></td><td>{t("阻止重复触发")}</td></tr>
-            <tr><th><code>fullWidth</code></th><td><code>boolean</code></td><td><code>false</code></td><td>{t('撑满宽度')}</td></tr>
-            <tr><th><code>align</code></th><td><code>'start' | 'center' | 'end'</code></td><td><code>'center'</code></td><td>{t('内容对齐')}</td></tr>
-            <tr><th><code>loadingPosition</code></th><td><code>'start' | 'center' | 'end'</code></td><td><code>'center'</code></td><td>{t('两侧加载保留文字和固定槽位；纯图标始终居中。')}</td></tr>
-            <tr><th><code>loadingIndicator</code></th><td><code>ReactNode</code></td><td>{t('默认加载图标')}</td><td>{t('仅装饰，不放交互内容')}</td></tr>
-            <tr><th><code>disabled</code></th><td><code>boolean</code></td><td><code>false</code></td><td>{t("禁用原生按钮")}</td></tr>
-            <tr><th><code>seed</code></th><td><code>string | number</code></td><td>{t("自动生成")}</td><td>{t("稳定材质采样")}</td></tr>
-          </tbody></table></div>
+          <div className="api-table-wrap"><ApiTable label="Button / ButtonLink API" rows={[
+            ['variant', "'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link'", "'primary'", t('视觉与语义层级')],
+            ['size', "'xs' | 'sm' | 'md' | 'lg' | 'icon-xs' | 'icon-sm' | 'icon' | 'icon-lg'", "'md'", t('文字或纯图标尺寸')],
+            ['startIcon', 'ReactNode', t('无'), t('逻辑起始侧图标')],
+            ['endIcon', 'ReactNode', t('无'), t('逻辑结束侧图标')],
+            ['loading', 'boolean', 'false', t('阻止重复触发')],
+            ['fullWidth', 'boolean', 'false', t('撑满宽度')],
+            ['align', "'start' | 'center' | 'end'", "'center'", t('内容对齐')],
+            ['loadingPosition', "'start' | 'center' | 'end'", "'center'", t('两侧加载保留文字和固定槽位；纯图标始终居中。')],
+            ['loadingIndicator', 'ReactNode', t('默认加载图标'), t('仅装饰，不放交互内容')],
+            ['disabled', 'boolean', 'false', t('禁用原生按钮')],
+            ['seed', 'string | number', t('自动生成'), t('稳定材质采样')],
+          ]} /></div>
           <PencilText as="h2" seed="button-link-api-title">ButtonLink</PencilText>
           <p><PencilText seed="button-link-api-description">渲染原生锚点；disabled 或 loading 时移除 href、退出 Tab 顺序并阻止激活。</PencilText></p>
           <PencilText as="h2" seed="button-group-api-title">ButtonGroup</PencilText>
-          <div className="api-table-wrap"><table><thead><tr><th>{t("属性")}</th><th>{t("类型")}</th><th>{t("默认值")}</th><th>{t("说明")}</th></tr></thead><tbody><tr><th><code>orientation</code></th><td><code>'horizontal' | 'vertical'</code></td><td><code>'horizontal'</code></td><td>{t("设置分组方向；组件渲染")}<code>role="group"</code></td></tr>
-            <tr><th><code>size / variant</code></th><td><code>ButtonSize / ButtonVariant</code></td><td>{t('未设置')}</td><td>{t('子按钮可覆盖尺寸和外观')}</td></tr>
-            <tr><th><code>disabled</code></th><td><code>boolean</code></td><td><code>false</code></td><td>{t('禁用组内按钮和链接，子项不可解除')}</td></tr>
-            <tr><th><code>fullWidth</code></th><td><code>boolean</code></td><td><code>false</code></td><td>{t('撑满宽度')}</td></tr>
-            <tr><th><code>equalWidth</code></th><td><code>boolean</code></td><td><code>false</code></td><td>{t('等宽按钮；窄屏保留局部滚动')}</td></tr>
-          </tbody></table></div>
+          <div className="api-table-wrap"><ApiTable label="ButtonGroup API" rows={[
+            ['orientation', "'horizontal' | 'vertical'", "'horizontal'", `${t('设置分组方向；组件渲染')}role="group"`],
+            ['size / variant', 'ButtonSize / ButtonVariant', t('未设置'), t('子按钮可覆盖尺寸和外观')],
+            ['disabled', 'boolean', 'false', t('禁用组内按钮和链接，子项不可解除')],
+            ['fullWidth', 'boolean', 'false', t('撑满宽度')],
+            ['equalWidth', 'boolean', 'false', t('等宽按钮；窄屏保留局部滚动')],
+          ]} /></div>
         </section>
       ) : (
         <section aria-labelledby="button-tab-accessibility" className="content-section" id="button-panel-accessibility" role="tabpanel">

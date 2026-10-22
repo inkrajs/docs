@@ -90,6 +90,30 @@ mobile, delayed fonts, runtime Latin glyph reuse, parameter invalidation,
 offscreen deferral and readable canvas-failure fallback. The font is preloaded;
 there is no pre-rendered alphabet asset or page-wide text loading gate.
 
+API documentation shares the installed Inkra Table and PencilText components.
+Code examples share a Prism-tokenized pencil CodeBlock, with theme-aware syntax
+colors and unchanged selectable/copyable source. `verify-docs-code.mjs` checks
+both API layouts, source fidelity, escaping, dark/mobile layouts and forced colors.
+Standalone Getting Started snippets use Card headers with language icons/names
+and copy actions. `verify-code-samples.mjs` checks copying, denied clipboard access
+and narrow-screen layout without adding duplicate headers to playgrounds.
+
+Editable lettering paints synchronously through a private offscreen buffer and
+bounded per-editor glyph cache. Committed text keeps its pencil texture during
+IME composition; the preedit range uses native-style underlined text. The native
+control retains input, caret and selection ownership. Chromium protocol tests in
+`verify-editable-composition.mjs` cover commit/cancel/replacement, controlled and
+uncontrolled values, pixel stability and forced-color fallback. These are not
+automated acceptance of the macOS system candidate window.
+
+Every API row includes a Chinese and English property description; the contract
+test checks coverage as APIs grow. Layout primitives have their own navigation
+category and interactive pages. Textarea supports near-limit or always-visible
+remaining/fraction/progress indicators and an optional pencil resize handle.
+Selection stays native without hiding editable text or doubling painted glyphs.
+Regression checks include `verify-textarea-selection.mjs`, `verify-layout.mjs`
+and `verify-tree-timeline.mjs`.
+
 Build checks the candidate, TypeScript, Vite and static route entrypoints.
 Push, PR and manual CI install a pinned registry release directly. For a local
 candidate they rebuild the exact product commit in library-candidate.json and

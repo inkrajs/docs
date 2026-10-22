@@ -6,7 +6,7 @@ const base = process.env.INKRA_URL || 'http://127.0.0.1:4180';
 const errors = [];
 page.on('pageerror', error => errors.push(error.message));
 const ready = async input => {
-  await input.locator('xpath=ancestor::span[contains(@class,"inkra-field-control-hit")]').evaluate(async element => {
+  await input.locator('xpath=ancestor::*[contains(@class,"inkra-field-control-hit")]').evaluate(async element => {
     const started = performance.now();
     while (element.getAttribute('data-pencil-editable-ready') !== 'true') {
       if (performance.now() - started > 5000) throw new Error('Editable canvas not ready');
@@ -26,8 +26,8 @@ try {
       element.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: true }));
     }, value);
     await page.waitForTimeout(50);
-    assert.equal(await input.evaluate(element => element.closest('.inkra-field-control-hit').hasAttribute('data-pencil-editable-ready')), false);
-    assert.notEqual(await input.evaluate(element => getComputedStyle(element).color), 'rgba(0, 0, 0, 0)');
+    assert.equal(await input.evaluate(element => element.closest('.inkra-field-control-hit').hasAttribute('data-pencil-editable-ready')), true);
+    assert.equal(await input.evaluate(element => getComputedStyle(element).color), 'rgba(0, 0, 0, 0)');
   }
   await input.evaluate(element => element.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true })));
   await ready(input);

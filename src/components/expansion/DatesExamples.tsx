@@ -115,7 +115,7 @@ function TimePickerExamples() {
   return <div className="dates-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
-        <DocsSelect label={zh ? '小时制偏好' : 'Hour-cycle hint'} value={hourCycle} onValueChange={next => setHourCycle(next as 'h12' | 'h24')} options={[["h24", zh ? '24 小时偏好' : 'Prefer 24 hour'], ["h12", zh ? '12 小时偏好' : 'Prefer 12 hour']]} />
+        <DocsSelect label={zh ? '小时制' : 'Hour cycle'} value={hourCycle} onValueChange={next => setHourCycle(next as 'h12' | 'h24')} options={[["h24", zh ? '24 小时' : '24 hour'], ["h12", zh ? '12 小时' : '12 hour']]} />
         <Switch label={zh ? '显示秒' : 'Show seconds'} checked={showSeconds} onCheckedChange={next => {
           setShowSeconds(next);
           setValue(current => next && current.length === 5 ? `${current}:00` : !next ? current.slice(0, 5) : current);
@@ -128,12 +128,12 @@ function TimePickerExamples() {
       </> },
     ]} />}>
       <div className="dates-examples__stage">
-        <Field label={zh ? '集合时间' : 'Meeting time'} description={zh ? '原生时间字段，保留浏览器校验' : 'Native time field with browser validation'}>
+        <Field label={zh ? '集合时间' : 'Meeting time'}>
           <TimePicker
             value={value}
             onValueChange={setValue}
             hourCycle={hourCycle}
-            locale={hourCycle === 'h12' ? 'en-US' : locale}
+            locale={locale}
             showSeconds={showSeconds}
             clearable={clearable}
             disabled={disabled}
@@ -141,14 +141,15 @@ function TimePickerExamples() {
             clearButtonLabel={zh ? '清空时间' : 'Clear time'}
           />
         </Field>
-        <output className="dates-examples__status" aria-live="polite">{value || (zh ? '空值' : 'Empty value')}</output>
       </div>
     </ComponentPlayground>
 
     <ComponentExample title={zh ? '基础时间选择' : 'Basic time selection'} code={`<Field label="${zh ? '出发时间' : 'Departure time'}">\n  <TimePicker defaultValue="09:30" />\n</Field>`}>
-      <Field label={zh ? '出发时间' : 'Departure time'}>
-        <TimePicker defaultValue="09:30" locale={locale} clearButtonLabel={zh ? '清空时间' : 'Clear time'} />
-      </Field>
+      <div className="dates-examples__stage">
+        <Field label={zh ? '出发时间' : 'Departure time'}>
+          <TimePicker defaultValue="09:30" locale={locale} clearButtonLabel={zh ? '清空时间' : 'Clear time'} />
+        </Field>
+      </div>
     </ComponentExample>
 
     <ComponentExample title={zh ? '边界、步进与秒' : 'Limits, steps, and seconds'} code={`<TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" />\n<TimePicker showSeconds defaultValue="09:30:15" />`}>
@@ -202,17 +203,23 @@ export const datesDocs: Record<string, ExpansionDoc> = {
       en: '"Be there soon" is not a time. Hours and minutes, please.',
     },
     api: [
-      ['value / defaultValue', "Native HH:mm or HH:mm:ss string; '' is empty"],
-      ['onValueChange', "(value, { reason: 'input' | 'clear' }) => void"],
-      ['hourCycle', "'h12' | 'h24' locale/display hint; user agent may override"],
-      ['showSeconds', 'Defaults step to 1 second'],
-      ['min / max / step', 'Native time constraints'],
-      ['name / form / required', 'Native form attributes'],
-      ['disabled / readOnly', 'Native control state'],
+      ['value / defaultValue', "string; HH:mm / HH:mm:ss", '受控值与非受控初始值；空字符串表示未选择，提交始终使用 24 小时格式。', 'Controlled value or uncontrolled initial value. An empty string means no selection; submitted values always use 24-hour format.'],
+      ['onValueChange', "(value, { reason: 'input' | 'clear' }) => void", '确认选择或清空时回调；在浮层中调整、取消或按 Escape 不提交草稿。', 'Called when applying or clearing a time. Editing, cancelling, and Escape do not commit the draft.'],
+      ['hourCycle', "'h12' | 'h24'; default h24", '控制显示与小时选项；12 小时制额外提供上午、下午选择，不改变表单值格式。', 'Controls the display and hour options. The 12-hour mode adds AM/PM without changing the form value format.'],
+      ['locale', 'string', '设置时间显示、浮层标题及按钮语言；中文 locale 显示中文操作名称。', 'Localizes the displayed time, popup heading, and actions. Chinese locales use Chinese action labels.'],
+      ['showSeconds', 'boolean; default false', '显示秒选项，未指定 step 时使用 1 秒步进；非整分钟 step 也会显示秒。', 'Shows seconds and defaults step to one second. Non-minute steps also show seconds.'],
+      ['min / max / step', 'string / string / number | "any"', '复用浏览器时间校验，支持跨午夜范围；不合范围或步进的草稿不能确认。step 单位为秒。', 'Uses browser time validation, including overnight ranges. Invalid drafts cannot be applied. Step is measured in seconds.'],
+      ['clearable / clearButtonLabel / onClear', 'boolean / string / MouseEventHandler<HTMLButtonElement>', '控制独立清空按钮、可访问名称和清空回调；清空后焦点返回整行触发器。', 'Controls the separate clear action, accessible name, and callback. Clearing returns focus to the row trigger.'],
+      ['name / form / required', 'string / string / boolean', '关联原生表单字段；必填校验失败会聚焦可见触发器，重置恢复初始值。', 'Associates the native form field. Required validation focuses the visible trigger; reset restores the initial value.'],
+      ['disabled / readOnly / invalid', 'boolean', '继承 Field 状态；禁用或只读时不打开浮层、不清空，invalid 显示错误状态。', 'Inherits Field state. Disabled and read-only pickers cannot open or clear; invalid marks an error.'],
+      ['size / fullWidth', "'sm' | 'md' | 'lg' / boolean", '控制整行触发器尺寸和是否占满容器；图标、时间与清空保持同一行。', 'Controls trigger size and full-width layout. Icon, time, and clear action remain on one row.'],
+      ['placeholder / startIcon / endIcon', 'string / ReactNode / ReactNode', '设置空值提示及触发器两侧的装饰图标。', 'Sets the empty-value prompt and decorative icons at each end of the trigger.'],
+      ['ref', 'HTMLInputElement', '指向用于校验和提交的原生时间字段；调用 focus 会转到可见触发器。选择变更请使用 onValueChange。', 'Points to the native validation/submission field. Calling focus redirects to the visible trigger. Use onValueChange for picker changes.'],
+      ['onChange / onClick / onKeyDown / ...', 'InputProps', '继承的原生输入框属性和事件作用于隐藏的表单校验字段，不是可见按钮；时间选择提交请使用 onValueChange。', 'Inherited native input attributes and events belong to the hidden validation field, not the visible button. Use onValueChange for picker commits.'],
     ],
     a11y: {
-      zh: '组件保留 input[type=time] 的原生语义、浏览器校验、键盘操作和移动选择器。清空按钮有独立名称，清空后焦点回到时间输入。',
-      en: 'The component preserves native input[type=time] semantics, browser validation, keyboard behavior, and mobile pickers. The clear button has its own name and returns focus to the time input.',
+      zh: '整行触发器使用原生按钮和 PencilText，Enter 或 Space 打开 Inkra Popover。时、分、秒使用具名 RadioGroup，可用方向键选择；确定后提交，取消或 Escape 放弃草稿并返回焦点。隐藏的原生时间字段仅负责表单校验和提交，不调用系统选择器。',
+      en: 'A full-row native button with PencilText opens an Inkra Popover with Enter or Space. Named RadioGroups support arrow-key selection. Apply commits; Cancel or Escape discards the draft and returns focus. A hidden native time field handles only validation and submission, never the system picker.',
     },
     Examples: TimePickerExamples,
   },
