@@ -1,6 +1,6 @@
-import { execFileSync } from 'node:child_process';
+import { runBrowserChecks } from './browser-check-runner.mjs';
 
-for (const script of [
+await runBrowserChecks([
   'verify-text-first-paint',
   'verify-docs-code',
   'verify-code-samples',
@@ -26,6 +26,4 @@ for (const script of [
   'verify-select-trigger',
   'verify-input-property-tabs',
   'verify-input-number',
-]) {
-  execFileSync(process.execPath, ['scripts/' + script + '.mjs'], { stdio: 'inherit' });
-}
+], { workers: process.env.CI === 'true' ? 2 : 1 });

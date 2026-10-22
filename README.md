@@ -128,6 +128,11 @@ historical regressions and may need updates as the docs evolve.
 Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
+Local smoke checks run sequentially. CI runs at most two independent checks
+against the same server; it does not start a server for each check. A failure
+stops new checks and waits for active checks to close their browsers. The full
+catalog scan follows actual sidebar links while reusing the application shell.
+
 Public hosting is owned by inkrajs/inkrajs.github.io. Its release.json pins this
 repository's exact commit; its Pages workflow builds this application once at
 the host root. The homepage is / and documentation is /docs. Build emits real
