@@ -325,21 +325,21 @@ const rtl = ${rtl};
 export const feedbackDocs: Record<string, ExpansionDoc> = {
   toast: {
     name: 'Toast',
-    intro: { zh: '消息轻轻冒个头，告诉你事情办好了。', en: 'A message pops up gently to let you know the job is done.' },
+    intro: { zh: '通知你一下，没打算跟你开个会。', en: 'A quick heads-up. This does not need to be a meeting.' },
     api: [['Toast.Provider', 'timeout, limit, placement, swipeDirection, toastManager, closeLabel'], ['useToastManager', 'toasts, add(options), update(id, options), close(id?), promise(promise, states)'], ['createToastManager', 'Create an external manager and pass it to Toast.Provider']],
     a11y: { zh: 'Base UI 负责 polite/urgent 播报、悬停与聚焦暂停、滑动关闭和队列限制。关闭按钮始终有可访问名称；高优先级只用于紧急更新。', en: 'Base UI owns polite/urgent announcements, hover/focus pause, swipe dismissal, and queue limiting. The close button is always named; reserve high priority for urgent updates.' },
     Examples: ToastExamples,
   },
   empty: {
     name: 'Empty',
-    intro: { zh: '暂时空着也没关系，给下一步留个入口。', en: 'It is okay to leave things empty for now. Keep a clear way into the next step.' },
+    intro: { zh: '这里真的什么都没有，不是你网卡了。', en: 'Nothing here. Your internet is fine.' },
     api: [['Empty.Root', 'size: sm | md | lg; align: start | center; native div props'], ['Empty.Icon', 'Optional decorative or named visual'], ['Empty.Title', 'Optional heading; as selects the heading element'], ['Empty.Description', 'Optional supporting paragraph'], ['Empty.Actions', 'Optional action group']],
     a11y: { zh: '按页面层级选择标题元素，并用 aria-labelledby 或周边结构建立名称。装饰图标默认隐藏；交互只放在 Actions 内的真实控件中。', en: 'Choose a heading element that fits the page hierarchy and name the region with aria-labelledby or surrounding structure. Decorative icons are hidden by default; actions remain real controls.' },
     Examples: EmptyExamples,
   },
   'toggle-group': {
     name: 'ToggleGroup',
-    intro: { zh: '加粗、斜体，还是一起上？把常用开关排在手边。', en: 'Bold, italic, or both? Keep everyday switches close at hand.' },
+    intro: { zh: '加粗壮胆，斜体歪头。也可以一起。', en: 'Feeling bold? Leaning italic? Both is an option.' },
     api: [['ToggleGroup.Root', 'value/defaultValue: string[]; onValueChange; multiple; orientation; loopFocus; disabled; size'], ['ToggleGroup.Item', 'value; disabled; startIcon; endIcon; native button and ARIA props']],
     a11y: { zh: 'Root 使用 group，Item 是带 aria-pressed 的原生按钮。水平组用左右方向键，垂直组用上下方向键；Tab 只进入当前漫游焦点项。', en: 'Root uses group semantics and each Item is a native button with aria-pressed. Horizontal groups use Left/Right, vertical groups use Up/Down, and Tab enters the current roving item.' },
     Examples: ToggleGroupExamples,

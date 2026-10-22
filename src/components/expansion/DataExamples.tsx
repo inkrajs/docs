@@ -287,8 +287,8 @@ export const dataDocs: Record<string, ExpansionDoc> = {
   'data-table': {
     name: 'DataTable',
     intro: {
-      zh: '数据再多，也能排得明明白白。翻页、筛选、挑几行，都交给它。',
-      en: 'However much data you have, keep it neatly sorted. Paging, filtering, and picking a few rows are all covered.',
+      zh: '表格一加筛选和排序，班味就上来了。',
+      en: 'Add filters and sorting. Congratulations, it is a workday.',
     },
     api: [
       ['data / columns', 'TData[] / DataTableColumnDef<TData>[]'],
@@ -308,8 +308,8 @@ export const dataDocs: Record<string, ExpansionDoc> = {
   tree: {
     name: 'Tree',
     intro: {
-      zh: '文件夹里还有文件夹？展开看看，每一层都有自己的位置。',
-      en: 'Folders inside folders? Open them up and every level keeps its place.',
+      zh: '文件夹套文件夹，禁止套娃？这里不禁止。',
+      en: 'A folder inside a folder inside a folder. Yes, keep going.',
     },
     api: [
       ['Tree.Root', 'selectionMode, selectedKeys, expandedKeys, disabledKeys and matching default/onChange props'],

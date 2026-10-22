@@ -20,8 +20,8 @@ test('Data documentation exports the route contract and honest interaction scope
   assert.match(docs, /onExpandedChange=\{setExpandedKeys\}/);
   assert.match(docs, /onSelectionChange=\{setSelectedKeys\}/);
   assert.doesNotMatch(docs, /<Tree\.Item[^>]*>\.\.\.<\/Tree\.Item>|<Tree\.Root[^>]*>\.\.\.<\/Tree\.Root>/);
-  assert.match(docs, /数据再多，也能排得明明白白。翻页、筛选、挑几行，都交给它。/);
-  assert.match(docs, /文件夹里还有文件夹？展开看看，每一层都有自己的位置。/);
+  assert.match(docs, /表格一加筛选和排序，班味就上来了。/);
+  assert.match(docs, /文件夹套文件夹，禁止套娃？这里不禁止。/);
   assert.match(docs, /Virtualization, inline editing and server transport are not included/);
   assert.match(docs, /Drag and drop is not included/);
   assert.match(browser, /process\.env\.BASE_URL/);

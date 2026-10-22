@@ -85,6 +85,11 @@ cover draft isolation and zero background canvas redraws on preview/close,
 save/cancel/reset, border/icon/fill pixel changes, persistence, storage failures, focus return,
 forced colors, responsive headers and the task-list interactions.
 
+`verify-text-first-paint.mjs` checks first-frame pencil lettering on desktop and
+mobile, delayed fonts, runtime Latin glyph reuse, parameter invalidation,
+offscreen deferral and readable canvas-failure fallback. The font is preloaded;
+there is no pre-rendered alphabet asset or page-wide text loading gate.
+
 Build checks the candidate, TypeScript, Vite and static route entrypoints.
 Push, PR and manual CI install a pinned registry release directly. For a local
 candidate they rebuild the exact product commit in library-candidate.json and

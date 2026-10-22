@@ -219,7 +219,7 @@ const timelineItems = events.map(event => ({
 export const flowsDocs: Record<string, ExpansionDoc> = {
   upload: {
     name: 'Upload',
-    intro: { zh: '把文件放进来，剩下的进度慢慢告诉你。', en: 'Drop your files in, and let the progress keep you posted as it goes.' },
+    intro: { zh: '最终版、最终版2、这次真是最终版，都拖进来吧。', en: 'final.pdf, final-v2.pdf, actually-final.pdf. Drop them all here.' },
     api: [
       ['files / defaultFiles', 'readonly UploadItem[]'], ['onFilesChange', '(files, details) => void'], ['accept', 'string'],
       ['maxSize / maxFiles', 'number'], ['onUpload', '(file, { signal, reportProgress }) => Promise<void> | void'],
@@ -230,14 +230,14 @@ export const flowsDocs: Record<string, ExpansionDoc> = {
   },
   steps: {
     name: 'Steps',
-    intro: { zh: '一步一步来，走到哪儿、还差几步，一眼就知道。', en: 'Take it one step at a time. See where you are and how many steps remain at a glance.' },
+    intro: { zh: '总说「只需几步」，这回把几步标清楚。', en: '"Just a few steps." Fine, but how many? Here is the count.' },
     api: [['items', 'readonly StepItem[]'], ['current', 'number'], ['orientation', '"horizontal" | "vertical"'], ['onStepChange', '(index, item) => void']],
     a11y: { zh: '组件使用 ol/li；当前项具有 aria-current="step"。只有提供 onStepChange 时才渲染原生按钮，禁用步骤使用原生 disabled。', en: 'The component uses ol/li and marks the current item with aria-current="step". Native buttons only appear when onStepChange is supplied, and disabled steps use native disabled.' },
     Examples: StepsExamples,
   },
   timeline: {
     name: 'Timeline',
-    intro: { zh: '把发生过的事串起来，每个时间点都留一笔。', en: 'Connect what happened, leaving a note at every point in time.' },
+    intro: { zh: '事情要从那天说起。放心，这次按时间顺序。', en: 'It all started that day. In chronological order, for once.' },
     api: [['items', 'readonly TimelineItem[]'], ['orientation', '"horizontal" | "vertical"'], ['item.dateTime', 'string'], ['item.content', 'ReactNode']],
     a11y: { zh: '时间线使用 ol/li；机器可读日期使用 time[dateTime]。标记和连接线只作装饰，正文不依赖画布或颜色。', en: 'The timeline uses ol/li and time[dateTime] for machine-readable dates. Markers and connectors are decorative; content never depends on canvas or color.' },
     Examples: TimelineExamples,

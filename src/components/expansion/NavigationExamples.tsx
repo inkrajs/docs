@@ -216,14 +216,14 @@ const [selected, setSelected] = useState('');
 export const navigationDocs: Record<string, ExpansionDoc> = {
   pagination: {
     name: 'Pagination',
-    intro: { zh: '这一页看完了？翻一页，精彩接着来。', en: 'Finished this page? Turn the page and keep the good stuff coming.' },
+    intro: { zh: '还有下一页，至少这次不用猜要滑多久。', en: 'There is more. At least you know where this page ends.' },
     api: [['totalPages', 'Page count, not item count; zero/nonfinite totals have no page buttons'], ['page / defaultPage / onPageChange', '1-based controlled or uncontrolled page; total changes clamp without emitting a user callback'], ['siblingCount / boundaryCount', '0..3, default 1; omitted ranges use noninteractive ellipses'], ['showFirstLast / disabled / size', 'boolean / boolean / sm | md | lg'], ['labels', 'Partial<PaginationLabels>; localize nav, first, previous, next, last, page(number), ellipsis']],
     a11y: { zh: 'nav 内的原生按钮通过 Tab、Enter、Space 操作，当前页带 aria-current="page"。省略符不可交互。此组件只支持数据翻页按钮，不提供链接导航。', en: 'Native buttons inside nav support Tab, Enter, and Space; the current page has aria-current="page". Ellipses are noninteractive. This component supports data pagination buttons, not link navigation.' },
     Examples: PaginationExamples,
   },
   command: {
     name: 'Command',
-    intro: { zh: '想做什么，敲几个字就找到，不必在菜单里兜圈子。', en: 'Type a few letters to find what you want to do, without wandering through menus.' },
+    intro: { zh: '菜单藏得再深，也躲不过我打字搜。', en: 'Somewhere in a menu? I will just type it.' },
     api: [['Command.Root', 'cmdk value/defaultValue/onValueChange, filter, shouldFilter, loop (default true), label'], ['Command.Input', 'Search value/onValueChange and native input attributes'], ['Command.List / Group', 'List label; Group heading/value/forceMount'], ['Command.Item', 'Stable value, keywords, disabled, onSelect(value), icon, shortcut'], ['Command.Empty / Separator / Shortcut', 'No-results content; separator alwaysRender; display-only kbd']],
     a11y: { zh: 'cmdk 负责 combobox/listbox 关联、方向键、Home/End、禁用项跳过与 Enter 选择。IME 组合输入不会提交命令。为 Root 提供本地化 label；Overlay 负责焦点约束、Escape 与返回。快捷键提示不自动注册全局按键。', en: 'cmdk owns combobox/listbox relationships, arrows, Home/End, disabled-item skipping, and Enter selection. IME composition does not submit a command. Provide a localized Root label; Overlay handles focus trapping, Escape, and return. Shortcut hints do not register global keys.' },
     Examples: CommandExamples,

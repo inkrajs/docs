@@ -239,8 +239,8 @@ export const overlaysDocs: Record<string, ExpansionDoc> = {
   'alert-dialog': {
     name: 'AlertDialog',
     intro: {
-      zh: '要删除、归档或提交重要内容时，先停一下，让用户安心确认。',
-      en: 'Give people a calm moment to confirm before deleting, archiving, or committing something important.',
+      zh: '手比脑子快的时候，还好有一句「确定吗」。',
+      en: 'For when your click gets ahead of your thinking. Are you sure?',
     },
     api: [
       ['Root', 'open, defaultOpen, onOpenChange, pending; always modal'],
@@ -258,8 +258,8 @@ export const overlaysDocs: Record<string, ExpansionDoc> = {
   drawer: {
     name: 'Drawer',
     intro: {
-      zh: '需要补充查看详情或完成一小段任务时，从屏幕边缘展开一块不打断上下文的空间。',
-      en: 'Open a focused edge panel for details or a short task without losing the page underneath.',
+      zh: '主线先别关，支线任务从旁边拉出来。',
+      en: 'A side quest slides in. Your main quest stays put.',
     },
     api: [
       ['Content.direction', "'top' | 'right' | 'bottom' | 'left'"],

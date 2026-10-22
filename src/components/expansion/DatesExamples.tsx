@@ -177,8 +177,8 @@ export const datesDocs: Record<string, ExpansionDoc> = {
   'date-picker': {
     name: 'DatePicker',
     intro: {
-      zh: '挑个好日子，一天也好，一段假期也好。',
-      en: 'Pick a good date, whether it is one day or a whole stretch of holiday.',
+      zh: '「改天」是哪天？今天就把它选出来。',
+      en: '"Someday" is not a date. Pick an actual one.',
     },
     api: [
       ['mode', "'single' | 'range'"],
@@ -198,8 +198,8 @@ export const datesDocs: Record<string, ExpansionDoc> = {
   'time-picker': {
     name: 'TimePicker',
     intro: {
-      zh: '几点出发、何时提醒？把时间定得刚刚好。',
-      en: 'When should you leave, and when should the reminder ring? Set the time just right.',
+      zh: '「马上到」不算时间，几点几分才算。',
+      en: '"Be there soon" is not a time. Hours and minutes, please.',
     },
     api: [
       ['value / defaultValue', "Native HH:mm or HH:mm:ss string; '' is empty"],

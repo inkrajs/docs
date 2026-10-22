@@ -32,6 +32,29 @@ try {
     await trigger.click();
     const dialog = page.getByRole('dialog');
     await dialog.waitFor();
+    const expectedDefaults = {
+      '--inkra-letter-variation': 0.2, '--inkra-letter-breaks': 0.5, '--inkra-letter-outline': 0.9,
+      '--inkra-letter-fill': 0.9, '--inkra-letter-grain': 0.6, '--inkra-stroke-width': 2,
+      '--inkra-stroke-amplitude': 1.5, '--inkra-wash-strength': 0.8, '--inkra-wash-spacing': 2,
+      '--inkra-wash-roughness': 3, '--inkra-wash-angle': -45,
+    };
+    const readDefaults = (node, expected) => Object.fromEntries(Object.keys(expected).map(token => [token, parseFloat(getComputedStyle(node).getPropertyValue(token))]));
+    assert.deepEqual(await page.locator('html').evaluate(readDefaults, expectedDefaults), expectedDefaults);
+    assert.deepEqual(await dialog.locator('.theme-customizer__preview-card').evaluate(readDefaults, expectedDefaults), expectedDefaults);
+    const mode = dialog.locator('.theme-customizer__mode');
+    assert.equal(await mode.locator('legend').innerText(), locale === 'en' ? 'Theme mode' : '主题模式');
+    assert.equal(await mode.locator('.inkra-radio-group__icon canvas').count(), 3);
+    const modeLayout = await mode.evaluate(node => {
+      const panel = node.parentElement.getBoundingClientRect();
+      const frame = node.querySelector('.inkra-radio-group__frame').getBoundingClientRect();
+      const legend = node.querySelector('legend').getBoundingClientRect();
+      return { panel: panel.width, frame: frame.width, top: legend.top - panel.top,
+        widths: [...node.querySelectorAll('.inkra-radio-group__item')].map(item => item.getBoundingClientRect().width) };
+    });
+    assert(Math.abs(modeLayout.panel - modeLayout.frame) < 1, 'mode fills the panel');
+    assert(Math.max(...modeLayout.widths) - Math.min(...modeLayout.widths) < 1, 'mode choices have equal widths');
+    assert(Math.abs(modeLayout.top - 20) < 1, 'panel padding owns the single 20px leading gap');
+    await dialog.screenshot({ path: `/tmp/inkra-theme-mode-${width}.png` });
     await page.evaluate(() => document.fonts.ready);
     await dialog.evaluate(node => Promise.all(node.getAnimations().map(animation => animation.finished)));
     assert.ok(await dialog.locator('.inkra-drawer__surface.inkra-pencil-surface--full').isVisible(), 'drawer uses borderless edge-to-edge paper');
@@ -103,7 +126,15 @@ try {
     const thickCard = await cardInk.evaluate(pixelHash);
     const thickButton = await surface.evaluate(pixelHash);
     const thickIcon = await iconInk.evaluate(pixelHash);
-    await dialog.getByRole('slider', { name: /线条起伏|Stroke roughness/ }).press('End');
+    const roughness = dialog.getByRole('slider', { name: /线条起伏|Stroke roughness/ });
+    assert.equal(await roughness.getAttribute('aria-valuemax'), '4');
+    await roughness.press('Home');
+    for (let step = 0; step < 20; step++) await roughness.press('ArrowRight');
+    assert.equal(await roughness.getAttribute('aria-valuenow'), '2');
+    await page.waitForTimeout(150);
+    const atTwo = await Promise.all([line, cardInk, surface, iconInk].map(node => node.evaluate(pixelHash)));
+    await roughness.press('End');
+    for (const [index, node] of [line, cardInk, surface, iconInk].entries()) await changed(node, atTwo[index]);
     await changed(line, thickLine);
     await changed(cardInk, thickCard);
     await changed(surface, thickButton);
@@ -140,7 +171,7 @@ try {
     assert.deepEqual(await page.evaluate(() => ({ paints: window.backgroundPaints, invalidations: window.backgroundInvalidations })), { paints: 0, invalidations: 0 }, 'closing without edits must not redraw the background');
     await trigger.click();
     await dialog.getByRole('tab', { name: /^(线条|Lines)$/ }).click();
-    assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '1.2', 'Escape discards unsaved settings');
+    assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '2', 'Escape discards unsaved settings');
     await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).press('End');
     await dialog.getByRole('tab', { name: /^(文字|Text)$/ }).click();
     await dialog.getByRole('slider', { name: /填色浓度|Fill intensity/ }).press('End');
@@ -158,7 +189,7 @@ try {
     assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '3');
     await dialog.getByRole('button', { name: /^(恢复默认|Reset)$/ }).click();
     assert.equal(await page.evaluate(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width')), '3', 'Reset only changes the draft');
-    assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '1.2');
+    assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '2');
     await dialog.getByRole('button', { name: /^(取消|Cancel)$/ }).click();
     await dialog.waitFor({ state: 'hidden' });
     await trigger.click();
@@ -167,7 +198,7 @@ try {
     await dialog.getByRole('button', { name: /^(恢复默认|Reset)$/ }).click();
     await dialog.getByRole('button', { name: /^(保存|Save)$/ }).click();
     await dialog.waitFor({ state: 'hidden' });
-    await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width') === '' && document.documentElement.style.getPropertyValue('--inkra-accent') === '' && document.documentElement.dataset.theme === 'auto');
+    await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width') === '' && document.documentElement.style.getPropertyValue('--inkra-accent') === '' && document.documentElement.dataset.theme === 'light');
 
     const sample = page.locator('.color-demo__column:visible').first();
     assert.equal(await sample.locator('.inkra-card').count(), 4);
@@ -198,9 +229,9 @@ try {
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('radio', { name: '深色', exact: true }).check();
   assert.equal(await dialog.locator('.theme-customizer__preview-card').getAttribute('data-inkra-theme'), 'dark');
-  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'auto');
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'light');
   await dialog.getByRole('tab', { name: '线条', exact: true }).click();
-  assert.equal(await dialog.getByRole('slider', { name: '线条粗细' }).getAttribute('aria-valuenow'), '1.2');
+  assert.equal(await dialog.getByRole('slider', { name: '线条粗细' }).getAttribute('aria-valuenow'), '2');
   await dialog.getByRole('button', { name: '保存', exact: true }).click();
   await dialog.getByText('设置已生效，但暂时无法保存到本机。').waitFor();
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');

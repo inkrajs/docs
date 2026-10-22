@@ -130,8 +130,8 @@ function readButtonTab(): ButtonTab {
 function readInitialTheme(): Theme {
   try {
     const stored = window.localStorage.getItem('inkra-docs-theme');
-    return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'auto';
-  } catch { return 'auto'; }
+    return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'light';
+  } catch { return 'light'; }
 }
 
 function useCompactLayout() {

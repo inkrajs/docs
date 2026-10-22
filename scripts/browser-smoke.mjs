@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 
 for (const script of [
+  'verify-text-first-paint',
   'verify-docs-spacing',
   'verify-theme-customizer',
   'verify-navigation-hierarchy',

@@ -6,6 +6,9 @@ import { __iconData as penIcon } from 'lucide-react/dist/esm/icons/pen-line.mjs'
 import { __iconData as resetIcon } from 'lucide-react/dist/esm/icons/rotate-ccw.mjs';
 import { __iconData as brushIcon } from 'lucide-react/dist/esm/icons/paintbrush.mjs';
 import { __iconData as heartIcon } from 'lucide-react/dist/esm/icons/heart.mjs';
+import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.mjs';
+import { __iconData as sunIcon } from 'lucide-react/dist/esm/icons/sun.mjs';
+import { __iconData as moonIcon } from 'lucide-react/dist/esm/icons/moon.mjs';
 import { DocsIcon } from './DocsIcon';
 import { paletteStyle, themeScales, useResolvedTheme } from './ColorSystem';
 import { PencilText, useLocale } from '../i18n';
@@ -13,17 +16,17 @@ import './ThemeCustomizer.css';
 
 const storageKey = 'inkra-docs-custom-theme-v1';
 const controls = [
-  { key: 'variation', token: '--inkra-letter-variation', zh: '笔压变化', en: 'Pressure variation', value: 0.52, min: 0, max: 1, step: 0.01, group: 'text' },
-  { key: 'breaks', token: '--inkra-letter-breaks', zh: '断笔程度', en: 'Stroke breaks', value: 0.18, min: 0, max: 0.5, step: 0.01, group: 'text' },
-  { key: 'outline', token: '--inkra-letter-outline', zh: '轮廓浓度', en: 'Outline intensity', value: 0.96, min: 0.2, max: 1, step: 0.01, group: 'text' },
-  { key: 'fill', token: '--inkra-letter-fill', zh: '填色浓度', en: 'Fill intensity', value: 0.34, min: 0.1, max: 1, step: 0.01, group: 'text' },
-  { key: 'grain', token: '--inkra-letter-grain', zh: '颗粒感', en: 'Grain', value: 0.45, min: 0, max: 1, step: 0.01, group: 'text' },
-  { key: 'width', token: '--inkra-stroke-width', zh: '线条粗细', en: 'Stroke weight', value: 1.2, min: 0.3, max: 3, step: 0.1, group: 'lines' },
-  { key: 'roughness', token: '--inkra-stroke-amplitude', zh: '线条起伏', en: 'Stroke roughness', value: 0.6, min: 0, max: 2, step: 0.1, group: 'lines' },
-  { key: 'washStrength', token: '--inkra-wash-strength', zh: '涂色浓度', en: 'Fill strength', value: 0.48, min: 0, max: 1, step: 0.01, group: 'wash' },
-  { key: 'washSpacing', token: '--inkra-wash-spacing', zh: '笔触间距', en: 'Stroke spacing', value: 1.8, min: 1, max: 6, step: 0.1, group: 'wash' },
-  { key: 'washRoughness', token: '--inkra-wash-roughness', zh: '涂色起伏', en: 'Fill roughness', value: 3.5, min: 0, max: 6, step: 0.1, group: 'wash' },
-  { key: 'washAngle', token: '--inkra-wash-angle', zh: '涂色角度', en: 'Fill angle', value: -35, min: -85, max: 85, step: 1, group: 'wash' },
+  { key: 'variation', token: '--inkra-letter-variation', zh: '笔压变化', en: 'Pressure variation', value: 0.2, min: 0, max: 1, step: 0.01, group: 'text' },
+  { key: 'breaks', token: '--inkra-letter-breaks', zh: '断笔程度', en: 'Stroke breaks', value: 0.5, min: 0, max: 0.5, step: 0.01, group: 'text' },
+  { key: 'outline', token: '--inkra-letter-outline', zh: '轮廓浓度', en: 'Outline intensity', value: 0.9, min: 0.2, max: 1, step: 0.01, group: 'text' },
+  { key: 'fill', token: '--inkra-letter-fill', zh: '填色浓度', en: 'Fill intensity', value: 0.9, min: 0.1, max: 1, step: 0.01, group: 'text' },
+  { key: 'grain', token: '--inkra-letter-grain', zh: '颗粒感', en: 'Grain', value: 0.6, min: 0, max: 1, step: 0.01, group: 'text' },
+  { key: 'width', token: '--inkra-stroke-width', zh: '线条粗细', en: 'Stroke weight', value: 2, min: 0.3, max: 3, step: 0.1, group: 'lines' },
+  { key: 'roughness', token: '--inkra-stroke-amplitude', zh: '线条起伏', en: 'Stroke roughness', value: 1.5, min: 0, max: 4, step: 0.1, group: 'lines' },
+  { key: 'washStrength', token: '--inkra-wash-strength', zh: '涂色浓度', en: 'Fill strength', value: 0.8, min: 0, max: 1, step: 0.01, group: 'wash' },
+  { key: 'washSpacing', token: '--inkra-wash-spacing', zh: '笔触间距', en: 'Stroke spacing', value: 2, min: 1, max: 6, step: 0.1, group: 'wash' },
+  { key: 'washRoughness', token: '--inkra-wash-roughness', zh: '涂色起伏', en: 'Fill roughness', value: 3, min: 0, max: 6, step: 0.1, group: 'wash' },
+  { key: 'washAngle', token: '--inkra-wash-angle', zh: '涂色角度', en: 'Fill angle', value: -45, min: -85, max: 85, step: 1, group: 'wash' },
 ] as const;
 type RenderKey = typeof controls[number]['key'];
 type Settings = { palette: string; render: Record<RenderKey, number> };
@@ -146,10 +149,10 @@ export function ThemeCustomizer({ theme, onThemeChange }: { theme: 'auto' | 'lig
               <Tabs.Trigger value="wash" startIcon={<DocsIcon data={brushIcon} size={22} />}>{en ? 'Fill' : '涂色'}</Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="theme" className="theme-customizer__panel">
-              <RadioGroup name="customizer-theme" aria-label={t('主题模式')} variant="segmented" orientation="horizontal" value={draftTheme} onValueChange={value => setDraftTheme(value as typeof theme)}>
-                <RadioGroupItem value="auto" label={en ? 'System' : '系统'} />
-                <RadioGroupItem value="light" label={en ? 'Light' : '浅色'} />
-                <RadioGroupItem value="dark" label={en ? 'Dark' : '深色'} />
+              <RadioGroup className="theme-customizer__mode" name="customizer-theme" label={t('主题模式')} variant="segmented" orientation="horizontal" value={draftTheme} onValueChange={value => setDraftTheme(value as typeof theme)}>
+                <RadioGroupItem value="auto" label={en ? 'System' : '系统'} icon={<DocsIcon data={monitorIcon} size={24} />} />
+                <RadioGroupItem value="light" label={en ? 'Light' : '浅色'} icon={<DocsIcon data={sunIcon} size={24} />} />
+                <RadioGroupItem value="dark" label={en ? 'Dark' : '深色'} icon={<DocsIcon data={moonIcon} size={24} />} />
               </RadioGroup>
               <PencilText as="h3">{en ? 'Accent color' : '主题色'}</PencilText>
               <div className="theme-customizer__swatches" role="group" aria-label={en ? 'Accent color' : '主题色'}>
@@ -169,7 +172,7 @@ export function ThemeCustomizer({ theme, onThemeChange }: { theme: 'auto' | 'lig
           {storageError && <p role="status">{en ? 'Changes apply now, but could not be saved on this device.' : '设置已生效，但暂时无法保存到本机。'}</p>}
         </Drawer.Body>
         <Drawer.Footer align="end">
-          <Button variant="outline" onClick={() => { setDraft(defaults); setDraftTheme('auto'); }} startIcon={<DocsIcon data={resetIcon} size={22} />}>{en ? 'Reset' : '恢复默认'}</Button>
+          <Button variant="outline" onClick={() => { setDraft(defaults); setDraftTheme('light'); }} startIcon={<DocsIcon data={resetIcon} size={22} />}>{en ? 'Reset' : '恢复默认'}</Button>
           <Drawer.Close asChild><Button variant="outline">{en ? 'Cancel' : '取消'}</Button></Drawer.Close>
           <Button onClick={save}>{en ? 'Save' : '保存'}</Button>
         </Drawer.Footer>
