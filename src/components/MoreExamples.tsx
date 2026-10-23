@@ -181,22 +181,26 @@ function SeparatorExamples() {
 }
 
 function SkeletonExamples() {
+  const { locale } = useLocale();
+  const zh = locale === 'zh-CN';
   const [width, setWidth] = useState(240);
   const [height, setHeight] = useState(24);
   const [radius, setRadius] = useState(6);
-  const code = `<Skeleton radius={${radius}} style={{ width: ${width}, height: ${height} }} />`;
+  const [animation, setAnimation] = useState<'none' | 'pulse'>('none');
+  const code = `<Skeleton radius={${radius}} width={${width}} height={${height}} animation="${animation}" />`;
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSlider label="圆角" min={0} max={8} value={radius} onValueChange={setRadius} unit="px" />
+        <DocsSelect label={zh ? '动画' : 'Animation'} value={animation} onValueChange={value => setAnimation(value as typeof animation)} options={[["none", zh ? '无' : 'None'], ["pulse", zh ? '呼吸' : 'Pulse']]} />
       </> },
       { label: '布局', content: <>
         <DocsSlider label="宽度" min={80} max={360} step={20} value={width} onValueChange={setWidth} unit="px" />
         <DocsSlider label="高度" min={12} max={96} step={4} value={height} onValueChange={setHeight} unit="px" />
       </> },
     ]} />}>
-      <Skeleton radius={radius} style={{ width, height }} />
+      <Skeleton radius={radius} width={width} height={height} animation={animation} />
     </ComponentPlayground>
     <ComponentExample title="内容" code={`<Skeleton style={{ width: 48, height: 48 }} />\n<Skeleton style={{ width: 220, height: 16 }} />`}>
       <div className="more-examples__skeleton-stack"><Skeleton style={{ width: 48, height: 48 }} /><div><Skeleton style={{ width: 220, height: 16 }} /><Skeleton style={{ width: 160, height: 12 }} /></div></div>

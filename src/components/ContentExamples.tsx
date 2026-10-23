@@ -50,7 +50,8 @@ function MenuExamples() {
 }
 
 function AlertExamples() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const zh = locale === 'zh-CN';
   const [variant, setVariant] = useState<AlertVariant>('info');
   const [icon, setIcon] = useState(true);
   const [title, setTitle] = useState(t('同步完成'));
@@ -58,7 +59,10 @@ function AlertExamples() {
   const [appearance, setAppearance] = useState<'soft' | 'outline'>('soft');
   const [actions, setActions] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
-  const code = `<Alert.Root variant="${variant}" size="${size}" appearance="${appearance}"${icon ? ' icon={<InfoIcon />}' : ''}${actions ? ` actions={<Button onClick={handleAcknowledge}>${t('确认')}</Button>}` : ''}>\n  <Alert.Title>{${JSON.stringify(title)}}</Alert.Title>\n  <Alert.Description>${t('所有笔记已保存到当前工作区。')}</Alert.Description>\n</Alert.Root>`;
+  const [closable, setClosable] = useState(false);
+  const [open, setOpen] = useState(true);
+  const closeLabel = zh ? '关闭通知' : 'Dismiss notification';
+  const code = `const [open, setOpen] = useState(${open});\n\n<Alert.Root open={open} onOpenChange={setOpen} closable={${closable}} closeLabel="${closeLabel}" variant="${variant}" size="${size}" appearance="${appearance}"${icon ? ' icon={<InfoIcon />}' : ''}${actions ? ` actions={<Button onClick={handleAcknowledge}>${t('确认')}</Button>}` : ''}>\n  <Alert.Title>{${JSON.stringify(title)}}</Alert.Title>\n  <Alert.Description>${t('所有笔记已保存到当前工作区。')}</Alert.Description>\n</Alert.Root>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
@@ -71,8 +75,13 @@ function AlertExamples() {
         <Switch label={t('显示图标')} checked={icon} onCheckedChange={setIcon} />
         <Switch label={t('显示操作')} checked={actions} onCheckedChange={setActions} />
       </> },
+      { label: '交互', content: <>
+        <Switch label={zh ? '允许关闭' : 'Dismissible'} checked={closable} onCheckedChange={setClosable} />
+        <Switch label={zh ? '显示通知' : 'Show notification'} checked={open} onCheckedChange={setOpen} />
+      </> },
     ]} />}>
-      <Alert.Root className="content-demo-width" variant={variant} size={size} appearance={appearance} actions={actions ? <Button variant="outline" onClick={() => setAcknowledged(true)}>{t(acknowledged ? '已确认' : '确认')}</Button> : undefined} icon={icon ? <DocsIcon data={infoIcon} size={20} /> : undefined}><Alert.Title>{title}</Alert.Title><Alert.Description>{t('所有笔记已保存到当前工作区。')}</Alert.Description></Alert.Root>
+      <Alert.Root className="content-demo-width" open={open} onOpenChange={setOpen} closable={closable} closeLabel={closeLabel} variant={variant} size={size} appearance={appearance} actions={actions ? <Button variant="outline" onClick={() => setAcknowledged(true)}>{t(acknowledged ? '已确认' : '确认')}</Button> : undefined} icon={icon ? <DocsIcon data={infoIcon} size={20} /> : undefined}><Alert.Title>{title}</Alert.Title><Alert.Description>{t('所有笔记已保存到当前工作区。')}</Alert.Description></Alert.Root>
+      {!open && <Button variant="outline" onClick={() => setOpen(true)}>{zh ? '重新显示通知' : 'Show notification again'}</Button>}
     </ComponentPlayground>
     <ComponentExample title="状态" code={`<Alert.Root variant="warning" role="alert">\n  <Alert.Title>${t('尚未保存')}</Alert.Title>\n  <Alert.Description>${t('离开前请保存当前修改。')}</Alert.Description>\n</Alert.Root>`}>
       <Alert.Root variant="warning" role="alert"><Alert.Title>{t('尚未保存')}</Alert.Title><Alert.Description>{t('离开前请保存当前修改。')}</Alert.Description></Alert.Root>

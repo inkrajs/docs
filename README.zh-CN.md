@@ -10,9 +10,10 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-本次提交使用已发布的 `@inkra/react@0.3.0` 正式包。
-library-candidate.json 记录精确源码提交、SHA-256 与 SHA-512。
-新检出文档仓库时可直接安装和构建，无需相邻组件仓库或本地归档：
+当前工作区使用 `vendor/inkra.tgz` 预览尚未发布的组件属性扩展。
+版本仍为 0.3.0，但归档不等同于 npm 已发布的同版本包。
+library-candidate.json 固定组件仓精确提交及本地归档校验和。
+先按下文准备本地候选包，再安装和构建：
 
 ```sh
 npm ci
@@ -20,7 +21,7 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-需要预览尚未发布的组件修改时，再按以下步骤准备本地候选包。
+当前版本安装前需要按以下步骤准备本地候选包。
 
 先在组件仓检出 library-candidate.json 中的精确提交，运行 npm ci、npm run build，
 再用 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 打包。在本仓运行：
@@ -35,6 +36,10 @@ npm run dev -- --port 4180
 vendor 中的 tarball 不提交。组件仓使用
 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 记录精确源码版本，
 再同步本仓候选信息。组件修改后需要重新构建并准备候选包。
+
+`node scripts/verify-property-extensions.mjs` 使用一个浏览器和真实安装包，检查
+树的缩进与状态渲染、分页展示、评分悬停与表单重置、通知关闭、骨架减少动态效果，
+并保存中英文桌面和窄屏截图。
 
 在 4180 端口运行本地文档后，执行 `npx playwright install chromium` 和
 `npm run test:browser`，检查选定的侧栏、Select、Input 和 InputNumber 桌面与

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Command, InputNumber, Overlay, Pagination, Switch } from '@inkra/react';
+import { Button, Command, InputNumber, Overlay, Pagination, PencilText, Switch } from '@inkra/react';
 import type { PaginationLabels } from '@inkra/react';
 import { __iconData as fileIcon } from 'lucide-react/dist/esm/icons/file-text.mjs';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
@@ -33,12 +33,16 @@ function PaginationExamples() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [disabled, setDisabled] = useState(false);
   const [firstLast, setFirstLast] = useState(true);
+  const [simple, setSimple] = useState(false);
+  const [previousNext, setPreviousNext] = useState(true);
+  const [hideSingle, setHideSingle] = useState(false);
   const [rtl, setRtl] = useState(false);
   const resolvedPage = totalPages ? Math.min(totalPages, Math.max(1, page)) : 0;
   return <div className="component-examples navigation-examples">
     <ComponentPlayground code={`const [page, setPage] = useState(${page});
 <Pagination totalPages={${totalPages}} page={page} onPageChange={setPage}
   siblingCount={${siblings}} boundaryCount={${boundaries}}
+  simple={${simple}} showPreviousNext={${previousNext}} hideOnSinglePage={${hideSingle}}
   showFirstLast={${firstLast}} size="${size}" disabled={${disabled}} dir="${rtl ? 'rtl' : 'ltr'}" />`}
       controls={<PropertyTabs groups={[
         { label: '基础', content: <>
@@ -49,12 +53,15 @@ function PaginationExamples() {
           <DocsSelect label={zh ? '相邻页数' : 'Sibling count'} value={String(siblings)} onValueChange={value => setSiblings(Number(value))} options={[["0", "0"], ["1", "1"], ["2", "2"], ["3", "3"]]} />
           <DocsSelect label={zh ? '边界页数' : 'Boundary count'} value={String(boundaries)} onValueChange={value => setBoundaries(Number(value))} options={[["0", "0"], ["1", "1"], ["2", "2"]]} />
           <Switch label={zh ? '首尾操作' : 'First and last controls'} checked={firstLast} onCheckedChange={setFirstLast} />
+          <Switch label={zh ? '简洁模式' : 'Simple mode'} checked={simple} onCheckedChange={setSimple} />
+          <Switch label={zh ? '上一页与下一页' : 'Previous and next controls'} checked={previousNext} onCheckedChange={setPreviousNext} />
+          <Switch label={zh ? '仅一页时隐藏' : 'Hide for a single page'} checked={hideSingle} onCheckedChange={setHideSingle} />
           <Switch label="RTL" checked={rtl} onCheckedChange={setRtl} />
         </> },
         { label: '状态', content: <Switch label={zh ? '禁用' : 'Disabled'} checked={disabled} onCheckedChange={setDisabled} /> },
       ]} />}>
       <div className="navigation-examples__stage" dir={rtl ? 'rtl' : 'ltr'} data-testid="pagination-playground">
-        <Pagination totalPages={totalPages} page={page} onPageChange={setPage} siblingCount={siblings} boundaryCount={boundaries} showFirstLast={firstLast} disabled={disabled} size={size} labels={labels} />
+        <Pagination totalPages={totalPages} page={page} onPageChange={setPage} siblingCount={siblings} boundaryCount={boundaries} showFirstLast={firstLast} simple={simple} showPreviousNext={previousNext} hideOnSinglePage={hideSingle} disabled={disabled} size={size} labels={labels} />
         <output aria-live="polite" data-testid="pagination-value">{zh ? '当前页' : 'Current page'}: {resolvedPage} / {totalPages}</output>
         <ol start={Math.max(1, (resolvedPage - 1) * 3 + 1)} className="navigation-examples__results">
           {resolvedPage > 0 && [1, 2, 3].map(index => <li key={index}>{zh ? '笔记' : 'Note'} {(resolvedPage - 1) * 3 + index}</li>)}
@@ -63,6 +70,13 @@ function PaginationExamples() {
     </ComponentPlayground>
     <ComponentExample title={zh ? '基本分页' : 'Basic pagination'} code={'<Pagination totalPages={5} defaultPage={1} />'}>
       <Pagination totalPages={5} defaultPage={1} labels={labels} data-testid="pagination-basic" />
+    </ComponentExample>
+    <ComponentExample title={zh ? '自定义页码与摘要' : 'Custom page labels and summary'} code={`<Pagination totalPages={3} renderPage={page => <PencilText>{String(page).padStart(2, '0')}</PencilText>} />
+<Pagination totalPages={12} simple renderSummary={(page, total) => <PencilText>{\`${zh ? '第 ${page} 页，共 ${total} 页' : 'Page ${page} of ${total}'}\`}</PencilText>} />`}>
+      <div className="navigation-examples__stage">
+        <Pagination totalPages={3} labels={labels} renderPage={page => <PencilText>{String(page).padStart(2, '0')}</PencilText>} />
+        <Pagination totalPages={12} simple labels={labels} renderSummary={(page, total) => <PencilText>{zh ? `第 ${page} 页，共 ${total} 页` : `Page ${page} of ${total}`}</PencilText>} />
+      </div>
     </ComponentExample>
     <ComponentExample title={zh ? '空结果与总页数变化' : 'Empty results and changing totals'} code={'<Pagination totalPages={0} showFirstLast />\n// Changing totalPages clamps the displayed page, without onPageChange.\n// Pagination uses buttons for client-side data, not links.'}>
       <Pagination totalPages={0} showFirstLast labels={{ ...labels, nav: zh ? '空结果分页' : 'Empty results pagination' }} data-testid="pagination-empty" />
@@ -210,7 +224,18 @@ export const navigationDocs: Record<string, ExpansionDoc> = {
   pagination: {
     name: 'Pagination',
     intro: { zh: '还有下一页，至少这次不用猜要滑多久。', en: 'There is more. At least you know where this page ends.' },
-    api: [['totalPages', 'Page count, not item count; zero/nonfinite totals have no page buttons'], ['page / defaultPage / onPageChange', '1-based controlled or uncontrolled page; total changes clamp without emitting a user callback'], ['siblingCount / boundaryCount', '0..3, default 1; omitted ranges use noninteractive ellipses'], ['showFirstLast / disabled / size', 'boolean / boolean / sm | md | lg'], ['labels', 'Partial<PaginationLabels>; localize nav, first, previous, next, last, page(number), ellipsis']],
+    api: [
+      ['totalPages', 'Page count, not item count; zero/nonfinite totals have no page buttons'],
+      ['page / defaultPage / onPageChange', '1-based controlled or uncontrolled page; total changes clamp without emitting a user callback'],
+      ['siblingCount / boundaryCount', '0..3, default 1; omitted ranges use noninteractive ellipses'],
+      ['showFirstLast / disabled / size', 'boolean / boolean / sm | md | lg'],
+      ['simple', 'boolean = false', '用当前页 / 总页数替代页码列表；保留已启用的翻页操作。空结果显示 0 / 0。', 'Replace page buttons with current / total while retaining enabled navigation controls. Empty results show 0 / 0.'],
+      ['showPreviousNext', 'boolean = true', '显示上一页和下一页，不影响独立的首尾页开关。', 'Show previous and next controls independently of first/last controls.'],
+      ['hideOnSinglePage', 'boolean = false', '总页数不超过 1 时不渲染导航，不触发页码变化回调。', 'Render no navigation when total pages is at most one, without emitting a page-change callback.'],
+      ['renderPage', '(page, { isCurrent }) => ReactNode', '自定义页码按钮内的非交互内容；不改变按钮语义，名称仍由 labels.page 提供。', 'Customize non-interactive page button content. Button semantics and labels.page naming remain intact.'],
+      ['renderSummary', '(page, totalPages) => ReactNode', '简洁模式下自定义非交互摘要，接收规范化页码。', 'Customize the non-interactive simple-mode summary with normalized page numbers.'],
+      ['labels', 'Partial<PaginationLabels>; localize nav, first, previous, next, last, page(number), ellipsis'],
+    ],
     a11y: { zh: 'nav 内的原生按钮通过 Tab、Enter、Space 操作，当前页带 aria-current="page"。省略符不可交互。此组件只支持数据翻页按钮，不提供链接导航。', en: 'Native buttons inside nav support Tab, Enter, and Space; the current page has aria-current="page". Ellipses are noninteractive. This component supports data pagination buttons, not link navigation.' },
     Examples: PaginationExamples,
   },

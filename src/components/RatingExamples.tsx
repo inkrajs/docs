@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PencilIcon, Rating, Switch } from '@inkra/react';
+import { Button, PencilIcon, Rating, Switch } from '@inkra/react';
 import type { RatingClearStrategy, RatingSize } from '@inkra/react';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
@@ -34,11 +34,17 @@ export function RatingExamples() {
   const [clearable, setClearable] = useState<RatingClearStrategy>(true);
   const [readOnly, setReadOnly] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const [hoverPreview, setHoverPreview] = useState(true);
+  const [preview, setPreview] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState<string | null>(null);
+  const zh = locale === 'zh-CN';
   const code = `const [value, setValue] = useState(${value});
+const [preview, setPreview] = useState<number | null>(null);
 
 <Rating aria-label="${text.quality}" value={value} onValueChange={setValue}
   count={${count}} step={${step}} size="${size}" dir="${dir}"
   clearable={${JSON.stringify(clearable)}} readOnly={${readOnly}} disabled={${disabled}}
+  hoverPreview={${hoverPreview}} onPreviewChange={setPreview}
   getValueLabel={(value, count) => \`${'${value} / ${count}'}\`} />`;
 
   return <>
@@ -58,6 +64,7 @@ export function RatingExamples() {
         <DocsSelect label={text.direction} value={dir} onValueChange={next => setDir(next as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
       </> },
       { label: '交互', content: <>
+        <Switch label={zh ? '悬停预览' : 'Hover preview'} checked={hoverPreview} onCheckedChange={setHoverPreview} />
         <DocsSelect label={text.clear} value={String(clearable)} onValueChange={(next) => setClearable(next === 'true' ? true : next === 'false' ? false : next as RatingClearStrategy)} options={[["true", text.clearBoth], ["reselect", text.clearReselect], ["keyboard", text.clearKeyboard], ["false", text.clearNever]]} />
       </> },
       { label: '状态', content: <>
@@ -77,11 +84,32 @@ export function RatingExamples() {
           clearable={clearable}
           readOnly={readOnly}
           disabled={disabled}
+          hoverPreview={hoverPreview}
+          onPreviewChange={setPreview}
           getValueLabel={(nextValue, maximum) => `${nextValue} / ${maximum}`}
         />
         <output className="rating-demo__value" aria-live="polite"><PencilText>{text.value}</PencilText>: {value} / {count}</output>
+        <span className="rating-demo__value"><PencilText>{`${zh ? '预览值' : 'Preview value'}: ${preview ?? '-'}`}</PencilText></span>
       </div>
     </ComponentPlayground>
+    <ComponentExample title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`<form onSubmit={event => {
+  event.preventDefault();
+  setSubmitted(String(new FormData(event.currentTarget).get('quality')));
+}}>
+  <Rating aria-label="${text.quality}" name="quality" defaultValue={2.5} step={0.5} />
+  <Button type="submit">${zh ? '提交' : 'Submit'}</Button>
+  <Button type="reset">${zh ? '重置' : 'Reset'}</Button>
+</form>`}>
+      <form className="rating-example-list" onSubmit={event => {
+        event.preventDefault();
+        setSubmitted(String(new FormData(event.currentTarget).get('quality')));
+      }} onReset={() => setSubmitted(null)}>
+        <Rating aria-label={text.quality} name="quality" defaultValue={2.5} step={0.5} getValueLabel={(next, max) => `${next} / ${max}`} />
+        <Button type="submit">{zh ? '提交' : 'Submit'}</Button>
+        <Button type="reset" variant="outline">{zh ? '重置' : 'Reset'}</Button>
+        <output aria-live="polite"><PencilText>{`${zh ? '已提交' : 'Submitted'}: ${submitted ?? '-'}`}</PencilText></output>
+      </form>
+    </ComponentExample>
 
     <ComponentExample title={text.uncontrolled} code={`<Rating aria-label="${text.difficulty}" defaultValue={2} count={4} />\n<Rating aria-label="${text.completion}" defaultValue={3.5} step={0.5} readOnly />`}>
       <div className="rating-example-list">

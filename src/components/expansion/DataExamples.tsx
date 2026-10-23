@@ -179,6 +179,8 @@ function TreeExamples() {
   const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(new Set<TreeKey>(['workspace', 'assets']));
   const [disableArchive, setDisableArchive] = useState(true);
   const [disclosureStyle, setDisclosureStyle] = useState<'folder' | 'chevron'>('folder');
+  const [indent, setIndent] = useState(24);
+  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const selectedText = selectedKeys === 'all' ? '*' : [...selectedKeys].map(String).join(', ') || text.nothing;
   const selectedKeysCode = selectedKeys === 'all' ? "'all'" : `new Set<TreeKey>(${JSON.stringify([...selectedKeys])})`;
   const expandedKeysCode = `new Set<TreeKey>(${JSON.stringify([...expandedKeys])})`;
@@ -217,6 +219,7 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
 
 <Tree.Root
   aria-label="${text.label}"
+  indent={${indent}} size="${size}"
   selectionMode="${selectionMode}"
   expandedKeys={expandedKeys}
   onExpandedChange={setExpandedKeys}
@@ -260,11 +263,17 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
         <DocsSelect label={zh ? '展开图标' : 'Disclosure icon'} value={disclosureStyle} onValueChange={value => setDisclosureStyle(value as typeof disclosureStyle)}
           options={[['folder', zh ? '文件夹' : 'Folder'], ['chevron', zh ? '箭头' : 'Chevron']]} />
       </> },
+      { label: '布局', content: <>
+        <DocsSelect label={zh ? '层级缩进' : 'Level indentation'} value={String(indent)} onValueChange={value => setIndent(Number(value))} options={['0', '16', '24', '32', '40'].map(value => [value, `${value} px`])} />
+        <DocsSelect label={zh ? '行密度' : 'Row density'} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", zh ? '紧凑' : 'Compact'], ["md", zh ? '标准' : 'Standard'], ["lg", zh ? '宽松' : 'Relaxed']]} />
+      </> },
       { label: '状态', content: <Switch label={text.disableArchive} checked={disableArchive} onCheckedChange={setDisableArchive} /> },
     ]} />}>
       <div className="data-demo-tree-wrap">
         <Tree.Root
           className="data-demo-tree"
+          indent={indent}
+          size={size}
           aria-label={text.label}
           selectionMode={selectionMode}
           selectedKeys={selectedKeys}
@@ -293,6 +302,25 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
           {itemContent(text.workspace, text.workspaceDescription, icon(folderIcon, 'basic-workspace'), true)}
           <Tree.Item id="drafts" textValue={text.drafts}>{itemContent(text.drafts, undefined, icon(fileIcon, 'basic-drafts'))}</Tree.Item>
           <Tree.Item id="published" textValue={text.published}>{itemContent(text.published, undefined, icon(fileIcon, 'basic-published'))}</Tree.Item>
+        </Tree.Item>
+      </Tree.Root>
+    </ComponentExample>
+    <ComponentExample title={zh ? '按节点状态展示内容' : 'Content from node state'} code={`<Tree.Root aria-label="${text.label}" defaultExpandedKeys={['workspace']}>
+  <Tree.Item id="workspace" textValue="${text.workspace}">
+    <Tree.ItemContent>{({ isExpanded, level }) => <>
+      <Tree.ItemTitle>${text.workspace}</Tree.ItemTitle>
+      <Tree.ItemDescription>{isExpanded ? '${zh ? '已展开' : 'Expanded'}' : '${zh ? '已折叠' : 'Collapsed'}'} · ${zh ? '层级' : 'Level'} {level}</Tree.ItemDescription>
+    </>}</Tree.ItemContent>
+    <Tree.Item id="drafts" textValue="${text.drafts}"><Tree.ItemContent><Tree.ItemTitle>${text.drafts}</Tree.ItemTitle></Tree.ItemContent></Tree.Item>
+  </Tree.Item>
+</Tree.Root>`}>
+      <Tree.Root className="data-demo-tree" aria-label={text.label} defaultExpandedKeys={['workspace']}>
+        <Tree.Item id="workspace" textValue={text.workspace}>
+          <Tree.ItemContent expandLabel={text.expand} collapseLabel={text.collapse}>{({ isExpanded, level }) => <>
+            <Tree.ItemTitle>{text.workspace}</Tree.ItemTitle>
+            <Tree.ItemDescription>{zh ? `${isExpanded ? '已展开' : '已折叠'} · 层级 ${level}` : `${isExpanded ? 'Expanded' : 'Collapsed'} · Level ${level}`}</Tree.ItemDescription>
+          </>}</Tree.ItemContent>
+          <Tree.Item id="drafts" textValue={text.drafts}><Tree.ItemContent><Tree.ItemTitle>{text.drafts}</Tree.ItemTitle></Tree.ItemContent></Tree.Item>
         </Tree.Item>
       </Tree.Root>
     </ComponentExample>
@@ -331,6 +359,9 @@ export const dataDocs: Record<string, ExpansionDoc> = {
       ['Tree.Root', 'selectionMode, selectedKeys, expandedKeys, disabledKeys and matching default/onChange props'],
       ['Tree.Item', 'stable id, required textValue, isDisabled and nested Tree.Item children'],
       ['Tree.ItemContent', 'disclosure, indentation, optional icon, localized expand/collapse labels'],
+      ['Tree.Root.indent', 'number = 24', '每层缩进像素，可设为 0；负数归零，非有限值回退 24，方向随 RTL。', 'Indentation per level in px, including zero. Negative values clamp to zero; nonfinite values use 24. Follows RTL.'],
+      ['Tree.Root.size', 'sm | md | lg = md', '控制行内留白，不缩小字体；所有尺寸保留至少 44px 命中区域。', 'Control row spacing without shrinking text; all sizes retain at least 44px targets.'],
+      ['Tree.ItemContent.children', 'ReactNode | (state: TreeItemContentState) => ReactNode', '按展开、选中、禁用、子项和 level 层级渲染内容；Item.textValue 仍需提供稳定的可搜索文字。', 'Render content from expansion, selection, disabled, child and level state. Keep a stable searchable Item.textValue.'],
       ['Tree.ItemContent.disclosureIcon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '替换展开图标；根据 isExpanded 显示打开或关闭的文件夹。不传时使用无外框箭头。', 'Replace the disclosure icon; use isExpanded to switch open/closed folders. Defaults to an unframed chevron.'],
       ['Tree.ItemContent.icon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '可选的行图标，也可读取展开、选择、禁用与子项状态。用文件夹作为展开图标时可以省略，避免重复。', 'Optional row icon, with expansion, selection, disabled and child state. Omit it when the folder already serves as the disclosure icon.'],
       ['Tree.ItemTitle / Description', 'visible selectable text slots'],

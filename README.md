@@ -6,14 +6,16 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This revision consumes the published `@inkra/react@0.3.0` package.
-library-candidate.json records its exact source commit, SHA-256 and SHA-512.
-Install directly with npm ci; no sibling checkout or vendor archive is needed.
+This working revision previews unpublished component property extensions using
+`vendor/inkra.tgz`. The version remains `0.3.0`, but these are not the published
+registry bytes. library-candidate.json pins the exact library commit and archive
+checksums. Prepare this candidate before npm ci.
 Build verifies the archive and installed dependency without a source alias.
 
 ## Local Development
 
-For the published release, no sibling library checkout or vendor archive is needed:
+This revision uses an unpublished candidate. First follow
+**Prepare An Unpublished Candidate** below, then run:
 
 ```sh
 npm ci
@@ -21,8 +23,8 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-To preview library changes that are not published, follow
-**Prepare An Unpublished Candidate** below.
+Revisions pinned to a published registry release need no sibling library checkout
+or vendor archive.
 
 ## Local Routes And Page Actions
 
@@ -45,12 +47,12 @@ Destination/prompt checks use intercepted calls, not authenticated AI sessions.
 
 ## Prepare An Unpublished Candidate
 
-In an inkrajs/inkra checkout:
+In an inkrajs/inkra checkout at the revision from library-candidate.json:
 
 ```sh
 npm ci
 npm run build
-npm run check:package
+GITHUB_SHA=$(git rev-parse HEAD) npm run check:package
 ```
 
 Then, in this repository:
@@ -89,6 +91,11 @@ not just individual padding values: heading and standalone dividers own their
 cover draft isolation and zero background canvas redraws on preview/close,
 save/cancel/reset, border/icon/fill pixel changes, persistence, storage failures, focus return,
 forced colors, responsive headers and the task-list interactions.
+
+`node scripts/verify-property-extensions.mjs` checks Tree indentation and state
+rendering, Pagination display controls, Rating hover and native form reset,
+Alert dismissal, and Skeleton reduced-motion behavior. It uses one browser and
+the installed candidate, then captures both locales at desktop and narrow sizes.
 
 `verify-text-first-paint.mjs` checks first-frame pencil lettering on desktop and
 mobile, delayed fonts, runtime Latin glyph reuse, parameter invalidation,
