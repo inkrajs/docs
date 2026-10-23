@@ -14,8 +14,25 @@ try {
     const playground = page.locator('.component-playground').first();
     const trigger = playground.getByRole('button', { name: '编辑笔记', exact: true });
     const dialog = page.getByRole('dialog', { name: '编辑笔记', exact: true });
+    await playground.evaluate(node => {
+      node.setAttribute('data-inkra-theme', 'dark');
+      node.setAttribute('dir', 'rtl');
+      node.setAttribute('lang', 'ar');
+      node.style.setProperty('--inkra-accent', '#a94267');
+    });
     await trigger.click();
     await dialog.waitFor();
+    await page.waitForFunction(node => node.getAttribute('data-inkra-theme') === 'dark'
+      && node.getAttribute('dir') === 'rtl' && node.getAttribute('lang') === 'ar'
+      && getComputedStyle(node).getPropertyValue('--inkra-accent').trim() === '#a94267', await dialog.elementHandle());
+    await playground.evaluate(node => {
+      node.removeAttribute('data-inkra-theme');
+      node.removeAttribute('dir');
+      node.removeAttribute('lang');
+      node.style.removeProperty('--inkra-accent');
+    });
+    await page.waitForFunction(node => node.getAttribute('dir') === 'ltr'
+      && getComputedStyle(node).getPropertyValue('--inkra-accent').trim() !== '#a94267', await dialog.elementHandle());
     await dialog.evaluate(node => Promise.all(node.getAnimations().map(animation => animation.finished)));
     assert.equal(await dialog.getAttribute('data-layout'), 'sections');
     assert.equal(await dialog.locator('.inkra-overlay__section-divider').count(), 2);
@@ -52,8 +69,13 @@ try {
     assert.equal(await playground.locator('output').textContent(), '{"name":"Section form"}');
     await expectFocus(trigger);
 
+    const configToggle = playground.locator('.playground-config-toggle');
+    if (await configToggle.getAttribute('aria-expanded') === 'false') await configToggle.click();
+    await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
     await playground.getByRole('switch', { name: '显示关闭按钮', exact: true }).uncheck();
     await playground.getByRole('switch', { name: '分割线', exact: true }).uncheck();
+    await configToggle.click();
+    await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
     await trigger.click();
     await dialog.waitFor();
     assert.equal(await dialog.locator('.inkra-overlay__close-button').count(), 0);
@@ -101,7 +123,7 @@ try {
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     assert.deepEqual(errors, []);
     await page.close();
-    console.log(`PASS ${width}x${height}: sections, close/focus, separators, form validation/submission, fixed actions and scroll`);
+    console.log(`PASS ${width}x${height}: live portal theme/direction/language, sections, nested close/focus, separators, form validation/submission, fixed actions and scroll`);
   }
 } finally {
   await browser.close();

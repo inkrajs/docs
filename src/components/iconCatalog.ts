@@ -280,7 +280,7 @@ export function navigationIcon(label: string) {
     Stack: '组件', Flex: 'Tabs', Grid: 'Table', Container: 'Card', Layout: 'Tabs', '布局': 'Tabs',
     Avatar: '用户', Upload: '上传', DataTable: 'Table', '开始': '快速开始', '基础': '设计规范',
     '通用': '组件', '表单输入': 'Field', '导航菜单': '菜单', '数据展示': 'Table',
-    '反馈状态': 'Alert', '弹层': 'Overlay', '日期与地图': '日历', '设计资源': '设计规范',
+    '反馈状态': 'Alert', '弹层': 'Overlay', '设计资源': '设计规范',
     ColorPicker: '设计规范', Rating: '星标', '视觉交互': 'PanZoom',
   };
   return (docsIconCatalog.find(icon => icon.label === (aliases[label] ?? label)) ?? docsIconCatalog[0]).data;

@@ -27,7 +27,7 @@ export function TabsExamples() {
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
-        <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as typeof size)} options={[["sm", "Small"], ["md", "Medium"], ["lg", "Large"]]} />
+        <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as typeof size)} options={[["sm", "小"], ["md", "中"], ["lg", "大"]]} />
         <DocsSelect label="对齐" value={align} onValueChange={next => setAlign(next as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
         <DocsSelect label="阅读方向" value={dir} onValueChange={next => setDir(next as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
         <DocsSelect label="排列" value={orientation} onValueChange={next => setOrientation(next as typeof orientation)} options={[["horizontal", "横向"], ["vertical", "纵向"]]} />

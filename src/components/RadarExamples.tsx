@@ -8,12 +8,12 @@ import { PropertyTabs } from './PropertyTabs';
 import { useLocale } from '../i18n';
 import './RadarExamples.css';
 
-const axes = [
-  { id: 'speed', label: 'Speed', min: -10, max: 10 },
-  { id: 'quality', label: 'Quality', min: 0, max: 100 },
-  { id: 'clarity', label: 'Clarity', min: 0, max: 10 },
-  { id: 'reach', label: 'Reach', min: 0, max: 100 },
-  { id: 'care', label: 'Care', min: 0, max: 10 },
+const axisMessages = [
+  { id: 'speed', label: '速度', min: -10, max: 10 },
+  { id: 'quality', label: '质量', min: 0, max: 100 },
+  { id: 'clarity', label: '清晰度', min: 0, max: 10 },
+  { id: 'reach', label: '覆盖面', min: 0, max: 100 },
+  { id: 'care', label: '细致度', min: 0, max: 10 },
 ] as const;
 
 const series = [
@@ -25,9 +25,17 @@ const series = [
 const quote = (value: string) => JSON.stringify(value);
 
 export function RadarExamples() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
+  const axes = axisMessages.map(axis => ({ ...axis, label: t(axis.label) }));
   const zh = locale === 'zh-CN';
   const text = (cn: string, en: string) => zh ? cn : en;
+  const labels = {
+    legendLabel: text('图例', 'Series'),
+    tableCaption: text('雷达图数据', 'Radar data'),
+    seriesLabel: text('数据系列', 'Series'),
+    emptyMessage: text('暂无雷达图数据', 'No radar data'),
+    missingLabel: text('缺失', 'Missing'),
+  };
   const [selected, setSelected] = useState<RadarKey | null>('alpha');
   const [showLabels, setShowLabels] = useState(true);
   const [showValues, setShowValues] = useState(true);
@@ -43,10 +51,10 @@ export function RadarExamples() {
         <Switch label={text('显示数据表', 'Show data table')} checked={showTable} onCheckedChange={setShowTable} />
       </> },
     ]} />}>
-      <Radar axes={axes} series={series} label={text('能力画像', 'Capability profile')} description={text('每条线都有独立线型和可读数据摘要。', 'Each series has its own line pattern and readable data summary.')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
+      <Radar {...labels} axes={axes} series={series} label={text('能力画像', 'Capability profile')} description={text('每条线都有独立线型和可读数据摘要。', 'Each series has its own line pattern and readable data summary.')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
     </ComponentPlayground>
-    <ComponentExample title={text('缺失值与负值', 'Missing and negative values')} code={'<Radar axes={axes} series={[{ id: "beta", label: "Beta", data: [{ axisId: "speed", value: -4 }, { axisId: "clarity", value: null }] }]} label="Boundary values" />'}>
-      <Radar axes={axes.slice(0, 3)} series={[{ id: 'boundary', label: text('边界样本', 'Boundary sample'), data: [{ axisId: 'speed', value: -4 }, { axisId: 'quality', value: 0 }, { axisId: 'clarity', value: null }] }]} label={text('边界样本', 'Boundary sample')} description={text('0 是有效数值，空值显示为缺失。', 'Zero is measured; null is missing.')} showLegend={false} />
+    <ComponentExample title={text('缺失值与负值', 'Missing and negative values')} code={'<Radar {...labels} axes={axes} series={[{ id: "beta", label: "Beta", data: [{ axisId: "speed", value: -4 }, { axisId: "clarity", value: null }] }]} label="Boundary values" />'}>
+      <Radar {...labels} axes={axes.slice(0, 3)} series={[{ id: 'boundary', label: text('边界样本', 'Boundary sample'), data: [{ axisId: 'speed', value: -4 }, { axisId: 'quality', value: 0 }, { axisId: 'clarity', value: null }] }]} label={text('边界样本', 'Boundary sample')} description={text('0 是有效数值，空值显示为缺失。', 'Zero is measured; null is missing.')} showLegend={false} />
     </ComponentExample>
   </div>;
 }

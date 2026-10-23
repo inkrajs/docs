@@ -8,15 +8,16 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { PropertyTabs } from './PropertyTabs';
 import './ColorPickerExamples.css';
 
-const presets = [
-  { value: '#4b96aaff', label: 'Ocean' },
-  { value: '#629568ff', label: 'Pine' },
-  { value: '#994f3fff', label: 'Cinnabar' },
-  { value: '#e6c17b99', label: 'Amber 60%' },
+const presetMessages = [
+  { value: '#4b96aaff', label: '海蓝' },
+  { value: '#629568ff', label: '松绿' },
+  { value: '#994f3fff', label: '朱砂' },
+  { value: '#e6c17b99', label: '琥珀 60%' },
 ];
 
 export function ColorPickerExamples() {
   const { t } = useLocale();
+  const presets = presetMessages.map(preset => ({ ...preset, label: t(preset.label) }));
   const [value, setValue] = useState<ColorValue>('#4b96aacc');
   const [showAlpha, setShowAlpha] = useState(true);
   const [showPresets, setShowPresets] = useState(true);

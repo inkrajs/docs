@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, PencilText, Sortable, Switch, type SortableContainerData } from '@inkra/react';
+import { Badge, Button, PencilText, Sortable, Switch, type SortableContainerData, type SortableLabels } from '@inkra/react';
 
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
@@ -29,22 +29,65 @@ const boardSeed: SortableContainerData<SortableNote>[] = [
   { id: 'paused', label: 'Paused', disabled: true, items: [{ id: 'signed', title: 'Signed copy', detail: 'This container is read only.' }] },
 ];
 
-function NoteContent({ item, compact = false }: { item: SortableNote; compact?: boolean }) {
+function NoteContent({ item, lockedLabel, compact = false }: { item: SortableNote; lockedLabel: string; compact?: boolean }) {
   return <div className="sortable-example__note-copy">
-    <span className="sortable-example__note-title"><PencilText>{item.title}</PencilText>{item.locked && <Badge size="sm">Locked</Badge>}</span>
-    {!compact && <span className="sortable-example__note-detail">{item.detail}</span>}
+    <span className="sortable-example__note-title"><PencilText>{item.title}</PencilText>{item.locked && <Badge size="sm">{lockedLabel}</Badge>}</span>
+    {!compact && <PencilText className="sortable-example__note-detail">{item.detail}</PencilText>}
   </div>;
 }
 
 export function SortableExamples() {
-  const { t } = useLocale();
+  const { locale } = useLocale();
+  const copy = locale === 'en' ? {
+    layout: 'Layout', arrangement: 'Arrangement', list: 'List', grid: 'Grid', interaction: 'Interaction',
+    handle: 'Drag handle', disableLocked: 'Disable locked item', drag: 'Drag item', locked: 'Locked',
+    across: 'Move across containers', open: 'Open',
+    containers: { notes: 'Creative steps', draft: 'Draft', ready: 'Ready', archive: 'Archive', paused: 'Paused' },
+    notes: {
+      outline: ['Outline the story', 'Find the opening and the ending.'],
+      sketch: ['Sketch the scenes', 'Keep each frame loose and readable.'],
+      review: ['Review the rhythm', 'Locked while feedback is collected.'],
+      polish: ['Polish the details', 'Add texture after the structure works.'],
+      signed: ['Signed copy', 'This container is read only.'],
+    },
+  } : {
+    layout: '布局', arrangement: '排列', list: '列表', grid: '网格', interaction: '交互',
+    handle: '拖动手柄', disableLocked: '禁用锁定项', drag: '拖动项目', locked: '已锁定',
+    across: '跨容器移动', open: '打开',
+    containers: { notes: '创作步骤', draft: '草稿', ready: '就绪', archive: '归档', paused: '暂停' },
+    notes: {
+      outline: ['梳理故事大纲', '先确定开头和结尾。'],
+      sketch: ['勾画场景', '让每一帧都清楚易读。'],
+      review: ['检查叙事节奏', '收集反馈期间暂时锁定。'],
+      polish: ['打磨细节', '结构确定后再补充质感。'],
+      signed: ['签字定稿', '此分组为只读。'],
+    },
+  };
+  const labels: SortableLabels = locale === 'en' ? { handle: copy.drag } : {
+    handle: copy.drag,
+    screenReaderInstructions: '按空格或回车拾取项目，使用方向键移动，再按空格或回车放下，按 Escape 取消。',
+    pickedUp: (item, container, position, count) => `已拾取${item}，位于${container}，第 ${position} 项，共 ${count} 项。`,
+    movedOver: (item, container, position, count) => `${item}移动至${container}，第 ${position} 项，共 ${count} 项。`,
+    dropped: (item, container, position, count) => `已将${item}放到${container}，第 ${position} 项，共 ${count} 项。`,
+    cancelled: item => `已取消排序，${item}回到原位。`,
+  };
   const [layout, setLayout] = useState<'list' | 'grid'>('list');
-  const [handle, setHandle] = useState(true);
+  const [handle, setHandle] = useState(false);
   const [disableLocked, setDisableLocked] = useState(true);
   const [notes, setNotes] = useState<SortableContainerData<SortableNote>[]>([
-    { id: 'notes', label: t('创作步骤 / Creative steps'), layout: 'list', items: initialNotes },
+    { id: 'notes', layout: 'list', items: initialNotes },
   ]);
   const [board, setBoard] = useState<SortableContainerData<SortableNote>[]>(boardSeed);
+  function localizeContainers(containers: SortableContainerData<SortableNote>[]) {
+    return containers.map(container => ({
+      ...container,
+      label: copy.containers[container.id as keyof typeof copy.containers],
+      items: container.items.map(item => {
+        const [title, detail] = copy.notes[item.id as keyof typeof copy.notes];
+        return { ...item, title, detail };
+      }),
+    }));
+  }
   const code = `<Sortable
   containers={[{ id: 'notes', layout: '${layout}', items }]}
   getItemId={item => item.id}
@@ -57,36 +100,36 @@ export function SortableExamples() {
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
-      { label: t('布局 / Layout'), content: <DocsSelect
-        label={t('排列 / Arrangement')}
+      { label: copy.layout, content: <DocsSelect
+        label={copy.arrangement}
         value={layout}
         onValueChange={value => {
           const next = value as 'list' | 'grid';
           setLayout(next);
           setNotes(current => current.map(container => ({ ...container, layout: next })));
         }}
-        options={[['list', t('列表 / List')], ['grid', t('网格 / Grid')]]}
+        options={[['list', copy.list], ['grid', copy.grid]]}
       /> },
-      { label: t('交互 / Interaction'), content: <>
-        <Switch label={t('拖动手柄 / Drag handle')} checked={handle} onCheckedChange={setHandle} />
-        <Switch label={t('禁用锁定项 / Disable locked item')} checked={disableLocked} onCheckedChange={setDisableLocked} />
+      { label: copy.interaction, content: <>
+        <Switch label={copy.handle} checked={handle} onCheckedChange={setHandle} />
+        <Switch label={copy.disableLocked} checked={disableLocked} onCheckedChange={setDisableLocked} />
       </> },
     ]} />}>
       <div className="sortable-example__playground" data-testid="sortable-playground">
         <Sortable
-          containers={notes}
+          containers={localizeContainers(notes)}
           getItemId={item => item.id}
           getItemLabel={item => item.title}
           handle={handle}
           isItemDisabled={item => disableLocked && item.locked === true}
-          labels={{ handle: t('拖动项目 / Drag item') }}
+          labels={labels}
           onChange={setNotes}
-          renderItem={({ item }) => <NoteContent item={item} />}
+          renderItem={({ item }) => <NoteContent item={item} lockedLabel={copy.locked} />}
         />
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={t('跨容器移动 / Move across containers')} code={`<Sortable
+    <ComponentExample title={copy.across} code={`<Sortable
   containers={columns}
   getItemId={item => item.id}
   handle
@@ -99,19 +142,19 @@ export function SortableExamples() {
 />`}>
       <div className="sortable-example__board" data-testid="sortable-board">
         <Sortable
-          containers={board}
+          containers={localizeContainers(board)}
           getItemId={item => item.id}
           getItemLabel={item => item.title}
           handle
-          labels={{ handle: t('拖动项目 / Drag item') }}
+          labels={labels}
           onChange={setBoard}
           renderContainerHeader={({ container, itemCount }) => <div className="sortable-example__column-title">
             <PencilText>{container.label ?? String(container.id)}</PencilText>
             <Badge size="sm">{itemCount}</Badge>
           </div>}
           renderItem={({ item }) => <div className="sortable-example__item-with-action">
-            <NoteContent item={item} compact />
-            <Button size="sm" variant="ghost" data-sortable-no-drag onClick={() => undefined}>{t('打开 / Open')}</Button>
+            <NoteContent item={item} lockedLabel={copy.locked} compact />
+            <Button size="sm" variant="ghost" data-sortable-no-drag onClick={() => undefined}>{copy.open}</Button>
           </div>}
         />
       </div>

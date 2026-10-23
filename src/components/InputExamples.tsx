@@ -1,9 +1,11 @@
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent } from 'react';
 import { Button, Field, Input, Textarea, Switch, Tooltip } from '@inkra/react';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
 import { __iconData as mailIcon } from 'lucide-react/dist/esm/icons/mail.mjs';
 import { __iconData as copyIcon } from 'lucide-react/dist/esm/icons/copy.mjs';
+import { __iconData as eyeIcon } from 'lucide-react/dist/esm/icons/eye.mjs';
+import { __iconData as eyeOffIcon } from 'lucide-react/dist/esm/icons/eye-off.mjs';
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
@@ -15,7 +17,7 @@ import './InputExamples.css';
 type InputSize = 'sm' | 'md' | 'lg';
 type InputVariant = 'underline' | 'outline' | 'soft' | 'ghost';
 type TextAlign = 'start' | 'center' | 'end';
-type InputKind = 'text' | 'search' | 'email' | 'url' | 'tel';
+type InputKind = 'text' | 'search' | 'email' | 'url' | 'tel' | 'password';
 
 const variants = [['underline', '下划线'], ['outline', '描边'], ['soft', '柔和铺色'], ['ghost', '无边框']] as const;
 const quote = (value: string) => JSON.stringify(value);
@@ -55,6 +57,9 @@ function InputPlayground() {
   const [prefix, setPrefix] = useState('');
   const [suffix, setSuffix] = useState('');
   const [status, setStatus] = useState('');
+  const password = type === 'password';
+  const label = t(password ? '密码' : '名称');
+  const placeholder = t(password ? '请输入密码' : '笔记名称');
   async function copyValue() {
     try {
       await navigator.clipboard.writeText(value);
@@ -65,12 +70,12 @@ function InputPlayground() {
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
+    setStatus(password ? t('密码已读取') : JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
   }
   const iconSize = size === 'sm' ? 18 : size === 'lg' ? 26 : 22;
-  const code = `const [value, setValue] = useState(${quote(value)});
+  const code = `const [value, setValue] = useState(${quote(password ? '' : value)});
 const [status, setStatus] = useState('');
-${action ? `async function copyValue() {
+${action && !password ? `async function copyValue() {
   try {
     await navigator.clipboard.writeText(value);
     setStatus(${quote(t('已复制'))});
@@ -81,15 +86,15 @@ ${action ? `async function copyValue() {
 ` : ''}
 <form noValidate onSubmit={event => {
   event.preventDefault();
-  setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
+  setStatus(${password ? quote(t('密码已读取')) : 'JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))'});
 }}>
-  <Field label=${quote(t('名称'))} description=${quote(t('用于识别这条笔记'))}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t('请输入名称'))}` : ''}>
+  <Field label=${quote(label)}${password ? '' : ` description=${quote(t('用于识别这条笔记'))}`}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t(password ? '请输入密码' : '请输入名称'))}` : ''}>
     <Input
       name="title" type="${type}" size="${size}" variant="${variant}"
       value={value} onValueChange={setValue}
-      placeholder=${quote(t('笔记名称'))}
+      placeholder=${quote(placeholder)}${password ? '\n      autoComplete="new-password"' : ''}
       textAlign="${textAlign}" dir="${dir}" fullWidth={${fullWidth}}
-      loading={${loading}}${clearable ? ` clearable clearButtonLabel=${quote(t('清空名称'))}` : ''}${disabled ? '\n      disabled' : ''}${readOnly ? '\n      readOnly' : ''}${start ? `\n      startIcon={<DocsIcon data={searchIcon} size={${iconSize}} />}` : ''}${end ? `\n      endIcon={<DocsIcon data={checkIcon} size={${iconSize}} />}` : ''}${prefix ? `\n      prefix=${quote(prefix)}` : ''}${suffix ? `\n      suffix=${quote(suffix)}` : ''}${action ? `
+      loading={${loading}}${clearable ? ` clearable clearButtonLabel=${quote(t(password ? '清空密码' : '清空名称'))}` : ''}${disabled ? '\n      disabled' : ''}${readOnly ? '\n      readOnly' : ''}${start ? `\n      startIcon={<DocsIcon data={searchIcon} size={${iconSize}} />}` : ''}${end ? `\n      endIcon={<DocsIcon data={checkIcon} size={${iconSize}} />}` : ''}${prefix ? `\n      prefix=${quote(prefix)}` : ''}${suffix ? `\n      suffix=${quote(suffix)}` : ''}${action && !password ? `
       endAction={
         <Tooltip.Provider>
           <Tooltip.Root>
@@ -111,15 +116,15 @@ ${action ? `async function copyValue() {
   return <ComponentPlayground code={code} controls={<PropertyTabs groups={[{ label: '基础', content: <>
     <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as InputSize)} options={controlSizes} />
     <DocsSelect label="外观" value={variant} onValueChange={next => setVariant(next as InputVariant)} options={variants} />
-    <DocsSelect label="输入类型" value={type} onValueChange={next => setType(next as InputKind)} options={[['text', 'Text'], ['search', 'Search'], ['email', 'Email'], ['url', 'URL'], ['tel', 'Tel']]} />
+    <DocsSelect label="输入类型" value={type} onValueChange={next => { setType(next as InputKind); setStatus(''); }} options={[['text', 'Text'], ['search', 'Search'], ['email', 'Email'], ['url', 'URL'], ['tel', 'Tel'], ['password', '密码']]} />
     <Switch label={t('撑满宽度')} checked={fullWidth} onCheckedChange={setFullWidth} />
     <DocsSelect label="内容对齐" value={textAlign} onValueChange={next => setTextAlign(next as TextAlign)} options={[['start', 'Start'], ['center', 'Center'], ['end', 'End']]} />
     <DocsSelect label="阅读方向" value={dir} onValueChange={next => setDir(next as typeof dir)} options={[['ltr', 'LTR'], ['rtl', 'RTL']]} />
   </> }, { label: '内容', content: <>
-    <Field label={t('名称')}><Input value={value} onChange={event => setValue(event.target.value)} /></Field>
+    <Field label={label}><Input type={password ? 'password' : 'text'} autoComplete={password ? 'new-password' : undefined} value={value} onChange={event => setValue(event.target.value)} /></Field>
     <Switch label={t('前置图标')} checked={start} onCheckedChange={setStart} />
     <Switch label={t('后置图标')} checked={end} onCheckedChange={setEnd} />
-    <Switch label={t('尾部操作')} checked={action} onCheckedChange={setAction} />
+    <Switch label={t('尾部操作')} checked={action && !password} disabled={password} onCheckedChange={setAction} />
     <Field label={t('前缀文字')}><Input value={prefix} onChange={event => setPrefix(event.target.value)} placeholder="https://" /></Field>
     <Field label={t('后缀文字')}><Input value={suffix} onChange={event => setSuffix(event.target.value)} placeholder="kg" /></Field>
   </> }, { label: '状态', content: <>
@@ -131,16 +136,16 @@ ${action ? `async function copyValue() {
     <Switch label={t('错误状态')} checked={invalid} onCheckedChange={setInvalid} />
   </> }]} />}>
     <form className="component-demo-form" noValidate onSubmit={submit}>
-      <Field label={t('名称')} description={t('用于识别这条笔记')} required={required} invalid={invalid} error={invalid ? t('请输入名称') : undefined}>
+      <Field label={label} description={password ? undefined : t('用于识别这条笔记')} required={required} invalid={invalid} error={invalid ? t(password ? '请输入密码' : '请输入名称') : undefined}>
         <Input
           name="title" type={type} size={size} variant={variant} value={value}
           onValueChange={setValue}
-          placeholder={t('笔记名称')} clearable={clearable} clearButtonLabel={t('清空名称')}
+          placeholder={placeholder} autoComplete={password ? 'new-password' : undefined} clearable={clearable} clearButtonLabel={t(password ? '清空密码' : '清空名称')}
           loading={loading} disabled={disabled} readOnly={readOnly} fullWidth={fullWidth}
           textAlign={textAlign} dir={dir} prefix={prefix || undefined} suffix={suffix || undefined}
           startIcon={start ? <DocsIcon data={searchIcon} size={iconSize} /> : undefined}
           endIcon={end ? <DocsIcon data={checkIcon} size={iconSize} /> : undefined}
-          endAction={action ? <CopyAction size={size} disabled={disabled} onClick={() => void copyValue()} /> : undefined}
+          endAction={action && !password ? <CopyAction size={size} disabled={disabled} onClick={() => void copyValue()} /> : undefined}
           onClear={() => setStatus(t('已清空'))}
         />
       </Field>
@@ -148,6 +153,67 @@ ${action ? `async function copyValue() {
       <output aria-live="polite" className="component-demo-status input-examples__status">{status}</output>
     </form>
   </ComponentPlayground>;
+}
+
+function PasswordExample() {
+  const { t } = useLocale();
+  const id = useId();
+  const [value, setValue] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [readOnly, setReadOnly] = useState(false);
+  const toggleLabel = t(visible ? '隐藏密码' : '显示密码');
+  const code = `const id = useId();
+const [value, setValue] = useState('');
+const [visible, setVisible] = useState(false);
+const [disabled, setDisabled] = useState(${disabled});
+const [readOnly, setReadOnly] = useState(${readOnly});
+const toggleLabel = visible ? ${quote(t('隐藏密码'))} : ${quote(t('显示密码'))};
+
+<Field id={id} label=${quote(t('密码'))}>
+  <Input
+    id={id} name="demo-password" type={visible ? 'text' : 'password'}
+    value={value} onValueChange={setValue}
+    autoComplete="new-password" autoCapitalize="none" spellCheck={false}
+    placeholder=${quote(t('请输入密码'))} disabled={disabled} readOnly={readOnly}
+    endAction={
+      <Button type="button" size="icon" variant="ghost"
+        disabled={disabled} aria-label={toggleLabel} title={toggleLabel}
+        aria-controls={id} aria-pressed={visible}
+        onClick={() => setVisible(current => !current)}>
+        <DocsIcon data={visible ? eyeOffIcon : eyeIcon} size={22} />
+      </Button>
+    }
+  />
+</Field>
+<Switch label=${quote(t('只读'))} checked={readOnly} onCheckedChange={setReadOnly} />
+<Switch label=${quote(t('禁用'))} checked={disabled} onCheckedChange={next => {
+  setDisabled(next);
+  if (next) setVisible(false);
+}} />`;
+  return <ComponentExample title="密码输入" code={code}>
+    <div className="component-demo-form" data-password-example="">
+      <Field id={id} label={t('密码')}>
+        <Input
+          id={id} name="demo-password" type={visible ? 'text' : 'password'}
+          value={value} onValueChange={setValue}
+          autoComplete="new-password" autoCapitalize="none" spellCheck={false}
+          placeholder={t('请输入密码')} disabled={disabled} readOnly={readOnly}
+          endAction={<Button type="button" size="icon" variant="ghost"
+            disabled={disabled} aria-label={toggleLabel} title={toggleLabel}
+            aria-controls={id} aria-pressed={visible}
+            onClick={() => setVisible(current => !current)}>
+            <DocsIcon data={visible ? eyeOffIcon : eyeIcon} size={22} />
+          </Button>}
+        />
+      </Field>
+      <Switch label={t('只读')} checked={readOnly} onCheckedChange={setReadOnly} />
+      <Switch label={t('禁用')} checked={disabled} onCheckedChange={next => {
+        setDisabled(next);
+        if (next) setVisible(false);
+      }} />
+    </div>
+  </ComponentExample>;
 }
 
 function ClearExamples() {
@@ -247,6 +313,7 @@ export function InputExamples() {
   const { t } = useLocale();
   return <>
     <InputPlayground />
+    <PasswordExample />
     <ComponentExample title="首尾图标" code={`<Field label=${quote(t('搜索文档'))}><Input type="search" placeholder=${quote(t('搜索文档'))} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>\n<Field label=${quote(t('电子邮箱'))}><Input type="email" defaultValue="hello@example.com" startIcon={<DocsIcon data={mailIcon} size={22} />} endIcon={<DocsIcon data={checkIcon} size={22} />} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('搜索文档')}><Input type="search" placeholder={t('搜索文档')} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>

@@ -8,18 +8,18 @@ import { PropertyTabs } from './PropertyTabs';
 import { PencilText, useLocale } from '../i18n';
 import './HeatmapExamples.css';
 
-const rows = [
-  { id: 'research', label: 'Research' },
-  { id: 'design', label: 'Design' },
-  { id: 'engineering', label: 'Engineering' },
-  { id: 'support', label: 'Support' },
+const rowMessages = [
+  { id: 'research', label: '研究' },
+  { id: 'design', label: '设计' },
+  { id: 'engineering', label: '工程' },
+  { id: 'support', label: '支持' },
 ];
 
-const columns = [
-  { id: 'clarity', label: 'Clarity' },
-  { id: 'momentum', label: 'Momentum' },
-  { id: 'quality', label: 'Quality' },
-  { id: 'risk', label: 'Risk' },
+const columnMessages = [
+  { id: 'clarity', label: '清晰度' },
+  { id: 'momentum', label: '推进力' },
+  { id: 'quality', label: '质量' },
+  { id: 'risk', label: '风险' },
 ];
 
 const cells: HeatmapCell[] = [
@@ -41,16 +41,16 @@ const cells: HeatmapCell[] = [
   { rowId: 'support', columnId: 'risk', value: 39 },
 ];
 
-const compactRows = [
-  { id: 'north', label: 'North' },
-  { id: 'central', label: 'Central' },
-  { id: 'south', label: 'South' },
+const compactRowMessages = [
+  { id: 'north', label: '北区' },
+  { id: 'central', label: '中区' },
+  { id: 'south', label: '南区' },
 ];
 
-const compactColumns = [
-  { id: 'new', label: 'New' },
-  { id: 'returning', label: 'Returning' },
-  { id: 'resolved', label: 'Resolved' },
+const compactColumnMessages = [
+  { id: 'new', label: '新增' },
+  { id: 'returning', label: '再次出现' },
+  { id: 'resolved', label: '已解决' },
 ];
 
 const compactCells: HeatmapCell[] = [
@@ -66,7 +66,12 @@ const compactCells: HeatmapCell[] = [
 ];
 
 export function HeatmapExamples() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
+  const localizeLabels = (items: { id: string; label: string }[]) => items.map(item => ({ ...item, label: t(item.label) }));
+  const rows = localizeLabels(rowMessages);
+  const columns = localizeLabels(columnMessages);
+  const compactRows = localizeLabels(compactRowMessages);
+  const compactColumns = localizeLabels(compactColumnMessages);
   const text = locale === 'en' ? {
     title: 'Team health matrix',
     description: 'Arrow keys move through cells. Enter or Space selects one.',

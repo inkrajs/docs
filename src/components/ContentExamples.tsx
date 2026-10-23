@@ -127,7 +127,7 @@ function CardExamples() {
   const [footerPadding, setFooterPadding] = useState<CardPadding>('inherit');
   const [headerAlign, setHeaderAlign] = useState<'start' | 'center' | 'end'>('start');
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
-  const paddingOptions = [['inherit', '继承尺寸'], ['none', '无'], ['sm', 'Small'], ['md', 'Medium'], ['lg', 'Large']] as const;
+  const paddingOptions = [['inherit', '继承尺寸'], ['none', '无'], ['sm', '小'], ['md', '中'], ['lg', '大']] as const;
   const [justify, setJustify] = useState<'start' | 'center' | 'end' | 'between'>('start');
   const [heading, setHeading] = useState<'h2' | 'h3' | 'h4'>('h3');
   const code = `<Card.Root variant="${variant}" size="${size}" radius={${radius}} divided={${divided}}>\n  <Card.Header padding="${headerPadding}" align="${headerAlign}"${action ? ` action={<Button variant="ghost" onClick={handleSave}>${t('保存更改')}</Button>}` : ''}>\n    <Card.Title as="${heading}">${t('灵感笔记')}</Card.Title>${description ? `\n    <Card.Description>${t('今天的创作记录')}</Card.Description>` : ''}\n  </Card.Header>\n  <Card.Content padding="${padding}">${t('记录一个值得继续探索的想法。')}</Card.Content>${footer ? `\n  <Card.Footer padding="${footerPadding}" orientation="${orientation}" justify="${justify}"><Button onClick={handleSave}>${t('保存更改')}</Button></Card.Footer>` : ''}\n</Card.Root>`;

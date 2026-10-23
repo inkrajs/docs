@@ -6,6 +6,8 @@ function InputNumberFixture() {
   const [value, setValue] = useState<number | null>(2);
   const [empty, setEmpty] = useState<number | null>(null);
   const [events, setEvents] = useState<string[]>([]);
+  const [repeatValue, setRepeatValue] = useState<number | null>(0);
+  const [repeatDisabled, setRepeatDisabled] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const record = (value: string) => setEvents(previous => [...previous, value]);
   return <div style={{ width: 'min(100%, 460px)', boxSizing: 'border-box', display: 'grid', gap: 20, padding: 20 }}>
@@ -30,6 +32,11 @@ function InputNumberFixture() {
     <Field label="External"><InputNumber form="external-number-form" defaultValue={6} controls={false} name="external" /></Field>
     <Field label="All slots"><InputNumber defaultValue={12.5} step={0.5} min={0} prefix="NZ$" suffix="kg" variant="outline" incrementButtonLabel="Increment slots" decrementButtonLabel="Decrement slots" /></Field>
     <Field label="RTL"><InputNumber defaultValue={2} dir="rtl" textAlign="end" incrementButtonLabel="Increment RTL" decrementButtonLabel="Decrement RTL" /></Field>
+    <Field label="Default modifiers"><InputNumber defaultValue={3} min={-1000} max={1000} incrementButtonLabel="Increment default modifiers" decrementButtonLabel="Decrement default modifiers" /></Field>
+    <Field label="Custom modifiers"><InputNumber defaultValue={0.3} min={-1000} max={1000} step={0.1} stepModifiers={[{ shiftKey: true, step: 7 }, { altKey: true, step: 0.25 }, { ctrlKey: true, shiftKey: true, step: 100 }, { metaKey: true, step: 50 }]} incrementButtonLabel="Increment custom" decrementButtonLabel="Decrement custom" /></Field>
+    <Field label="No modifiers"><InputNumber defaultValue={0} stepModifiers={[]} pressAndHold={false} incrementButtonLabel="Increment no modifiers" decrementButtonLabel="Decrement no modifiers" /></Field>
+    <Field label="Repeating"><InputNumber value={repeatValue} onValueChange={setRepeatValue} min={0} max={50} disabled={repeatDisabled} repeatDelay={150} repeatInterval={40} incrementButtonLabel="Increment repeating" decrementButtonLabel="Decrement repeating" /></Field>
+    <Button onClick={() => setRepeatDisabled(disabled => !disabled)}>Toggle repeat disabled</Button>
     <Button onClick={() => inputRef.current?.focus()}>Focus controlled</Button>
     <Button onClick={() => setValue(5)}>Set controlled externally</Button>
     <Button onClick={() => setValue(null)}>Empty controlled externally</Button>

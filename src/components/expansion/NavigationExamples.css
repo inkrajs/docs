@@ -4,5 +4,8 @@
 .navigation-examples__results { margin-block: 0; padding-inline-start: var(--inkra-space-6); line-height: var(--inkra-line-body); }
 .navigation-examples__themed { box-sizing: border-box; padding: var(--inkra-space-3); background: var(--inkra-paper); color: var(--inkra-ink); }
 .navigation-command-overlay { inline-size: min(36rem, calc(100vw - 32px)); }
+.navigation-command-overlay .inkra-command { display: flex; flex-direction: column; min-block-size: 0; }
+.navigation-command-overlay .inkra-command__input-wrap { flex: none; }
+.navigation-command-overlay .inkra-command__list { min-block-size: 0; }
 .navigation-command-overlay .inkra-command__list { max-block-size: min(320px, 40vh); }
 @media (max-width: 64rem) { .navigation-examples .preview-controls { max-block-size: none; } }

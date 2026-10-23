@@ -28,7 +28,7 @@ try {
   const verticalTab = await tabs.getByRole('tab').nth(1).boundingBox();
   assert(Math.abs(verticalLine.width - verticalTab.width + 16) < 1 && verticalLine.height === 8);
   await playground.getByRole('combobox', { name: '阅读方向', exact: true }).click();
-  await page.getByRole('option', { name: 'RTL', exact: true }).click();
+  await page.getByRole('option', { name: '从右到左', exact: true }).click();
   await playground.getByRole('combobox', { name: '排列', exact: true }).click();
   await page.getByRole('option', { name: '横向', exact: true }).click();
   const rtlFirst = await tabs.getByRole('tab').first().boundingBox();

@@ -221,7 +221,7 @@ const [noteCreated, setNoteCreated] = useState(false);
 </Empty.Root>`;
   return <div className="component-examples feedback-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
-      { label: '基础', content: <DocsSelect label={text('尺寸', 'Size')} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "Small"], ["md", "Medium"], ["lg", "Large"]]} /> },
+      { label: '基础', content: <DocsSelect label={text('尺寸', 'Size')} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "小"], ["md", "中"], ["lg", "大"]]} /> },
       { label: '内容', content: <><Switch label={text('显示图标', 'Show icon')} checked={showIcon} onCheckedChange={setShowIcon} /><Switch label={text('显示说明', 'Show description')} checked={showDescription} onCheckedChange={setShowDescription} /><Switch label={text('显示操作', 'Show action')} checked={showActions} onCheckedChange={setShowActions} /></> },
       { label: '布局', content: <DocsSelect label={text('对齐', 'Alignment')} value={align} onValueChange={value => setAlign(value as typeof align)} options={[["start", text('靠前', 'Start')], ["center", text('居中', 'Center')]]} /> },
     ]} />}>
@@ -296,7 +296,7 @@ const rtl = ${rtl};
   return <div className="component-examples feedback-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
-        <DocsSelect label={text('尺寸', 'Size')} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "Small"], ["md", "Medium"], ["lg", "Large"]]} />
+        <DocsSelect label={text('尺寸', 'Size')} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "小"], ["md", "中"], ["lg", "大"]]} />
         <DocsSelect label={text('方向', 'Orientation')} value={orientation} onValueChange={value => setOrientation(value as typeof orientation)} options={[["horizontal", text('横向', 'Horizontal')], ["vertical", text('纵向', 'Vertical')]]} />
       </> },
       { label: '状态', content: <><Switch label={text('允许多选', 'Multiple')} checked={multiple} onCheckedChange={next => { setMultiple(next); setValue(['start']); }} /><Switch label={text('整体禁用', 'Disabled')} checked={disabled} onCheckedChange={setDisabled} /></> },
@@ -313,7 +313,7 @@ const rtl = ${rtl};
       <ToggleGroup.Root aria-label={text('基础文字对齐', 'Basic text alignment')} defaultValue={['start']}><ToggleGroup.Item value="start">{text('靠前', 'Start')}</ToggleGroup.Item><ToggleGroup.Item value="center">{text('居中', 'Center')}</ToggleGroup.Item></ToggleGroup.Root>
     </ComponentExample>
     <ComponentExample title={text('多选与禁用项', 'Multiple selection and disabled item')} code={`<ToggleGroup.Root multiple defaultValue={['bold']} aria-label="${text('文字样式', 'Text style')}"><ToggleGroup.Item value="bold">Bold</ToggleGroup.Item><ToggleGroup.Item value="italic">Italic</ToggleGroup.Item><ToggleGroup.Item value="strike" disabled>Strike</ToggleGroup.Item></ToggleGroup.Root>`}>
-      <ToggleGroup.Root multiple defaultValue={['bold']} aria-label={text('文字样式', 'Text style')}><ToggleGroup.Item value="bold">Bold</ToggleGroup.Item><ToggleGroup.Item value="italic">Italic</ToggleGroup.Item><ToggleGroup.Item value="strike" disabled>Strike</ToggleGroup.Item></ToggleGroup.Root>
+      <ToggleGroup.Root multiple defaultValue={['bold']} aria-label={text('文字样式', 'Text style')}><ToggleGroup.Item value="bold">{text('粗体', 'Bold')}</ToggleGroup.Item><ToggleGroup.Item value="italic">{text('斜体', 'Italic')}</ToggleGroup.Item><ToggleGroup.Item value="strike" disabled>{text('删除线', 'Strike')}</ToggleGroup.Item></ToggleGroup.Root>
     </ComponentExample>
     <ComponentExample title={text('仅图标按钮', 'Icon-only buttons')} code={`const checkPaths = ${JSON.stringify(checkPaths, null, 2)};
 <ToggleGroup.Root aria-label="${text('完成状态', 'Completion state')}" defaultValue={['done']}><ToggleGroup.Item value="done" aria-label="${text('完成', 'Done')}"><PencilIcon paths={checkPaths} /></ToggleGroup.Item></ToggleGroup.Root>`}>

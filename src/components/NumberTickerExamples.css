@@ -7,12 +7,37 @@
 .number-ticker-examples__hero {
   font-size: var(--inkra-text-3xl);
   text-align: center;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  padding-block: var(--inkra-space-2);
 }
 
 .number-ticker-examples__controls {
   display: flex;
   flex-wrap: wrap;
   gap: var(--inkra-space-2);
+}
+
+.number-ticker-examples__unit-grid {
+  display: grid;
+  gap: var(--inkra-space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+.number-ticker-examples__unit-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  gap: var(--inkra-space-2);
+  align-items: center;
+}
+
+.number-ticker-examples__unit-row > span:first-child {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .number-ticker-examples__specimens {
@@ -69,3 +94,4 @@
     grid-template-columns: 1fr;
   }
 }
+.number-ticker-examples__exact-value { max-width: 100%; min-width: 0; overflow-x: auto; padding-block: 8px; }

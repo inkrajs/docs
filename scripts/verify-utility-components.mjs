@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -53,6 +54,7 @@ try {
     const ticker = page.locator('.preview-display .inkra-number-ticker');
     const announcement = ticker.locator('[aria-live="polite"]');
     const before = await announcement.textContent();
+    await setPlaygroundControls(page.locator('.component-playground'), true);
     const properties = page.getByRole('group', { name: config.locale === 'en' ? 'Properties' : '属性', exact: true });
     await properties.getByRole('tab', { name: config.locale === 'en' ? 'Interaction' : '交互', exact: true }).click();
     await properties.getByRole('button', { name: config.locale === 'en' ? 'Add 275' : '增加 275' }).click();

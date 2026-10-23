@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const browser = await chromium.launch();
 const baseURL = process.env.BASE_URL ?? 'http://127.0.0.1:4180';
@@ -130,9 +131,11 @@ try {
         await page.goto(new URL('/docs/components/breadcrumb#preview', baseURL).href);
         const breadcrumb = page.getByRole('navigation', { name: '当前位置', exact: true });
         await breadcrumb.waitFor();
+        await setPlaygroundControls(page.locator('.component-playground'), true);
         await page.getByRole('switch', { name: '从右向左', exact: true }).click();
-        assert.equal(await breadcrumb.getAttribute('dir'), 'rtl');
         await page.getByRole('switch', { name: '禁用上级链接', exact: true }).click();
+        await setPlaygroundControls(page.locator('.component-playground'), false);
+        assert.equal(await breadcrumb.getAttribute('dir'), 'rtl');
         assert.equal(await breadcrumb.locator('a').nth(1).getAttribute('href'), null);
         await page.getByRole('tab', { name: 'API', exact: true }).click();
         await page.getByRole('cell', { name: 'Separator.children', exact: true }).waitFor();

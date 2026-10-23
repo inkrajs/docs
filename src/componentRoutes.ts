@@ -28,11 +28,10 @@ export const componentNavigationGroups = [
   { label: '布局', components: ['stack', 'flex', 'grid', 'container', 'layout', 'resizable', 'dockable-panel', 'scroll-area'] },
   { label: '表单输入', components: ['input', 'select', 'textarea', 'input-number', 'hotkey', 'color-picker', 'tag-input', 'tree-select', 'editable', 'checkbox', 'radio-group', 'choice-grid', 'switch', 'date-picker', 'time-picker', 'slider', 'range-slider', 'rating', 'keypad', 'toggle-group', 'upload', 'field'] },
   { label: '导航菜单', components: ['tabs', 'dropdown-menu', 'context-menu', 'breadcrumb', 'pagination', 'command', 'steps'] },
-  { label: '数据展示', components: ['card', 'table', 'data-table', 'badge', 'number-ticker', 'log', 'audio-player', 'typewriter', 'sparkline', 'radar', 'heatmap', 'overflow-list', 'virtual-list', 'transfer', 'sortable', 'node-graph', 'carousel', 'avatar', 'accordion', 'tree', 'timeline'] },
+  { label: '数据展示', components: ['card', 'table', 'data-table', 'badge', 'number-ticker', 'log', 'audio-player', 'typewriter', 'sparkline', 'radar', 'heatmap', 'overflow-list', 'virtual-list', 'transfer', 'sortable', 'node-graph', 'carousel', 'avatar', 'accordion', 'tree', 'timeline', 'calendar', 'day-agenda', 'journey-map'] },
   { label: '反馈状态', components: ['alert', 'toast', 'progress', 'skeleton', 'empty'] },
   { label: '弹层', components: ['overlay', 'drawer', 'popover', 'hover-card', 'tooltip', 'image-viewer', 'image-cropper', 'alert-dialog'] },
   { label: '视觉交互', components: ['pan-zoom', 'flip'] },
-  { label: '日期与地图', components: ['calendar', 'day-agenda', 'journey-map'] },
 ] satisfies Array<{ label: string; components: ComponentRoute[] }>;
 
 export function isExpansionComponent(value: string): value is ExpansionComponent {

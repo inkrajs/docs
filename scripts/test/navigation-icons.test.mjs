@@ -27,6 +27,18 @@ const { docsIconCatalog, navigationIcon } = loadSource('../../src/components/ico
 });
 const { foundationComponents, foundationNames, componentNavigationGroups } = loadSource('../../src/componentRoutes.ts');
 
+test('navigation groups cover each component once and place dates and maps in data display', () => {
+  const routes = componentNavigationGroups.flatMap(group => group.components);
+  assert.deepEqual([...routes].sort(), ['button', ...foundationComponents].sort());
+  assert.equal(new Set(routes).size, routes.length, 'components must not appear in multiple groups');
+  assert.ok(componentNavigationGroups.every(group => group.components.length > 0));
+  assert.ok(!componentNavigationGroups.some(group => group.label === '日期与地图'));
+  const dataDisplay = componentNavigationGroups.find(group => group.label === '数据展示');
+  for (const route of ['calendar', 'day-agenda', 'journey-map']) {
+    assert.ok(dataDisplay?.components.includes(route), `${route} belongs in data display`);
+  }
+});
+
 test('every registered component and navigation group has an explicit pencil icon', () => {
   const labels = [
     'Button',

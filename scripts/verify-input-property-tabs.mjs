@@ -14,12 +14,16 @@ try {
     const tabs = controls.getByRole('tablist', { name: '属性分类', exact: true });
     const input = playground.locator('.preview-stage input[name="title"]');
     await input.waitFor();
+    const toggle = playground.locator('.playground-config-toggle');
+    if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+    await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
     assert.equal(await tabs.getByRole('tab').count(), 3);
     assert.equal(await controls.locator('.property-tabs > [role="tabpanel"]:visible').count(), 1);
     assert.equal(await tabs.getByRole('tab', { name: '基础', exact: true }).getAttribute('aria-selected'), 'true');
     const panelBox = await controls.boundingBox();
     const displayBox = await playground.locator('.preview-display').boundingBox();
-    if (width > 1024) {
+    const layout = await playground.getAttribute('data-controls-layout');
+    if (layout === 'wide') {
       assert(Math.abs(panelBox.width * 2 - displayBox.width) < 1, 'properties occupy one third of the content width');
       assert(Math.abs(panelBox.y - displayBox.y) < 1, 'desktop properties beside preview');
       assert(displayBox.width >= 390, 'preview retains usable width');
@@ -28,8 +32,10 @@ try {
       assert(Math.abs((await tabs.boundingBox()).y - tabTop) < 1, 'category tabs stay visible when fields scroll');
       await controls.locator('.property-tabs > [role="tabpanel"]:visible').evaluate(node => { node.scrollTop = 0; });
     } else {
-      assert(panelBox.y >= displayBox.y + displayBox.height, 'compact properties below preview');
-      assert.equal(await controls.evaluate(node => getComputedStyle(node).contain), 'none');
+      assert(Math.abs(panelBox.y - displayBox.y) < 1, 'compact properties overlay preview');
+      assert(Math.abs(panelBox.x + panelBox.width - displayBox.x - displayBox.width) < 1, 'properties align to the preview end');
+      assert.equal(await playground.locator('.preview-display').getAttribute('inert'), '');
+      if (layout === 'full') assert(Math.abs(panelBox.width - displayBox.width) < 1, 'small containers use a full overlay');
     }
     await tabs.getByRole('tab', { name: '内容', exact: true }).click();
     await controls.getByRole('textbox', { name: '名称', exact: true }).fill('Saved across tabs');
@@ -63,6 +69,8 @@ try {
     await page.screenshot({ path: `/tmp/inkra-input-property-tabs-${width}.png` });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no page overflow');
     await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/select#preview');
+    if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+    await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
     await page.locator('.property-tabs').getByRole('tab', { name: '基础', exact: true }).waitFor();
     assert.equal(await page.locator('.property-tabs [role="tab"]').count(), 4);
     await page.locator('.property-tabs').getByRole('tab', { name: '状态', exact: true }).click();

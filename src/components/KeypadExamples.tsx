@@ -8,64 +8,73 @@ import { DocsSelect } from './DocsSelect';
 import { PropertyTabs } from './PropertyTabs';
 import './KeypadExamples.css';
 
-const numericLayout: readonly (readonly KeypadKey[])[] = ([
+const numericLayoutMessages: readonly (readonly KeypadKey[])[] = ([
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
   [
-    { id: 'delete', label: 'Delete', ariaLabel: 'Delete last character', action: 'delete', variant: 'secondary' },
+    { id: 'delete', label: '删除', ariaLabel: '删除最后一个字符', action: 'delete', variant: 'secondary' },
     { id: 'zero', label: '0', value: '0' },
-    { id: 'confirm', label: 'Confirm', action: 'confirm', variant: 'confirm' },
+    { id: 'confirm', label: '确认', action: 'confirm', variant: 'confirm' },
   ],
 ] as const).map((row, rowIndex) => row.map((key, keyIndex): KeypadKey => typeof key === 'string'
   ? { id: `number-${rowIndex}-${keyIndex}`, label: key, value: key }
   : key));
 
-const compactLayout: readonly (readonly KeypadKey[])[] = [
+const compactLayoutMessages: readonly (readonly KeypadKey[])[] = [
   [
     { id: 'a', label: 'A', value: 'A' },
     { id: 'b', label: 'B', value: 'B' },
-    { id: 'long', label: 'Long custom label / 自定义长标签', value: '-' },
+    { id: 'long', label: '自定义长标签', value: '-' },
   ],
   [
-    { id: 'remove', label: 'Delete / 删除', action: 'delete', variant: 'secondary' },
-    { id: 'accept', label: 'Confirm / 确认', action: 'confirm', span: 2, variant: 'confirm' },
+    { id: 'remove', label: '删除', action: 'delete', variant: 'secondary' },
+    { id: 'accept', label: '确认', action: 'confirm', span: 2, variant: 'confirm' },
   ],
 ];
 
-const passwordLayout: readonly (readonly KeypadKey[])[] = ([
+const passwordLayoutMessages: readonly (readonly KeypadKey[])[] = ([
   ['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'],
   [
-    { id: 'password-delete', label: 'Delete / 删除', action: 'delete', variant: 'secondary' },
+    { id: 'password-delete', label: '删除', action: 'delete', variant: 'secondary' },
     { id: 'password-zero', label: '0', value: '0' },
-    { id: 'password-confirm', label: 'Unlock / 解锁', action: 'confirm', variant: 'confirm' },
+    { id: 'password-confirm', label: '解锁', action: 'confirm', variant: 'confirm' },
   ],
 ] as const).map((row, rowIndex) => row.map((key, keyIndex): KeypadKey => typeof key === 'string'
   ? { id: `password-${rowIndex}-${keyIndex}`, label: key, value: key }
   : key));
 
-const operations: readonly (readonly KeypadKey[])[] = [
+const operationMessages: readonly (readonly KeypadKey[])[] = [
   [
-    { id: 'previous', label: 'Previous / 上一步', action: 'custom' },
-    { id: 'pause', label: 'Pause / 暂停', action: 'custom' },
+    { id: 'previous', label: '上一步', action: 'custom' },
+    { id: 'pause', label: '暂停', action: 'custom' },
   ],
   [
-    { id: 'disabled', label: 'Unavailable / 暂不可用', action: 'custom', disabled: true },
-    { id: 'complete', label: 'Complete operation / 完成操作', action: 'custom', variant: 'confirm' },
+    { id: 'disabled', label: '暂不可用', action: 'custom', disabled: true },
+    { id: 'complete', label: '完成操作', action: 'custom', variant: 'confirm' },
   ],
 ];
 
-function eventText(details: KeypadPressDetails) {
-  return `${details.action}: ${details.key.id} (${details.previousValue} -> ${details.nextValue})`;
+function eventText(details: KeypadPressDetails, t: (value: string) => string) {
+  return `${typeof details.key.label === 'string' ? t(details.key.label) : details.key.id}: ${details.previousValue} → ${details.nextValue}`;
 }
 
 export function KeypadExamples() {
   const { t } = useLocale();
+  const localizeLayout = (rows: readonly (readonly KeypadKey[])[]) => rows.map(row => row.map(key => ({
+    ...key,
+    label: typeof key.label === 'string' ? t(key.label) : key.label,
+    ariaLabel: key.ariaLabel ? t(key.ariaLabel) : undefined,
+  })));
+  const numericLayout = localizeLayout(numericLayoutMessages);
+  const compactLayout = localizeLayout(compactLayoutMessages);
+  const passwordLayout = localizeLayout(passwordLayoutMessages);
+  const operations = localizeLayout(operationMessages);
   const [value, setValue] = useState('12');
   const [layoutName, setLayoutName] = useState<'numeric' | 'custom'>('numeric');
   const [disabled, setDisabled] = useState(false);
   const [maxLength, setMaxLength] = useState('6');
-  const [lastEvent, setLastEvent] = useState('');
+  const [lastEvent, setLastEvent] = useState<KeypadPressDetails | null>(null);
   const [password, setPassword] = useState('');
   const [passwordStatus, setPasswordStatus] = useState('');
   const [operation, setOperation] = useState('');
@@ -73,11 +82,11 @@ export function KeypadExamples() {
   const limit = Number(maxLength);
   const code = useMemo(() => `const [value, setValue] = useState(${JSON.stringify(value)});
 
-<Field label="${t('可编辑值 / Editable value')}">
+<Field label="${t('可编辑值')}">
   <Input value={value} onValueChange={setValue} maxLength={${limit}} />
 </Field>
 <Keypad
-  label="${t('输入面板 / Entry keypad')}"
+  label="${t('输入面板')}"
   layout={${layoutName === 'numeric' ? 'numericLayout' : 'customLayout'}}
   value={value}
   onValueChange={setValue}
@@ -90,52 +99,51 @@ export function KeypadExamples() {
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: t('内容'), content: <>
-        <DocsSelect label={t('按键排列 / Key layout')} value={layoutName} onValueChange={next => setLayoutName(next as typeof layoutName)} options={[
-          ['numeric', '数字面板 / Numeric'],
-          ['custom', '自定义字符 / Custom characters'],
+        <DocsSelect label={t('按键排列')} value={layoutName} onValueChange={next => setLayoutName(next as typeof layoutName)} options={[
+          ['numeric', '数字面板'],
+          ['custom', '自定义字符'],
         ]} />
-        <DocsSelect label={t('最大长度 / Maximum length')} value={maxLength} onValueChange={setMaxLength} options={[
+        <DocsSelect label={t('最大长度')} value={maxLength} onValueChange={setMaxLength} options={[
           ['4', '4'], ['6', '6'], ['12', '12'],
         ]} />
       </> },
-      { label: t('状态'), content: <Switch label={t('禁用 / Disabled')} checked={disabled} onCheckedChange={setDisabled} /> },
+      { label: t('状态'), content: <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
       <div className="keypad-example__playground" data-testid="keypad-playground">
-        <Field label={t('可编辑值 / Editable value')} description={t('实体键盘与按键面板都可输入 / Physical keyboard and keypad both work')}>
+        <Field label={t('可编辑值')} description={t('实体键盘与按键面板都可输入')}>
           <Input value={value} onValueChange={setValue} maxLength={limit} disabled={disabled} />
         </Field>
         <Keypad
           disabled={disabled}
-          label={t('输入面板 / Entry keypad')}
+          label={t('输入面板')}
           layout={layout}
           maxLength={limit}
-          onConfirm={current => setLastEvent(`${t('确认 / Confirm')}: ${current}`)}
-          onKeyPress={details => setLastEvent(eventText(details))}
+          onKeyPress={details => setLastEvent({ ...details, key: numericLayoutMessages.flat().concat(compactLayoutMessages.flat()).find(key => key.id === details.key.id) ?? details.key })}
           onValueChange={setValue}
           value={value}
         />
-        <output className="keypad-example__status" aria-live="polite">{lastEvent || t('等待按键 / Waiting for a key')}</output>
+        <output className="keypad-example__status" aria-live="polite">{lastEvent ? eventText(lastEvent, t) : t('等待按键')}</output>
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={t('密码面板 / Password keypad')} code={`<Input type="password" inputMode="numeric" value={password} onValueChange={setPassword} />
+    <ComponentExample title={t('密码面板')} code={`<Input type="password" inputMode="numeric" value={password} onValueChange={setPassword} />
 <Keypad layout={passwordLayout} value={password} onValueChange={setPassword} maxLength={6}
   onConfirm={value => verifyPin(value)} />`}>
       <div className="keypad-example__stack" data-testid="keypad-password">
-        <Field label={t('访问码 / Access code')} description={t('可直接使用实体键盘 / Physical keyboard remains available')}>
+        <Field label={t('访问码')} description={t('可直接使用实体键盘')}>
           <Input type="password" inputMode="numeric" autoComplete="off" value={password} onValueChange={setPassword} maxLength={6} />
         </Field>
-        <Keypad label={t('密码按键 / Password keys')} layout={passwordLayout} value={password} onValueChange={setPassword} maxLength={6} onConfirm={current => setPasswordStatus(current.length === 6 ? t('长度有效 / Length accepted') : t('请输入六位 / Enter six digits'))} />
-        <output className="keypad-example__status" aria-live="polite">{passwordStatus}</output>
+        <Keypad label={t('密码按键')} layout={passwordLayout} value={password} onValueChange={setPassword} maxLength={6} onConfirm={current => setPasswordStatus(current.length === 6 ? '长度有效' : '请输入六位')} />
+        <output className="keypad-example__status" aria-live="polite">{t(passwordStatus)}</output>
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('操作面板 / Operation panel')} code={`<Keypad layout={operations} onKeyPress={({ key }) => runAction(key.id)} />`}>
+    <ComponentExample title={t('操作面板')} code={`<Keypad layout={operations} onKeyPress={({ key }) => runAction(key.id)} />`}>
       <div className="keypad-example__stack" data-testid="keypad-operations">
-        <Keypad label={t('编辑操作 / Editing actions')} layout={operations} onKeyPress={({ key }) => setOperation(key.id)} />
+        <Keypad label={t('编辑操作')} layout={operations} onKeyPress={({ key }) => setOperation(key.id)} />
         <div className="keypad-example__operation-row">
-          <output className="keypad-example__status" aria-live="polite">{operation || t('尚未选择操作 / No action selected')}</output>
-          <Button variant="ghost" onClick={() => setOperation('')}>{t('清除状态 / Clear status')}</Button>
+          <output className="keypad-example__status" aria-live="polite">{operation ? operations.flat().find(key => key.id === operation)?.label : t('尚未选择操作')}</output>
+          <Button variant="ghost" onClick={() => setOperation('')}>{t('清除状态')}</Button>
         </div>
       </div>
     </ComponentExample>

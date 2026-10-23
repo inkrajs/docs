@@ -15,28 +15,28 @@ const gallery: readonly ImageViewerItem[] = [
   {
     id: 'light-docs',
     src: previewLight,
-    alt: 'Inkra documentation in its light theme / Inkra 文档浅色主题',
+    alt: 'Inkra 文档浅色主题',
     width: 1305,
     height: 1050,
   },
   {
     id: 'dark-docs',
     src: previewDark,
-    alt: 'Inkra documentation in its dark theme / Inkra 文档深色主题',
+    alt: 'Inkra 文档深色主题',
     width: 1305,
     height: 1050,
   },
   {
     id: 'inkra-artwork',
     src: inkraArtwork,
-    alt: 'Inkra pencil artwork / Inkra 彩铅图案',
+    alt: 'Inkra 彩铅图案',
     width: 512,
     height: 512,
   },
 ];
 
 export function ImageViewerExamples() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const english = locale === 'en';
   const text = (zh: string, en: string) => english ? en : zh;
   const [items, setItems] = useState<readonly ImageViewerItem[]>(gallery);
@@ -115,11 +115,11 @@ export function ImageViewerExamples() {
           {gallery.map(item => <img key={item.id} src={item.src} alt="" />)}
         </div>
         <ImageViewer.Root
-          items={items}
+          items={items.map(item => ({ ...item, alt: t(item.alt) }))}
           activeId={activeId}
           onActiveIdChange={(nextId, details) => {
             setActiveId(nextId);
-            setLastChange(text(`当前：${details.item?.alt ?? '无'}（${details.reason}）`, `Current: ${details.item?.alt ?? 'none'} (${details.reason})`));
+            setLastChange(details.item?.id ?? 'none');
           }}
           loop={loop}
         >
@@ -128,7 +128,7 @@ export function ImageViewerExamples() {
           </ImageViewer.Trigger>
           <ImageViewer.Content labels={labels} rotatable={rotatable} showThumbnails={showThumbnails} zoomable={zoomable} />
         </ImageViewer.Root>
-        <span aria-live="polite" className="image-viewer-examples__status">{lastChange}</span>
+        <span aria-live="polite" className="image-viewer-examples__status">{lastChange ? `${text('当前', 'Current')}: ${t(gallery.find(item => item.id === lastChange)?.alt ?? '无')}` : ''}</span>
       </div>
     </ComponentPlayground>
 

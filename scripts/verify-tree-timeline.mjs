@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -33,6 +34,7 @@ try {
     assert(treeTop.tree >= treeTop.stage, 'tall Tree content remains reachable from the start of the scrollport');
     await page.screenshot({ path: `/tmp/inkra-tree-folder-${width}.png` });
     const selector = page.getByRole('combobox', { name: /展开图标|Disclosure icon/ });
+    await setPlaygroundControls(page.locator('.component-playground'), true);
     await selector.click();
     await page.getByRole('option', { name: /箭头|Chevron/, exact: true }).click();
     assert.equal(await disclosure.locator('.inkra-tree__chevron').count(), 1);
@@ -83,8 +85,10 @@ try {
     };
     await verify('vertical', false);
     await page.screenshot({ path: `/tmp/inkra-timeline-connected-${width}.png` });
+    await setPlaygroundControls(playground, true);
     await playground.locator('.preview-controls').getByRole('combobox', { name: /方向|Orientation/ }).click();
     await page.getByRole('option', { name: /横向|Horizontal/, exact: true }).click();
+    await setPlaygroundControls(playground, false);
     await verify('horizontal', false);
     await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
     await verify('horizontal', true);

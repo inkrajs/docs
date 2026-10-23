@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Button,
   PencilSurface,
+  PencilText,
   Switch,
   VirtualList,
   type VirtualListHandle,
@@ -16,6 +17,11 @@ import './VirtualListExamples.css';
 
 interface NoteItem {
   id: string;
+  number: number;
+  added?: boolean;
+}
+
+interface LocalizedNote extends NoteItem {
   title: string;
   meta: string;
   detail: string;
@@ -26,48 +32,44 @@ function createItems(count: number): NoteItem[] {
     const number = index + 1;
     return {
       id: `note-${number}`,
-      title: `笔记 ${String(number).padStart(3, '0')} / Note ${String(number).padStart(3, '0')}`,
-      meta: `${number % 7 + 1} 个标签 / ${number % 7 + 1} tags`,
-      detail: number % 5 === 0
-        ? '这条记录包含更长的摘要，用来验证动态高度测量。 / This record has a longer summary for dynamic measurement.'
-        : '简短摘要 / Short summary',
+      number,
     };
   });
 }
 
 const initialItems = createItems(500);
 
-function ExternalScrollExample({ items, label }: { items: readonly NoteItem[]; label: string }) {
+function ExternalScrollExample({ items, label }: { items: readonly LocalizedNote[]; label: string }) {
   const viewportRef = useRef<HTMLDivElement>(null);
-  return <PencilSurface
-    aria-label={label}
-    as="div"
-    className="virtual-list-examples__external-viewport"
-    radius={8}
-    ref={viewportRef}
-    role="region"
-    tabIndex={0}
-    variant="paper"
-  >
-    <VirtualList
-      estimateSize={56}
-      getScrollElement={() => viewportRef.current}
-      itemKey={item => item.id}
-      items={items}
-      listLabel={label}
-      overscan={5}
-      renderItem={({ item }) => <div className="virtual-list-examples__external-row">
-        <span>{item.title}</span>
-        <small>{item.meta}</small>
-      </div>}
-      role="none"
-      ssrItemCount={6}
-    />
+  return <PencilSurface as="div" className="virtual-list-examples__external-frame" radius={8} variant="paper">
+    <div
+      aria-label={label}
+      className="virtual-list-examples__external-viewport"
+      ref={viewportRef}
+      role="region"
+      tabIndex={0}
+    >
+      <VirtualList
+        estimateSize={72}
+        measureItems
+        getScrollElement={() => viewportRef.current}
+        itemKey={item => item.id}
+        items={items}
+        listLabel={label}
+        overscan={5}
+        renderItem={({ item }) => <div className="virtual-list-examples__external-row">
+          <PencilText>{item.title}</PencilText>
+          <small><PencilText>{item.meta}</PencilText></small>
+        </div>}
+        role="none"
+        ssrItemCount={6}
+      />
+    </div>
   </PencilSurface>;
 }
 
 export function VirtualListExamples() {
-  const { locale, t } = useLocale();
+  const { locale } = useLocale();
   const copy = locale === 'en' ? {
     add: 'Prepend item',
     clear: 'Clear data',
@@ -82,6 +84,8 @@ export function VirtualListExamples() {
     remove: 'Remove selected',
     restore: 'Restore 500 items',
     selected: 'Selected',
+    emptyTitle: 'Empty list',
+    emptyList: 'Empty notes',
   } : {
     add: '在顶部添加',
     clear: '清空数据',
@@ -96,6 +100,8 @@ export function VirtualListExamples() {
     remove: '删除选中项',
     restore: '恢复 500 项',
     selected: '已选择',
+    emptyTitle: '空列表',
+    emptyList: '空笔记列表',
   };
   const listRef = useRef<VirtualListHandle>(null);
   const nextItemRef = useRef(1);
@@ -103,6 +109,21 @@ export function VirtualListExamples() {
   const [selectedId, setSelectedId] = useState<string | null>('note-3');
   const [dynamic, setDynamic] = useState(false);
   const [overscan, setOverscan] = useState(6);
+  const localizeItem = (item: NoteItem): LocalizedNote => ({
+    ...item,
+    title: locale === 'en'
+      ? `${item.added ? 'New note' : 'Note'} ${String(item.number).padStart(3, '0')}`
+      : `${item.added ? '新笔记' : '笔记'} ${String(item.number).padStart(3, '0')}`,
+    meta: item.added ? (locale === 'en' ? 'Added now' : '刚刚添加')
+      : locale === 'en' ? `${item.number % 7 + 1} tags` : `${item.number % 7 + 1} 个标签`,
+    detail: item.added
+      ? (locale === 'en' ? 'Stable keys keep identity after insertion.' : '稳定 key 会在插入后继续对应同一条记录。')
+      : item.number % 5 === 0
+        ? (locale === 'en' ? 'This record has a longer summary for dynamic height measurement.' : '这条记录包含更长的摘要，用来验证动态高度测量。')
+        : (locale === 'en' ? 'Short summary' : '简短摘要'),
+  });
+  const localizedItems = useMemo(() => items.map(localizeItem), [items, locale]);
+  const externalItems = useMemo(() => initialItems.slice(0, 160).map(localizeItem), [locale]);
   const selectedIndex = selectedId ? items.findIndex(item => item.id === selectedId) : -1;
   const code = `const listRef = useRef<VirtualListHandle>(null);
 const [selectedId, setSelectedId] = useState('note-3');
@@ -112,7 +133,7 @@ const [selectedId, setSelectedId] = useState('note-3');
   aria-label="${copy.list}"
   items={items}
   itemKey={item => item.id}
-  estimateSize={${dynamic ? '(item) => item.detail.length > 50 ? 92 : 64' : '64'}}
+  estimateSize={${dynamic ? '120' : '80'}}
   measureItems={${dynamic}}
   overscan={${overscan}}
   emptyLabel="${copy.empty}"
@@ -135,9 +156,8 @@ const [selectedId, setSelectedId] = useState('note-3');
     const id = `new-${nextItemRef.current++}`;
     setItems(current => [{
       id,
-      title: `新笔记 ${id.slice(4)} / New note ${id.slice(4)}`,
-      meta: '刚刚添加 / Added now',
-      detail: '稳定 key 会在插入后继续对应同一条记录。 / Stable keys keep identity after insertion.',
+      number: Number(id.slice(4)),
+      added: true,
     }, ...current]);
     setSelectedId(id);
     requestAnimationFrame(() => listRef.current?.scrollToIndex(0, { align: 'start' }));
@@ -184,11 +204,12 @@ const [selectedId, setSelectedId] = useState('note-3');
           aria-label={copy.list}
           data-testid="virtual-list-playground"
           emptyLabel={copy.empty}
-          estimateSize={dynamic ? item => item.detail.length > 50 ? 92 : 64 : 64}
+          estimateSize={dynamic ? 120 : 80}
+          data-dynamic={dynamic || undefined}
           getItemProps={({ item }) => ({ className: item.id === selectedId ? 'is-selected' : undefined })}
           height="22rem"
           itemKey={item => item.id}
-          items={items}
+          items={localizedItems}
           listLabel={copy.list}
           measureItems={dynamic}
           overscan={overscan}
@@ -201,32 +222,32 @@ const [selectedId, setSelectedId] = useState('note-3');
             variant={selectedId === item.id ? 'secondary' : 'ghost'}
           >
             <span className="virtual-list-examples__item-copy">
-              <span>{item.title}</span>
-              <small>{item.meta}</small>
-              {dynamic && <span className="virtual-list-examples__detail">{item.detail}</span>}
+              <PencilText ellipsis>{item.title}</PencilText>
+              <small><PencilText ellipsis>{item.meta}</PencilText></small>
+              {dynamic && <PencilText className="virtual-list-examples__detail">{item.detail}</PencilText>}
               <span className="visually-hidden">{index + 1} / {items.length}</span>
             </span>
           </Button>}
           ssrItemCount={6}
         />
         <output className="virtual-list-examples__selection" aria-live="polite">
-          {copy.selected}: {selectedId ?? '—'}
+          <PencilText>{`${copy.selected}: ${selectedId ?? '—'}`}</PencilText>
         </output>
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={copy.external} code={`const viewportRef = useRef<HTMLDivElement>(null);\n\n<PencilSurface ref={viewportRef} className="scroll-viewport">\n  <VirtualList\n    items={items}\n    itemKey={item => item.id}\n    estimateSize={56}\n    getScrollElement={() => viewportRef.current}\n    renderItem={({ item }) => <NoteRow item={item} />}\n  />\n</PencilSurface>`}>
-      <ExternalScrollExample items={initialItems.slice(0, 160)} label={copy.external} />
+    <ComponentExample title={copy.external} code={`const viewportRef = useRef<HTMLDivElement>(null);\n\n<PencilSurface>\n  <div ref={viewportRef} className="scroll-viewport">\n    <VirtualList\n      items={items}\n      itemKey={item => item.id}\n      estimateSize={72}\n      measureItems\n      getScrollElement={() => viewportRef.current}\n      renderItem={({ item }) => <NoteRow item={item} />}\n    />\n  </div>\n</PencilSurface>`}>
+      <ExternalScrollExample items={externalItems} label={copy.external} />
     </ComponentExample>
 
-    <ComponentExample title={t('空列表 / Empty list')} code={`<VirtualList\n  items={[]}\n  itemKey={item => item.id}\n  estimateSize={64}\n  emptyLabel="${copy.empty}"\n  renderItem={({ item }) => <NoteRow item={item} />}\n/>`}>
+    <ComponentExample title={copy.emptyTitle} code={`<VirtualList\n  items={[]}\n  itemKey={item => item.id}\n  estimateSize={80}\n  emptyLabel="${copy.empty}"\n  renderItem={({ item }) => <NoteRow item={item} />}\n/>`}>
       <div className="virtual-list-examples__empty-frame">
         <VirtualList
-          aria-label={t('空笔记列表 / Empty notes')}
+          aria-label={copy.emptyList}
           emptyLabel={copy.empty}
-          estimateSize={64}
+          estimateSize={80}
           itemKey={item => item.id}
-          items={[] as readonly NoteItem[]}
+          items={[] as readonly LocalizedNote[]}
           renderItem={({ item }) => item.title}
         />
       </div>

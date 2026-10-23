@@ -19,8 +19,12 @@ test('every documented property has meaningful Chinese and English descriptions'
       if (ts.isArrayLiteralExpression(node) && [2, 4].includes(node.elements.length)
         && node.elements.every(ts.isStringLiteral)) {
         const [prop, , zh, en] = node.elements.map(item => item.text);
+        let owner = node.parent;
+        while (owner && !ts.isPropertyAssignment(owner)) owner = owner.parent;
+        const component = name === 'FoundationPages.tsx' && owner
+          && (ts.isStringLiteral(owner.name) || ts.isIdentifier(owner.name)) ? owner.name.text : '';
         for (const [locale, explicit] of [['zh-CN', zh], ['en', en]]) {
-          const description = explicit ?? describeApiProp('', prop, locale);
+          const description = explicit ?? describeApiProp(component, prop, locale);
           assert(description.length > 4, `${name}: ${prop} lacks ${locale} description`);
         }
         checked++;

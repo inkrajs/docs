@@ -140,15 +140,12 @@ const [selected, setSelected] = useState('');
         <output aria-live="polite">{selected || (zh ? '尚未执行' : 'No command executed')}</output>
         <Overlay.Root open={open} onOpenChange={setOpen}>
           <Overlay.Trigger asChild><Button variant="outline">{zh ? '打开命令面板' : 'Open command palette'}</Button></Overlay.Trigger>
-          <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" className="navigation-command-overlay">
-            <Overlay.Header closeLabel={zh ? '关闭命令面板' : 'Close command palette'}>
-              <Overlay.Title>{zh ? '命令面板' : 'Command palette'}</Overlay.Title>
-              <Overlay.Description>{zh ? '选择一项工作区操作。' : 'Choose a workspace action.'}</Overlay.Description>
-            </Overlay.Header>
-            <Overlay.Body><Command.Root label={zh ? '面板命令' : 'Palette commands'}>
+          <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" className="navigation-command-overlay" aria-describedby={undefined}>
+            <Overlay.Title className="visually-hidden">{zh ? '命令面板' : 'Command palette'}</Overlay.Title>
+            <Command.Root surface={false} label={zh ? '面板命令' : 'Palette commands'}>
               <Command.Input placeholder={zh ? '搜索命令' : 'Search commands'} />
               <Command.List label={zh ? '面板结果' : 'Palette results'}><CommandItems zh={zh} onSelect={value => { setSelected(value); setOpen(false); }} /></Command.List>
-            </Command.Root></Overlay.Body>
+            </Command.Root>
           </Overlay.Content></Overlay.Portal>
         </Overlay.Root>
       </div>
@@ -176,35 +173,31 @@ const [selected, setSelected] = useState('');
 const [selected, setSelected] = useState('');
 <Overlay.Root open={open} onOpenChange={setOpen}>
   <Overlay.Trigger asChild><Button>Search actions</Button></Overlay.Trigger>
-  <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections">
-    <Overlay.Header><Overlay.Title>Commands</Overlay.Title>
-      <Overlay.Description>Choose a workspace action.</Overlay.Description>
-    </Overlay.Header>
-    <Overlay.Body><Command.Root label="Commands">
+  <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" aria-describedby={undefined}>
+    <Overlay.Title style={{ position: 'absolute', width: 1, height: 1, margin: 0,
+      overflow: 'hidden', clipPath: 'inset(50%)' }}>Commands</Overlay.Title>
+    <Command.Root surface={false} label="Commands">
       <Command.Input placeholder="Search commands" />
       <Command.List><Command.Empty>No matching commands</Command.Empty>
         <Command.Item value="new-note" onSelect={value => { setSelected(value); setOpen(false); }}>New note</Command.Item>
         <Command.Item value="find-note" onSelect={value => { setSelected(value); setOpen(false); }}>Find note</Command.Item>
       </Command.List>
-    </Command.Root></Overlay.Body>
+    </Command.Root>
   </Overlay.Content></Overlay.Portal>
 </Overlay.Root>
 <output aria-live="polite">{selected || 'No command executed'}</output>`}>
       <div className="navigation-examples__stage" data-testid="command-composition">
         <Overlay.Root open={advancedOpen} onOpenChange={setAdvancedOpen}>
           <Overlay.Trigger asChild><Button variant="outline">{zh ? '搜索操作' : 'Search actions'}</Button></Overlay.Trigger>
-          <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections">
-            <Overlay.Header closeLabel={zh ? '关闭' : 'Close'}>
-              <Overlay.Title>{zh ? '操作命令' : 'Actions'}</Overlay.Title>
-              <Overlay.Description>{zh ? '选择一项工作区操作。' : 'Choose a workspace action.'}</Overlay.Description>
-            </Overlay.Header>
-            <Overlay.Body><Command.Root label={zh ? '操作命令' : 'Actions'}>
+          <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" className="navigation-command-overlay" aria-describedby={undefined}>
+            <Overlay.Title className="visually-hidden">{zh ? '操作命令' : 'Actions'}</Overlay.Title>
+            <Command.Root surface={false} label={zh ? '操作命令' : 'Actions'}>
               <Command.Input placeholder={zh ? '搜索命令' : 'Search commands'} />
               <Command.List><Command.Empty>{zh ? '没有匹配的命令' : 'No matching commands'}</Command.Empty>
-                <Command.Item value="new-note" onSelect={value => { setSelected(value); setAdvancedOpen(false); }}>{zh ? '新建笔记' : 'New note'}</Command.Item>
-                <Command.Item value="find-note" onSelect={value => { setSelected(value); setAdvancedOpen(false); }}>{zh ? '查找笔记' : 'Find note'}</Command.Item>
+                <Command.Item value="new-note" keywords={[zh ? '新建笔记' : 'New note']} onSelect={value => { setSelected(value); setAdvancedOpen(false); }}>{zh ? '新建笔记' : 'New note'}</Command.Item>
+                <Command.Item value="find-note" keywords={[zh ? '查找笔记' : 'Find note']} onSelect={value => { setSelected(value); setAdvancedOpen(false); }}>{zh ? '查找笔记' : 'Find note'}</Command.Item>
               </Command.List>
-            </Command.Root></Overlay.Body>
+            </Command.Root>
           </Overlay.Content></Overlay.Portal>
         </Overlay.Root>
         <output aria-live="polite">{selected || (zh ? '尚未执行' : 'No command executed')}</output>
@@ -224,7 +217,7 @@ export const navigationDocs: Record<string, ExpansionDoc> = {
   command: {
     name: 'Command',
     intro: { zh: '菜单藏得再深，也躲不过我打字搜。', en: 'Somewhere in a menu? I will just type it.' },
-    api: [['Command.Root', 'cmdk value/defaultValue/onValueChange, filter, shouldFilter, loop (default true), label'], ['Command.Input', 'Search value/onValueChange and native input attributes'], ['Command.List / Group', 'List label; Group heading/value/forceMount'], ['Command.Item', 'Stable value, keywords, disabled, onSelect(value), icon, shortcut'], ['Command.Empty / Separator / Shortcut', 'No-results content; separator alwaysRender; display-only kbd']],
+    api: [['Command.Root', 'cmdk value/defaultValue/onValueChange, filter, shouldFilter, loop (default true), label'], ['Command.Root.surface', 'boolean = true', '是否绘制独立纸面与描边；嵌入已有弹窗纸面时设为 false，避免重复边框。', 'Draw the standalone paper and outline; set false inside an existing dialog surface to avoid duplicate frames.'], ['Command.Input', 'Search value/onValueChange and native input attributes'], ['Command.List / Group', 'List label; Group heading/value/forceMount'], ['Command.Item', 'Stable value, keywords, disabled, onSelect(value), icon, shortcut'], ['Command.Empty / Separator / Shortcut', 'No-results content; separator alwaysRender; display-only kbd']],
     a11y: { zh: 'cmdk 负责 combobox/listbox 关联、方向键、Home/End、禁用项跳过与 Enter 选择。IME 组合输入不会提交命令。为 Root 提供本地化 label；Overlay 负责焦点约束、Escape 与返回。快捷键提示不自动注册全局按键。', en: 'cmdk owns combobox/listbox relationships, arrows, Home/End, disabled-item skipping, and Enter selection. IME composition does not submit a command. Provide a localized Root label; Overlay handles focus trapping, Escape, and return. Shortcut hints do not register global keys.' },
     Examples: CommandExamples,
   },

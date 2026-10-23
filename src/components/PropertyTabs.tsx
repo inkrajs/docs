@@ -13,11 +13,14 @@ const categoryIcons = { '基础': settingsIcon, '布局': layoutIcon, '内容': 
 
 export function PropertyTabs({ groups }: { groups: { label: string; content: ReactNode }[] }) {
   const { t } = useLocale();
-  return <Tabs.Root className="property-tabs" defaultValue={groups[0].label} size="sm">
+  return <Tabs.Root className="property-tabs" defaultValue="group-0" size="sm">
     <Tabs.List aria-label={t('属性分类')} fullWidth>
-      {groups.map(group => <Tabs.Trigger key={group.label} value={group.label} startIcon={<DocsIcon data={categoryIcons[group.label as keyof typeof categoryIcons] ?? settingsIcon} size={24} />}>{t(group.label)}</Tabs.Trigger>)}
+      {groups.map((group, index) => {
+        const category = (Object.keys(categoryIcons) as (keyof typeof categoryIcons)[]).find(key => key === group.label || t(key) === group.label);
+        return <Tabs.Trigger key={index} value={`group-${index}`} startIcon={<DocsIcon data={category ? categoryIcons[category] : settingsIcon} size={24} />}>{t(group.label)}</Tabs.Trigger>;
+      })}
     </Tabs.List>
-    {groups.map(group => <Tabs.Content key={group.label} value={group.label} forceMount>
+    {groups.map((group, index) => <Tabs.Content key={index} value={`group-${index}`} forceMount>
       <div className="property-tabs__fields">{group.content}</div>
     </Tabs.Content>)}
   </Tabs.Root>;

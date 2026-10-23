@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -12,9 +13,16 @@ try {
     const playground = page.locator('.component-playground').first();
     const controls = playground.locator('.preview-controls');
     const trigger = playground.locator('.preview-stage .inkra-select__trigger');
-    const category = label => controls.getByRole('tab', { name: label, exact: true });
-    const toggle = label => controls.getByRole('switch', { name: label, exact: true }).click();
-    for (const [label, size, height] of [['Small', 24, 36], ['Medium', 28, 44], ['Large', 32, 48]]) {
+    const category = label => ({ click: async () => {
+      await setPlaygroundControls(playground, true);
+      await controls.getByRole('tab', { name: label, exact: true }).click();
+    } });
+    const toggle = async label => {
+      await setPlaygroundControls(playground, true);
+      await controls.getByRole('switch', { name: label, exact: true }).click();
+    };
+    await setPlaygroundControls(playground, true);
+    for (const [label, size, height] of [['小', 24, 36], ['中', 28, 44], ['大', 32, 48]]) {
       await controls.getByRole('combobox', { name: '尺寸', exact: true }).click();
       await page.getByRole('option', { name: label, exact: true }).click();
       const glyph = await trigger.locator('.inkra-select__trigger-glyph').boundingBox();
@@ -26,7 +34,7 @@ try {
       assert.equal(surface.height, height, `${label} control height unchanged`);
     }
     await controls.getByRole('combobox', { name: '尺寸', exact: true }).click();
-    await page.getByRole('option', { name: 'Medium', exact: true }).click();
+    await page.getByRole('option', { name: '中', exact: true }).click();
     await page.getByRole('listbox').waitFor({ state: 'hidden' });
     await page.waitForTimeout(250);
     await page.screenshot({ path: `/tmp/inkra-select-chevron-${width}.png` });
@@ -36,6 +44,7 @@ try {
     assert.equal(await trigger.locator('.inkra-select__trigger-slot').count(), 2);
     await toggle('隐藏下拉箭头');
     assert.equal(await trigger.locator('.inkra-select__trigger-icon').count(), 0);
+    await setPlaygroundControls(playground, false);
     await trigger.click();
     await page.getByRole('option', { name: '团队', exact: true }).click();
     assert.match(await trigger.textContent(), /团队/);
@@ -48,6 +57,7 @@ try {
     assert((await trigger.getAttribute('aria-describedby')).split(' ').includes(valueId));
     assert.match(await hiddenValue.textContent(), /团队/);
     assert.equal(await trigger.getAttribute('aria-label'), '可见范围');
+    await setPlaygroundControls(playground, false);
     await trigger.focus();
     await page.keyboard.press('ArrowDown');
     await page.getByRole('listbox').waitFor();
@@ -61,6 +71,7 @@ try {
     assert.match(await hiddenValue.textContent(), /请选择/);
     await category('基础').click();
     await toggle('多选');
+    await setPlaygroundControls(playground, false);
     await trigger.click();
     await page.getByRole('option', { name: '仅自己', exact: true }).click();
     await page.getByRole('option', { name: '团队', exact: true }).click();
@@ -72,6 +83,7 @@ try {
     assert.match(await playground.locator('.component-demo-status').textContent(), /private.*team/);
     await category('状态').click();
     await toggle('只读');
+    await setPlaygroundControls(playground, false);
     await trigger.click();
     assert.equal(await page.getByRole('listbox').count(), 0, 'readonly stays closed');
     await toggle('只读');
@@ -82,7 +94,7 @@ try {
     await toggle('纯图标触发器');
     await category('布局').click();
     await controls.getByRole('combobox', { name: '阅读方向', exact: true }).click();
-    await page.getByRole('option', { name: 'RTL', exact: true }).click();
+    await page.getByRole('option', { name: '从右到左', exact: true }).click();
     const slots = await trigger.locator('.inkra-select__trigger-slot').all();
     assert((await slots[0].boundingBox()).x > (await slots[1].boundingBox()).x, 'logical icon slots follow RTL');
     await category('内容').click();
@@ -92,6 +104,7 @@ try {
     const code = await playground.locator('code').textContent();
     for (const prop of ['startIcon=', 'endIcon=', 'hideIndicator={true}', 'fullWidth={false}', 'dir="rtl"']) assert(code.includes(prop));
     await playground.getByRole('tab', { name: '预览', exact: true }).click();
+    await setPlaygroundControls(playground, false);
     const example = page.locator('.component-example').filter({ has: page.getByRole('heading', { name: '纯图标触发器', exact: true }) });
     const iconTrigger = example.getByRole('combobox');
     await iconTrigger.scrollIntoViewIfNeeded();

@@ -1,19 +1,45 @@
 .component-examples { display: grid; gap: var(--inkra-space-5); }
 .component-playground { min-width: 0; }
+.playground-toolbar__actions { display: flex; flex: none; align-items: center; gap: 4px; }
+.playground-toolbar__actions .icon-button[data-tooltip]::after { inset-inline-start: auto; inset-inline-end: 0; transform: translateY(-3px); }
+.playground-toolbar__actions .icon-button[data-tooltip]:is(:hover, :focus-visible)::after { transform: translateY(0); }
+.component-playground[data-controls-layout] > .preview-workspace { position: relative; isolation: isolate; grid-template-columns: minmax(0, 1fr); }
+.component-playground[data-controls-layout="wide"][data-controls-present="true"] > .preview-workspace { grid-template-columns: minmax(0, 2fr) 8px minmax(0, 1fr); }
+.component-playground .preview-display { transform-origin: top left; }
+.component-playground:dir(rtl) .preview-display { transform-origin: top right; }
+.component-playground .preview-workspace:has([data-playground-moving]) { overflow: clip; }
+.component-playground .preview-controls[inert] { pointer-events: none; }
+.component-playground[data-controls-layout] .preview-controls { position: relative; grid-template-columns: minmax(0, 1fr); contain: size; block-size: 0; min-block-size: 100%; align-self: stretch; }
+.component-playground[data-controls-layout] .preview-controls > :not(.preview-controls__paper) { position: relative; }
+.component-playground[data-controls-layout] .preview-controls__paper { position: absolute; inset: 0; background: var(--inkra-paper); pointer-events: none; border-radius: 0; }
+.component-playground[data-controls-layout="wide"] .preview-controls__paper { display: none; }
+.component-playground[data-controls-layout] .preview-controls-divider { width: 8px; height: 100%; min-height: 0; }
+.component-playground[data-controls-present="false"] .preview-controls,
+.component-playground[data-controls-present="false"] .preview-controls-divider { display: none; }
+.component-playground:is([data-controls-layout="overlay"], [data-controls-layout="full"]) .preview-controls {
+  position: absolute; z-index: 3; inset-block: 0; inset-inline-end: 0;
+  width: min(360px, 100%); block-size: auto; min-block-size: 0; contain: none;
+  background: var(--inkra-paper); border-end-end-radius: 8px;
+}
+.component-playground[data-controls-layout="overlay"] .preview-controls-divider {
+  position: absolute; z-index: 4; inset-block: 0; inset-inline-end: 356px;
+  block-size: auto; min-block-size: 0; pointer-events: none;
+}
+.component-playground[data-controls-layout="full"] .preview-controls { width: 100%; border-end-start-radius: 8px; }
+.component-playground[data-controls-layout="full"] .preview-controls-divider { display: none; }
+.component-playground[data-controls-layout="full"] .preview-stage { padding: 16px; }
 .property-tabs { width: 100%; min-width: 0; grid-column: 1 / -1; }
 .property-tabs__fields { display: grid; align-content: start; gap: 16px; min-width: 0; }
 .property-tabs__fields > label:not(.check-control) { display: grid; gap: var(--inkra-space-1); min-width: 0; }
 .property-tabs .inkra-tabs__list { margin-bottom: 16px; --inkra-tabs-icon-size: 24px; }
 .property-tabs > .inkra-tabs__content { padding: 4px; overflow-x: clip; }
-@media (min-width: 64.001rem) {
-  .component-playground .preview-controls:has(> .property-tabs) {
-    grid-template-rows: minmax(0, 1fr);
-    overflow: hidden;
-  }
-  .property-tabs { display: flex; flex-direction: column; min-height: 0; }
-  .property-tabs > .inkra-tabs__list { flex: none; }
-  .property-tabs > .inkra-tabs__content { min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; }
+.component-playground[data-controls-layout] .preview-controls:has(> .property-tabs) {
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
 }
+.component-playground .property-tabs { display: flex; flex-direction: column; min-height: 0; }
+.component-playground .property-tabs > .inkra-tabs__list { flex: none; }
+.component-playground .property-tabs > .inkra-tabs__content { min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; }
 .component-playground .preview-stage { flex-wrap: wrap; align-content: center; }
 .button-playground .preview-stage { flex-direction: column; flex-wrap: nowrap; }
 .button-playground .preview-feedback { text-align: center; }

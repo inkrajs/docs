@@ -18,6 +18,47 @@ test('preview content determines height and stays inert behind code', () => {
   assert.match(css, /\.preview-controls-divider\s*\{[^}]*contain:\s*size/);
 });
 
+test('playground properties are container-aware, persistent and keyboard dismissible', () => {
+  const source = read('components/ComponentPlayground.tsx');
+  const css = read('components/ComponentExample.css');
+  assert.match(source, /new ResizeObserver/);
+  assert.doesNotMatch(source, /matchMedia/);
+  assert.match(source, /aria-expanded=\{controlsOpen\}/);
+  assert.match(source, /aria-controls=\{`\$\{id\}-properties`\}/);
+  assert.match(source, /if \(controlsPresent\) setControlsMounted\(true\)/);
+  assert.match(source, /controlsMounted \? controls : null/);
+  assert.match(source, /hidden=\{!controlsPresent\} inert=\{!controlsOpen\} aria-hidden=\{!controlsOpen \|\| undefined\}/);
+  assert.match(source, /inert=\{overlayOpen\}/);
+  assert.match(source, /event\.key !== 'Escape'/);
+  assert.match(source, /toggleRef\.current\?\.focus\(\)/);
+  assert.match(source, /variant="full" aria-hidden="true"/);
+  assert.match(css, /data-controls-layout="wide".*grid-template-columns: minmax\(0, 2fr\) 8px minmax\(0, 1fr\)/);
+  assert.match(css, /data-controls-layout="full"\] \.preview-controls-divider \{ display: none/);
+  assert.match(css, /\.component-playground:is\(\[data-controls-layout="overlay"\], \[data-controls-layout="full"\]\) \.preview-controls/);
+  assert.match(css, /data-controls-layout="full"\] \.preview-controls \{ width: 100%/);
+  assert.doesNotMatch(css, /\[data-controls-layout\]:not\(\[data-controls-layout="wide"\]\)/);
+  assert.match(css, /background: var\(--inkra-paper\)/);
+});
+
+test('playground motion preserves final layout and honors reduced motion', () => {
+  const source = read('components/usePlaygroundMotion.ts');
+  const css = read('components/ComponentExample.css');
+  assert.match(source, /const duration = 180/);
+  assert.match(source, /prefers-reduced-motion: reduce/);
+  assert.match(source, /preference\.addEventListener\('change', update\)/);
+  assert.match(source, /preference\.removeEventListener\('change', update\)/);
+  assert.match(source, /motion\.complete\(\)/);
+  assert.match(source, /animation\.cancel\(\)/);
+  assert.match(source, /setControlsPresent\(false\)/);
+  assert.match(source, /old\.rootWidth !== next\.rootWidth/);
+  assert.match(source, /width: display\.offsetWidth, height: display\.offsetHeight/);
+  assert.match(source, /count < 8/);
+  assert.match(css, /data-controls-present="true"/);
+  assert.match(css, /data-controls-present="false"/);
+  assert.doesNotMatch(source, /requestAnimationFrame|setInterval|getBoundingClientRect|\.style\.(?:height|width)/);
+  assert.doesNotMatch(css, /transition:\s*all/);
+});
+
 test('toolbar and shortcut separators use shared pencil components', () => {
   for (const component of ['OverflowList', 'Hotkey']) {
     assert.match(read(`components/${component}Examples.tsx`), /<PencilLine/);

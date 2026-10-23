@@ -6,15 +6,35 @@
 }
 
 .virtual-list-examples__item-button {
+  --inkra-button-visual-height: 64px;
+  --inkra-button-visual-padding: var(--inkra-space-2);
+  block-size: 64px;
   min-inline-size: 0;
 }
 
-.virtual-list-examples__item-copy {
+.virtual-list-examples__item-button .inkra-button__label,
+.virtual-list-examples__item-button .inkra-button__label > .virtual-list-examples__item-copy {
   display: grid;
   gap: var(--inkra-space-1);
   inline-size: 100%;
   min-inline-size: 0;
   text-align: start;
+}
+
+.virtual-list-examples__item-copy > *,
+.virtual-list-examples__item-copy small > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.inkra-virtual-list[data-dynamic] .virtual-list-examples__item-button {
+  block-size: auto;
+}
+
+.inkra-virtual-list[data-dynamic] .virtual-list-examples__item-button .inkra-button__surface {
+  height: auto;
+  min-height: 64px;
+  padding-block: var(--inkra-space-2);
 }
 
 .virtual-list-examples__item-copy small,
@@ -31,9 +51,13 @@
   min-block-size: 1.5rem;
 }
 
+.virtual-list-examples__external-frame {
+  inline-size: min(100%, 44rem);
+  min-inline-size: 0;
+}
+
 .virtual-list-examples__external-viewport {
   block-size: 20rem;
-  inline-size: min(100%, 44rem);
   min-inline-size: 0;
   overflow: auto;
   overscroll-behavior: contain;

@@ -140,7 +140,7 @@ function BadgeExamples() {
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label="状态" value={variant} onValueChange={value => setVariant(value as typeof variant)} options={badgeVariants} />
-        <DocsSelect label="尺寸" value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "Small"], ["md", "Medium"], ["lg", "Large"]]} />
+        <DocsSelect label="尺寸" value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "小"], ["md", "中"], ["lg", "大"]]} />
       </> },
       { label: '内容', content: <>
         <DocsSelect label="图标位置" value={icon} onValueChange={value => setIcon(value as typeof icon)} options={[["none", "无"], ["start", "Start"], ["end", "End"]]} />
@@ -238,7 +238,7 @@ function ProgressExamples() {
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label={zh ? '展示形式' : 'Shape'} value={shape} onValueChange={value => setShape(value as typeof shape)} options={[["linear", zh ? '条形' : 'Linear'], ["circular", zh ? '环状' : 'Circular']]} />
-        <DocsSelect label="尺寸" value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "Small"], ["md", "Medium"], ["lg", "Large"]]} />
+        <DocsSelect label="尺寸" value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "小"], ["md", "中"], ["lg", "大"]]} />
         <DocsSelect label="阅读方向" value={dir} onValueChange={value => setDir(value as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
         <label><PencilText>名称</PencilText><Input value={label} onChange={event => setLabel(event.target.value)} /></label>
       </> },

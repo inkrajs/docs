@@ -68,10 +68,10 @@ export function TypewriterExamples() {
       </PencilSurface>
     </ComponentPlayground>
 
-    <ComponentExample title={text('表情与多语言', 'Emoji and multilingual text')} code={`<Typewriter speed={42}>\n  {'你好，世界 👩🏽‍💻 — élan!'}\n</Typewriter>`}>
+    <ComponentExample title={text('表情与组合字符', 'Emoji and combining characters')} code={`<Typewriter speed={42}>\n  {${JSON.stringify(text('你好，世界 👩🏽‍💻', 'Hello, world 👩🏽‍💻 — élan!'))}}\n</Typewriter>`}>
       <div className="typewriter-examples__specimens">
-        <Typewriter speed={42} punctuationDelay={220}>你好，世界 👩🏽‍💻 — élan!</Typewriter>
-        <Typewriter speed={34} punctuationDelay={180}>Plan, sketch, revise… 完成。 ✏️</Typewriter>
+        <Typewriter speed={42} punctuationDelay={220}>{text('你好，世界 👩🏽‍💻', 'Hello, world 👩🏽‍💻 — élan!')}</Typewriter>
+        <Typewriter speed={34} punctuationDelay={180}>{text('计划、起稿、修改……完成。 ✏️', 'Plan, sketch, revise… Done. ✏️')}</Typewriter>
       </div>
     </ComponentExample>
 

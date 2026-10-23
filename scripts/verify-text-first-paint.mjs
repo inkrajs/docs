@@ -45,6 +45,15 @@ try {
     const frames = await page.evaluate(() => window.textFrames);
     assert.deepEqual(frames[0].missing, [], `first frame at ${width}px: ${JSON.stringify(frames[0])}`);
     assert(frames.every(frame => frame.missing.length === 0), `font readiness must not flash plain text: ${JSON.stringify(frames.filter(frame => frame.missing.length))}`);
+    const config = page.locator('.playground-config-toggle');
+    if (await config.getAttribute('aria-expanded') === 'false') {
+      await page.evaluate(() => { window.textFrames = []; });
+      await config.click();
+      await page.waitForFunction(() => window.textFrames.length >= 30);
+      const reveal = await page.evaluate(() => window.textFrames);
+      assert(reveal.every(frame => frame.missing.length === 0), `revealed controls must paint on their first visible frame: ${JSON.stringify(reveal.filter(frame => frame.missing.length))}`);
+      await config.click();
+    }
     await page.screenshot({ path: `/tmp/inkra-text-first-paint-${width}.png` });
     await page.locator('.brand').click();
     await page.locator('#home-title[data-pencil-ready="true"]').waitFor();

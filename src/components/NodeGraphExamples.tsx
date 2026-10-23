@@ -33,12 +33,12 @@ const workflowNodes: DemoNode[] = [
     id: 'brief',
     position: { x: 0, y: 70 },
     data: {
-      label: '需求草图 / Brief',
-      description: '收集目标和约束 / Gather goals and constraints',
+      label: '需求草图',
+      description: '收集目标和约束',
       kind: 'start',
       ports: [
-        { id: 'out', type: 'source', position: 'right', label: '下一步 / Next step' },
-        { id: 'revise-in', type: 'target', position: 'bottom', label: '修改后返回 / Revised work' },
+        { id: 'out', type: 'source', position: 'right', label: '下一步' },
+        { id: 'revise-in', type: 'target', position: 'bottom', label: '修改后返回' },
       ],
     },
   },
@@ -46,13 +46,13 @@ const workflowNodes: DemoNode[] = [
     id: 'review',
     position: { x: 260, y: 0 },
     data: {
-      label: '设计评审 / Review',
-      description: '检查内容、交互和视觉 / Check content, behavior and visuals',
+      label: '设计评审',
+      description: '检查内容、交互和视觉',
       kind: 'decision',
       ports: [
-        { id: 'in', type: 'target', position: 'left', label: '评审输入 / Review input' },
-        { id: 'approved', type: 'source', position: 'right', label: '通过 / Approved' },
-        { id: 'revise', type: 'source', position: 'bottom', label: '修改 / Revise' },
+        { id: 'in', type: 'target', position: 'left', label: '评审输入' },
+        { id: 'approved', type: 'source', position: 'right', label: '通过' },
+        { id: 'revise', type: 'source', position: 'bottom', label: '修改' },
       ],
     },
   },
@@ -60,12 +60,12 @@ const workflowNodes: DemoNode[] = [
     id: 'revise',
     position: { x: 270, y: 220 },
     data: {
-      label: '调整方案 / Revise',
-      description: '保留反馈并继续迭代 / Keep feedback and iterate',
+      label: '调整方案',
+      description: '保留反馈并继续迭代',
       kind: 'step',
       ports: [
-        { id: 'in', type: 'target', position: 'top', label: '待修改 / Needs revision' },
-        { id: 'out', type: 'source', position: 'left', label: '返回草图 / Return to brief' },
+        { id: 'in', type: 'target', position: 'top', label: '待修改' },
+        { id: 'out', type: 'source', position: 'left', label: '返回草图' },
       ],
     },
   },
@@ -73,33 +73,33 @@ const workflowNodes: DemoNode[] = [
     id: 'ship',
     position: { x: 540, y: 70 },
     data: {
-      label: '交付 / Ship',
-      description: '完成验证并发布 / Finish verification and release',
+      label: '交付',
+      description: '完成验证并发布',
       kind: 'finish',
-      ports: [{ id: 'in', type: 'target', position: 'left', label: '已通过 / Approved work' }],
+      ports: [{ id: 'in', type: 'target', position: 'left', label: '已通过' }],
     },
   },
 ];
 
 const workflowEdges: DemoEdge[] = [
-  { id: 'brief-review', source: 'brief', sourceHandle: 'out', target: 'review', targetHandle: 'in', label: '提交 / Submit' },
-  { id: 'review-ship', source: 'review', sourceHandle: 'approved', target: 'ship', targetHandle: 'in', label: '通过 / Approved', data: { tone: 'accent' } },
-  { id: 'review-revise', source: 'review', sourceHandle: 'revise', target: 'revise', targetHandle: 'in', label: '有反馈 / Feedback' },
-  { id: 'revise-brief', source: 'revise', sourceHandle: 'out', target: 'brief', targetHandle: 'revise-in', label: '再试一次 / Try again' },
+  { id: 'brief-review', source: 'brief', sourceHandle: 'out', target: 'review', targetHandle: 'in', label: '提交' },
+  { id: 'review-ship', source: 'review', sourceHandle: 'approved', target: 'ship', targetHandle: 'in', label: '通过', data: { tone: 'accent' } },
+  { id: 'review-revise', source: 'review', sourceHandle: 'revise', target: 'revise', targetHandle: 'in', label: '有反馈' },
+  { id: 'revise-brief', source: 'revise', sourceHandle: 'out', target: 'brief', targetHandle: 'revise-in', label: '再试一次' },
 ];
 
 const dependencyNodes: DemoNode[] = [
-  { id: 'tokens', position: { x: 20, y: 40 }, data: { label: 'Design tokens', status: 'stable', ports: [{ id: 'out', type: 'source', position: 'right', label: 'Token output' }] } },
-  { id: 'controls', position: { x: 300, y: 0 }, data: { label: 'Controls', status: 'active', ports: [{ id: 'in', type: 'target', position: 'left', label: 'Token input' }, { id: 'out', type: 'source', position: 'right', label: 'Control output' }] } },
-  { id: 'docs', position: { x: 590, y: 40 }, data: { label: 'Documentation', status: 'draft', ports: [{ id: 'in', type: 'target', position: 'left', label: 'Component input' }] } },
-  { id: 'playground', position: { x: 300, y: 220 }, data: { label: 'Playground', status: 'active', ports: [{ id: 'in', type: 'target', position: 'top', label: 'Control input' }, { id: 'out', type: 'source', position: 'right', label: 'Preview output' }] } },
+  { id: 'tokens', position: { x: 20, y: 40 }, data: { label: '设计变量', status: 'stable', ports: [{ id: 'out', type: 'source', position: 'right', label: '变量输出' }] } },
+  { id: 'controls', position: { x: 300, y: 0 }, data: { label: '控件', status: 'active', ports: [{ id: 'in', type: 'target', position: 'left', label: '变量输入' }, { id: 'out', type: 'source', position: 'right', label: '控件输出' }] } },
+  { id: 'docs', position: { x: 590, y: 40 }, data: { label: '使用文档', status: 'draft', ports: [{ id: 'in', type: 'target', position: 'left', label: '组件输入' }] } },
+  { id: 'playground', position: { x: 300, y: 220 }, data: { label: '交互预览', status: 'active', ports: [{ id: 'in', type: 'target', position: 'top', label: '控件输入' }, { id: 'out', type: 'source', position: 'right', label: '预览输出' }] } },
 ];
 
 const dependencyEdges: DemoEdge[] = [
-  { id: 'tokens-controls', source: 'tokens', sourceHandle: 'out', target: 'controls', targetHandle: 'in', label: 'theme' },
+  { id: 'tokens-controls', source: 'tokens', sourceHandle: 'out', target: 'controls', targetHandle: 'in', label: '主题' },
   { id: 'controls-docs', source: 'controls', sourceHandle: 'out', target: 'docs', targetHandle: 'in', label: 'API', data: { tone: 'accent' } },
-  { id: 'controls-playground', source: 'controls', sourceHandle: 'out', target: 'playground', targetHandle: 'in', label: 'preview' },
-  { id: 'playground-docs', source: 'playground', sourceHandle: 'out', target: 'docs', targetHandle: 'in', label: 'examples' },
+  { id: 'controls-playground', source: 'controls', sourceHandle: 'out', target: 'playground', targetHandle: 'in', label: '预览' },
+  { id: 'playground-docs', source: 'playground', sourceHandle: 'out', target: 'docs', targetHandle: 'in', label: '示例' },
 ];
 
 function statusVariant(status: unknown): 'success' | 'info' | 'warning' {
@@ -109,12 +109,13 @@ function statusVariant(status: unknown): 'success' | 'info' | 'warning' {
 }
 
 function DependencyNode({ id, data, selected, readOnly }: NodeGraphRenderNodeProps<DemoNode['data']>) {
+  const { t } = useLocale();
   const label = typeof data.label === 'string' ? data.label : id;
   return <div className="node-graph-examples__dependency-node" data-selected={selected || undefined}>
     <Card.Root variant={selected ? 'quiet' : 'paper'} size="sm" divided={false}>
       <Card.Content className="node-graph-examples__dependency-content">
         <PencilText>{label}</PencilText>
-        <Badge size="sm" variant={statusVariant(data.status)}>{String(data.status ?? 'active')}</Badge>
+        <Badge size="sm" variant={statusVariant(data.status)}>{t(data.status === 'stable' ? '稳定' : data.status === 'draft' ? '草稿' : '活跃')}</Badge>
       </Card.Content>
     </Card.Root>
     {(data.ports ?? []).map(port => <NodeGraph.Port key={`${port.type}-${port.id}`} {...port} connectable={!readOnly && port.connectable !== false} />)}
@@ -139,7 +140,7 @@ function GraphFrame({ children }: { children: ReactNode }) {
 }
 
 export function NodeGraphExamples() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const english = locale === 'en';
   const text = (chinese: string, englishText: string) => english ? englishText : chinese;
   const graphRef = useRef<NodeGraphRef>(null);
@@ -152,8 +153,15 @@ export function NodeGraphExamples() {
   const [empty, setEmpty] = useState(false);
   const [message, setMessage] = useState('');
 
-  const displayedNodes = empty ? [] : nodes;
-  const displayedEdges = empty ? [] : edges;
+  const localizeNodes = (items: DemoNode[]) => items.map(node => ({ ...node, data: {
+    ...node.data,
+    label: typeof node.data.label === 'string' ? t(node.data.label) : node.data.label,
+    description: typeof node.data.description === 'string' ? t(node.data.description) : node.data.description,
+    ports: node.data.ports?.map(port => ({ ...port, label: typeof port.label === 'string' ? t(port.label) : port.label })),
+  } }));
+  const localizeEdges = (items: DemoEdge[]) => items.map(edge => ({ ...edge, label: typeof edge.label === 'string' ? t(edge.label) : edge.label }));
+  const displayedNodes = empty ? [] : localizeNodes(nodes);
+  const displayedEdges = empty ? [] : localizeEdges(edges);
   const isValidConnection = useCallback((connection: NodeGraphConnection | DemoEdge) => {
     const duplicate = edges.some(edge => edge.source === connection.source
       && edge.target === connection.target
@@ -244,8 +252,8 @@ const renderEdge = useCallback(props => <DependencyEdge {...props} />, []);
       <GraphFrame>
         <NodeGraph.Root
           aria-label={text('组件依赖关系', 'Component dependencies')}
-          nodes={dependencyNodes}
-          edges={dependencyEdges}
+          nodes={localizeNodes(dependencyNodes)}
+          edges={localizeEdges(dependencyEdges)}
           renderNode={dependencyRenderNode}
           renderEdge={dependencyRenderEdge}
           readOnly

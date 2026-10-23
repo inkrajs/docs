@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { Select } from '@inkra/react';
 import type { SelectTriggerProps } from '@inkra/react';
-import { PencilText, useLocale } from '../i18n';
+import { PencilText, translateOptionLabel, useLocale } from '../i18n';
 
 export function DocsSelect({ label, value, onValueChange, options, disabled = false, hideLabel = false, startIcon }: {
   label: string;
@@ -12,7 +12,7 @@ export function DocsSelect({ label, value, onValueChange, options, disabled = fa
   hideLabel?: boolean;
   startIcon?: SelectTriggerProps['startIcon'];
 }) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const id = useId();
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null);
   return <div className="docs-select">
@@ -22,7 +22,10 @@ export function DocsSelect({ label, value, onValueChange, options, disabled = fa
       <Select.Portal container={trigger?.closest<HTMLElement>('.mobile-drawer') ?? undefined}>
         <Select.Content position="popper" sideOffset={4} onKeyDown={event => event.stopPropagation()}>
           <Select.ScrollUpButton /><Select.Viewport>
-            {options.map(([key, text]) => <Select.Item key={key} value={key} textValue={t(text)}><Select.ItemText>{t(text)}</Select.ItemText><Select.ItemIndicator /></Select.Item>)}
+            {options.map(([key, text]) => {
+              const optionLabel = translateOptionLabel(locale, text);
+              return <Select.Item key={key} value={key} textValue={optionLabel}><Select.ItemText>{optionLabel}</Select.ItemText><Select.ItemIndicator /></Select.Item>;
+            })}
           </Select.Viewport><Select.ScrollDownButton />
         </Select.Content>
       </Select.Portal>
@@ -30,4 +33,4 @@ export function DocsSelect({ label, value, onValueChange, options, disabled = fa
   </div>;
 }
 
-export const controlSizes = [['sm', 'Small'], ['md', 'Medium'], ['lg', 'Large']] as const;
+export const controlSizes = [['sm', '小'], ['md', '中'], ['lg', '大']] as const;

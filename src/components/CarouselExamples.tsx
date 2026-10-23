@@ -10,19 +10,20 @@ import { PropertyTabs } from './PropertyTabs';
 import './CarouselExamples.css';
 
 const projects = [
-  { id: 'notes', title: '随手笔记 / Field notes', detail: '整理散落的想法，让下一步保持清楚。 / Gather loose ideas and keep the next step clear.', action: '打开笔记 / Open notes' },
-  { id: 'palette', title: '配色草图 / Palette sketch', detail: '比较纸面、墨色和彩铅颜料的真实组合。 / Compare paper, ink and pencil pigment together.', action: '查看色板 / View palette' },
-  { id: 'review', title: '评审清单 / Review list', detail: '在交付前检查语义、键盘和窄屏布局。 / Check semantics, keyboard use and narrow layouts.', action: '开始评审 / Start review' },
-  { id: 'archive', title: '灵感归档 / Idea archive', detail: '保留已经验证的方案和仍待探索的问题。 / Keep proven approaches and open questions.', action: '浏览归档 / Browse archive' },
-  { id: 'share', title: '分享草稿 / Share draft', detail: '把当前版本交给协作者继续完善。 / Hand the current version to collaborators.', action: '分享 / Share' },
+  { id: 'notes', title: '随手笔记', detail: '整理散落的想法，让下一步保持清楚。', action: '打开笔记' },
+  { id: 'palette', title: '配色草图', detail: '比较纸面、墨色和彩铅颜料的真实组合。', action: '查看色板' },
+  { id: 'review', title: '评审清单', detail: '在交付前检查语义、键盘和窄屏布局。', action: '开始评审' },
+  { id: 'archive', title: '灵感归档', detail: '保留已经验证的方案和仍待探索的问题。', action: '浏览归档' },
+  { id: 'share', title: '分享草稿', detail: '把当前版本交给协作者继续完善。', action: '分享' },
 ];
 
 function ProjectCard({ project }: { project: typeof projects[number] }) {
+  const { t } = useLocale();
   return <Card.Root className="carousel-examples__card" divided={false}>
     <Card.Content className="carousel-examples__card-content">
-      <Card.Title as="h3">{project.title}</Card.Title>
-      <Card.Description>{project.detail}</Card.Description>
-      <Button variant="outline" onClick={() => undefined}>{project.action}</Button>
+      <Card.Title as="h3">{t(project.title)}</Card.Title>
+      <Card.Description>{t(project.detail)}</Card.Description>
+      <Button variant="outline" onClick={() => undefined}>{t(project.action)}</Button>
     </Card.Content>
   </Card.Root>;
 }
@@ -30,6 +31,14 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
 export function CarouselExamples() {
   const { locale } = useLocale();
   const text = (chinese: string, english: string) => locale === 'en' ? english : chinese;
+  const labels = {
+    previous: text('上一组', 'Previous items'), next: text('下一组', 'Next items'),
+    pause: text('暂停自动播放', 'Pause autoplay'), play: text('开始自动播放', 'Start autoplay'),
+    pages: text('轮播分页', 'Carousel pages'), empty: text('暂无项目', 'No projects'),
+    page: (index: number, count: number) => text(`转到第 ${index} 页，共 ${count} 页`, `Go to page ${index} of ${count}`),
+    slide: (index: number, count: number) => text(`第 ${index} 项，共 ${count} 项`, `Item ${index} of ${count}`),
+    status: (index: number, count: number) => text(`当前第 ${index} 项，共 ${count} 项`, `Current item ${index} of ${count}`),
+  };
   const [currentIndex, setCurrentIndex] = useState(0);
   const [controlled, setControlled] = useState(true);
   const [loop, setLoop] = useState(false);
@@ -73,14 +82,7 @@ export function CarouselExamples() {
           aria-label={text('创作项目', 'Creative projects')}
           autoplay={autoplay ? { delay: 5000, pauseOnFocus: true, pauseOnHover: true } : false}
           dir={direction}
-          labels={{
-            previous: text('上一组', 'Previous items'), next: text('下一组', 'Next items'),
-            pause: text('暂停自动播放', 'Pause autoplay'), play: text('开始自动播放', 'Start autoplay'),
-            pages: text('轮播分页', 'Carousel pages'), empty: text('暂无项目', 'No projects'),
-            page: (index, count) => text(`转到第 ${index} 页，共 ${count} 页`, `Go to page ${index} of ${count}`),
-            slide: (index, count) => text(`第 ${index} 项，共 ${count} 项`, `Item ${index} of ${count}`),
-            status: (index, count) => text(`当前第 ${index} 项，共 ${count} 项`, `Current item ${index} of ${count}`),
-          }}
+          labels={labels}
           loop={loop}
           visibleItems={visibleItems}
         >
@@ -94,7 +96,7 @@ export function CarouselExamples() {
   <PencilSurface as="figure" variant="paper" data-inkra-theme="dark"><img src="/favicon-dark.png" alt="${text('深色 Inkra 标志', 'Dark Inkra mark')}" /></PencilSurface>
 </Carousel>`}>
       <div className="carousel-examples__frame carousel-examples__frame--images">
-        <Carousel aria-label={text('主题预览', 'Theme previews')} visibleItems={{ base: 1, sm: 2 }}>
+        <Carousel aria-label={text('主题预览', 'Theme previews')} labels={labels} visibleItems={{ base: 1, sm: 2 }}>
           <PencilSurface as="figure" variant="paper" data-inkra-theme="light" className="carousel-examples__image-slide">
             <img src="/favicon.png" alt={text('浅色 Inkra 标志', 'Light Inkra mark')} />
             <figcaption><PencilText>{text('浅色纸面', 'Light paper')}</PencilText><Button variant="ghost">{text('查看细节', 'View details')}</Button></figcaption>
@@ -113,8 +115,8 @@ export function CarouselExamples() {
 
     <ComponentExample title={text('空状态与单项', 'Empty and single item')} code={`<Carousel emptyState={<Empty />}>{items}</Carousel>`}>
       <div className="carousel-examples__states">
-        <Carousel aria-label={text('空项目', 'Empty projects')} emptyState={<PencilText>{text('还没有可浏览的项目。', 'There are no projects to browse yet.')}</PencilText>} />
-        <Carousel aria-label={text('唯一项目', 'Only project')}><ProjectCard project={projects[0]} /></Carousel>
+        <Carousel aria-label={text('空项目', 'Empty projects')} labels={labels} emptyState={<PencilText>{text('还没有可浏览的项目。', 'There are no projects to browse yet.')}</PencilText>} />
+        <Carousel aria-label={text('唯一项目', 'Only project')} labels={labels}><ProjectCard project={projects[0]} /></Carousel>
       </div>
     </ComponentExample>
   </div>;

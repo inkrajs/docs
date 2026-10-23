@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -13,6 +14,7 @@ try {
     const playgroundProgress = playground.locator('.inkra-progress');
     await playgroundProgress.locator('.inkra-progress__ring-ink[data-ready="true"]').waitFor();
     const controls = playground.getByRole('group', { name: '属性', exact: true });
+    await setPlaygroundControls(playground, true);
     await controls.getByRole('combobox', { name: '展示形式', exact: true }).click();
     await page.getByRole('option', { name: '条形', exact: true }).click();
     assert.equal(await playgroundProgress.getAttribute('data-shape'), 'linear');
@@ -25,6 +27,7 @@ try {
     await playground.locator('.playground-toolbar').getByRole('tab', { name: '代码', exact: true }).click();
     assert((await playground.locator('code').textContent()).includes('contentPosition="bottom"'));
     await playground.locator('.playground-toolbar').getByRole('tab', { name: '预览', exact: true }).click();
+    await setPlaygroundControls(playground, false);
     await page.screenshot({ path: `/tmp/inkra-progress-docs-${width}.png`, fullPage: true });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.evaluate(async theme => {
