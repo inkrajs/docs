@@ -10,9 +10,17 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-本次提交预览尚未发布的 `@inkra/react` 候选包，包含 npm 0.1.0 中没有的新增组件。
-源码提交、SHA-256 与 SHA-512 固定在 library-candidate.json 中。新检出文档仓库时，
-先按下述步骤准备被忽略的 vendor 归档，再运行 npm ci；不能用同版本的公开包替代。
+本次提交使用已发布的 `@inkra/react@0.2.0`，直接从 npm 安装。
+library-candidate.json 记录 registry 来源、源码提交、SHA-256 与 SHA-512，
+构建时核对公开归档与已安装依赖。新检出文档仓库不需要组件源码或 vendor 归档：
+
+```sh
+npm ci
+npm run build
+npm run dev -- --port 4180
+```
+
+需要预览尚未发布的组件修改时，再按以下步骤准备本地候选包。
 
 先在组件仓检出 library-candidate.json 中的精确提交，运行 npm ci、npm run build，
 再用 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 打包。在本仓运行：
@@ -36,5 +44,5 @@ Push、PR 和手动 CI 对正式版本直接安装 npm 包；本地候选模式�
 
 公开网站由 inkrajs/inkrajs.github.io 的 release.json 固定本仓精确提交后构建发布。
 首页位于 /，文档位于 /docs；构建生成每条文档路径及旧地址的 HTML 入口，
-支持 GitHub Pages 直达与刷新，不依赖 404 跳转。网站部署不等于 React 0.1.0
-已发布到 npm。设置 BASE_URL 可对线上运行首页检查。
+支持 GitHub Pages 直达与刷新，不依赖 404 跳转。网站部署与 npm 发布是独立流程。
+设置 BASE_URL 可对线上运行首页检查。

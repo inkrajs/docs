@@ -6,18 +6,23 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The package name is `@inkra/react`. This revision previews an unpublished
-candidate, including components not yet in npm 0.1.0. library-candidate.json
-pins its exact source commit, SHA-256 and SHA-512. The verified archive is
-installed from vendor/inkra.tgz; it is not a source alias.
+This revision installs the published `@inkra/react@0.2.0` package from npm.
+library-candidate.json records its registry source, exact source commit,
+SHA-256 and SHA-512. Build checks the public archive and installed dependency
+against those hashes; it does not use a source alias.
 
 ## Local Development
 
-First follow **Prepare The Unpublished Candidate** below. Check out the library
-revision recorded in library-candidate.json before building it; the ignored
-vendor archive must exist before `npm ci` can run in a fresh docs checkout.
-Build verifies the archive against the recorded hashes and installed dependency.
-It does not silently substitute the published 0.1.0 package.
+For the published release, no sibling library checkout or vendor archive is needed:
+
+```sh
+npm ci
+npm run build
+npm run dev -- --port 4180
+```
+
+To preview library changes that are not published, follow
+**Prepare An Unpublished Candidate** below.
 
 ## Local Routes And Page Actions
 
@@ -38,7 +43,7 @@ copy documentation for the user to paste. They do not send local URLs or input
 values to those services. Clipboard failures expose selectable Markdown.
 Destination/prompt checks use intercepted calls, not authenticated AI sessions.
 
-## Prepare The Unpublished Candidate
+## Prepare An Unpublished Candidate
 
 In an inkrajs/inkra checkout:
 
@@ -138,7 +143,7 @@ repository's exact commit; its Pages workflow builds this application once at
 the host root. The homepage is / and documentation is /docs. Build emits real
 HTML entrypoints for every documented route and its legacy alias, so Pages
 direct refresh works without a 404 redirect hack. Trailing slashes normalize
-in the client. This site deployment is not a React 0.1.0 npm release.
+in the client. Website deployment and npm publication remain separate workflows.
 
 Run `node scripts/verify-homepage.mjs` against the local server for homepage
 interaction checks and desktop/mobile screenshots in Chinese and English.
