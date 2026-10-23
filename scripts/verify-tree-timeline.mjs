@@ -15,8 +15,11 @@ try {
     const row = tree.locator('.inkra-tree__item').first();
     const disclosure = row.locator('.inkra-tree__disclosure').first();
     assert.equal(await disclosure.locator('.inkra-pencil-surface--quiet').count(), 0);
+    await tree.evaluate(async node => {
+      await Promise.all(node.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {})));
+    });
     const buttonBox = await disclosure.boundingBox();
-    assert(buttonBox.width >= 44 && buttonBox.height >= 44);
+    assert(buttonBox.width >= 44 && buttonBox.height >= 44, `Tree target must be at least 44px: ${JSON.stringify(buttonBox)}`);
     assert.equal(await disclosure.locator('[data-folder-state]').getAttribute('data-folder-state'), 'open');
     await disclosure.click();
     assert.equal(await row.getAttribute('aria-expanded'), 'false');
