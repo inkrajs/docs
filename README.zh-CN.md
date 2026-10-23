@@ -10,9 +10,9 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-本次提交验证 `@inkra/react@0.3.0` 发布候选。
+本次提交使用已发布的 `@inkra/react@0.3.0` 正式包。
 library-candidate.json 记录精确源码提交、SHA-256 与 SHA-512。
-新检出文档仓库时，先按下方本地候选步骤准备该提交的归档，再安装和构建：
+新检出文档仓库时可直接安装和构建，无需相邻组件仓库或本地归档：
 
 ```sh
 npm ci

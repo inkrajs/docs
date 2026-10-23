@@ -6,9 +6,9 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This revision validates the `@inkra/react@0.3.0` release candidate.
+This revision consumes the published `@inkra/react@0.3.0` package.
 library-candidate.json records its exact source commit, SHA-256 and SHA-512.
-Prepare that commit using the unpublished-candidate steps below before npm ci.
+Install directly with npm ci; no sibling checkout or vendor archive is needed.
 Build verifies the archive and installed dependency without a source alias.
 
 ## Local Development
