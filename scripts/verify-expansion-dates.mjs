@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { setPlaygroundControls as setControls } from './playground-test-helpers.mjs';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -27,12 +28,6 @@ async function waitForFocus(locator) {
     }
     throw new Error('Expected focus to return after popup dismissal');
   });
-}
-
-async function setControls(playground, open) {
-  const toggle = playground.locator('.playground-config-toggle');
-  if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
-  await playground.page().waitForFunction(node => !node.hasAttribute('data-playground-moving'), await playground.elementHandle());
 }
 
 async function verifyCurrentCodeCopy(page, playground, expectedFragments, forbiddenFragments = []) {
@@ -127,6 +122,9 @@ try {
 
     const timePage = await browser.newPage({ viewport: { width, height: 900 } });
     await openDocs(timePage, 'time-picker', 'TimePicker');
+    await timePage.addStyleTag({
+      content: '.inkra-time-picker__popover[data-state="closed"] { animation-duration: 600ms; }',
+    });
     const timePlayground = timePage.locator('.component-playground');
     const controlledTime = timePlayground.locator('input[type="time"]');
     const timeTrigger = timePlayground.locator('.inkra-time-picker__trigger');
@@ -207,6 +205,9 @@ try {
     await choose('秒', '15');
     await popup.getByRole('button', { name: '确定', exact: true }).click();
     await waitForInputValue(controlledTime, '21:30:15');
+    // Finish Radix dismissal/focus restoration before opening another picker.
+    await popup.waitFor({ state: 'detached' });
+    await waitForFocus(timeTrigger);
     assert.match(await timeTrigger.textContent(), /下午.*09:30:15|09:30:15.*下午/);
     assert(await timeTrigger.locator('.inkra-pencil-text').count() > 0);
 
@@ -235,6 +236,8 @@ try {
     await choose('分', '45');
     await popup.getByRole('button', { name: '确定', exact: true }).click();
     await waitForInputValue(limited, '09:45');
+    await popup.waitFor({ state: 'detached' });
+    await waitForFocus(limitsExample.locator('.inkra-time-picker__trigger').first());
     const validity = await limited.evaluate(node => {
       const original = node.value;
       node.value = '07:45'; const underflow = node.validity.rangeUnderflow;

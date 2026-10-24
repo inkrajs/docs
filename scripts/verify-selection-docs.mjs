@@ -1,14 +1,9 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls as controls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
-
-async function controls(playground, open) {
-  const toggle = playground.locator('.playground-config-toggle');
-  if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
-  await playground.page().waitForFunction(node => !node.hasAttribute('data-playground-moving'), await playground.elementHandle());
-}
 
 try {
   for (const [width, locale, theme] of [[1305, 'zh-CN', 'light'], [390, 'en', 'dark']]) {
@@ -54,8 +49,10 @@ try {
     await tree.getByRole('button', { name: copy('清空树选择', 'Clear tree selection'), exact: true }).click();
     await tree.locator('.inkra-tree-select__value[data-placeholder="true"]').waitFor();
     assert.equal(await tree.locator('.inkra-tree-select__value').textContent(), copy('选择工作区', 'Choose workspaces'));
+    await controls(playground, false);
     const after = await tree.locator('.inkra-tree-select__control').boundingBox();
-    assert(Math.abs(after.height - 48) <= 1 && Math.abs(after.width - before.width) <= 1, 'clearing preserves the shared control geometry');
+    assert(Math.abs(after.height - 48) <= 1 && Math.abs(after.width - before.width) <= 1,
+      `clearing preserves the shared control geometry: ${JSON.stringify({ before, after })}`);
     await page.waitForFunction(() => document.activeElement?.classList.contains('inkra-tree-select__trigger'));
     const form = page.locator('.tree-select-demo--form');
     await form.getByRole('button', { name: copy('清空树选择', 'Clear tree selection'), exact: true }).click();
