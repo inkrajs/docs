@@ -32,7 +32,11 @@ async function waitForFocus(locator) {
 async function setControls(playground, open) {
   const toggle = playground.locator('.playground-config-toggle');
   if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
-  await playground.page().waitForFunction(node => !node.hasAttribute('data-playground-moving'), await playground.elementHandle());
+  await playground.page().waitForFunction(({ node, open }) => new Promise(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve(
+      node.dataset.controlsPresent === String(open) && !node.querySelector('[data-playground-moving]'),
+    )));
+  }), { node: await playground.elementHandle(), open });
 }
 
 async function verifyCurrentCodeCopy(page, playground, expectedFragments, forbiddenFragments = []) {
