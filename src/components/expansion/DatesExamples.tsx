@@ -29,6 +29,7 @@ function DatePickerExamples() {
   const [mode, setMode] = useState<'single' | 'range'>('single');
   const [single, setSingle] = useState<Date | undefined>(initialDate);
   const [range, setRange] = useState<DatePickerRange | undefined>(initialRange);
+  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [clearable, setClearable] = useState(true);
@@ -37,8 +38,8 @@ function DatePickerExamples() {
     ? localDate(single)
     : `${localDate(range?.from)} → ${localDate(range?.to)}`;
   const code = mode === 'single'
-    ? `const [date, setDate] = useState<Date | undefined>(new Date(2026, 9, 22));\n\n<DatePicker\n  locale="${locale}"\n  value={date}\n  onValueChange={next => setDate(next instanceof Date ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`
-    : `const [range, setRange] = useState<DatePickerRange | undefined>({\n  from: new Date(2026, 9, 22),\n  to: new Date(2026, 9, 25),\n});\n\n<DatePicker\n  mode="range"\n  locale="${locale}"\n  value={range}\n  onValueChange={next => setRange(next && !(next instanceof Date) ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`;
+    ? `const [date, setDate] = useState<Date | undefined>(new Date(2026, 9, 22));\n\n<DatePicker\n  locale="${locale}"\n  size="${size}"\n  value={date}\n  onValueChange={next => setDate(next instanceof Date ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`
+    : `const [range, setRange] = useState<DatePickerRange | undefined>({\n  from: new Date(2026, 9, 22),\n  to: new Date(2026, 9, 25),\n});\n\n<DatePicker\n  mode="range"\n  locale="${locale}"\n  size="${size}"\n  value={range}\n  onValueChange={next => setRange(next && !(next instanceof Date) ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`;
 
   return <div className="dates-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
@@ -46,6 +47,8 @@ function DatePickerExamples() {
         <DocsSelect label={zh ? '选择模式' : 'Selection mode'} value={mode} onValueChange={next => {
           setMode(next as 'single' | 'range');
         }} options={[["single", zh ? '单日' : 'Single date'], ["range", zh ? '日期范围' : 'Date range']]} />
+        <DocsSelect label={zh ? '尺寸' : 'Size'} value={size} onValueChange={next => setSize(next as typeof size)}
+          options={[["sm", zh ? '小' : 'Small'], ["md", zh ? '中' : 'Medium'], ["lg", zh ? '大' : 'Large']]} />
         <Switch label={zh ? '可清空' : 'Clearable'} checked={clearable} onCheckedChange={setClearable} />
       </> },
       { label: '状态', content: <>
@@ -58,6 +61,7 @@ function DatePickerExamples() {
           <DatePicker
             locale={locale}
             mode={mode}
+            size={size}
             value={value}
             onValueChange={(next: DatePickerValue) => {
               if (mode === 'single') setSingle(next instanceof Date ? next : undefined);
@@ -106,16 +110,19 @@ function TimePickerExamples() {
   const zh = locale === 'zh-CN';
   const [value, setValue] = useState('09:30');
   const [hourCycle, setHourCycle] = useState<'h12' | 'h24'>('h24');
+  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [showSeconds, setShowSeconds] = useState(false);
   const [clearable, setClearable] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
-  const code = `const [time, setTime] = useState('${showSeconds ? '09:30:00' : '09:30'}');\n\n<TimePicker\n  locale="${locale}"\n  value={time}\n  hourCycle="${hourCycle}"\n  showSeconds={${showSeconds}}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n  onValueChange={(next: string) => setTime(next)}\n/>`;
+  const code = `const [time, setTime] = useState('${showSeconds ? '09:30:00' : '09:30'}');\n\n<TimePicker\n  locale="${locale}"\n  size="${size}"\n  value={time}\n  hourCycle="${hourCycle}"\n  showSeconds={${showSeconds}}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n  onValueChange={(next: string) => setTime(next)}\n/>`;
 
   return <div className="dates-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label={zh ? '小时制' : 'Hour cycle'} value={hourCycle} onValueChange={next => setHourCycle(next as 'h12' | 'h24')} options={[["h24", zh ? '24 小时' : '24 hour'], ["h12", zh ? '12 小时' : '12 hour']]} />
+        <DocsSelect label={zh ? '尺寸' : 'Size'} value={size} onValueChange={next => setSize(next as typeof size)}
+          options={[["sm", zh ? '小' : 'Small'], ["md", zh ? '中' : 'Medium'], ["lg", zh ? '大' : 'Large']]} />
         <Switch label={zh ? '显示秒' : 'Show seconds'} checked={showSeconds} onCheckedChange={next => {
           setShowSeconds(next);
           setValue(current => next && current.length === 5 ? `${current}:00` : !next ? current.slice(0, 5) : current);
@@ -134,6 +141,7 @@ function TimePickerExamples() {
             onValueChange={setValue}
             hourCycle={hourCycle}
             locale={locale}
+            size={size}
             showSeconds={showSeconds}
             clearable={clearable}
             disabled={disabled}
@@ -189,6 +197,8 @@ export const datesDocs: Record<string, ExpansionDoc> = {
       ['name / endName', 'Local YYYY-MM-DD form fields'],
       ['disabled / readOnly / required', 'Field and form state'],
       ['calendarProps', 'Non-selection Calendar configuration'],
+      ['size / fullWidth', 'sm | md (default) | lg / boolean', '共享外框视觉高度为 36/44/48px，操作命中区域至少 44px；fullWidth 控制是否撑满。', 'The shared frame is 36/44/48px high with targets of at least 44px. fullWidth controls stretching.'],
+      ['clearable / clearButtonLabel', 'boolean / string', '清空图标位于共享外框的逻辑末端，保持独立按钮语义；清空不会打开弹层，焦点返回触发器。', 'The clear icon sits at the logical end inside the shared frame as a separate native button. Clearing does not open the popup and returns focus to the trigger.'],
     ],
     a11y: {
       zh: '触发器是原生按钮，Popover 负责 Escape、边界和焦点返回，DayPicker 负责日期网格的方向键导航。打开时焦点落在已选、今日或首个可用日期。',
@@ -209,10 +219,10 @@ export const datesDocs: Record<string, ExpansionDoc> = {
       ['locale', 'string', '设置时间显示、浮层标题及按钮语言；中文 locale 显示中文操作名称。', 'Localizes the displayed time, popup heading, and actions. Chinese locales use Chinese action labels.'],
       ['showSeconds', 'boolean; default false', '显示秒选项，未指定 step 时使用 1 秒步进；非整分钟 step 也会显示秒。', 'Shows seconds and defaults step to one second. Non-minute steps also show seconds.'],
       ['min / max / step', 'string / string / number | "any"', '复用浏览器时间校验，支持跨午夜范围；不合范围或步进的草稿不能确认。step 单位为秒。', 'Uses browser time validation, including overnight ranges. Invalid drafts cannot be applied. Step is measured in seconds.'],
-      ['clearable / clearButtonLabel / onClear', 'boolean / string / MouseEventHandler<HTMLButtonElement>', '控制独立清空按钮、可访问名称和清空回调；清空后焦点返回整行触发器。', 'Controls the separate clear action, accessible name, and callback. Clearing returns focus to the row trigger.'],
+      ['clearable / clearButtonLabel / onClear', 'boolean / string / MouseEventHandler<HTMLButtonElement>', '清空图标与触发器共享外框，但保留独立原生按钮语义；清空不打开弹层，焦点返回触发器。', 'The clear icon shares the trigger frame while retaining separate native button semantics. Clearing does not open the popup and returns focus to the trigger.'],
       ['name / form / required', 'string / string / boolean', '关联原生表单字段；必填校验失败会聚焦可见触发器，重置恢复初始值。', 'Associates the native form field. Required validation focuses the visible trigger; reset restores the initial value.'],
       ['disabled / readOnly / invalid', 'boolean', '继承 Field 状态；禁用或只读时不打开浮层、不清空，invalid 显示错误状态。', 'Inherits Field state. Disabled and read-only pickers cannot open or clear; invalid marks an error.'],
-      ['size / fullWidth', "'sm' | 'md' | 'lg' / boolean", '控制整行触发器尺寸和是否占满容器；图标、时间与清空保持同一行。', 'Controls trigger size and full-width layout. Icon, time, and clear action remain on one row.'],
+      ['size / fullWidth', "'sm' | 'md' | 'lg' / boolean", '共享外框视觉高度为 36/44/48px，操作命中区域至少 44px；图标、时间与清空保持同一行。', 'The shared frame is 36/44/48px high with targets of at least 44px. Icon, time, and clear action remain on one row.'],
       ['placeholder / startIcon / endIcon', 'string / ReactNode / ReactNode', '设置空值提示及触发器两侧的装饰图标。', 'Sets the empty-value prompt and decorative icons at each end of the trigger.'],
       ['ref', 'HTMLInputElement', '指向用于校验和提交的原生时间字段；调用 focus 会转到可见触发器。选择变更请使用 onValueChange。', 'Points to the native validation/submission field. Calling focus redirects to the visible trigger. Use onValueChange for picker changes.'],
       ['onChange / onClick / onKeyDown / ...', 'InputProps', '继承的原生输入框属性和事件作用于隐藏的表单校验字段，不是可见按钮；时间选择提交请使用 onValueChange。', 'Inherited native input attributes and events belong to the hidden validation field, not the visible button. Use onValueChange for picker commits.'],

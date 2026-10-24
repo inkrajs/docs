@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Field,
   Hotkey,
@@ -39,6 +39,11 @@ function HotkeyPlayground() {
   const [readOnly, setReadOnly] = useState(false);
   const [checkConflict, setCheckConflict] = useState(true);
   const [status, setStatus] = useState('');
+  const placeholder = zh ? '按下快捷键' : 'Press a shortcut';
+  const recordingLabel = zh ? '正在录入，请按组合键…' : 'Recording: press a shortcut...';
+  const clearButtonLabel = zh ? '清除快捷键' : 'Clear shortcut';
+  const conflictMessage = zh ? '快捷键已被占用' : 'Shortcut already assigned';
+  useEffect(() => setStatus(''), [locale]);
   const code = `const [shortcut, setShortcut] = useState<HotkeyValue | null>(${JSON.stringify(value)});
 
 <Field label="${zh ? '命令面板快捷键' : 'Command palette shortcut'}">
@@ -48,6 +53,10 @@ function HotkeyPlayground() {
     platform="${platform}" size="${size}"
     clearable={${clearable}} blurOnCapture={${blurOnCapture}}
     disabled={${disabled}} readOnly={${readOnly}}
+    placeholder="${placeholder}"
+    recordingLabel="${recordingLabel}"
+    clearButtonLabel="${clearButtonLabel}"
+    conflictMessage="${conflictMessage}"
     validateHotkey={shortcut =>
       ${checkConflict} && shortcut.code === 'KeyK' && shortcut.modifiers?.includes('control')
         ? '${zh ? '已分配给快速打开' : 'Already assigned to Quick Open'}'
@@ -83,7 +92,8 @@ function HotkeyPlayground() {
           aria-label={zh ? '录入命令面板快捷键' : 'Record command palette shortcut'}
           blurOnCapture={blurOnCapture}
           clearable={clearable}
-          clearButtonLabel={zh ? '清除快捷键' : 'Clear shortcut'}
+          clearButtonLabel={clearButtonLabel}
+          conflictMessage={conflictMessage}
           disabled={disabled}
           onCancel={() => setStatus(zh ? '已取消录入' : 'Recording cancelled')}
           onValueChange={(next, details) => {
@@ -91,7 +101,9 @@ function HotkeyPlayground() {
             setStatus(details.conflict ?? (details.reason === 'clear' ? (zh ? '已清除' : 'Cleared') : (zh ? '已录入' : 'Recorded')));
           }}
           platform={platform}
+          placeholder={placeholder}
           readOnly={readOnly}
+          recordingLabel={recordingLabel}
           size={size}
           validateHotkey={shortcut => checkConflict && sameHotkey(shortcut, paletteShortcut)
             ? (zh ? '已分配给快速打开' : 'Already assigned to Quick Open')
@@ -124,26 +136,56 @@ export function HotkeyExamples() {
     <ComponentExample title={zh ? '非受控录入与冲突校验' : 'Uncontrolled recording and conflicts'} code={`<Field label="${zh ? '格式化文档' : 'Format document'}">
   <HotkeyInput
     defaultValue={{ key: 'F', code: 'KeyF', modifiers: ['alt', 'shift'] }}
+    placeholder="${zh ? '按下快捷键' : 'Press a shortcut'}"
+    recordingLabel="${zh ? '正在录入，请按组合键…' : 'Recording: press a shortcut...'}"
+    clearButtonLabel="${zh ? '清除快捷键' : 'Clear shortcut'}"
     validateHotkey={shortcut => isReserved(shortcut) ? '${zh ? '此快捷键由系统保留' : 'Reserved by the system'}' : undefined}
   />
 </Field>`}>
       <Field label={zh ? '格式化文档' : 'Format document'}>
         <HotkeyInput
           aria-label={zh ? '录入格式化快捷键' : 'Record format shortcut'}
+          clearButtonLabel={zh ? '清除快捷键' : 'Clear shortcut'}
+          conflictMessage={zh ? '此快捷键由系统保留' : 'Reserved by the system'}
           defaultValue={{ key: 'F', code: 'KeyF', modifiers: ['alt', 'shift'] }}
+          placeholder={zh ? '按下快捷键' : 'Press a shortcut'}
+          recordingLabel={zh ? '正在录入，请按组合键…' : 'Recording: press a shortcut...'}
           validateHotkey={shortcut => shortcut.key === 'Tab' ? (zh ? 'Tab 保留用于焦点导航' : 'Tab is reserved for focus navigation') : undefined}
         />
       </Field>
     </ComponentExample>
     <ComponentExample title={zh ? '游戏操作映射' : 'Game action mapping'} code={`<Field label="${zh ? '打开地图' : 'Open map'}">
-  <HotkeyInput defaultValue={{ key: 'M', code: 'KeyM' }} blurOnCapture={false} />
+  <HotkeyInput
+    defaultValue={{ key: 'M', code: 'KeyM' }}
+    blurOnCapture={false}
+    clearButtonLabel="${zh ? '清除按键' : 'Clear key'}"
+    placeholder="${zh ? '按下按键' : 'Press a key'}"
+    recordingLabel="${zh ? '正在录入，请按按键…' : 'Recording: press a key...'}"
+  />
 </Field>
 <Field label="${zh ? '冲刺' : 'Sprint'}">
-  <HotkeyInput defaultValue={{ key: 'Shift', code: 'ShiftLeft' }} readOnly />
+  <HotkeyInput
+    defaultValue={{ key: 'Shift', code: 'ShiftLeft' }}
+    clearButtonLabel="${zh ? '清除按键' : 'Clear key'}"
+    readOnly
+  />
 </Field>`}>
       <div className="hotkey-examples__grid">
-        <Field label={zh ? '打开地图' : 'Open map'}><HotkeyInput defaultValue={{ key: 'M', code: 'KeyM' }} blurOnCapture={false} /></Field>
-        <Field label={zh ? '冲刺' : 'Sprint'}><HotkeyInput value={{ key: 'Shift', code: 'ShiftLeft' }} readOnly /></Field>
+        <Field label={zh ? '打开地图' : 'Open map'}><HotkeyInput
+          aria-label={zh ? '录入打开地图按键' : 'Record open map key'}
+          blurOnCapture={false}
+          clearButtonLabel={zh ? '清除按键' : 'Clear key'}
+          defaultValue={{ key: 'M', code: 'KeyM' }}
+          placeholder={zh ? '按下按键' : 'Press a key'}
+          recordingLabel={zh ? '正在录入，请按按键…' : 'Recording: press a key...'}
+        /></Field>
+        <Field label={zh ? '冲刺' : 'Sprint'}><HotkeyInput
+          aria-label={zh ? '冲刺按键' : 'Sprint key'}
+          clearButtonLabel={zh ? '清除按键' : 'Clear key'}
+          placeholder={zh ? '未设置按键' : 'No key assigned'}
+          value={{ key: 'Shift', code: 'ShiftLeft' }}
+          readOnly
+        /></Field>
       </div>
     </ComponentExample>
   </div>;

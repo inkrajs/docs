@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ContextMenu, PencilSurface, Switch } from '@inkra/react';
+import { ContextMenu, Field, Input, PencilSurface, Switch } from '@inkra/react';
 
-import { useLocale } from '../i18n';
+import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { PropertyTabs } from './PropertyTabs';
@@ -15,6 +15,7 @@ export function ContextMenuExamples() {
   const [disabled, setDisabled] = useState(false);
   const [longPress, setLongPress] = useState(true);
   const [compact, setCompact] = useState(false);
+  const [policyAction, setPolicyAction] = useState(false);
   const [lastAction, setLastAction] = useState<'none' | 'duplicate' | 'ideas' | 'drafts' | 'archive'>('none');
   const code = `${controlled ? `const [open, setOpen] = useState(${open});\n\n` : ''}<ContextMenu.Root${controlled ? ' open={open} onOpenChange={setOpen}' : ''}>
   <ContextMenu.Trigger longPress={${longPress}} disabled={${disabled}}>
@@ -67,11 +68,11 @@ export function ContextMenuExamples() {
             longPress={longPress ? { delay: 600, movementTolerance: 10 } : false}
           >
             <PencilSurface as="span" aria-hidden="true" className="context-menu-demo__surface" radius={8} seed="context-menu-demo-target" variant="paper" />
-            <span className="context-menu-demo__eyebrow">{text('灵感笔记', 'Idea note')}</span>
-            <strong>{text('铅笔菜单的交互草图', 'Interaction sketch for pencil menus')}</strong>
-            <span>{text('鼠标右键，或聚焦后按 ContextMenu / Shift+F10。', 'Right-click, or focus and press ContextMenu / Shift+F10.')}</span>
+            <PencilSurface as="span" aria-hidden="true" className="context-menu-demo__focus" variant="outline" />
+            <PencilText className="context-menu-demo__eyebrow">{text('灵感笔记', 'Idea note')}</PencilText>
+            <PencilText>{text('铅笔菜单的交互草图', 'Interaction sketch for pencil menus')}</PencilText>
             <span data-context-menu-native className="context-menu-demo__native">
-              {text('此行保留浏览器原生菜单，可选择和复制文字。', 'This line keeps the browser menu for selecting and copying text.')}
+              <PencilText>{text('留下一些值得继续打磨的想法。', 'Keep a few ideas worth refining.')}</PencilText>
             </span>
           </ContextMenu.Trigger>
           <ContextMenu.Portal>
@@ -94,18 +95,40 @@ export function ContextMenuExamples() {
             </ContextMenu.Content>
           </ContextMenu.Portal>
         </ContextMenu.Root>
-        <output aria-live="polite" className="context-menu-demo__status">{actionText}</output>
+        <output aria-live="polite" className="context-menu-demo__status"><PencilText>{actionText}</PencilText></output>
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('浏览器菜单排除策略', 'Native-menu exclusion policy')} code={`<ContextMenu.Trigger nativeContextMenu="editable" exclude="[data-context-menu-native]">
-  <p>${text('自定义菜单区域', 'Custom menu area')}</p>
-  <input value="${text('输入框保留原生菜单', 'Inputs keep the native menu')}" readOnly />
-  <p data-context-menu-native>${text('显式排除区域', 'Explicitly excluded area')}</p>
-</ContextMenu.Trigger>`}>
+    <ComponentExample title={text('浏览器菜单排除策略', 'Native-menu exclusion policy')} code={`const [copied, setCopied] = useState(false);
+
+<ContextMenu.Root>
+  <ContextMenu.Trigger nativeContextMenu="editable" exclude="[data-context-menu-native]" aria-label="${text('草稿操作区域', 'Draft actions region')}">
+    <PencilText>${text('待整理草稿', 'Draft to organize')}</PencilText>
+    <Field label="${text('名称', 'Name')}"><Input defaultValue="Inkra" /></Field>
+    <p data-context-menu-native>${text('保留这段文字，稍后继续整理。', 'Keep this text to revisit later.')}</p>
+  </ContextMenu.Trigger>
+  <ContextMenu.Portal>
+    <ContextMenu.Content aria-label="${text('草稿操作', 'Draft actions')}">
+      <ContextMenu.Item onSelect={() => setCopied(true)}>${text('复制笔记', 'Duplicate note')}</ContextMenu.Item>
+    </ContextMenu.Content>
+  </ContextMenu.Portal>
+</ContextMenu.Root>`}>
       <div className="context-menu-demo__policy">
-        <p>{text('默认策略在输入、可编辑内容、已有文本选择和 data-context-menu-native 区域保留浏览器菜单。禁用 ContextMenu 时也不会阻止原生菜单。', 'The default policy keeps the browser menu for inputs, editable content, active text selections, and data-context-menu-native regions. A disabled ContextMenu also never blocks the native menu.')}</p>
-        <code>nativeContextMenu=&quot;editable&quot;</code>
+        <ContextMenu.Root>
+          <ContextMenu.Trigger className="context-menu-demo__target" nativeContextMenu="editable" exclude="[data-context-menu-native]" aria-label={text('草稿操作区域', 'Draft actions region')}>
+            <PencilSurface as="span" aria-hidden="true" className="context-menu-demo__surface" variant="paper" />
+            <PencilSurface as="span" aria-hidden="true" className="context-menu-demo__focus" variant="outline" />
+            <PencilText>{text('待整理草稿', 'Draft to organize')}</PencilText>
+            <Field label={text('名称', 'Name')}><Input defaultValue="Inkra" /></Field>
+            <span data-context-menu-native><PencilText>{text('保留这段文字，稍后继续整理。', 'Keep this text to revisit later.')}</PencilText></span>
+          </ContextMenu.Trigger>
+          <ContextMenu.Portal>
+            <ContextMenu.Content aria-label={text('草稿操作', 'Draft actions')}>
+              <ContextMenu.Item onSelect={() => setPolicyAction(true)}>{text('复制笔记', 'Duplicate note')}</ContextMenu.Item>
+            </ContextMenu.Content>
+          </ContextMenu.Portal>
+        </ContextMenu.Root>
+        <output aria-live="polite" className="context-menu-demo__status"><PencilText>{policyAction ? text('已复制笔记', 'Note duplicated') : text('尚未执行操作', 'No action yet')}</PencilText></output>
       </div>
     </ComponentExample>
   </div>;

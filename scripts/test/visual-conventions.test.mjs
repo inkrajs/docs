@@ -4,6 +4,12 @@ import test from 'node:test';
 
 const read = name => readFileSync(new URL(`../../src/${name}`, import.meta.url), 'utf8');
 
+test('global focus fallback does not override component-owned pencil focus', () => {
+  const css = read('styles.css');
+  assert.match(css, /:where\(:focus-visible\)\s*\{[^}]*outline:\s*var\(--inkra-focus-width\) solid/);
+  assert.doesNotMatch(css, /(?:^|\n):focus-visible\s*\{/);
+});
+
 test('navigation labels reuse pencil ellipsis instead of wrapping', () => {
   assert.match(read('App.tsx'), /<PencilText ellipsis seed=\{`nav-/);
   assert.doesNotMatch(read('styles.css'), /\.nav-link \.inkra-pencil-text\s*\{[^}]*overflow-wrap:\s*anywhere/);
@@ -57,6 +63,14 @@ test('playground motion preserves final layout and honors reduced motion', () =>
   assert.match(css, /data-controls-present="false"/);
   assert.doesNotMatch(source, /requestAnimationFrame|setInterval|getBoundingClientRect|\.style\.(?:height|width)/);
   assert.doesNotMatch(css, /transition:\s*all/);
+});
+
+test('reduced motion removes color transitions before pencil canvases capture appearance', () => {
+  const css = read('styles.css');
+  const reduced = css.match(/@media \(prefers-reduced-motion: reduce\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+  assert.match(reduced, /animation-duration:\s*0\.01ms !important/);
+  assert.match(reduced, /transition-duration:\s*0ms !important/);
+  assert.doesNotMatch(reduced, /transition-duration:\s*0\.01ms/);
 });
 
 test('toolbar and shortcut separators use shared pencil components', () => {

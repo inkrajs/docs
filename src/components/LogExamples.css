@@ -1,10 +1,11 @@
 .log-examples__frame {
-  block-size: 22rem;
+  min-block-size: 12rem;
   inline-size: min(100%, 46rem);
   min-inline-size: 0;
 }
 
-.log-examples__frame > .inkra-log { block-size: 100%; }
+.log-examples__frame[data-bounded="true"] { block-size: 22rem; }
+.log-examples__frame[data-bounded="true"] > .inkra-log { block-size: 100%; }
 
 .log-examples__stack {
   display: grid;
@@ -21,8 +22,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   inline-size: min(100%, 58rem);
 }
-
-.log-examples__empty-grid .log-examples__frame { block-size: 16rem; }
 
 @media (max-width: 48rem) {
   .log-examples__empty-grid { grid-template-columns: 1fr; }

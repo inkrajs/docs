@@ -68,14 +68,17 @@ try {
     await playground.getByRole('tab', { name: '预览', exact: true }).click();
     await settle(page);
     const originalHeight = await display.evaluate(element => element.offsetHeight);
-    await display.locator('.preview-stage').evaluate(stage => {
+    await display.locator('.preview-stage').evaluate((stage, originalHeight) => {
       const probe = document.createElement('div');
       probe.dataset.motionHeightProbe = '';
-      probe.style.cssText = 'height: 620px; width: 100%; flex: none';
+      // Keep the probe inside the motion hook's 0.5x-2x scale budget at either viewport.
+      probe.style.cssText = `height: ${Math.max(44, Math.round(originalHeight / 4))}px; width: 100%; flex: none`;
       stage.append(probe);
-    });
+    }, originalHeight);
     await page.waitForFunction(height => document.querySelector('.preview-display').offsetHeight > height, originalHeight);
     await settle(page);
+    assert(originalHeight / await display.evaluate(element => element.offsetHeight) >= 0.5,
+      'height probe stays within the bounded animation budget');
     await page.locator('[data-motion-height-probe]').evaluate(element => element.remove());
     await settle(page);
     assert.equal(await display.evaluate(element => element.offsetHeight), originalHeight);

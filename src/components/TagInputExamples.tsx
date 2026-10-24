@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import {
   Field,
+  Input,
+  PencilText,
   Switch,
   TagInput,
   type TagInputLabels,
@@ -31,6 +33,36 @@ function exampleLabels(zh: boolean): Partial<TagInputLabels> {
     maxTags: maximum => zh ? `最多添加 ${maximum} 个标签。` : `Add up to ${maximum} tags.`,
     invalid: candidate => zh ? `${candidate} 不是有效标签。` : `${candidate} is not a valid tag.`,
   };
+}
+
+function SizeAlignmentExample() {
+  const { locale } = useLocale();
+  const zh = locale === 'zh-CN';
+  const sizes: TagInputSize[] = ['sm', 'md', 'lg'];
+  const code = sizes.map(size => `<div className="form-size-row">
+  <Input aria-label="Input ${size}" size="${size}" defaultValue="Inkra" />
+  <TagInput
+    aria-label="TagInput ${size}"
+    size="${size}"
+    value={[{ id: 'react', value: 'react', label: 'React' }]}
+    clearable={false}
+  />
+</div>`).join('\n');
+
+  return <ComponentExample title={zh ? '尺寸与外框内距' : 'Sizes and control inset'} code={code}>
+    <div className="tag-input-examples__size-list">
+      {sizes.map(size => <div className="tag-input-examples__size-row" data-size={size} key={size}>
+        <PencilText as="span" className="tag-input-examples__size-label">{size}</PencilText>
+        <Input aria-label={`Input ${size}`} defaultValue="Inkra" size={size} />
+        <TagInput
+          aria-label={`TagInput ${size}`}
+          clearable={false}
+          size={size}
+          value={[initialTags[0]]}
+        />
+      </div>)}
+    </div>
+  </ComponentExample>;
 }
 
 function TagInputPlayground() {
@@ -216,6 +248,7 @@ function PasteAndStateExamples() {
 export function TagInputExamples() {
   return <div className="component-examples tag-input-examples">
     <TagInputPlayground />
+    <SizeAlignmentExample />
     <ContractExample />
     <PasteAndStateExamples />
   </div>;

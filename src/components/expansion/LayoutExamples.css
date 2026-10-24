@@ -22,10 +22,6 @@
 .layout-examples__composition > p,
 .layout-examples__shell h3,
 .layout-examples__shell p { margin: 0; }
-.layout-examples__shell .inkra-layout__header,
-.layout-examples__shell .inkra-layout__footer { background: color-mix(in srgb, var(--inkra-info-pigment) 6%, transparent); }
-.layout-examples__shell .inkra-layout__sidebar { background: color-mix(in srgb, var(--inkra-success-pigment) 5%, transparent); }
-
 .layout-examples--workspace .preview-display { height: 640px; }
 .layout-examples--workspace .preview-stage { padding: 16px; }
 .layout-viewport { width: 100%; min-width: 0; display: grid; gap: 16px; }
@@ -37,7 +33,11 @@
 .layout-viewport__scroll { width: 100%; min-width: 0; overflow: auto; overscroll-behavior-inline: contain; }
 .layout-viewport__extent { position: relative; margin-inline: auto; }
 .layout-viewport__canvas { position: absolute; top: 0; left: 0; border: 0; transform-origin: top left; }
-.layout-notebook { background: var(--inkra-paper); }
+.layout-notebook { background: var(--inkra-paper); isolation: isolate; position: relative; }
+.layout-notebook :is(.inkra-layout__header, .inkra-layout__sidebar, .inkra-layout__content, .inkra-layout__footer) {
+  background: transparent;
+  position: relative;
+}
 .layout-notebook > .inkra-layout__body { min-height: 440px; }
 .layout-notebook__storage { display: grid; gap: 8px; margin-block-start: 32px; padding: 12px; font-size: var(--inkra-text-sm); }
 .layout-notebook__notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -55,4 +55,7 @@
   .layout-viewport__sizes .inkra-radio-group__item { flex: 1; min-width: 0; }
   .layout-viewport__sizes .inkra-radio-group__segment { padding-inline: 4px; }
   .layout-viewport__sizes .inkra-radio-segment__content { gap: 4px; }
+}
+@media (forced-colors: active), print {
+  .layout-notebook { background: Canvas; }
 }

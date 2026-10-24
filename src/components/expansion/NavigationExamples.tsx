@@ -37,6 +37,7 @@ function PaginationExamples() {
   const [previousNext, setPreviousNext] = useState(true);
   const [hideSingle, setHideSingle] = useState(false);
   const [rtl, setRtl] = useState(false);
+  const [changingTotal, setChangingTotal] = useState(12);
   const resolvedPage = totalPages ? Math.min(totalPages, Math.max(1, page)) : 0;
   return <div className="component-examples navigation-examples">
     <ComponentPlayground code={`const [page, setPage] = useState(${page});
@@ -78,8 +79,14 @@ function PaginationExamples() {
         <Pagination totalPages={12} simple labels={labels} renderSummary={(page, total) => <PencilText>{zh ? `第 ${page} 页，共 ${total} 页` : `Page ${page} of ${total}`}</PencilText>} />
       </div>
     </ComponentExample>
-    <ComponentExample title={zh ? '空结果与总页数变化' : 'Empty results and changing totals'} code={'<Pagination totalPages={0} showFirstLast />\n// Changing totalPages clamps the displayed page, without onPageChange.\n// Pagination uses buttons for client-side data, not links.'}>
+    <ComponentExample title={zh ? '空结果与总页数变化' : 'Empty results and changing totals'} code={`const [totalPages, setTotalPages] = useState(12);
+<Pagination totalPages={totalPages} defaultPage={9} showFirstLast />
+<Pagination totalPages={0} showFirstLast />`}>
+      <div className="navigation-examples__stage" data-testid="pagination-changing-total">
+      <DocsSelect label={zh ? '结果页数' : 'Result pages'} value={String(changingTotal)} onValueChange={value => setChangingTotal(Number(value))} options={[["12", "12"], ["3", "3"], ["0", "0"]]} />
+      <Pagination totalPages={changingTotal} defaultPage={9} showFirstLast labels={labels} />
       <Pagination totalPages={0} showFirstLast labels={{ ...labels, nav: zh ? '空结果分页' : 'Empty results pagination' }} data-testid="pagination-empty" />
+      </div>
     </ComponentExample>
   </div>;
 }

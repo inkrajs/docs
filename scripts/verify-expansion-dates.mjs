@@ -29,6 +29,12 @@ async function waitForFocus(locator) {
   });
 }
 
+async function setControls(playground, open) {
+  const toggle = playground.locator('.playground-config-toggle');
+  if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
+  await playground.page().waitForFunction(node => !node.hasAttribute('data-playground-moving'), await playground.elementHandle());
+}
+
 async function verifyCurrentCodeCopy(page, playground, expectedFragments, forbiddenFragments = []) {
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(baseUrl).origin });
   await playground.getByRole('tab', { name: /代码|Code/ }).click();
@@ -62,12 +68,16 @@ try {
     assert.match(await datePlayground.locator('.dates-examples__status').textContent(), /未选择|No selection/);
     assert(await dateTrigger.evaluate(node => node === document.activeElement), 'clear returns focus to trigger');
 
+    await setControls(datePlayground, true);
     await datePlayground.locator('.preview-controls').getByRole('tab', { name: /状态|States?/ }).click();
     await datePlayground.getByRole('switch', { name: /只读|Read only/ }).click();
+    await setControls(datePlayground, false);
     await dateTrigger.click();
     await datePage.locator('.inkra-date-picker__popover').waitFor();
     assert.equal(await datePage.locator('.inkra-date-picker__popover .rdp-day_button:not(:disabled)').count(), 0, 'readOnly disables date selection');
     await datePage.keyboard.press('Escape');
+    await datePage.locator('.inkra-date-picker__popover').waitFor({ state: 'detached' });
+    await setControls(datePlayground, true);
     await datePlayground.getByRole('switch', { name: /只读|Read only/ }).click();
     await datePlayground.getByRole('switch', { name: /禁用|Disabled/ }).click();
     assert(await dateTrigger.isDisabled(), 'Field trigger respects disabled state');
@@ -76,11 +86,15 @@ try {
       'const [date, setDate] = useState<Date | undefined>',
       'onValueChange={next => setDate(next instanceof Date ? next : undefined)}',
       'locale="zh-CN"',
+      'size="md"',
       'clearable={true}',
       'disabled={true}',
       'readOnly={false}',
     ], ['onValueChange={setDate}']);
     await datePlayground.locator('.preview-controls').getByRole('tab', { name: /基础|Basic/ }).click();
+    await datePlayground.getByRole('combobox', { name: /尺寸|Size/ }).click();
+    await datePage.getByRole('option', { name: /大|Large/, exact: true }).click();
+    await verifyCurrentCodeCopy(datePage, datePlayground, ['size="lg"']);
     await datePlayground.getByRole('combobox', { name: /选择模式|Selection mode/ }).click();
     await datePage.getByRole('option', { name: /日期范围|Date range/ }).click();
     await verifyCurrentCodeCopy(datePage, datePlayground, [
@@ -88,6 +102,7 @@ try {
       'mode="range"',
       'onValueChange={next => setRange(next && !(next instanceof Date) ? next : undefined)}',
     ], ['onValueChange={setRange}']);
+    await setControls(datePlayground, false);
 
     const formExample = datePage.locator('.component-example').nth(1);
     const form = formExample.locator('form');
@@ -134,18 +149,21 @@ try {
     assert.equal(await controlledTime.inputValue(), '09:30', 'draft selection does not submit');
     await popup.getByRole('button', { name: '确定', exact: true }).click();
     await waitForInputValue(controlledTime, '10:45');
+    await waitForFocus(timeTrigger);
     assert(await timeTrigger.evaluate(node => node === document.activeElement), 'apply returns focus');
     await timeTrigger.press('Enter');
     await popup.waitFor();
     await choose('时', '11');
     await timePage.keyboard.press('Escape');
     assert.equal(await controlledTime.inputValue(), '10:45', 'Escape discards draft');
+    await waitForFocus(timeTrigger);
     assert(await timeTrigger.evaluate(node => node === document.activeElement));
     await timeTrigger.press('Space');
     await popup.waitFor();
     await choose('时', '12');
     await popup.getByRole('button', { name: '取消', exact: true }).click();
     assert.equal(await controlledTime.inputValue(), '10:45', 'Cancel discards draft');
+    await waitForFocus(timeTrigger);
     await timePlayground.getByRole('button', { name: /清空时间|Clear time/ }).click();
     assert.equal(await controlledTime.inputValue(), '');
     assert(await timeTrigger.evaluate(node => node === document.activeElement), 'clear returns focus to visible trigger');
@@ -155,27 +173,35 @@ try {
     await choose('分', '30');
     await popup.getByRole('button', { name: '确定', exact: true }).click();
 
+    await popup.waitFor({ state: 'detached' });
+    await setControls(timePlayground, true);
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /状态|States?/ }).click();
     await timePlayground.getByRole('switch', { name: /只读|Read only/ }).click();
     assert.equal(await controlledTime.getAttribute('readonly'), '');
     assert(await timePlayground.locator('.inkra-time-picker__clear').isDisabled());
+    await setControls(timePlayground, false);
     await timeTrigger.click();
     assert.equal(await popup.count(), 0, 'read-only cannot open editor');
+    await setControls(timePlayground, true);
     await timePlayground.getByRole('switch', { name: /只读|Read only/ }).click();
     await timePlayground.getByRole('switch', { name: /禁用|Disabled/ }).click();
     assert(await controlledTime.isDisabled());
     assert(await timeTrigger.isDisabled());
     await verifyCurrentCodeCopy(timePage, timePlayground, [
       "const [time, setTime] = useState('09:30')", 'locale="zh-CN"', 'value={time}',
-      'hourCycle="h24"', 'showSeconds={false}', 'clearable={true}', 'disabled={true}',
+      'size="md"', 'hourCycle="h24"', 'showSeconds={false}', 'clearable={true}', 'disabled={true}',
       'readOnly={false}', 'onValueChange={(next: string) => setTime(next)}',
     ]);
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /状态|States?/ }).click();
     await timePlayground.getByRole('switch', { name: /禁用|Disabled/ }).click();
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /基础|Basic/ }).click();
+    await timePlayground.getByRole('combobox', { name: /尺寸|Size/ }).click();
+    await timePage.getByRole('option', { name: /小|Small/, exact: true }).click();
     await timePlayground.getByRole('switch', { name: /显示秒|Show seconds/ }).click();
     await timePlayground.getByRole('combobox', { name: /小时制|Hour cycle/ }).click();
     await timePage.getByRole('option', { name: /12 小时|12 hour/, exact: true }).click();
+    await verifyCurrentCodeCopy(timePage, timePlayground, ['size="sm"', 'hourCycle="h12"', 'showSeconds={true}']);
+    await setControls(timePlayground, false);
     await timeTrigger.click();
     await choose('时段', '下午');
     await choose('秒', '15');

@@ -52,19 +52,22 @@ export function ScrollAreaExamples() {
       </div>
     }</ComponentPlayground>
 
-    <ComponentExample title={text('组合原语', 'Composable parts')} code={`<ScrollArea.Root>
-  <ScrollArea.Viewport aria-label="${text('结果列表', 'Results list')}">
-    <ScrollArea.Content>{text('结果内容', 'Result content')}</ScrollArea.Content>
-  </ScrollArea.Viewport>
-  <ScrollArea.Scrollbar orientation="vertical"><ScrollArea.Thumb /></ScrollArea.Scrollbar>
-</ScrollArea.Root>`}>
+    <ComponentExample title={text('可聚焦视口', 'Focusable viewport')} code={`<ScrollArea
+  type="always"
+  viewportLabel="${text('结果列表', 'Results list')}"
+  viewportProps={{ tabIndex: 0 }}
+>
+  <div>${text('结果内容', 'Result content')}</div>
+</ScrollArea>`}>
       <div className="scroll-area-examples__parts">
-        <ScrollArea.Root className="scroll-area-examples__parts-root">
-          <ScrollArea.Viewport aria-label={text('结果列表', 'Results list')}>
-            <ScrollArea.Content><p>{text('组合式 ScrollArea 保留 viewport 的原生键盘与触摸滚动。', 'Composable ScrollArea keeps native keyboard and touch scrolling on the viewport.')}</p><p>{text('自定义条只作用于组件内部。', 'Custom bars stay scoped to the component.')}</p></ScrollArea.Content>
-          </ScrollArea.Viewport>
-          <ScrollArea.Scrollbar orientation="vertical"><ScrollArea.Thumb /></ScrollArea.Scrollbar>
-        </ScrollArea.Root>
+        <ScrollArea className="scroll-area-examples__parts-root" type="always"
+          viewportLabel={text('结果列表', 'Results list')} viewportProps={{ tabIndex: 0 }}>
+          <div className="scroll-area-examples__parts-content">
+            <p>{text('聚焦视口后可继续使用原生方向键、Page Up 与 Page Down。', 'Focus the viewport to keep native arrow-key, Page Up, and Page Down scrolling.')}</p>
+            <p>{text('自定义滚动条只作用于组件内部，内容仍可选择和复制。', 'Custom scrollbars stay scoped to the component while content remains selectable and copyable.')}</p>
+            <p>{text('触摸、触控板与滑块拖动继续交给成熟滚动原语处理。', 'Touch, trackpad, and thumb dragging remain delegated to the mature scroll primitive.')}</p>
+          </div>
+        </ScrollArea>
       </div>
     </ComponentExample>
   </div>;

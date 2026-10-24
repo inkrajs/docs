@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Card, Carousel, PencilSurface, PencilText, Switch } from '@inkra/react';
+import { Button, ButtonLink, Card, Carousel, Overlay, PencilSurface, PencilText, Switch } from '@inkra/react';
 import type { CarouselVisibleItems } from '@inkra/react';
 
 import { useLocale } from '../i18n';
@@ -19,13 +19,18 @@ const projects = [
 
 function ProjectCard({ project }: { project: typeof projects[number] }) {
   const { t } = useLocale();
-  return <Card.Root className="carousel-examples__card" divided={false}>
+  return <Overlay.Root><Card.Root className="carousel-examples__card" divided={false}>
     <Card.Content className="carousel-examples__card-content">
       <Card.Title as="h3">{t(project.title)}</Card.Title>
       <Card.Description>{t(project.detail)}</Card.Description>
-      <Button variant="outline" onClick={() => undefined}>{t(project.action)}</Button>
+      <Overlay.Trigger asChild><Button variant="outline">{t(project.action)}</Button></Overlay.Trigger>
     </Card.Content>
-  </Card.Root>;
+  </Card.Root>
+    <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections">
+      <Overlay.Header closeLabel={t('关闭')}><Overlay.Title>{t(project.title)}</Overlay.Title></Overlay.Header>
+      <Overlay.Body><Overlay.Description>{t(project.detail)}</Overlay.Description></Overlay.Body>
+    </Overlay.Content></Overlay.Portal>
+  </Overlay.Root>;
 }
 
 export function CarouselExamples() {
@@ -76,7 +81,7 @@ export function CarouselExamples() {
         <Switch label={text('自动播放', 'Autoplay')} checked={autoplay} onCheckedChange={setAutoplay} />
       </> },
     ]} />}>
-      <div className="carousel-examples__frame" dir={direction}>
+      <div className="carousel-examples__frame" dir={direction} data-testid="carousel-playground">
         <Carousel
           {...indexProps}
           aria-label={text('创作项目', 'Creative projects')}
@@ -99,15 +104,15 @@ export function CarouselExamples() {
         <Carousel aria-label={text('主题预览', 'Theme previews')} labels={labels} visibleItems={{ base: 1, sm: 2 }}>
           <PencilSurface as="figure" variant="paper" data-inkra-theme="light" className="carousel-examples__image-slide">
             <img src="/favicon.png" alt={text('浅色 Inkra 标志', 'Light Inkra mark')} />
-            <figcaption><PencilText>{text('浅色纸面', 'Light paper')}</PencilText><Button variant="ghost">{text('查看细节', 'View details')}</Button></figcaption>
+            <figcaption><PencilText>{text('浅色纸面', 'Light paper')}</PencilText><ButtonLink variant="ghost" href="/favicon.png" target="_blank" rel="noopener noreferrer">{text('查看细节', 'View details')}</ButtonLink></figcaption>
           </PencilSurface>
           <PencilSurface as="figure" variant="paper" data-inkra-theme="dark" className="carousel-examples__image-slide">
             <img src="/favicon-dark.png" alt={text('深色 Inkra 标志', 'Dark Inkra mark')} />
-            <figcaption><PencilText>{text('深色纸面', 'Dark paper')}</PencilText><Button variant="ghost">{text('查看细节', 'View details')}</Button></figcaption>
+            <figcaption><PencilText>{text('深色纸面', 'Dark paper')}</PencilText><ButtonLink variant="ghost" href="/favicon-dark.png" target="_blank" rel="noopener noreferrer">{text('查看细节', 'View details')}</ButtonLink></figcaption>
           </PencilSurface>
           <PencilSurface as="figure" variant="paper" className="carousel-examples__image-slide">
             <img src="/favicon.png" alt={text('小尺寸 Inkra 标志', 'Compact Inkra mark')} />
-            <figcaption><PencilText>{text('紧凑预览', 'Compact preview')}</PencilText><Button variant="ghost">{text('查看细节', 'View details')}</Button></figcaption>
+            <figcaption><PencilText>{text('紧凑预览', 'Compact preview')}</PencilText><ButtonLink variant="ghost" href="/favicon.png" target="_blank" rel="noopener noreferrer">{text('查看细节', 'View details')}</ButtonLink></figcaption>
           </PencilSurface>
         </Carousel>
       </div>

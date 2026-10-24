@@ -10,7 +10,6 @@
   min-height: 24px;
   max-width: 100%;
   color: var(--inkra-ink-muted);
-  font-family: var(--inkra-font-mono);
   overflow-wrap: anywhere;
   text-align: center;
 }

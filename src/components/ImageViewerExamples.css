@@ -32,6 +32,8 @@
   overflow-wrap: anywhere;
 }
 
+.image-viewer-examples__recovery { display: flex; flex-wrap: wrap; gap: var(--inkra-space-2); min-inline-size: 0; }
+
 @media (max-width: 30rem) {
   .image-viewer-examples__preview-list { gap: var(--inkra-space-2); }
 }

@@ -4,6 +4,7 @@ import {
   Accordion,
   Badge,
   Button,
+  Field,
   Input,
   Progress,
   Separator,
@@ -67,7 +68,7 @@ function TooltipExamples() {
       <Tooltip.Provider delayDuration={delay} disableHoverableContent={!hoverable}><Tooltip.Root><Tooltip.Trigger asChild><Button variant="outline">{t('内容')}</Button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content side={side} align={align} sideOffset={offset} avoidCollisions={collisions} surfaceRadius={radius}>{content}</Tooltip.Content></Tooltip.Portal></Tooltip.Root></Tooltip.Provider>
     </ComponentPlayground>
     <ComponentExample title="方向" code={`<Tooltip.Content side="right" sideOffset={12}>Tooltip</Tooltip.Content>`}>
-      <div className="more-examples__row">{sides.map(([value]) => <Tooltip.Provider key={value}><Tooltip.Root><Tooltip.Trigger asChild><Button size="sm" variant="secondary">{value}</Button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content side={value} sideOffset={12}>{value}</Tooltip.Content></Tooltip.Portal></Tooltip.Root></Tooltip.Provider>)}</div>
+      <div className="more-examples__row">{sides.map(([value, label]) => <Tooltip.Provider key={value}><Tooltip.Root><Tooltip.Trigger asChild><Button size="sm" variant="secondary">{t(label)}</Button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content side={value} sideOffset={12}>{t(label)}</Tooltip.Content></Tooltip.Portal></Tooltip.Root></Tooltip.Provider>)}</div>
     </ComponentExample>
   </>;
 }
@@ -78,10 +79,10 @@ const accordionItems = [
   ['three', '彩铅层负责什么？', 'Canvas 只负责纸张、描边和文字颜料。'],
 ] as const;
 
-function AccordionItems({ disabledItem = false, showDivider = true, showIcon = true }: { disabledItem?: boolean; showDivider?: boolean; showIcon?: boolean }) {
+function AccordionItems({ disabledItem = false, showDivider = true, showIcon = true, keepMounted = false }: { disabledItem?: boolean; showDivider?: boolean; showIcon?: boolean; keepMounted?: boolean }) {
   const { t } = useLocale();
   return <>
-    {accordionItems.map(([value, question, answer]) => <Accordion.Item key={value} value={value} disabled={disabledItem && value === 'two'} showDivider={showDivider}><Accordion.Header><Accordion.Trigger icon={showIcon ? undefined : null}>{t(question)}</Accordion.Trigger></Accordion.Header><Accordion.Content><PencilText>{answer}</PencilText></Accordion.Content></Accordion.Item>)}
+    {accordionItems.map(([value, question, answer]) => <Accordion.Item key={value} value={value} disabled={disabledItem && value === 'two'} showDivider={showDivider}><Accordion.Header><Accordion.Trigger icon={showIcon ? undefined : null}>{t(question)}</Accordion.Trigger></Accordion.Header><Accordion.Content forceMount={keepMounted || undefined}><PencilText>{answer}</PencilText></Accordion.Content></Accordion.Item>)}
   </>;
 }
 
@@ -96,7 +97,8 @@ function AccordionExamples() {
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [singleValue, setSingleValue] = useState('one');
   const [multipleValue, setMultipleValue] = useState(['one']);
-  const itemCode = accordionItems.map(([value, question, answer]) => `  <Accordion.Item value="${value}" showDivider={${showDivider}}${disabledItem && value === 'two' ? ' disabled' : ''}>\n    <Accordion.Header><Accordion.Trigger${showIcon ? '' : ' icon={null}'}>${t(question)}</Accordion.Trigger></Accordion.Header>\n    <Accordion.Content>${t(answer)}</Accordion.Content>\n  </Accordion.Item>`).join('\n');
+  const [keepMounted, setKeepMounted] = useState(false);
+  const itemCode = accordionItems.map(([value, question, answer]) => `  <Accordion.Item value="${value}" showDivider={${showDivider}}${disabledItem && value === 'two' ? ' disabled' : ''}>\n    <Accordion.Header><Accordion.Trigger${showIcon ? '' : ' icon={null}'}>${t(question)}</Accordion.Trigger></Accordion.Header>\n    <Accordion.Content${keepMounted ? ' forceMount' : ''}>${t(answer)}</Accordion.Content>\n  </Accordion.Item>`).join('\n');
   const rootProps = type === 'single'
     ? `type="single" value={${JSON.stringify(singleValue)}} onValueChange={setValue}${collapsible ? ' collapsible' : ''}`
     : `type="multiple" value={${JSON.stringify(multipleValue)}} onValueChange={setValue}`;
@@ -112,6 +114,7 @@ function AccordionExamples() {
       </> },
       { label: '交互', content: <>
         <Switch label={t('允许全部收起')} checked={collapsible} onCheckedChange={next => { setCollapsible(next); if (!next && !singleValue) setSingleValue('one'); }} disabled={type === 'multiple'} />
+        <Switch label={t('保留面板内容')} checked={keepMounted} onCheckedChange={setKeepMounted} />
       </> },
       { label: '状态', content: <>
         <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} />
@@ -119,11 +122,21 @@ function AccordionExamples() {
       </> },
     ]} />}>
       {type === 'single'
-        ? <Accordion.Root type="single" collapsible={collapsible} value={singleValue} onValueChange={setSingleValue} disabled={disabled} dir={dir}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} /></Accordion.Root>
-        : <Accordion.Root type="multiple" value={multipleValue} onValueChange={setMultipleValue} disabled={disabled} dir={dir}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} /></Accordion.Root>}
+        ? <Accordion.Root type="single" collapsible={collapsible} value={singleValue} onValueChange={setSingleValue} disabled={disabled} dir={dir}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} keepMounted={keepMounted} /></Accordion.Root>
+        : <Accordion.Root type="multiple" value={multipleValue} onValueChange={setMultipleValue} disabled={disabled} dir={dir}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} keepMounted={keepMounted} /></Accordion.Root>}
     </ComponentPlayground>
     <ComponentExample title="多项展开" code={`<Accordion.Root type="multiple" defaultValue={['one', 'two']}>\n${itemCode}\n</Accordion.Root>`}>
-      <Accordion.Root type="multiple" defaultValue={['one', 'two']}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} /></Accordion.Root>
+      <Accordion.Root type="multiple" defaultValue={['one', 'two']}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} keepMounted={keepMounted} /></Accordion.Root>
+    </ComponentExample>
+    <ComponentExample title="保留面板内容" code={`<Accordion.Root type="single" defaultValue="draft" collapsible>\n  <Accordion.Item value="draft">\n    <Accordion.Header><Accordion.Trigger>${t('草稿')}</Accordion.Trigger></Accordion.Header>\n    <Accordion.Content forceMount>\n      <Field label="${t('名称')}"><Input defaultValue="Inkra" /></Field>\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion.Root>`}>
+      <Accordion.Root type="single" defaultValue="draft" collapsible>
+        <Accordion.Item value="draft">
+          <Accordion.Header><Accordion.Trigger>{t('草稿')}</Accordion.Trigger></Accordion.Header>
+          <Accordion.Content forceMount>
+            <Field label={t('名称')}><Input defaultValue="Inkra" /></Field>
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion.Root>
     </ComponentExample>
   </>;
 }

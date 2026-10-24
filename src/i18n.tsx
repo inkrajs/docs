@@ -3,6 +3,10 @@ import { PencilText as BasePencilText } from '@inkra/react';
 
 type Locale = 'zh-CN' | 'en';
 const english: Record<string, string> = {
+  '播放、暂停、进度、音量和倍速均使用有名称的控件；自动播放默认关闭，显式启用仍受浏览器策略限制。加载失败、缓冲与播放被拒绝通过可读状态反馈。': 'Playback, seeking, volume and speed use named controls. Autoplay defaults off and remains subject to browser policy when enabled. Loading failures, buffering and blocked playback have readable feedback.',
+  '前后按钮和分页有可访问名称，键盘可移动当前项；自动播放默认关闭，启用时在交互、页面隐藏和减少动态效果时暂停。': 'Navigation and page controls have accessible names and keyboard support. Autoplay defaults off and pauses for interaction, a hidden page and reduced motion.',
+  'Dialog 管理焦点、Escape 和后台滚动；图片提供 alt，缩略图和前后按钮有名称。加载失败与空列表保留可操作出口。': 'The dialog manages focus, Escape and background scrolling. Images have alt text, and thumbnails and navigation have accessible names. Failed images and empty lists retain dismissal controls.',
+  '原生默认值': 'Native defaults',
   '组合键步长': 'Modifier steps', 'Shift 步长': 'Shift step', 'Alt 步长': 'Alt step',
   'Ctrl + Shift 步长': 'Ctrl + Shift step', '长按连续调整': 'Repeat while holding',
   '长按等待': 'Hold delay', '重复间隔': 'Repeat interval', '组合键与长按': 'Modifiers and hold repeat',
@@ -111,6 +115,7 @@ const english: Record<string, string> = {
   "没有符合筛选条件的记录": "No matching records",
   "运行记录": "Run log",
   "显示时间": "Show time",
+  "限制滚动高度": "Bound scroll height",
   "级别筛选": "Level filters",
   "跟随控制": "Follow control",
   "暂停自动跟随": "Pause automatic follow",
@@ -194,6 +199,8 @@ const english: Record<string, string> = {
   '隐藏选中值': 'Hide selected text', '隐藏下拉箭头': 'Hide dropdown arrow', '纯图标触发器': 'Icon-only trigger',
   '搜索位置': 'Search placement', '无搜索': 'No search', '触发器': 'Trigger', '弹层内': 'Inside popup',
   '搜索选项': 'Search options', '没有匹配的选项': 'No matching options', '展开选项': 'Show options',
+  '下拉选择': 'Dropdown', '触发器搜索': 'Search in trigger', '弹层搜索': 'Search in popup', '左右切换': 'Previous / next',
+  '选择上一项': 'Select previous option', '选择下一项': 'Select next option',
   '方向键浏览选项，Enter 确认，Escape 关闭并返回触发器。首尾图标仅作装饰，不嵌套按钮；hideValue 和 iconOnly 保留选中值的读屏描述，仍需 Field 标签或 aria-label 命名。纯图标触发器搭配 Tooltip，命中区域至少 44px；隐藏标签不等于删除可访问名称。': 'Use arrow keys to browse, Enter to select and Escape to close and restore focus. Icons are decorative; never nest buttons in the trigger. hideValue and iconOnly retain the selected text as an accessible description; name the control with Field or aria-label. Pair icon-only triggers with Tooltip and keep targets at least 44px. Hiding a visible label must not remove its accessible name.',
   '属性分类': 'Property categories',
   '布局': 'Layout', '交互': 'Interaction', '组合': 'Composition',

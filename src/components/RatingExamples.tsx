@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, PencilIcon, Rating, Switch } from '@inkra/react';
+import { Button, normalizeRatingValue, PencilIcon, Rating, Switch } from '@inkra/react';
 import type { RatingClearStrategy, RatingSize } from '@inkra/react';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
@@ -53,13 +53,13 @@ const [preview, setPreview] = useState<number | null>(null);
         <DocsSelect label={text.count} value={String(count)} onValueChange={(next) => {
           const nextCount = Number(next);
           setCount(nextCount);
-          setValue(current => Math.min(current, nextCount));
+          setValue(current => normalizeRatingValue(current, nextCount, step));
         }} options={[["3", "3"], ["5", "5"], ["7", "7"]]} />
         <DocsSelect label={text.step} value={String(step)} onValueChange={(next) => {
           const nextStep = Number(next);
           setStep(nextStep);
-          setValue(current => Math.round(current / nextStep) * nextStep);
-        }} options={[["0.5", "0.5"], ["1", "1"]]} />
+          setValue(current => normalizeRatingValue(current, count, nextStep));
+        }} options={[["0.5", "0.5"], ["1", "1"], ["1.5", "1.5"]]} />
         <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as RatingSize)} options={controlSizes} />
         <DocsSelect label={text.direction} value={dir} onValueChange={next => setDir(next as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
       </> },

@@ -118,13 +118,85 @@ control retains input, caret and selection ownership. Chromium protocol tests in
 uncontrolled values, pixel stability and forced-color fallback. These are not
 automated acceptance of the macOS system candidate window.
 
-Every API row includes a Chinese and English property description; the contract
-test checks coverage as APIs grow. Layout primitives have their own navigation
+ColorPicker, Upload and Transfer have installed-package regression fixtures in
+`scripts/fixtures`. Their `verify-*-refinement.mjs` checks cover native/external
+form reset, color normalization, composition, keyboard focus, upload cancellation,
+narrow containers and delayed controlled transfers. `verify-refinement-docs.mjs`
+also exercises the actual bilingual examples and API tables, including RTL/native
+text fallback and restoring pencil lettering without retaining stale canvas width.
+
+Slider and RangeSlider share cancel-aware form reset with consistent submitted,
+accessible and displayed values. `verify-slider-refinement.mjs` checks native,
+external, canceled and controlled resets plus input events and range constraints.
+`verify-rating-refinement.mjs` covers pencil focus, pointer-to-keyboard continuity,
+internal scrolling and off-grid maximum values. `verify-numeric-controls-docs.mjs`
+checks the bilingual examples, actual API rows and desktop/narrow screenshots.
+
+Selection controls and ChoiceGrid use pencil focus with native keyboard/form
+semantics. `verify-selection-refinement.mjs` covers cancel-aware reset, controlled
+values and changing external form owners. `verify-choice-grid-refinement.mjs`
+covers option lettering, native choices and container-responsive columns.
+`verify-selection-controls-docs.mjs` checks real bilingual examples, form values,
+focus pixels and desktop/narrow screenshots using the installed archive.
+
+Tabs and Accordion have installed-package checks in `verify-tabs-refinement.mjs`
+and `verify-accordion-refinement.mjs`: controlled retries, keyboard navigation,
+retained panel state, collapsed focus exclusion and system-color fallbacks.
+`verify-disclosure-docs.mjs` exercises preserved input drafts in both locales at
+desktop and narrow widths. `verify-layout-style-sync.mjs` checks live stylesheet
+order, retained mirror nodes, link relation changes and subtree cleanup without
+continuous idle invalidation. These bounded checks do not establish that every
+reported browser crash is resolved.
+
+`verify-initial-theme-ink.mjs` compares real lettering/icon canvas pixels with
+computed foreground colors on saved dark loads and light/dark switches, with and
+without reduced motion. Reduced motion disables transitions completely; only
+CSS animations retain a minimal completion tick for presence primitives.
+
+Modal and Command regressions use `verify-drawer-refinement.mjs`,
+`verify-alert-dialog-refinement.mjs` and `verify-command-refinement.mjs` against
+the installed package. They exercise short-view content and action reachability,
+RTL centering, safe initial focus, pencil editing, IME and keyboard behavior.
+`verify-modal-docs.mjs` checks live localized Drawer save/cancel feedback,
+asynchronous confirmation and composed Command focus return at desktop/narrow sizes.
+The Drawer sample saves only in preview memory; it does not persist remote data.
+
+DataTable, Log and Pagination have installed-package regression fixtures in
+`verify-data-table-refinement.mjs`, `verify-log-refinement.mjs` and
+`verify-pagination-refinement.mjs`. They cover pencil text/focus, distinct sort
+directions, controlled pagination retries and bounded correction callbacks,
+empty results, narrow custom labels, natural sizing, RTL and forced colors.
+The Log playground grows with its records by default; its optional bounded mode
+scrolls records independently. The latest action occupies a separate footer.
+Very short containers can scroll the entire Log to keep controls reachable while
+retaining a usable record viewport. `verify-content-docs.mjs` exercises localized
+table selection/filtering, natural/bounded logs and changing pagination totals,
+with desktop/narrow screenshots and internal geometry checks.
+
+Every API row includes a Chinese and English property description. Contract tests
+check coverage as APIs grow and reject invented media APIs. AudioPlayer, Carousel and ImageViewer
+have installed-package fixtures in `verify-audio-player-refinement.mjs`,
+`verify-carousel-refinement.mjs` and `verify-image-viewer-refinement.mjs`.
+These cover stable media callbacks, controlled settings, container-responsive
+slides, pencil focus, RTL tools and same-id source recovery. `verify-media-docs.mjs`
+exercises the live localized examples, a generated WAV, real project actions,
+loaded image assets and desktop/narrow screenshots using one browser worker.
+
+Layout primitives have their own navigation
 category and interactive pages. Textarea supports near-limit or always-visible
 remaining/fraction/progress indicators and an optional pencil resize handle.
 Selection stays native without hiding editable text or doubling painted glyphs.
 Regression checks include `verify-textarea-selection.mjs`, `verify-layout.mjs`
 and `verify-tree-timeline.mjs`.
+
+Tree and floating controls have installed-package checks in
+`verify-tree-refinement.mjs`, `verify-menu-refinement.mjs` and
+`verify-floating-refinement.mjs`. They cover deep narrow trees, pencil focus,
+long menu labels, nested RTL menus, short-view floating bounds and system-color
+fallbacks. `verify-floating-docs.mjs` checks the live native-menu exclusion sample,
+editable content, action feedback, Popover focus return and localized Tooltip
+directions. Native menu checks assert that browser defaults are not prevented;
+they do not automate the operating system menu itself.
 
 Build checks the candidate, TypeScript, Vite and static route entrypoints.
 Push, PR and manual CI install a pinned registry release directly. For a local

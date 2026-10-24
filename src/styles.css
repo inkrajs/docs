@@ -107,7 +107,7 @@ pre {
   color: var(--inkra-ink);
 }
 
-:focus-visible {
+:where(:focus-visible) {
   outline: var(--inkra-focus-width) solid var(--inkra-focus);
   outline-offset: var(--inkra-focus-offset);
 }
@@ -1241,7 +1241,7 @@ table:not(.inkra-table):not(.rdp-month_grid) tbody tr:nth-child(odd) {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0ms !important;
   }
 }
 

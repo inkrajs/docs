@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { Button, Log, PencilIcon, Switch, type LogEntry, type LogLevelDefinition } from '@inkra/react';
 import { __iconData as bugIcon } from 'lucide-react/dist/esm/icons/bug.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/circle-check.mjs';
@@ -58,13 +58,14 @@ const labelMessages = {
   list: '运行记录',
 };
 
-function ExampleFrame({ children }: { children: ReactNode }) {
-  return <div className="log-examples__frame">{children}</div>;
+function ExampleFrame({ children, bounded = false }: { children: ReactNode; bounded?: boolean }) {
+  return <div className="log-examples__frame" data-bounded={bounded || undefined}>{children}</div>;
 }
 
 export function LogExamples() {
   const { t } = useLocale();
   const [records, setRecords] = useState<readonly (LogEntry & { sequence?: number })[]>(initialRecords);
+  const sequence = useRef(initialRecords.length);
   const labels = Object.fromEntries(Object.entries(labelMessages).map(([key, value]) => [key, t(value)]));
   const localizedLevels = levelDefinitions.map(level => ({ ...level, label: typeof level.label === 'string' ? t(level.label) : level.label }));
   const localizeRecord = (record: LogEntry & { sequence?: number }): LogEntry => ({
@@ -79,6 +80,7 @@ export function LogExamples() {
   const [showFollow, setShowFollow] = useState(true);
   const [showTime, setShowTime] = useState(true);
   const [showIcons, setShowIcons] = useState(true);
+  const [bounded, setBounded] = useState(false);
   const visibleRecords = localizedRecords.map(record => ({
     ...record,
     time: showTime ? record.time : undefined,
@@ -94,15 +96,15 @@ export function LogExamples() {
   onPausedChange={setPaused}
   showLevelFilter={${showFilters}}
   showFollowControl={${showFollow}}
-  labels={localizedLabels}
+  ${bounded ? "style={{ height: '22rem' }}\n  " : ''}labels={localizedLabels}
 />`;
 
   function appendRecord() {
-    const index = records.length + 1;
+    const index = ++sequence.current;
     const level = (['info', 'success', 'warning', 'error'] as const)[index % 4];
     setRecords(current => [...current, {
       id: `run-${index}`,
-      time: `09:42:${String(index + 4).padStart(2, '0')}`,
+      time: new Date(Date.UTC(2026, 9, 23, 9, 42, index + 4)).toISOString().slice(11, 19),
       level,
       icon: <LogIcon level={level} />,
       content: '',
@@ -115,6 +117,7 @@ export function LogExamples() {
       { label: '内容', content: <>
         <Switch label={t('显示时间')} checked={showTime} onCheckedChange={setShowTime} />
         <Switch label={t('显示图标')} checked={showIcons} onCheckedChange={setShowIcons} />
+        <Switch label={t('限制滚动高度')} checked={bounded} onCheckedChange={setBounded} />
       </> },
       { label: '交互', content: <>
         <Switch label={t('级别筛选')} checked={showFilters} onCheckedChange={setShowFilters} />
@@ -124,9 +127,10 @@ export function LogExamples() {
         <Button variant="ghost" onClick={() => setRecords([])}>{t('清空记录')}</Button>
       </> },
     ]} />}>
-      <ExampleFrame>
+      <ExampleFrame bounded={bounded}>
         <Log
           aria-label={t('运行记录')}
+          data-testid="log-playground"
           items={visibleRecords}
           labels={labels}
           levels={localizedLevels}
@@ -140,10 +144,10 @@ export function LogExamples() {
       </ExampleFrame>
     </ComponentPlayground>
 
-    <ComponentExample title={t('运行记录')} code={`const [records, setRecords] = useState(initialRecords);\n\n<Button onClick={() => setRecords(current => [...current, nextRecord])}>${t('追加记录')}</Button>\n<Log items={records} levels={levels} labels={localizedLabels} />`}>
+    <ComponentExample title={t('运行记录')} code={`const [records, setRecords] = useState(initialRecords);\n\n<Button onClick={() => setRecords(current => [...current, nextRecord])}>${t('追加记录')}</Button>\n<Log items={records} levels={levels} labels={localizedLabels} style={{ height: '22rem' }} />`}>
       <div className="log-examples__stack">
         <Button size="sm" variant="outline" onClick={appendRecord}>{t('追加记录')}</Button>
-        <ExampleFrame><Log items={localizedRecords} labels={labels} levels={localizedLevels} /></ExampleFrame>
+        <ExampleFrame bounded><Log items={localizedRecords} labels={labels} levels={localizedLevels} /></ExampleFrame>
       </div>
     </ComponentExample>
 

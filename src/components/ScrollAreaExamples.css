@@ -10,8 +10,8 @@
 .scroll-area-examples__content[data-expanded="true"] { min-block-size: 48rem; }
 .scroll-area-examples__parts { block-size: 180px; inline-size: min(100%, 560px); }
 .scroll-area-examples__parts-root { block-size: 100%; }
-.scroll-area-examples__parts-root .inkra-scroll-area__viewport { padding: var(--inkra-space-4); }
-.scroll-area-examples__parts-root p { margin: 0 0 var(--inkra-space-3); }
+.scroll-area-examples__parts-content { min-block-size: 22rem; padding: var(--inkra-space-4); }
+.scroll-area-examples__parts-content p { margin: 0 0 var(--inkra-space-3); }
 @media (max-width: 480px) {
   .scroll-area-examples__playground { block-size: 320px; }
   .scroll-area-examples__content { min-inline-size: 38rem; }

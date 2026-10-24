@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Switch } from '@inkra/react';
+import { Button, PencilText, Switch } from '@inkra/react';
 
 import { ImageViewer, type ImageViewerItem } from '@inkra/react';
 import inkraArtwork from '../assets/inkra.png';
@@ -8,6 +8,7 @@ import previewLight from '../assets/preview-light.png';
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
+import { DocsSelect } from './DocsSelect';
 import { PropertyTabs } from './PropertyTabs';
 import './ImageViewerExamples.css';
 
@@ -46,6 +47,8 @@ export function ImageViewerExamples() {
   const [zoomable, setZoomable] = useState(true);
   const [rotatable, setRotatable] = useState(true);
   const [lastChange, setLastChange] = useState('');
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
+  const [failureRecovered, setFailureRecovered] = useState(false);
 
   const code = useMemo(() => `<ImageViewer.Root
   items={images}
@@ -57,12 +60,13 @@ export function ImageViewerExamples() {
     <Button>${text('打开图片查看器', 'Open image viewer')}</Button>
   </ImageViewer.Trigger>
   <ImageViewer.Content
+    dir="${direction}"
     showThumbnails={${showThumbnails}}
     zoomable={${zoomable}}
     rotatable={${rotatable}}
     labels={localizedLabels}
   />
-</ImageViewer.Root>`, [english, loop, rotatable, showThumbnails, zoomable]);
+</ImageViewer.Root>`, [direction, english, loop, rotatable, showThumbnails, zoomable]);
 
   const labels = {
     title: text('图片查看器', 'Image viewer'),
@@ -99,6 +103,9 @@ export function ImageViewerExamples() {
   return <div className="image-viewer-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '交互', content: <>
+        <DocsSelect label={text('阅读方向', 'Reading direction')} value={direction} onValueChange={value => setDirection(value as 'ltr' | 'rtl')} options={[
+          ['ltr', 'LTR'], ['rtl', 'RTL'],
+        ]} />
         <Switch label={text('循环浏览', 'Loop navigation')} checked={loop} onCheckedChange={setLoop} />
         <Switch label={text('显示缩略图', 'Show thumbnails')} checked={showThumbnails} onCheckedChange={setShowThumbnails} />
         <Switch label={text('启用缩放', 'Enable zoom')} checked={zoomable} onCheckedChange={setZoomable} />
@@ -110,9 +117,9 @@ export function ImageViewerExamples() {
         <Button variant="secondary" onClick={restore}>{text('恢复图片', 'Restore images')}</Button>
       </> },
     ]} />}>
-      <div className="image-viewer-examples__gallery">
+      <div className="image-viewer-examples__gallery" data-testid="image-viewer-playground">
         <div className="image-viewer-examples__preview-list">
-          {gallery.map(item => <img key={item.id} src={item.src} alt="" />)}
+          {items.map(item => <img key={item.id} src={item.src} alt="" />)}
         </div>
         <ImageViewer.Root
           items={items.map(item => ({ ...item, alt: t(item.alt) }))}
@@ -126,24 +133,28 @@ export function ImageViewerExamples() {
           <ImageViewer.Trigger asChild>
             <Button>{text('打开图片查看器', 'Open image viewer')}</Button>
           </ImageViewer.Trigger>
-          <ImageViewer.Content labels={labels} rotatable={rotatable} showThumbnails={showThumbnails} zoomable={zoomable} />
+          <ImageViewer.Content dir={direction} labels={labels} rotatable={rotatable} showThumbnails={showThumbnails} zoomable={zoomable} />
         </ImageViewer.Root>
-        <span aria-live="polite" className="image-viewer-examples__status">{lastChange ? `${text('当前', 'Current')}: ${t(gallery.find(item => item.id === lastChange)?.alt ?? '无')}` : ''}</span>
+        <PencilText as="span" aria-live="polite" className="image-viewer-examples__status">{lastChange ? `${text('当前', 'Current')}: ${t(gallery.find(item => item.id === lastChange)?.alt ?? '无')}` : ''}</PencilText>
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('加载失败与恢复', 'Load failure and recovery')} code={`<ImageViewer.Root items={[{ id: 'missing', src: '/missing-image.png', alt: 'Missing preview' }]}>
-  <ImageViewer.Trigger asChild><Button>Open failed image</Button></ImageViewer.Trigger>
+    <ComponentExample title={text('加载失败与恢复', 'Load failure and recovery')} code={`<Button onClick={() => setRecovered(value => !value)}>${text('切换图片源', 'Switch image source')}</Button>
+<ImageViewer.Root items={[{ id: 'preview', src: recovered ? previewLight : '/missing-image.png', alt: '${text('预览图片', 'Preview image')}' }]}>
+  <ImageViewer.Trigger asChild><Button>${text('查看恢复状态', 'View recovery state')}</Button></ImageViewer.Trigger>
   <ImageViewer.Content labels={localizedLabels} />
 </ImageViewer.Root>`}>
-      <ImageViewer.Root items={[{
-        id: 'missing-preview',
-        src: '/image-viewer-intentionally-missing.png',
-        alt: text('故意缺失的预览图片', 'Intentionally missing preview image'),
-      }]}>
-        <ImageViewer.Trigger asChild><Button variant="outline">{text('查看失败状态', 'View failure state')}</Button></ImageViewer.Trigger>
-        <ImageViewer.Content labels={labels} />
-      </ImageViewer.Root>
+      <div className="image-viewer-examples__recovery" data-testid="image-viewer-recovery">
+        <Button variant="ghost" onClick={() => setFailureRecovered(value => !value)}>{failureRecovered ? text('重置失败图片源', 'Reset failing source') : text('恢复图片源', 'Restore image source')}</Button>
+        <ImageViewer.Root items={[{
+          id: 'missing-preview',
+          src: failureRecovered ? previewLight : '/image-viewer-intentionally-missing.png',
+          alt: text('预览图片', 'Preview image'),
+        }]}>
+          <ImageViewer.Trigger asChild><Button variant="outline">{text('查看恢复状态', 'View recovery state')}</Button></ImageViewer.Trigger>
+          <ImageViewer.Content labels={labels} />
+        </ImageViewer.Root>
+      </div>
     </ComponentExample>
   </div>;
 }

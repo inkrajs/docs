@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import { Button, Switch, Transfer, type TransferChangeDetails, type TransferItem } from '@inkra/react';
+import { Button, PencilText, Switch, Transfer, type TransferChangeDetails, type TransferCountDetails, type TransferItem } from '@inkra/react';
 
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
+import { DocsSelect } from './DocsSelect';
 import { PropertyTabs } from './PropertyTabs';
 import './TransferExamples.css';
 
@@ -39,12 +40,16 @@ const labelMessages = {
 };
 
 export function TransferExamples() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const text = (zh: string, en: string) => locale === 'zh-CN' ? zh : en;
   const labels = Object.fromEntries(Object.entries(labelMessages).map(([key, value]) => [key, t(value)]));
   const localizedPeople = people.map(person => ({ ...person, label: t(String(person.label)), description: t(String(person.description)) }));
   const [targetKeys, setTargetKeys] = useState<string[]>(['grace', 'margaret']);
   const [disabled, setDisabled] = useState(false);
   const [searchable, setSearchable] = useState(true);
+  const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
+  const formatCount = ({ visible, total, selected }: TransferCountDetails) => selected > 0
+    ? `${selected} ${t('已勾选')} · ${visible}/${total}` : `${visible}/${total}`;
   const [lastEvent, setLastEvent] = useState<TransferChangeDetails | null>(null);
   const code = useMemo(() => `const [targetKeys, setTargetKeys] = useState(['grace', 'margaret']);
 
@@ -53,21 +58,27 @@ export function TransferExamples() {
   targetKeys={targetKeys}
   onTargetKeysChange={(nextKeys, details) => setTargetKeys(nextKeys)}
   labels={labels}
+  formatCount={localizedCount}
+  dir="${dir}"
   searchable={${searchable}}
   disabled={${disabled}}
-/>`, [disabled, searchable]);
+/>`, [dir, disabled, searchable]);
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
-      { label: t('交互'), content: <Switch label={t('显示搜索')} checked={searchable} onCheckedChange={setSearchable} /> },
+      { label: t('交互'), content: <>
+        <Switch label={t('显示搜索')} checked={searchable} onCheckedChange={setSearchable} />
+        <DocsSelect label={text('阅读方向', 'Direction')} value={dir} onValueChange={value => setDir(value as typeof dir)} options={[
+          ['ltr', 'LTR'], ['rtl', 'RTL'],
+        ]} />
+      </> },
       { label: t('状态'), content: <Switch label={t('整体禁用')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
       <div className="transfer-example__playground" data-testid="transfer-playground">
         <Transfer
+          dir={dir}
           disabled={disabled}
-          formatCount={({ visible, total, selected }) => selected > 0
-            ? `${selected} ${t('已勾选')} · ${visible}/${total}`
-            : `${visible}/${total}`}
+          formatCount={formatCount}
           items={localizedPeople}
           labels={labels}
           onTargetKeysChange={(next, details) => {
@@ -78,21 +89,22 @@ export function TransferExamples() {
           targetKeys={targetKeys}
         />
         <output aria-live="polite" className="transfer-example__status">
-          {lastEvent ? `${t(lastEvent.direction === 'to-target' ? '已移到右侧' : '已移回左侧')} · ${lastEvent.movedKeys.map(key => localizedPeople.find(person => person.id === key)?.label ?? key).join(', ')}` : t('等待移动')}
+          <PencilText>{lastEvent ? `${lastEvent.direction === 'to-target' ? text('已移到已选列表', 'Moved to selected') : text('已移回可选列表', 'Moved to available')} · ${lastEvent.movedKeys.map(key => localizedPeople.find(person => person.id === key)?.label ?? key).join(', ')}` : t('等待移动')}</PencilText>
         </output>
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={t('非受控初始选择')} code={`<Transfer items={people} defaultTargetKeys={['ada', 'katherine']} labels={labels} />`}>
+    <ComponentExample title={t('非受控初始选择')} code={`<Transfer items={people} defaultTargetKeys={['ada', 'katherine']} labels={labels} formatCount={localizedCount} />`}>
       <div className="transfer-example__frame" data-testid="transfer-uncontrolled">
-        <Transfer items={localizedPeople.slice(0, 5)} defaultTargetKeys={['ada', 'katherine']} labels={labels} />
+        <Transfer items={localizedPeople.slice(0, 5)} defaultTargetKeys={['ada', 'katherine']} labels={labels} formatCount={formatCount} />
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('空态与外部重置')} code={`<Transfer items={people.slice(0, 2)} targetKeys={targetKeys} onTargetKeysChange={setTargetKeys} />`}>
+    <ComponentExample title={t('空态与外部重置')} code={`<Transfer items={people.slice(0, 2)} targetKeys={targetKeys} onTargetKeysChange={setTargetKeys} labels={labels} formatCount={localizedCount} />`}>
       <div className="transfer-example__stack" data-testid="transfer-empty-state">
         <Transfer
           items={localizedPeople.slice(0, 2)}
+          formatCount={formatCount}
           labels={labels}
           onTargetKeysChange={setTargetKeys}
           targetKeys={targetKeys.filter(key => key === 'ada' || key === 'grace')}

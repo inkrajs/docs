@@ -2,10 +2,12 @@ import { useMemo, useState, type ReactNode } from 'react';
 import {
   DataTable,
   PencilIcon,
+  PencilText,
   Switch,
   Tree,
   type DataTableColumnDef,
   type DataTablePaginationState,
+  type DataTableRowSelectionState,
   type TreeKey,
   type TreeSelection,
 } from '@inkra/react';
@@ -74,6 +76,13 @@ function DataTableExamples() {
   const [loading, setLoading] = useState(false);
   const [empty, setEmpty] = useState(false);
   const [pageState, setPageState] = useState<DataTablePaginationState>({ pageIndex: 0, pageSize: 3 });
+  const [selection, setSelection] = useState<DataTableRowSelectionState>({});
+  const [rtl, setRtl] = useState(false);
+  const sortStatusLabel = (column: string, direction: false | 'asc' | 'desc') => {
+    const label = ({ name: text.name, status: text.status, items: text.items } as Record<string, string>)[column] ?? column;
+    return zh ? `${label}：${direction === 'asc' ? '升序' : direction === 'desc' ? '降序' : '未排序'}`
+      : `${label}: ${direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'not sorted'}`;
+  };
   const basicRows = rows.slice(0, 3).map(({ id, name, status }) => ({ id, name, status }));
   const basicCode = `const notes = ${JSON.stringify(basicRows, null, 2)};
 
@@ -90,6 +99,7 @@ const columns: DataTableColumnDef<Note>[] = [
   caption="${text.caption}"
 />`;
   const code = `const [paginationState, setPaginationState] = useState<DataTablePaginationState>(${JSON.stringify(pageState)});
+const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>({});
 
 <DataTable
   data={${empty ? '[]' : 'notes'}}
@@ -98,6 +108,9 @@ const columns: DataTableColumnDef<Note>[] = [
   density="${density}"
   filterable={${filterable}}
   selectable={${selectable}}
+  rowSelection={rowSelection}
+  onRowSelectionChange={setRowSelection}
+  dir="${rtl ? 'rtl' : 'ltr'}"
   getRowCanSelect={() => ${!disableRows}}
   pagination={${pagination}}
   paginationState={paginationState}
@@ -115,6 +128,7 @@ const columns: DataTableColumnDef<Note>[] = [
       { label: '基础', content: <>
         <DocsSelect label={text.density} value={density} onValueChange={value => setDensity(value as typeof density)} options={[["comfortable", text.comfortable], ["compact", text.compact]]} />
         <DocsSelect label={text.pageSize} value={String(pageState.pageSize)} onValueChange={value => setPageState({ pageIndex: 0, pageSize: Number(value) })} options={[["2", "2"], ["3", "3"], ["5", "5"]]} />
+        <Switch label="RTL" checked={rtl} onCheckedChange={setRtl} />
       </> },
       { label: '交互', content: <>
         <Switch label={text.filterable} checked={filterable} onCheckedChange={setFilterable} />
@@ -127,8 +141,9 @@ const columns: DataTableColumnDef<Note>[] = [
         <Switch label={text.emptyToggle} checked={empty} onCheckedChange={setEmpty} />
       </> },
     ]} />}>
+      <div className="data-demo-width data-demo-table-stage" data-testid="data-table-playground" dir={rtl ? 'rtl' : 'ltr'}>
       <DataTable
-        className="data-demo-table data-demo-width"
+        className="data-demo-table"
         data={empty ? [] : rows}
         columns={columns}
         getRowId={row => row.id}
@@ -138,6 +153,8 @@ const columns: DataTableColumnDef<Note>[] = [
         filterLabel={text.filter}
         filterPlaceholder={text.filterPlaceholder}
         selectable={selectable}
+        rowSelection={selection}
+        onRowSelectionChange={setSelection}
         getRowCanSelect={() => !disableRows}
         pagination={pagination}
         paginationState={pageState}
@@ -151,11 +168,15 @@ const columns: DataTableColumnDef<Note>[] = [
         nextPageLabel={text.next}
         paginationLabel={text.playground}
         pageLabel={text.page}
-        sortStatusLabel={(column, direction) => zh ? `${column}：${direction === 'asc' ? '升序' : direction === 'desc' ? '降序' : '未排序'}` : `${column}: ${direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'not sorted'}`}
+        sortStatusLabel={sortStatusLabel}
       />
+      {selectable && <output className="data-demo-output" data-testid="data-table-selection" aria-live="polite">
+        <PencilText>{zh ? `已选 ${Object.values(selection).filter(Boolean).length} 条笔记` : `${Object.values(selection).filter(Boolean).length} notes selected`}</PencilText>
+      </output>}
+      </div>
     </ComponentPlayground>
     <ComponentExample title={text.basic} code={basicCode}>
-      <DataTable className="data-demo-table data-demo-width" data={rows.slice(0, 3)} columns={columns.slice(0, 2)} getRowId={row => row.id} caption={text.caption} />
+      <DataTable className="data-demo-table data-demo-width" data={rows.slice(0, 3)} columns={columns.slice(0, 2)} getRowId={row => row.id} caption={text.caption} sortStatusLabel={sortStatusLabel} />
     </ComponentExample>
   </div>;
 }
@@ -340,12 +361,19 @@ export const dataDocs: Record<string, ExpansionDoc> = {
       ['sorting / onSortingChange', 'controlled TanStack SortingState and updater'],
       ['globalFilter / onGlobalFilterChange', 'controlled filter text; defaultGlobalFilter for uncontrolled use'],
       ['pagination / paginationState', 'opt-in client pagination with controlled or default state'],
+      ['defaultPagination / onPaginationChange', 'PaginationState / OnChangeFn<PaginationState>'],
       ['selectable / rowSelection', 'real checkbox selection with controlled or default state'],
+      ['defaultRowSelection / onRowSelectionChange', 'RowSelectionState / OnChangeFn<RowSelectionState>'],
+      ['getRowCanSelect', '(row: Row<TData>) => boolean'],
+      ['filterable / filterLabel / filterPlaceholder', 'boolean / string / string'],
+      ['selectAllLabel / selectRowLabel', 'string / (row: Row<TData>) => string'],
+      ['previousPageLabel / nextPageLabel / paginationLabel / pageLabel', 'string / string / string / (page, pageCount) => ReactNode'],
+      ['sortStatusLabel', '(columnId, direction: false | "asc" | "desc") => string'],
       ['loading / emptyMessage', 'semantic loading row and honest empty result'],
     ],
     a11y: {
-      zh: '保留 table、caption、th、td 语义；排序按钮写入 aria-sort，选择使用真实复选框，分页按钮有本地化名称。当前不包含虚拟化、行内编辑或服务端传输。',
-      en: 'Preserves table, caption, th and td semantics. Sort buttons update aria-sort, selection uses real checkboxes, and pagination controls are named. Virtualization, inline editing and server transport are not included.',
+      zh: '保留 table、caption、th、td 语义；表头以 aria-sort 标记顺序，排序按钮有独立焦点，选择使用真实复选框。通过 labels 类属性和 sortStatusLabel 本地化分页、选择及排序名称；后者接收字段 ID，需由调用方映射为当前语言的列名。当前不包含虚拟化、行内编辑或服务端传输。',
+      en: 'Preserves table, caption, th and td semantics, with aria-sort on headers, focused sort controls and real selection checkboxes. Localize pagination, selection and sorting through label props and sortStatusLabel; map its column ID to a localized column name. Virtualization, inline editing and server transport are not included.',
     },
     Examples: DataTableExamples,
   },
@@ -359,7 +387,7 @@ export const dataDocs: Record<string, ExpansionDoc> = {
       ['Tree.Root', 'selectionMode, selectedKeys, expandedKeys, disabledKeys and matching default/onChange props'],
       ['Tree.Item', 'stable id, required textValue, isDisabled and nested Tree.Item children'],
       ['Tree.ItemContent', 'disclosure, indentation, optional icon, localized expand/collapse labels'],
-      ['Tree.Root.indent', 'number = 24', '每层缩进像素，可设为 0；负数归零，非有限值回退 24，方向随 RTL。', 'Indentation per level in px, including zero. Negative values clamp to zero; nonfinite values use 24. Follows RTL.'],
+      ['Tree.Root.indent', 'number = 24', '每层缩进像素，可设为 0；负数归零，非有限值回退 24，方向随 RTL。窄容器中的深层缩进会受限，以保留文字和展开按钮空间。', 'Indentation per level in px, including zero. Negative values clamp to zero; nonfinite values use 24. Follows RTL. Deep indentation is capped in narrow containers to preserve text and disclosure space.'],
       ['Tree.Root.size', 'sm | md | lg = md', '控制行内留白，不缩小字体；所有尺寸保留至少 44px 命中区域。', 'Control row spacing without shrinking text; all sizes retain at least 44px targets.'],
       ['Tree.ItemContent.children', 'ReactNode | (state: TreeItemContentState) => ReactNode', '按展开、选中、禁用、子项和 level 层级渲染内容；Item.textValue 仍需提供稳定的可搜索文字。', 'Render content from expansion, selection, disabled, child and level state. Keep a stable searchable Item.textValue.'],
       ['Tree.ItemContent.disclosureIcon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '替换展开图标；根据 isExpanded 显示打开或关闭的文件夹。不传时使用无外框箭头。', 'Replace the disclosure icon; use isExpanded to switch open/closed folders. Defaults to an unframed chevron.'],

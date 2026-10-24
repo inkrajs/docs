@@ -8,6 +8,22 @@ const source = readFileSync(new URL('src/components/apiDescriptions.ts', root), 
 const module = ts.transpile(source, { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext });
 const { describeApiProp } = await import('data:text/javascript;base64,' + Buffer.from(module).toString('base64'));
 
+test('disclosure mounting descriptions keep visibility and focus ownership explicit', () => {
+  for (const [component, prop] of [['tabs', 'Content.value / forceMount'], ['accordion', 'Content.forceMount']]) {
+    assert.match(describeApiProp(component, prop, 'en'), /hidden|collapsed/);
+    assert.match(describeApiProp(component, prop, 'en'), /focus/);
+    assert.match(describeApiProp(component, prop, 'zh-CN'), /状态/);
+    assert.doesNotMatch(describeApiProp(component, prop, 'en'), /external animation or visibility management/);
+  }
+});
+
+test('context-menu API explains native exclusions, callback reasons and focus overrides', () => {
+  assert.match(describeApiProp('context-menu', 'Trigger.nativeContextMenu', 'en'), /exclude takes precedence/);
+  assert.match(describeApiProp('context-menu', 'Trigger.exclude', 'en'), /data-context-menu-native/);
+  assert.match(describeApiProp('context-menu', 'Root.onOpenChange', 'en'), /pointer, keyboard, long-press or dismiss/);
+  assert.match(describeApiProp('context-menu', 'Content.onCloseAutoFocus', 'en'), /preventDefault/);
+});
+
 test('every documented property has meaningful Chinese and English descriptions', () => {
   const docsRoot = new URL('src/components/', root);
   const files = ['FoundationPages.tsx', ...readdirSync(new URL('expansion/', docsRoot))

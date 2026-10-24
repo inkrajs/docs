@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { AudioPlayer, Button, PencilText, Switch } from '@inkra/react';
 import type { AudioPlayerState } from '@inkra/react';
 
@@ -54,29 +54,57 @@ export function AudioPlayerExamples() {
   const [autoPlay, setAutoPlay] = useState(false);
   const [state, setState] = useState<AudioPlayerState | null>(null);
   const [custom, setCustom] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+  const [muted, setMuted] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const labels = {
+    audio: text('示例音频', 'Sample audio'), controls: text('音频控制', 'Audio controls'),
+    play: text('播放', 'Play'), pause: text('暂停', 'Pause'), seek: text('进度', 'Seek'),
+    volume: text('音量', 'Volume'), mute: text('静音', 'Mute'), unmute: text('取消静音', 'Unmute'),
+    rate: text('倍速', 'Speed'), loading: text('正在加载音频', 'Loading audio'),
+    blocked: text('播放被阻止，请再次点击播放。', 'Playback was blocked. Press play to try again.'),
+    error: text('音频加载失败。', 'Audio failed to load.'),
+  };
+  const statuses: Record<AudioPlayerState['status'], string> = {
+    idle: text('未加载', 'Idle'), loading: text('加载中', 'Loading'), ready: text('就绪', 'Ready'),
+    playing: text('播放中', 'Playing'), paused: text('已暂停', 'Paused'), buffering: text('缓冲中', 'Buffering'),
+    ended: text('播放结束', 'Ended'), blocked: text('播放被阻止', 'Playback blocked'), error: text('加载失败', 'Load failed'),
+  };
   const code = `<AudioPlayer
   src={sampleAudio}
   autoPlay={${autoPlay}}
   onStateChange={setState}
+  labels={localizedLabels}
   ${custom ? 'renderControls={controls => <YourControls {...controls} />}' : ''}
 />`;
-  const status = useMemo(() => state ? text(`状态：${state.status}`, `Status: ${state.status}`) : text('等待播放', 'Ready to play'), [state, locale]);
+  const status = state ? text(`状态：${statuses[state.status]}`, `Status: ${statuses[state.status]}`) : text('等待播放', 'Ready to play');
 
   return <div className="audio-player-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: text('基础', 'Basics'), content: <Switch label={text('自动播放', 'Autoplay')} checked={autoPlay} onCheckedChange={setAutoPlay} /> },
       { label: text('组合', 'Composition'), content: <Switch label={text('自定义控制区', 'Custom controls')} checked={custom} onCheckedChange={setCustom} /> },
     ]} />}>
-      <div className="audio-player-examples__stage">
-        <AudioPlayer src={sampleAudio} autoPlay={autoPlay} onStateChange={setState} labels={{ play: text('播放', 'Play'), pause: text('暂停', 'Pause'), seek: text('进度', 'Seek'), volume: text('音量', 'Volume'), mute: text('静音', 'Mute'), unmute: text('取消静音', 'Unmute'), rate: text('倍速', 'Speed') }} renderControls={custom ? controls => <div className="audio-player-examples__custom-controls"><Button variant="outline" onClick={() => void controls.togglePlay()}>{controls.state.status === 'playing' ? text('暂停', 'Pause') : text('播放', 'Play')}</Button><Button variant="ghost" onClick={() => controls.seek(0)}>{text('回到开头', 'Restart')}</Button></div> : undefined} />
+      <div className="audio-player-examples__stage" data-testid="audio-player-playground">
+        <AudioPlayer src={sampleAudio} autoPlay={autoPlay} onStateChange={setState} labels={labels} renderControls={custom ? controls => <div className="audio-player-examples__custom-controls"><Button variant="outline" onClick={() => void controls.togglePlay()}>{controls.state.status === 'playing' ? text('暂停', 'Pause') : text('播放', 'Play')}</Button><Button variant="ghost" onClick={() => controls.seek(0)}>{text('回到开头', 'Restart')}</Button></div> : undefined} />
         <PencilText as="p" className="audio-player-examples__status" aria-live="polite">{status}</PencilText>
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('受控状态回调', 'State callbacks')} code={`<AudioPlayer src={sampleAudio} onTimeChange={setCurrentTime} onError={setError} />`}>
-      <div className="audio-player-examples__secondary">
-        <AudioPlayer src={sampleAudio} preload="none" labels={{ play: text('播放短音频', 'Play short audio'), pause: text('暂停短音频', 'Pause short audio') }} />
-        <p>{text('播放器保留原生 audio 语义；自定义区域只消费 controls 快照和动作。', 'The native audio element remains semantic; custom controls consume the controls snapshot and actions.')}</p>
+    <ComponentExample title={text('受控音量与倍速', 'Controlled volume and speed')} code={`<AudioPlayer
+  src={sampleAudio}
+  volume={volume}
+  muted={muted}
+  playbackRate={playbackRate}
+  onVolumeChange={setVolume}
+  onMutedChange={setMuted}
+  onPlaybackRateChange={setPlaybackRate}
+  labels={localizedLabels}
+/>`}>
+      <div className="audio-player-examples__secondary" data-testid="audio-player-controlled">
+        <AudioPlayer src={sampleAudio} preload="none" volume={volume} muted={muted} playbackRate={playbackRate}
+          onVolumeChange={setVolume} onMutedChange={setMuted} onPlaybackRateChange={setPlaybackRate} labels={labels} />
+        <Button variant="outline" onClick={() => { setVolume(0.5); setMuted(false); setPlaybackRate(1); }}>{text('重置播放设置', 'Reset playback settings')}</Button>
+        <PencilText as="p" className="audio-player-examples__status">{text(`音量 ${Math.round(volume * 100)}% · ${muted ? '已静音' : '未静音'} · ${playbackRate} 倍速`, `Volume ${Math.round(volume * 100)}% · ${muted ? 'Muted' : 'Unmuted'} · ${playbackRate}x`)}</PencilText>
       </div>
     </ComponentExample>
   </div>;

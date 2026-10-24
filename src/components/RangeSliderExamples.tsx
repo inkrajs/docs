@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { RangeSlider, Switch } from '@inkra/react';
+import { Button, RangeSlider, Switch } from '@inkra/react';
 import type { RangeSliderValue, SliderSize, SliderVariant } from '@inkra/react';
 
-import { useLocale } from '../i18n';
+import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect, controlSizes } from './DocsSelect';
@@ -49,8 +49,10 @@ export function RangeSliderExamples() {
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [size, setSize] = useState<SliderSize>('md');
   const [variant, setVariant] = useState<SliderVariant>('standard');
+  const [formResult, setFormResult] = useState('');
   const labels = copy.labels;
   const code = `const [value, setValue] = useState<[number, number]>(${JSON.stringify(value)});
+const [committed, setCommitted] = useState<[number, number] | null>(null);
 
 <RangeSlider
   value={value}
@@ -96,6 +98,32 @@ export function RangeSliderExamples() {
         <RangeSlider defaultValue={[20, 80]} minDistance={20} thumbLabels={copy.valueLabels} />
         <RangeSlider defaultValue={[20, 80]} allowCross thumbLabels={copy.crossingLabels} />
       </div>
+    </ComponentExample>
+
+    <ComponentExample title={t('表单与重置')} code={`const [result, setResult] = useState('');
+
+<form onSubmit={event => {
+  event.preventDefault();
+  setResult(new FormData(event.currentTarget).getAll('price[]').join(' - '));
+}} onReset={() => setResult('')}>
+  <RangeSlider name="price" defaultValue={[20, 80]} step={5} minDistance={10}
+    thumbLabels={${JSON.stringify(labels)}} getValueLabel={value => '$' + value} />
+  <Button type="submit">${t('读取表单')}</Button>
+  <Button type="reset" variant="secondary">${t('重置')}</Button>
+  <output aria-live="polite">{result}</output>
+</form>`}>
+      <form className="range-slider-examples__stack" data-testid="range-slider-form" onSubmit={event => {
+        event.preventDefault();
+        setFormResult(new FormData(event.currentTarget).getAll('price[]').join(' - '));
+      }} onReset={() => setFormResult('')}>
+        <RangeSlider name="price" defaultValue={[20, 80]} step={5} minDistance={10}
+          thumbLabels={labels} getValueLabel={number => `$${number}`} />
+        <div className="component-demo-row">
+          <Button type="submit">{t('读取表单')}</Button>
+          <Button type="reset" variant="secondary">{t('重置')}</Button>
+        </div>
+        <output className="component-demo-status" aria-live="polite"><PencilText>{formResult}</PencilText></output>
+      </form>
     </ComponentExample>
 
     <ComponentExample title={copy.rtlDisabled} code={`<RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={${JSON.stringify(copy.valueLabels)}} />\n<RangeSlider defaultValue={[30, 70]} disabled thumbLabels={${JSON.stringify(copy.valueLabels)}} />`}>

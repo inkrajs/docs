@@ -101,6 +101,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
   const { t } = useLocale();
   const [checked, setChecked] = useState(false);
   const [status, setStatus] = useState('');
+  const [nativeStatus, setNativeStatus] = useState('');
   const [demoChecked, setDemoChecked] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [mixed, setMixed] = useState(false);
@@ -134,6 +135,26 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
         <output className="component-demo-status" aria-live="polite">{status}</output>
       </form>
     </ComponentPlayground>
+    <ComponentExample title={t('原生默认值')} code={`<form>
+  ${choice ? `<RadioGroup name="visibility" defaultValue="private" label="${t('可见范围')}">
+    <RadioGroupItem value="private" label="${t('仅自己')}" />
+    <RadioGroupItem value="team" label="${t('团队')}" />
+  </RadioGroup>` : `<${name} name="updates" value="enabled" defaultChecked label="${t('接收更新')}" />`}
+  <Button type="submit">${t('读取表单')}</Button>
+  <Button type="reset">${t('重置')}</Button>
+</form>`}>
+      <form className="component-demo-form selection-native-form" onSubmit={event => {
+        event.preventDefault();
+        setNativeStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
+      }} onReset={() => setNativeStatus('')}>
+        {choice ? <RadioGroup name="visibility" defaultValue="private" label={t('可见范围')}>
+          <RadioGroupItem value="private" label={t('仅自己')} />
+          <RadioGroupItem value="team" label={t('团队')} />
+        </RadioGroup> : <Toggle name="updates" value="enabled" defaultChecked label={t('接收更新')} />}
+        <div className="component-demo-row"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
+        <output className="component-demo-status" aria-live="polite">{nativeStatus}</output>
+      </form>
+    </ComponentExample>
     {choice && <ComponentExample title="图标分段选择" code={`<RadioGroup name="example-theme" label="${t('主题模式')}" variant="segmented" orientation="horizontal" defaultValue="auto">\n  <RadioGroupItem value="auto" label="${t('跟随系统')}" icon={<MonitorIcon />} />\n  <RadioGroupItem value="light" label="${t('浅色')}" icon={<SunIcon />} />\n  <RadioGroupItem value="dark" label="${t('深色')}" icon={<MoonIcon />} />\n</RadioGroup>`}>
       <RadioGroup name="example-theme" label={t('主题模式')} variant="segmented" orientation="horizontal" defaultValue="auto"><RadioGroupItem value="auto" label={t('跟随系统')} icon={<DocsIcon data={monitorIcon} size={20} />} /><RadioGroupItem value="light" label={t('浅色')} icon={<DocsIcon data={sunIcon} size={20} />} /><RadioGroupItem value="dark" label={t('深色')} icon={<DocsIcon data={moonIcon} size={20} />} /></RadioGroup>
     </ComponentExample>}
@@ -177,13 +198,14 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['fullWidth / textAlign / classNames', 'Input layout and slot props; textAlign defaults to center'],
     ['name / form / onChange / ref', 'native number input; HTMLInputElement ref'],
   ],
-  hotkey: [['Hotkey.value', 'HotkeyValue; key, optional code and modifiers'], ['Hotkey.platform / separator / size', 'auto | mac | windows / ReactNode / sm | md | lg'], ['HotkeyInput.value / defaultValue', 'HotkeyValue | null; controlled / uncontrolled'], ['HotkeyInput.onValueChange', "(value, details: { reason: 'record' | 'clear'; conflict? }) => void"], ['HotkeyInput.platform / size', 'auto | mac | windows / sm | md | lg'], ['HotkeyInput.clearable / clearButtonLabel', 'boolean (default true) / string'], ['HotkeyInput.blurOnCapture', 'boolean (default true)'], ['HotkeyInput.validateHotkey / onConflict', 'validation callback / conflict callback'], ['HotkeyInput.conflict / conflictMessage', 'boolean | string / string'], ['HotkeyInput.onCancel', '() => void; Escape cancels recording'], ['HotkeyInput.disabled / readOnly / required / invalid', 'boolean; integrates with Field'], ['HotkeyInput.placeholder / classNames', 'string / internal slot classes'], ['HotkeyInput.ref', 'HTMLInputElement']],
+  hotkey: [['Hotkey.value', 'HotkeyValue; key, optional code and modifiers'], ['Hotkey.platform / separator / size', 'auto | mac | windows / ReactNode / sm | md | lg'], ['HotkeyInput.value / defaultValue', 'HotkeyValue | null; controlled / uncontrolled'], ['HotkeyInput.onValueChange', "(value, details: { reason: 'record' | 'clear'; conflict? }) => void"], ['HotkeyInput.platform / size', 'auto | mac | windows / sm | md | lg'], ['HotkeyInput.clearable / clearButtonLabel', 'boolean (default true) / string'], ['HotkeyInput.recordingLabel', 'string; default "Press a shortcut..."'], ['HotkeyInput.blurOnCapture', 'boolean (default true)'], ['HotkeyInput.validateHotkey / onConflict', 'validation callback / conflict callback'], ['HotkeyInput.conflict / conflictMessage', 'boolean | string / string'], ['HotkeyInput.onCancel', '() => void; Escape cancels recording'], ['HotkeyInput.disabled / readOnly / required / invalid', 'boolean; integrates with Field'], ['HotkeyInput.placeholder / classNames', 'string / internal slot classes'], ['HotkeyInput.ref', 'HTMLInputElement']],
   slider: [
     ['variant', 'standard (default) | inset; thin track or wide enclosing track'],
     ['value / defaultValue', 'number[]; one thumb or multiple range thumbs'],
     ['onValueChange / onValueCommit', '(value: number[]) => void; live / committed values'],
     ['min / max / step', 'number; defaults 0 / 100 / 1'],
     ['minStepsBetweenThumbs', 'number (default 0)'],
+    ['preserveThumbOrder', 'boolean (default false)'],
     ['orientation / dir / inverted', 'horizontal | vertical / ltr | rtl / boolean'],
     ['size / disabled', 'sm | md (default) | lg / boolean'],
     ['thumbLabels', 'readonly string[]; accessible name for each thumb'],
@@ -223,6 +245,24 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   progress: [['value', 'number | null'], ['max', 'number (default 100)'], ['shape', 'linear (default) | circular'], ['size', 'sm | md | lg: linear 12/16/24px; circular 64/96/128px'], ['diameter', 'number (32-512px)'], ['thickness', 'number (1-diameter/8; default 4/6/8px)'], ['contentPosition', 'center | top | bottom | start | end'], ['children', 'ReactNode | (state: ProgressRenderState) => ReactNode'], ['label', 'ReactNode'], ['dir', 'ltr | rtl'], ['aria-label / aria-labelledby / aria-valuetext', 'string'], ['seed', 'string | number']],
   tabs: [['Root.value / defaultValue', 'string'], ['Root.onValueChange', '(value: string) => void'], ['Root.size', 'sm | md (default) | lg'], ['Root.animated', 'boolean (default true)'], ['Root.orientation', 'horizontal | vertical'], ['Root.activationMode', 'automatic | manual'], ['Root.dir', 'ltr | rtl'], ['List.align', 'start (default) | center | end'], ['List.fullWidth', 'boolean (default false)'], ['List.divided', 'boolean (default false)'], ['List.loop', 'boolean (default true)'], ['Trigger.value / disabled', 'string / boolean'], ['Trigger.startIcon / endIcon', 'ReactNode'], ['Content.value / forceMount', 'string / true']],
   select: [
+    ['Searchable.items', 'readonly SearchableSelectOption[]; value, label, disabled?, keywords?'],
+    ['Searchable.searchPlacement', 'trigger (default) | popup'],
+    ['Searchable.multiple', 'boolean (default false)'],
+    ['Searchable.value / defaultValue / onValueChange', 'string | null for single; string[] for multiple; matching value callback'],
+    ['Searchable.size / dir', 'sm | md (default) | lg / ltr | rtl'],
+    ['Searchable.clearable / clearLabel / openLabel', 'boolean (default true) / string / string'],
+    ['Searchable.placeholder / searchPlaceholder / emptyContent', 'string / string / ReactNode'],
+    ['Searchable.name / form / required', 'string / string / boolean'],
+    ['Searchable.disabled / readOnly / invalid', 'boolean; inherits Field state'],
+    ['Searchable.open / defaultOpen / onOpenChange', 'boolean / boolean / (open: boolean) => void'],
+    ['Searchable.side / align / sideOffset / collisionPadding', 'top | right | bottom | left / start | center | end / number / number'],
+    ['Stepper.items', 'readonly SelectStepperItem[]; { value: string; label: string; disabled?: boolean }'],
+    ['Stepper.value / defaultValue / onValueChange', 'string | null / string | null / (value: string) => void'],
+    ['Stepper.loop', 'boolean (default false)'],
+    ['Stepper.size / fullWidth / dir', 'sm | md (default) | lg / boolean (default true) / ltr | rtl'],
+    ['Stepper.placeholder / previousLabel / nextLabel', 'string; localized labels'],
+    ['Stepper.name / form / required', 'string / string / boolean'],
+    ['Stepper.disabled / readOnly / invalid', 'boolean; inherits Field state'],
     ['Root.multiple', 'boolean (default false); selection stays open in multiple mode'],
     ['Root.value / defaultValue', 'string for single; string[] for multiple'],
     ['Root.onValueChange', '(value: string) => void; multiple: (values: string[]) => void'],
@@ -279,35 +319,123 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['disabled / readOnly / required / invalid', 'boolean; inherits Field state'],
     ['name / form / placeholder / autoComplete', 'native textarea props'], ['ref', 'HTMLTextAreaElement'],
   ],
-  checkbox: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['indeterminate', 'boolean'], ['label / description', 'ReactNode'], ['name / value', 'string']],
-  'radio-group': [['value / defaultValue', 'string'], ['onValueChange', '(value: string) => void'], ['variant', 'radio | segmented'], ['orientation', 'horizontal | vertical'], ['RadioGroupItem.icon', 'ReactNode'], ['name', 'string'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean']],
-  switch: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['name / value', 'string']],
-  'audio-player': [['src', 'string'], ['playing / defaultPlaying', 'boolean'], ['onPlayingChange', '(playing, details) => void'], ['currentTime / defaultCurrentTime', 'number'], ['volume / muted / playbackRate', 'number / boolean / number'], ['renderControls', '(state, actions) => ReactNode']],
-  carousel: [['children', 'ReactNode'], ['index / defaultIndex / onIndexChange', 'number / number / callback'], ['visibleItems', 'number | responsive breakpoints'], ['loop / dragFree / disabled', 'boolean'], ['autoplay', 'false | autoplay options'], ['ref', 'CarouselRef']],
-  'choice-grid': [['mode', 'single | multiple'], ['value / defaultValue', 'string | string[]'], ['onValueChange', 'selection callback'], ['columns / minItemWidth', 'responsive layout'], ['renderItem', '(item, state) => ReactNode'], ['disabled / readOnly / invalid', 'boolean']],
-  'color-picker': [['value / defaultValue', 'ColorValue'], ['onValueChange', '(value, details) => void'], ['presets', 'readonly ColorPreset[]'], ['formats', 'hex | rgb | hsl'], ['alpha', 'boolean'], ['disabled / readOnly', 'boolean']],
-  'context-menu': [['open / defaultOpen', 'boolean'], ['onOpenChange', '(open, details) => void'], ['longPress', 'boolean | options'], ['nativeContextMenu', 'preserve policy'], ['Trigger', 'right-click, keyboard and long-press target'], ['Content / Item / Sub', 'menu composition']],
+  checkbox: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['onChange', 'ChangeEventHandler<HTMLInputElement>'], ['indeterminate', 'boolean'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['name / value / form', 'native input props'], ['ref', 'HTMLInputElement']],
+  'radio-group': [['value / defaultValue', 'string'], ['onValueChange', '(value: string) => void'], ['variant', 'radio | segmented'], ['orientation', 'horizontal | vertical'], ['RadioGroupItem.value / label / description / icon', 'string / ReactNode / ReactNode / ReactNode'], ['RadioGroupItem.onChange', 'ChangeEventHandler<HTMLInputElement>'], ['name / form', 'string'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['ref / RadioGroupItem.ref', 'HTMLFieldSetElement / HTMLInputElement']],
+  switch: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['onChange', 'ChangeEventHandler<HTMLInputElement>'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['name / value / form', 'native input props'], ['ref', 'HTMLInputElement']],
+  'audio-player': [
+    ['src', 'string'], ['preload / autoPlay / crossOrigin', 'none | metadata | auto / boolean / native audio crossOrigin'],
+    ['volume / defaultVolume', 'number (0..1)'], ['muted / defaultMuted', 'boolean'],
+    ['playbackRate / defaultPlaybackRate', 'number (0.25..4)'],
+    ['onVolumeChange / onMutedChange / onPlaybackRateChange', '(volume: number) / (muted: boolean) / (rate: number) => void'],
+    ['onTimeChange', '(currentTime: number) => void'], ['onStateChange', '(state: AudioPlayerState) => void'],
+    ['onError', '(error: MediaError | DOMException | null) => void'], ['labels', 'AudioPlayerLabels'],
+    ['renderControls', '(controls: AudioPlayerControls) => ReactNode'], ['audioProps', 'native audio attributes, excluding managed properties'],
+    ['ref', 'AudioPlayerControls: audio / state / play / pause / togglePlay / seek / setVolume / setMuted / setPlaybackRate / focus'],
+  ],
+  carousel: [
+    ['children', 'ReactNode'], ['currentIndex / defaultIndex / onCurrentIndexChange', 'number / number / (index: number) => void'],
+    ['visibleItems', 'number | { base?: number; sm?: number; md?: number; lg?: number }'],
+    ['gap / align', 'number (px, default 16) / start | center | end'], ['loop / dragFree / disabled', 'boolean'],
+    ['controls / pagination', 'boolean (default true)'], ['autoplay', 'boolean | CarouselAutoplayOptions'],
+    ['labels', 'CarouselLabels'], ['emptyState', 'ReactNode'], ['dir', 'ltr | rtl'],
+    ['ref', 'CarouselRef: root / previous / next / scrollTo / play / pause'],
+  ],
+  'choice-grid': [
+    ['type', 'single (default) | multiple'],
+    ['value / defaultValue / onValueChange', 'string / string / (value: string) => void; single'],
+    ['values / defaultValues / onValuesChange', 'readonly string[] / readonly string[] / (values: string[]) => void; multiple'],
+    ['name / form', 'string'], ['label / description / error', 'ReactNode'],
+    ['columns / minItemWidth', '1 | 2 | 3 | 4 / CSS length (default 13rem)'],
+    ['disabled', 'boolean'],
+    ['ChoiceGridOption.value / label / description', 'string / ReactNode / ReactNode'],
+    ['ChoiceGridOption.icon / image', "ReactNode / ChoiceGridImage; decorative image with alt=''"],
+    ['ChoiceGridOption.disabled / required / form', 'boolean / boolean / string; native input props'],
+    ['ChoiceGridOption.onChange', 'ChangeEventHandler<HTMLInputElement>'],
+    ['ref / ChoiceGridOption.ref', 'HTMLFieldSetElement / HTMLInputElement'],
+  ],
+  'color-picker': [
+    ['value / defaultValue', 'string; #RGB | #RGBA | #RRGGBB | #RRGGBBAA'],
+    ['onValueChange', '(value: ColorValue, details: ColorPickerChangeDetails) => void'],
+    ['onInvalidInput', '(input: string) => void'],
+    ['presets', 'readonly (string | ColorPreset)[]'],
+    ['showAlpha', 'boolean (default true)'],
+    ['label / labels', 'ReactNode / ColorPickerLabels'],
+    ['name / form', 'string'], ['disabled', 'boolean (default false)'],
+    ['seed', 'string | number'],
+  ],
+  'context-menu': [['Root.open / defaultOpen', 'boolean'], ['Root.onOpenChange', '(open: boolean, details: ContextMenuOpenChangeDetails) => void'], ['Root.modal / dir', 'boolean / ltr | rtl'], ['Trigger.as / disabled', 'ElementType / boolean'], ['Trigger.longPress', 'boolean | { delay?: number; movementTolerance?: number }'], ['Trigger.nativeContextMenu', 'editable | always | never'], ['Trigger.exclude', 'string | (target: Element, currentTarget: HTMLElement) => boolean'], ['Content.onCloseAutoFocus', '(event: Event) => void'], ['Content.side / align / sideOffset / collisionPadding', 'top | right | bottom | left / start | center | end / number / number'], ['Item.disabled / destructive / icon / onSelect', 'boolean / boolean / ReactNode / (event: Event) => void'], ['CheckboxItem.checked / onCheckedChange', 'boolean | indeterminate / (checked: boolean) => void'], ['RadioGroup.value / onValueChange', 'string / (value: string) => void'], ['Sub.open / defaultOpen / onOpenChange', 'boolean / boolean / (open: boolean) => void'], ['SubTrigger.disabled / icon', 'boolean / ReactNode'], ['SubContent.sideOffset / collisionPadding', 'number'], ['Portal.container', 'HTMLElement']],
   'dockable-panel': [['position / defaultPosition', '{ x; y }'], ['onPositionChange', 'position callback'], ['collapsed / defaultCollapsed', 'boolean'], ['snap', 'viewport edge options'], ['bounds', 'viewport | HTMLElement'], ['panelId / activePanelId', 'layer management']],
-  editable: [['value / defaultValue', 'string'], ['editing / defaultEditing', 'boolean'], ['onValueChange / onEditingChange', 'callbacks'], ['multiline', 'boolean'], ['validate', 'sync or async validator'], ['renderDisplay / renderEditor', 'render hooks']],
+  editable: [['value / defaultValue', 'string'], ['editing / defaultEditing', 'boolean'], ['onValueChange / onEditingChange', 'callbacks'], ['multiline', 'boolean'], ['validate', 'sync or async validator'], ['display / editor', 'ReactNode | render callback'], ['blurBehavior', 'ignore (default) | save | cancel'], ['submitOnEnter', 'boolean; default !multiline'], ['inputProps / textareaProps', 'InputProps / TextareaProps; excludes value handlers'], ['startEditingLabel / saveLabel / cancelLabel', 'string'], ['onSave / onCancel', 'EditableSaveHandler / (value: string) => void'], ['EditableEditorProps', 'value, onValueChange, onKeyDown, onBlur, disabled, readOnly, invalid, error, autoFocus, ARIA'], ['ref', 'EditableHandle: focus / startEditing / save / cancel']],
   flip: [['flipped / defaultFlipped', 'boolean'], ['onFlippedChange', '(flipped) => void'], ['front / back', 'ReactNode'], ['tilt', 'boolean | TiltOptions'], ['axis', 'x | y'], ['disabled', 'boolean']],
   heatmap: [['rows / columns / cells', 'axis and cell data'], ['scaleType / domain / binCount', 'continuous | quantize'], ['selectedCell / defaultSelectedCell', 'HeatmapSelection'], ['onSelectedCellChange', 'selection callback'], ['renderCell / renderDetails', 'render hooks'], ['showLegend / showValues', 'boolean']],
   'hover-card': [['open / defaultOpen', 'boolean'], ['onOpenChange', '(open) => void'], ['openDelay / closeDelay', 'milliseconds'], ['interactive', 'boolean'], ['Trigger / Content', 'compound parts'], ['side / align / collisionPadding', 'positioning']],
   'image-cropper': [['src', 'string'], ['crop / defaultCrop', 'crop state'], ['zoom / rotation / aspect', 'number'], ['onCropChange / onCropComplete', 'callbacks'], ['exportImage', 'bounded export options'], ['keyboardStep / zoomStep', 'number']],
-  'image-viewer': [['items', 'readonly ImageViewerItem[]'], ['index / defaultIndex', 'number'], ['open / defaultOpen', 'boolean'], ['onIndexChange / onOpenChange', 'callbacks'], ['zoom / rotation controls', 'labels and feature flags'], ['empty / error', 'fallback content']],
+  'image-viewer': [
+    ['Root.items', 'readonly ImageViewerItem[]'], ['Root.activeId / defaultActiveId', 'string | null'],
+    ['Root.onActiveIdChange', '(id: string | null, details: ImageViewerChangeDetails) => void'],
+    ['Root.open / defaultOpen / onOpenChange', 'boolean / boolean / (open: boolean) => void'], ['Root.loop', 'boolean (default true)'],
+    ['Content.showThumbnails / zoomable / rotatable', 'boolean (defaults true / true / false)'],
+    ['Content.minScale / maxScale / wheel', 'number / number / disabled | always | modifier'],
+    ['Content.labels', 'Partial<ImageViewerLabels>'], ['Content.renderImage', '(item: ImageViewerItem, props: ImageViewerImageRenderProps) => ReactNode'],
+    ['Content.emptyState', 'ReactNode'], ['Content.dir / onOpenAutoFocus', 'ltr | rtl / (event: Event) => void'],
+    ['ImageViewerItem.id / src / alt', 'string'], ['ImageViewerItem.thumbnailSrc / thumbnailAlt / width / height', 'string / string / number / number'],
+  ],
   keypad: [['keys', 'readonly KeypadKey[]'], ['value / defaultValue', 'string'], ['onValueChange', '(value, details) => void'], ['columns / maxLength', 'number'], ['onConfirm', '(value) => void'], ['disabled / readOnly', 'boolean']],
   'node-graph': [['nodes / edges', 'React Flow data'], ['onNodesChange / onEdgesChange', 'change callbacks'], ['onConnect', 'connection callback'], ['fitView / minZoom / maxZoom', 'viewport options'], ['Node / Edge', 'bounded Inkra renderers'], ['ref', 'NodeGraphRef']],
   'overflow-list': [['items', 'readonly OverflowListItem[]'], ['strategy', 'end | start | priority'], ['renderItem / renderOverflowItem', 'render hooks'], ['renderOverflowTrigger', 'trigger hook'], ['onOverflowChange', 'visible and overflow ids'], ['minVisibleItems', 'number']],
   'pan-zoom': [['value / defaultValue', 'PanZoomTransform'], ['onTransformChange', '(transform, details) => void'], ['minScale / maxScale', 'number'], ['wheel / pinch / pan / keyboard', 'interaction options'], ['fitOnInit / bounds', 'viewport options'], ['ref', 'PanZoomRef']],
   radar: [['axes / series', 'radar data'], ['hiddenSeries / defaultHiddenSeries', 'string[]'], ['onHiddenSeriesChange', 'callback'], ['showLegend / showTable', 'boolean'], ['tableCaption / seriesLabel', 'ReactNode'], ['renderLabel / renderTooltip', 'render hooks'], ['domain', 'per-axis ranges']],
-  'range-slider': [['value / defaultValue', '[number, number]'], ['onValueChange / onValueCommit', 'callbacks'], ['min / max / step', 'number'], ['minStepsBetweenThumbs', 'number'], ['thumbLabels / getValueLabel', 'accessible labels'], ['orientation / dir / disabled', 'options']],
+  'range-slider': [
+    ['value / defaultValue', '[number, number]; default [min, max]'],
+    ['onValueChange / onValueCommit', '(value: [number, number]) => void'],
+    ['min / max / step', 'number; defaults 0 / 100 / 1'],
+    ['minDistance', 'number = 0'],
+    ['allowCross', 'boolean = false'],
+    ['thumbLabels', 'readonly [string, string]'],
+    ['getValueLabel', '(value: number, index: number) => string'],
+    ['orientation / dir / inverted', 'horizontal | vertical / ltr | rtl / boolean'],
+    ['variant', 'standard (default) | inset'],
+    ['size / disabled', 'sm | md (default) | lg / boolean'],
+    ['name / form / ref', 'form field name / form id / HTMLSpanElement'],
+  ],
   rating: [['value / defaultValue', 'number'], ['onValueChange', '(value: number) => void'], ['count', 'number = 5'], ['step', 'number = 1'], ['clearable', 'boolean | reselect | keyboard = false'], ['hoverPreview', 'boolean = true'], ['onPreviewChange', '(value: number | null) => void'], ['name / form', 'string'], ['readOnly / disabled', 'boolean'], ['size', 'sm | md | lg'], ['dir', 'ltr | rtl'], ['symbol', 'ReactNode'], ['renderSymbol', '(state: RatingSymbolState) => ReactNode'], ['getValueLabel', '(value: number, count: number) => string']],
   resizable: [['orientation', 'horizontal | vertical'], ['layout / defaultLayout', 'ResizableLayout'], ['onLayoutChange / onLayoutCommit', 'callbacks'], ['Panel', 'min/max/collapsible sizes'], ['Handle', 'label and separator props'], ['ref hooks', 'group and panel imperative handles']],
-  'scroll-area': [['orientation', 'vertical | horizontal | both'], ['visibility', 'auto | always'], ['viewportProps / contentProps', 'native props'], ['scrollbarSize', 'number'], ['onScroll', 'native scroll callback'], ['ref', 'ScrollAreaRef']],
+  'scroll-area': [['type', 'auto (default) | always'], ['viewportLabel', 'string'], ['viewportProps', 'native div props; scroll events and tabIndex'], ['overflowEdgeThreshold', 'number | { xStart?: number; xEnd?: number; yStart?: number; yEnd?: number }'], ['seed', 'string | number'], ['className / style / ref', 'native root div props / HTMLDivElement'], ['Root', 'alias of ScrollArea; viewport, scrollbars and corner included']],
   sortable: [['items', 'readonly SortableItem[]'], ['onItemsChange', '(items, details) => void'], ['containers', 'optional grouped data'], ['strategy / orientation', 'sorting strategy'], ['renderItem / renderOverlay', 'render hooks'], ['disabled / announcements', 'accessibility options']],
   sparkline: [['data', 'readonly SparklineDatum[]'], ['variant', 'line | bar'], ['xDomain / yDomain', 'domains'], ['showExtrema / showCurrent', 'boolean'], ['getValueLabel', 'accessible formatter'], ['renderTooltip', 'render hook']],
   'tag-input': [['value / defaultValue', 'TagInputTag[]'], ['inputValue / defaultInputValue', 'string'], ['onValueChange / onInputValueChange', 'callbacks'], ['createTag / validateTag', 'creation hooks'], ['delimiters / maxTags', 'constraints'], ['disabled / readOnly / clearable', 'boolean']],
-  transfer: [['items', 'readonly TransferItem[]'], ['value / defaultValue', 'string[]'], ['onValueChange', '(value, details) => void'], ['filterable / sortable', 'boolean'], ['renderItem', 'render hook'], ['disabled / readOnly', 'boolean']],
-  'tree-select': [['items', 'readonly TreeSelectItem[]'], ['value / defaultValue', 'string | string[]'], ['multiple / cascade', 'selection policy'], ['searchable / clearable', 'boolean'], ['onValueChange', 'callback'], ['renderLabel', 'render hook']],
+  transfer: [
+    ['items', 'readonly TransferItem[]'],
+    ['targetKeys / defaultTargetKeys', 'readonly string[]'],
+    ['onTargetKeysChange', '(keys: string[], details: TransferChangeDetails) => void'],
+    ['searchable', 'boolean (default true)'],
+    ['filterItem', '(item: TransferItem, query: string, side: TransferSide) => boolean'],
+    ['renderItem', '(item: TransferItem, state: TransferItemRenderState) => ReactNode'],
+    ['formatCount', '(details: TransferCountDetails) => ReactNode'],
+    ['labels', 'TransferLabels'], ['disabled', 'boolean (default false)'],
+    ['dir', 'ltr | rtl | auto'], ['ref', 'HTMLDivElement'],
+  ],
+  'tree-select': [
+    ['items', 'readonly TreeSelectNode[]; id, label, children?, disabled?, description?, keywords?'],
+    ['value / defaultValue', 'string | null for single; readonly string[] for multiple'],
+    ['multiple', 'boolean (default false)'],
+    ['branchSelection', 'leaf (default) | all'],
+    ['selectionPropagation', 'none (default) | down | both'],
+    ['onValueChange', '(value, details: TreeSelectChangeDetails) => void'],
+    ['size / dir', 'sm | md (default) | lg / ltr | rtl'],
+    ['clearable / clearLabel', 'boolean (default true) / string'],
+    ['placeholder / searchPlaceholder / emptyContent', 'string / string / ReactNode'],
+    ['treeLabel / expandLabel / collapseLabel', 'string; localized accessible names'],
+    ['renderLabel', '(node: TreeSelectNode, state: TreeSelectRenderLabelState) => ReactNode'],
+    ['renderValue', '(nodes: readonly TreeSelectNode[], ids: readonly string[]) => ReactNode'],
+    ['expandedIds / defaultExpandedIds / onExpandedIdsChange', 'readonly string[] / readonly string[] / (ids: string[]) => void'],
+    ['open / defaultOpen / onOpenChange', 'boolean / boolean / (open: boolean) => void'],
+    ['name / form', 'string; multiple selection submits repeated fields'],
+    ['disabled / readOnly / invalid', 'boolean; inherits Field state'],
+    ['required', 'boolean; accessible required state, not native constraint validation'],
+    ['side / align / sideOffset / collisionPadding', 'top | right | bottom | left / start | center | end / number / number'],
+    ['className / style / ref', 'native root div props / HTMLDivElement'],
+  ],
   typewriter: [['text', 'string'], ['speed / punctuationDelay', 'milliseconds'], ['paused', 'boolean'], ['onComplete', 'callback'], ['reducedMotion', 'follow-system | always | never'], ['ref', 'pause, resume, complete and restart']],
   'virtual-list': [['items / itemKey', 'data and stable key'], ['estimateSize / measureItems', 'sizing options'], ['renderItem / getItemProps', 'render hooks'], ['overscan / gap / padding', 'layout options'], ['getScrollElement', 'external viewport'], ['ref', 'VirtualListHandle']],
 };
@@ -338,7 +466,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
   hotkey: 'Hotkey 只展示快捷键。HotkeyInput 仅在自身输入框聚焦时录入，不注册全局监听，也不拦截浏览器快捷键；Escape 取消，Delete 或 Backspace 清除，IME 与纯修饰键不会提交。冲突校验由调用方提供。',
   'number-ticker': '最终数值通过礼貌 live region 发布，动画中间帧不逐帧播报；减少动态效果时直接显示终值。使用 getValueLabel 为货币、单位或自定义渲染提供完整读屏文字。',
   log: '滚动区域用 region 和名称表达，不把整个长列表设为 live region。Home/End 可跳到顶部或底部；用户离开底部或暂停后不强制抢回滚动位置，稳定 id 保持记录身份。',
-  'audio-player': '播放、暂停、进度、音量和倍速均使用有名称的原生控件；不自动播放。加载失败、缓冲与播放被拒绝通过可读状态反馈。',
+  'audio-player': '播放、暂停、进度、音量和倍速均使用有名称的控件；自动播放默认关闭，显式启用仍受浏览器策略限制。加载失败、缓冲与播放被拒绝通过可读状态反馈。',
   carousel: '前后按钮和分页有可访问名称，键盘可移动当前项；自动播放默认关闭，启用时在交互、页面隐藏和减少动态效果时暂停。',
   'choice-grid': '复用原生单选或多选语义，方向键与 Tab 遵循对应控件规则；图标、图片和颜色不替代文字标签与错误说明。',
   'color-picker': '颜色值同时用文本和通道数值表达；色块不是唯一信息。每个通道控件有名称，预设按钮暴露实际颜色值。',
