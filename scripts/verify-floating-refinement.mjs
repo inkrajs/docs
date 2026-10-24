@@ -68,6 +68,8 @@ try {
   await page.waitForFunction(() => !document.querySelector('.inkra-popover__content'));
 
   const tooltipTrigger = page.getByRole('button', { name: 'Open bounded tooltip', exact: true });
+  await tooltipTrigger.scrollIntoViewIfNeeded();
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await tooltipTrigger.focus();
   const tooltip = page.locator('.inkra-tooltip__content');
   await tooltip.waitFor();
@@ -104,13 +106,19 @@ try {
   const forced = await browser.newPage({ viewport: { width: 390, height: 240 }, forcedColors: 'active', reducedMotion: 'reduce' });
   try {
     await mount(forced, 'floating-refinement-forced');
-    await forced.getByRole('button', { name: 'Open bounded popover', exact: true }).click();
+    const forcedPopoverTrigger = forced.getByRole('button', { name: 'Open bounded popover', exact: true });
+    await forcedPopoverTrigger.click();
     const forcedPopover = forced.locator('.inkra-popover__surface');
     await forcedPopover.waitFor();
     assert.match(await forcedPopover.evaluate(node => getComputedStyle(node).borderTopStyle), /solid/);
     assert.notEqual(await forcedPopover.evaluate(node => getComputedStyle(node).color), 'rgba(0, 0, 0, 0)');
     await forced.keyboard.press('Escape');
-    await forced.getByRole('button', { name: 'Open bounded tooltip', exact: true }).focus();
+    await forcedPopover.waitFor({ state: 'detached' });
+    await forced.waitForFunction(node => node === document.activeElement, await forcedPopoverTrigger.elementHandle());
+    const forcedTooltipTrigger = forced.getByRole('button', { name: 'Open bounded tooltip', exact: true });
+    await forcedTooltipTrigger.scrollIntoViewIfNeeded();
+    await forced.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await forcedTooltipTrigger.focus();
     const forcedTooltip = forced.locator('.inkra-tooltip__surface');
     await forcedTooltip.waitFor();
     assert.match(await forcedTooltip.evaluate(node => getComputedStyle(node).borderTopStyle), /solid/);
