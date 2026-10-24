@@ -8,9 +8,11 @@ const browser = await chromium.launch({ headless: true, ...(executablePath ? { e
 async function controls(playground, open) {
   const toggle = playground.locator('.playground-config-toggle');
   if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
-  await playground.page().waitForFunction(({ node, open }) =>
-    node.dataset.controlsPresent === String(open) && !node.querySelector('[data-playground-moving]'),
-  { node: await playground.elementHandle(), open });
+  await playground.page().waitForFunction(({ node, open }) => new Promise(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve(
+      node.dataset.controlsPresent === String(open) && !node.querySelector('[data-playground-moving]'),
+    )));
+  }), { node: await playground.elementHandle(), open });
 }
 
 try {
@@ -88,9 +90,12 @@ try {
     const upload = uploadPlayground.locator('.inkra-upload');
     await upload.waitFor();
     await upload.scrollIntoViewIfNeeded();
-    await upload.locator('.inkra-upload__dropzone').focus();
+    const dropzone = upload.locator('.inkra-upload__dropzone');
+    await page.waitForFunction(node => !node.closest('[inert]'), await dropzone.elementHandle());
+    await dropzone.focus();
+    assert(await dropzone.evaluate(node => node === document.activeElement), 'upload receives keyboard focus');
     const chooserPromise = page.waitForEvent('filechooser');
-    await page.keyboard.press('Enter');
+    await dropzone.press('Enter');
     const chooser = await chooserPromise;
     await chooser.setFiles([]);
     await page.screenshot({ path: `/tmp/inkra-upload-docs-${width}.png`, animations: 'disabled' });
