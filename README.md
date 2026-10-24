@@ -6,16 +6,14 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This working revision previews the `0.4.3` release candidate using
-`vendor/inkra.tgz`. These are not yet the published
-registry bytes. library-candidate.json records the source commit (or null for an
-uncommitted local build) and pins the exact archive checksums. Prepare this candidate before npm ci.
-Build verifies the archive and installed dependency without a source alias.
+This revision consumes the published `@inkra/react@0.4.3` from the public npm
+registry. library-candidate.json pins the released source commit and exact archive
+checksums. Build verifies the public archive and installed dependency without a
+source alias.
 
 ## Local Development
 
-This revision uses an unpublished candidate. First follow
-**Prepare An Unpublished Candidate** below, then run:
+Install the pinned registry release and run:
 
 ```sh
 npm ci
@@ -23,8 +21,8 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-Revisions pinned to a published registry release need no sibling library checkout
-or vendor archive.
+No sibling library checkout or vendor archive is required. To preview unpublished
+library changes, follow **Prepare An Unpublished Candidate** below.
 
 ## Local Routes And Page Actions
 
