@@ -50,8 +50,14 @@ function nodePath([tag, attributes]: LucideIconData['node'][number]): PencilIcon
   return null;
 }
 
+const pathCache = new WeakMap<LucideIconData, PencilIconPath[]>();
+
 export function iconPaths(data: LucideIconData): PencilIconPath[] {
-  return data.node.map(nodePath).filter((path): path is PencilIconPath => Boolean(path));
+  const cached = pathCache.get(data);
+  if (cached) return cached;
+  const paths = data.node.map(nodePath).filter((path): path is PencilIconPath => Boolean(path));
+  pathCache.set(data, paths);
+  return paths;
 }
 
 export function DocsIcon({

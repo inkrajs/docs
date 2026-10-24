@@ -136,9 +136,6 @@ export function HoverCardExamples() {
             </article>
           </HoverCard.Content>
         </HoverCard.Root>
-        <output className="hover-card-demo__status" aria-live="polite">
-          {controlled ? (open ? text.openState : text.closedState) : text.managed}
-        </output>
       </div>
     </ComponentPlayground>
 

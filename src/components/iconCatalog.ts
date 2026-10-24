@@ -133,9 +133,184 @@ import { __iconData as sparklineIcon } from 'lucide-react/dist/esm/icons/chart-n
 import { __iconData as radarIcon } from 'lucide-react/dist/esm/icons/radar.mjs';
 import { __iconData as heatmapIcon } from 'lucide-react/dist/esm/icons/grid-3x3.mjs';
 
+import { __iconData as catalogIcon0 } from 'lucide-react/dist/esm/icons/file-text.mjs';
+import { __iconData as catalogIcon1 } from 'lucide-react/dist/esm/icons/file-code.mjs';
+import { __iconData as catalogIcon2 } from 'lucide-react/dist/esm/icons/file-image.mjs';
+import { __iconData as catalogIcon3 } from 'lucide-react/dist/esm/icons/file-archive.mjs';
+import { __iconData as catalogIcon4 } from 'lucide-react/dist/esm/icons/folder-open.mjs';
+import { __iconData as catalogIcon5 } from 'lucide-react/dist/esm/icons/folder-plus.mjs';
+import { __iconData as catalogIcon6 } from 'lucide-react/dist/esm/icons/paperclip.mjs';
+import { __iconData as catalogIcon7 } from 'lucide-react/dist/esm/icons/clipboard.mjs';
+import { __iconData as catalogIcon8 } from 'lucide-react/dist/esm/icons/play.mjs';
+import { __iconData as catalogIcon9 } from 'lucide-react/dist/esm/icons/pause.mjs';
+import { __iconData as catalogIcon10 } from 'lucide-react/dist/esm/icons/skip-back.mjs';
+import { __iconData as catalogIcon11 } from 'lucide-react/dist/esm/icons/skip-forward.mjs';
+import { __iconData as catalogIcon12 } from 'lucide-react/dist/esm/icons/volume-2.mjs';
+import { __iconData as catalogIcon13 } from 'lucide-react/dist/esm/icons/volume-x.mjs';
+import { __iconData as catalogIcon14 } from 'lucide-react/dist/esm/icons/headphones.mjs';
+import { __iconData as catalogIcon15 } from 'lucide-react/dist/esm/icons/video.mjs';
+import { __iconData as catalogIcon16 } from 'lucide-react/dist/esm/icons/mail.mjs';
+import { __iconData as catalogIcon17 } from 'lucide-react/dist/esm/icons/send.mjs';
+import { __iconData as catalogIcon18 } from 'lucide-react/dist/esm/icons/phone.mjs';
+import { __iconData as catalogIcon19 } from 'lucide-react/dist/esm/icons/phone-call.mjs';
+import { __iconData as catalogIcon20 } from 'lucide-react/dist/esm/icons/users.mjs';
+import { __iconData as catalogIcon21 } from 'lucide-react/dist/esm/icons/user-plus.mjs';
+import { __iconData as catalogIcon22 } from 'lucide-react/dist/esm/icons/at-sign.mjs';
+import { __iconData as catalogIcon23 } from 'lucide-react/dist/esm/icons/messages-square.mjs';
+import { __iconData as catalogIcon24 } from 'lucide-react/dist/esm/icons/shield.mjs';
+import { __iconData as catalogIcon25 } from 'lucide-react/dist/esm/icons/shield-check.mjs';
+import { __iconData as catalogIcon26 } from 'lucide-react/dist/esm/icons/shield-alert.mjs';
+import { __iconData as catalogIcon27 } from 'lucide-react/dist/esm/icons/key-round.mjs';
+import { __iconData as catalogIcon28 } from 'lucide-react/dist/esm/icons/fingerprint-pattern.mjs';
+import { __iconData as catalogIcon29 } from 'lucide-react/dist/esm/icons/lock-open.mjs';
+import { __iconData as catalogIcon30 } from 'lucide-react/dist/esm/icons/eye-off.mjs';
+import { __iconData as catalogIcon31 } from 'lucide-react/dist/esm/icons/scan-face.mjs';
+import { __iconData as catalogIcon32 } from 'lucide-react/dist/esm/icons/database.mjs';
+import { __iconData as catalogIcon33 } from 'lucide-react/dist/esm/icons/server.mjs';
+import { __iconData as catalogIcon34 } from 'lucide-react/dist/esm/icons/chart-column.mjs';
+import { __iconData as catalogIcon35 } from 'lucide-react/dist/esm/icons/chart-line.mjs';
+import { __iconData as catalogIcon36 } from 'lucide-react/dist/esm/icons/chart-pie.mjs';
+import { __iconData as catalogIcon37 } from 'lucide-react/dist/esm/icons/trending-up.mjs';
+import { __iconData as catalogIcon38 } from 'lucide-react/dist/esm/icons/activity.mjs';
+import { __iconData as catalogIcon39 } from 'lucide-react/dist/esm/icons/network.mjs';
+import { __iconData as catalogIcon40 } from 'lucide-react/dist/esm/icons/shopping-cart.mjs';
+import { __iconData as catalogIcon41 } from 'lucide-react/dist/esm/icons/shopping-bag.mjs';
+import { __iconData as catalogIcon42 } from 'lucide-react/dist/esm/icons/credit-card.mjs';
+import { __iconData as catalogIcon43 } from 'lucide-react/dist/esm/icons/receipt.mjs';
+import { __iconData as catalogIcon44 } from 'lucide-react/dist/esm/icons/banknote.mjs';
+import { __iconData as catalogIcon45 } from 'lucide-react/dist/esm/icons/coins.mjs';
+import { __iconData as catalogIcon46 } from 'lucide-react/dist/esm/icons/package.mjs';
+import { __iconData as catalogIcon47 } from 'lucide-react/dist/esm/icons/gift.mjs';
+import { __iconData as catalogIcon48 } from 'lucide-react/dist/esm/icons/gamepad-2.mjs';
+import { __iconData as catalogIcon49 } from 'lucide-react/dist/esm/icons/dice-5.mjs';
+import { __iconData as catalogIcon50 } from 'lucide-react/dist/esm/icons/trophy.mjs';
+import { __iconData as catalogIcon51 } from 'lucide-react/dist/esm/icons/medal.mjs';
+import { __iconData as catalogIcon52 } from 'lucide-react/dist/esm/icons/target.mjs';
+import { __iconData as catalogIcon53 } from 'lucide-react/dist/esm/icons/flag.mjs';
+import { __iconData as catalogIcon54 } from 'lucide-react/dist/esm/icons/swords.mjs';
+import { __iconData as catalogIcon55 } from 'lucide-react/dist/esm/icons/gem.mjs';
+
+import { __iconData as moreIcon0 } from 'lucide-react/dist/esm/icons/bold.mjs';
+import { __iconData as moreIcon1 } from 'lucide-react/dist/esm/icons/italic.mjs';
+import { __iconData as moreIcon2 } from 'lucide-react/dist/esm/icons/underline.mjs';
+import { __iconData as moreIcon3 } from 'lucide-react/dist/esm/icons/strikethrough.mjs';
+import { __iconData as moreIcon4 } from 'lucide-react/dist/esm/icons/heading.mjs';
+import { __iconData as moreIcon5 } from 'lucide-react/dist/esm/icons/pilcrow.mjs';
+import { __iconData as moreIcon6 } from 'lucide-react/dist/esm/icons/text-align-center.mjs';
+import { __iconData as moreIcon7 } from 'lucide-react/dist/esm/icons/text-align-end.mjs';
+import { __iconData as moreIcon8 } from 'lucide-react/dist/esm/icons/text-align-justify.mjs';
+import { __iconData as moreIcon9 } from 'lucide-react/dist/esm/icons/quote.mjs';
+import { __iconData as moreIcon10 } from 'lucide-react/dist/esm/icons/highlighter.mjs';
+import { __iconData as moreIcon11 } from 'lucide-react/dist/esm/icons/remove-formatting.mjs';
+import { __iconData as moreIcon12 } from 'lucide-react/dist/esm/icons/smartphone.mjs';
+import { __iconData as moreIcon13 } from 'lucide-react/dist/esm/icons/tablet.mjs';
+import { __iconData as moreIcon14 } from 'lucide-react/dist/esm/icons/laptop.mjs';
+import { __iconData as moreIcon15 } from 'lucide-react/dist/esm/icons/mouse.mjs';
+import { __iconData as moreIcon16 } from 'lucide-react/dist/esm/icons/printer.mjs';
+import { __iconData as moreIcon17 } from 'lucide-react/dist/esm/icons/bluetooth.mjs';
+import { __iconData as moreIcon18 } from 'lucide-react/dist/esm/icons/wifi.mjs';
+import { __iconData as moreIcon19 } from 'lucide-react/dist/esm/icons/wifi-off.mjs';
+import { __iconData as moreIcon20 } from 'lucide-react/dist/esm/icons/usb.mjs';
+import { __iconData as moreIcon21 } from 'lucide-react/dist/esm/icons/plug.mjs';
+import { __iconData as moreIcon22 } from 'lucide-react/dist/esm/icons/battery-charging.mjs';
+import { __iconData as moreIcon23 } from 'lucide-react/dist/esm/icons/hard-drive.mjs';
+import { __iconData as moreIcon24 } from 'lucide-react/dist/esm/icons/wrench.mjs';
+import { __iconData as moreIcon25 } from 'lucide-react/dist/esm/icons/hammer.mjs';
+import { __iconData as moreIcon26 } from 'lucide-react/dist/esm/icons/ruler.mjs';
+import { __iconData as moreIcon27 } from 'lucide-react/dist/esm/icons/scissors.mjs';
+import { __iconData as moreIcon28 } from 'lucide-react/dist/esm/icons/paintbrush.mjs';
+import { __iconData as moreIcon29 } from 'lucide-react/dist/esm/icons/eraser.mjs';
+import { __iconData as moreIcon30 } from 'lucide-react/dist/esm/icons/pipette.mjs';
+import { __iconData as moreIcon31 } from 'lucide-react/dist/esm/icons/flashlight.mjs';
+import { __iconData as moreIcon32 } from 'lucide-react/dist/esm/icons/magnet.mjs';
+import { __iconData as moreIcon33 } from 'lucide-react/dist/esm/icons/scale.mjs';
+import { __iconData as moreIcon34 } from 'lucide-react/dist/esm/icons/thermometer.mjs';
+import { __iconData as moreIcon35 } from 'lucide-react/dist/esm/icons/timer.mjs';
+import { __iconData as moreIcon36 } from 'lucide-react/dist/esm/icons/sunrise.mjs';
+import { __iconData as moreIcon37 } from 'lucide-react/dist/esm/icons/sunset.mjs';
+import { __iconData as moreIcon38 } from 'lucide-react/dist/esm/icons/cloud-sun.mjs';
+import { __iconData as moreIcon39 } from 'lucide-react/dist/esm/icons/cloud-lightning.mjs';
+import { __iconData as moreIcon40 } from 'lucide-react/dist/esm/icons/cloud-snow.mjs';
+import { __iconData as moreIcon41 } from 'lucide-react/dist/esm/icons/wind.mjs';
+import { __iconData as moreIcon42 } from 'lucide-react/dist/esm/icons/snowflake.mjs';
+import { __iconData as moreIcon43 } from 'lucide-react/dist/esm/icons/droplets.mjs';
+import { __iconData as moreIcon44 } from 'lucide-react/dist/esm/icons/flame.mjs';
+import { __iconData as moreIcon45 } from 'lucide-react/dist/esm/icons/leaf.mjs';
+import { __iconData as moreIcon46 } from 'lucide-react/dist/esm/icons/tree-pine.mjs';
+import { __iconData as moreIcon47 } from 'lucide-react/dist/esm/icons/flower-2.mjs';
+import { __iconData as moreIcon48 } from 'lucide-react/dist/esm/icons/file-plus.mjs';
+import { __iconData as moreIcon49 } from 'lucide-react/dist/esm/icons/file-check.mjs';
+import { __iconData as moreIcon50 } from 'lucide-react/dist/esm/icons/file-x.mjs';
+import { __iconData as moreIcon51 } from 'lucide-react/dist/esm/icons/file-search.mjs';
+import { __iconData as moreIcon52 } from 'lucide-react/dist/esm/icons/file-lock.mjs';
+import { __iconData as moreIcon53 } from 'lucide-react/dist/esm/icons/file-clock.mjs';
+import { __iconData as moreIcon54 } from 'lucide-react/dist/esm/icons/folder-check.mjs';
+import { __iconData as moreIcon55 } from 'lucide-react/dist/esm/icons/folder-lock.mjs';
+import { __iconData as moreIcon56 } from 'lucide-react/dist/esm/icons/folder-search.mjs';
+import { __iconData as moreIcon57 } from 'lucide-react/dist/esm/icons/clipboard-check.mjs';
+import { __iconData as moreIcon58 } from 'lucide-react/dist/esm/icons/archive.mjs';
+import { __iconData as moreIcon59 } from 'lucide-react/dist/esm/icons/files.mjs';
+import { __iconData as moreIcon60 } from 'lucide-react/dist/esm/icons/mic.mjs';
+import { __iconData as moreIcon61 } from 'lucide-react/dist/esm/icons/mic-off.mjs';
+import { __iconData as moreIcon62 } from 'lucide-react/dist/esm/icons/eighth-notes.mjs';
+import { __iconData as moreIcon63 } from 'lucide-react/dist/esm/icons/radio.mjs';
+import { __iconData as moreIcon64 } from 'lucide-react/dist/esm/icons/film.mjs';
+import { __iconData as moreIcon65 } from 'lucide-react/dist/esm/icons/clapperboard.mjs';
+import { __iconData as moreIcon66 } from 'lucide-react/dist/esm/icons/captions.mjs';
+import { __iconData as moreIcon67 } from 'lucide-react/dist/esm/icons/repeat.mjs';
+import { __iconData as moreIcon68 } from 'lucide-react/dist/esm/icons/shuffle.mjs';
+import { __iconData as moreIcon69 } from 'lucide-react/dist/esm/icons/fast-forward.mjs';
+import { __iconData as moreIcon70 } from 'lucide-react/dist/esm/icons/rewind.mjs';
+import { __iconData as moreIcon71 } from 'lucide-react/dist/esm/icons/picture-in-picture.mjs';
+import { __iconData as moreIcon72 } from 'lucide-react/dist/esm/icons/arrow-up.mjs';
+import { __iconData as moreIcon73 } from 'lucide-react/dist/esm/icons/arrow-down.mjs';
+import { __iconData as moreIcon74 } from 'lucide-react/dist/esm/icons/arrow-up-right.mjs';
+import { __iconData as moreIcon75 } from 'lucide-react/dist/esm/icons/arrow-down-left.mjs';
+import { __iconData as moreIcon76 } from 'lucide-react/dist/esm/icons/chevron-left.mjs';
+import { __iconData as moreIcon77 } from 'lucide-react/dist/esm/icons/chevron-right.mjs';
+import { __iconData as moreIcon78 } from 'lucide-react/dist/esm/icons/chevron-up.mjs';
+import { __iconData as moreIcon79 } from 'lucide-react/dist/esm/icons/chevrons-left.mjs';
+import { __iconData as moreIcon80 } from 'lucide-react/dist/esm/icons/chevrons-right.mjs';
+import { __iconData as moreIcon81 } from 'lucide-react/dist/esm/icons/corner-down-left.mjs';
+import { __iconData as moreIcon82 } from 'lucide-react/dist/esm/icons/log-in.mjs';
+import { __iconData as moreIcon83 } from 'lucide-react/dist/esm/icons/log-out.mjs';
+import { __iconData as moreIcon84 } from 'lucide-react/dist/esm/icons/crown.mjs';
+import { __iconData as moreIcon85 } from 'lucide-react/dist/esm/icons/sparkles.mjs';
+import { __iconData as moreIcon86 } from 'lucide-react/dist/esm/icons/zap.mjs';
+import { __iconData as moreIcon87 } from 'lucide-react/dist/esm/icons/heart-pulse.mjs';
+import { __iconData as moreIcon88 } from 'lucide-react/dist/esm/icons/shield-half.mjs';
+import { __iconData as moreIcon89 } from 'lucide-react/dist/esm/icons/sword.mjs';
+import { __iconData as moreIcon90 } from 'lucide-react/dist/esm/icons/wand-sparkles.mjs';
+import { __iconData as moreIcon91 } from 'lucide-react/dist/esm/icons/puzzle.mjs';
+import { __iconData as moreIcon92 } from 'lucide-react/dist/esm/icons/crosshair.mjs';
+import { __iconData as moreIcon93 } from 'lucide-react/dist/esm/icons/dices.mjs';
+import { __iconData as moreIcon94 } from 'lucide-react/dist/esm/icons/joystick.mjs';
+import { __iconData as moreIcon95 } from 'lucide-react/dist/esm/icons/backpack.mjs';
+
+const markdownIcon = {
+  name: 'markdown',
+  size: 24,
+  node: [
+    ['rect', { x: 1, y: 5, width: 22, height: 14, rx: 2 }],
+    ['path', { d: 'M4 15V9l3 3 3-3v6' }],
+    ['path', { d: 'M17 9v6m-3-3 3 3 3-3' }],
+  ],
+} satisfies import('./DocsIcon').LucideIconData;
+
 export const iconCategories = [
   ['all', '全部', icon31], ['actions', '操作', icon30], ['appearance', '主题与语言', icon21],
   ['navigation', '导航', extraIcon14], ['components', '组件', icon28], ['travel', '旅行', extraIcon15],
+  ['files', '文件与文档', catalogIcon0],
+  ['media', '影音媒体', catalogIcon8],
+  ['communication', '沟通协作', catalogIcon16],
+  ['security', '安全与权限', catalogIcon24],
+  ['data', '数据与系统', catalogIcon32],
+  ['commerce', '商业与交易', catalogIcon40],
+  ['games', '游戏与奖励', catalogIcon48],
+  ['editing', '编辑与排版', moreIcon0],
+  ['devices', '设备与连接', moreIcon12],
+  ['tools', '工具与测量', moreIcon24],
+  ['nature', '天气与自然', moreIcon36],
 ] as const;
 
 export const docsIconCatalog = [
@@ -169,6 +344,7 @@ export const docsIconCatalog = [
   { key: 'book-open', label: '使用指南', category: 'navigation', data: icon27 },
   { key: 'layers', label: '组件', category: 'navigation', data: icon28 },
   { key: 'code-xml', label: '代码', category: 'actions', data: icon29 },
+  { key: 'markdown', label: 'Markdown', category: 'files', data: markdownIcon },
   { key: 'mouse-pointer-2', label: 'Button', category: 'components', data: icon30 },
   { key: 'shapes', label: 'Icon', category: 'components', data: icon31 },
   { key: 'message-square', label: 'Popover', category: 'components', data: icon32 },
@@ -272,6 +448,158 @@ export const docsIconCatalog = [
   { key: 'filter', label: '筛选', category: 'actions', data: extraIcon34 },
   { key: 'zoom-in', label: '放大', category: 'actions', data: extraIcon35 },
   { key: 'zoom-out', label: '缩小', category: 'actions', data: extraIcon36 },
+  { key: 'file-text', label: '文本文件', category: 'files', data: catalogIcon0 },
+  { key: 'file-code', label: '代码文件', category: 'files', data: catalogIcon1 },
+  { key: 'file-image', label: '图片文件', category: 'files', data: catalogIcon2 },
+  { key: 'file-archive', label: '压缩文件', category: 'files', data: catalogIcon3 },
+  { key: 'folder-open', label: '打开文件夹', category: 'files', data: catalogIcon4 },
+  { key: 'folder-plus', label: '新建文件夹', category: 'files', data: catalogIcon5 },
+  { key: 'paperclip', label: '附件', category: 'files', data: catalogIcon6 },
+  { key: 'clipboard', label: '剪贴板', category: 'files', data: catalogIcon7 },
+  { key: 'play', label: '播放', category: 'media', data: catalogIcon8 },
+  { key: 'pause', label: '暂停', category: 'media', data: catalogIcon9 },
+  { key: 'skip-back', label: '上一曲', category: 'media', data: catalogIcon10 },
+  { key: 'skip-forward', label: '下一曲', category: 'media', data: catalogIcon11 },
+  { key: 'volume-2', label: '扬声器', category: 'media', data: catalogIcon12 },
+  { key: 'volume-x', label: '静音', category: 'media', data: catalogIcon13 },
+  { key: 'headphones', label: '耳机', category: 'media', data: catalogIcon14 },
+  { key: 'video', label: '视频', category: 'media', data: catalogIcon15 },
+  { key: 'mail', label: '邮件', category: 'communication', data: catalogIcon16 },
+  { key: 'send', label: '发送', category: 'communication', data: catalogIcon17 },
+  { key: 'phone', label: '电话', category: 'communication', data: catalogIcon18 },
+  { key: 'phone-call', label: '通话', category: 'communication', data: catalogIcon19 },
+  { key: 'users', label: '团队', category: 'communication', data: catalogIcon20 },
+  { key: 'user-plus', label: '添加成员', category: 'communication', data: catalogIcon21 },
+  { key: 'at-sign', label: '提及', category: 'communication', data: catalogIcon22 },
+  { key: 'messages-square', label: '会话', category: 'communication', data: catalogIcon23 },
+  { key: 'shield', label: '安全防护', category: 'security', data: catalogIcon24 },
+  { key: 'shield-check', label: '验证通过', category: 'security', data: catalogIcon25 },
+  { key: 'shield-alert', label: '安全警告', category: 'security', data: catalogIcon26 },
+  { key: 'key-round', label: '密钥', category: 'security', data: catalogIcon27 },
+  { key: 'fingerprint-pattern', label: '指纹', category: 'security', data: catalogIcon28 },
+  { key: 'lock-open', label: '解锁', category: 'security', data: catalogIcon29 },
+  { key: 'eye-off', label: '隐藏', category: 'security', data: catalogIcon30 },
+  { key: 'scan-face', label: '面部识别', category: 'security', data: catalogIcon31 },
+  { key: 'database', label: '数据库', category: 'data', data: catalogIcon32 },
+  { key: 'server', label: '服务器', category: 'data', data: catalogIcon33 },
+  { key: 'chart-column', label: '柱状图', category: 'data', data: catalogIcon34 },
+  { key: 'chart-line', label: '折线图', category: 'data', data: catalogIcon35 },
+  { key: 'chart-pie', label: '饼图', category: 'data', data: catalogIcon36 },
+  { key: 'trending-up', label: '上升趋势', category: 'data', data: catalogIcon37 },
+  { key: 'activity', label: '活动监测', category: 'data', data: catalogIcon38 },
+  { key: 'network', label: '网络节点', category: 'data', data: catalogIcon39 },
+  { key: 'shopping-cart', label: '购物车', category: 'commerce', data: catalogIcon40 },
+  { key: 'shopping-bag', label: '购物袋', category: 'commerce', data: catalogIcon41 },
+  { key: 'credit-card', label: '银行卡', category: 'commerce', data: catalogIcon42 },
+  { key: 'receipt', label: '收据', category: 'commerce', data: catalogIcon43 },
+  { key: 'banknote', label: '纸币', category: 'commerce', data: catalogIcon44 },
+  { key: 'coins', label: '硬币', category: 'commerce', data: catalogIcon45 },
+  { key: 'package', label: '包裹', category: 'commerce', data: catalogIcon46 },
+  { key: 'gift', label: '礼物', category: 'commerce', data: catalogIcon47 },
+  { key: 'gamepad-2', label: '游戏手柄', category: 'games', data: catalogIcon48 },
+  { key: 'dice-5', label: '骰子', category: 'games', data: catalogIcon49 },
+  { key: 'trophy', label: '奖杯', category: 'games', data: catalogIcon50 },
+  { key: 'medal', label: '奖牌', category: 'games', data: catalogIcon51 },
+  { key: 'target', label: '目标', category: 'games', data: catalogIcon52 },
+  { key: 'flag', label: '旗帜', category: 'games', data: catalogIcon53 },
+  { key: 'swords', label: '对战', category: 'games', data: catalogIcon54 },
+  { key: 'gem', label: '宝石', category: 'games', data: catalogIcon55 },
+  { key: 'bold', label: '粗体', category: 'editing', data: moreIcon0 },
+  { key: 'italic', label: '斜体', category: 'editing', data: moreIcon1 },
+  { key: 'underline', label: '下划线文字', category: 'editing', data: moreIcon2 },
+  { key: 'strikethrough', label: '删除线', category: 'editing', data: moreIcon3 },
+  { key: 'heading', label: '标题层级', category: 'editing', data: moreIcon4 },
+  { key: 'pilcrow', label: '段落标记', category: 'editing', data: moreIcon5 },
+  { key: 'text-align-center', label: '居中对齐', category: 'editing', data: moreIcon6 },
+  { key: 'text-align-end', label: '右端对齐', category: 'editing', data: moreIcon7 },
+  { key: 'text-align-justify', label: '两端对齐', category: 'editing', data: moreIcon8 },
+  { key: 'quote', label: '引用', category: 'editing', data: moreIcon9 },
+  { key: 'highlighter', label: '荧光标记', category: 'editing', data: moreIcon10 },
+  { key: 'remove-formatting', label: '清除格式', category: 'editing', data: moreIcon11 },
+  { key: 'smartphone', label: '手机', category: 'devices', data: moreIcon12 },
+  { key: 'tablet', label: '平板', category: 'devices', data: moreIcon13 },
+  { key: 'laptop', label: '笔记本电脑', category: 'devices', data: moreIcon14 },
+  { key: 'mouse', label: '鼠标', category: 'devices', data: moreIcon15 },
+  { key: 'printer', label: '打印机', category: 'devices', data: moreIcon16 },
+  { key: 'bluetooth', label: '蓝牙', category: 'devices', data: moreIcon17 },
+  { key: 'wifi', label: '无线网络', category: 'devices', data: moreIcon18 },
+  { key: 'wifi-off', label: '网络断开', category: 'devices', data: moreIcon19 },
+  { key: 'usb', label: 'USB 接口', category: 'devices', data: moreIcon20 },
+  { key: 'plug', label: '插头', category: 'devices', data: moreIcon21 },
+  { key: 'battery-charging', label: '电池充电', category: 'devices', data: moreIcon22 },
+  { key: 'hard-drive', label: '硬盘', category: 'devices', data: moreIcon23 },
+  { key: 'wrench', label: '扳手', category: 'tools', data: moreIcon24 },
+  { key: 'hammer', label: '锤子', category: 'tools', data: moreIcon25 },
+  { key: 'ruler', label: '直尺', category: 'tools', data: moreIcon26 },
+  { key: 'scissors', label: '剪刀', category: 'tools', data: moreIcon27 },
+  { key: 'paintbrush', label: '画笔', category: 'tools', data: moreIcon28 },
+  { key: 'eraser', label: '橡皮擦', category: 'tools', data: moreIcon29 },
+  { key: 'pipette', label: '吸管', category: 'tools', data: moreIcon30 },
+  { key: 'flashlight', label: '手电筒', category: 'tools', data: moreIcon31 },
+  { key: 'magnet', label: '磁铁', category: 'tools', data: moreIcon32 },
+  { key: 'scale', label: '天平', category: 'tools', data: moreIcon33 },
+  { key: 'thermometer', label: '温度计', category: 'tools', data: moreIcon34 },
+  { key: 'timer', label: '计时器', category: 'tools', data: moreIcon35 },
+  { key: 'sunrise', label: '日出', category: 'nature', data: moreIcon36 },
+  { key: 'sunset', label: '日落', category: 'nature', data: moreIcon37 },
+  { key: 'cloud-sun', label: '晴间多云', category: 'nature', data: moreIcon38 },
+  { key: 'cloud-lightning', label: '雷雨', category: 'nature', data: moreIcon39 },
+  { key: 'cloud-snow', label: '降雪', category: 'nature', data: moreIcon40 },
+  { key: 'wind', label: '风', category: 'nature', data: moreIcon41 },
+  { key: 'snowflake', label: '雪花', category: 'nature', data: moreIcon42 },
+  { key: 'droplets', label: '水滴', category: 'nature', data: moreIcon43 },
+  { key: 'flame', label: '火焰', category: 'nature', data: moreIcon44 },
+  { key: 'leaf', label: '叶子', category: 'nature', data: moreIcon45 },
+  { key: 'tree-pine', label: '松树', category: 'nature', data: moreIcon46 },
+  { key: 'flower-2', label: '花朵', category: 'nature', data: moreIcon47 },
+  { key: 'file-plus', label: '新建文件', category: 'files', data: moreIcon48 },
+  { key: 'file-check', label: '文件已确认', category: 'files', data: moreIcon49 },
+  { key: 'file-x', label: '文件错误', category: 'files', data: moreIcon50 },
+  { key: 'file-search', label: '搜索文件', category: 'files', data: moreIcon51 },
+  { key: 'file-lock', label: '加密文件', category: 'files', data: moreIcon52 },
+  { key: 'file-clock', label: '文件历史', category: 'files', data: moreIcon53 },
+  { key: 'folder-check', label: '文件夹已确认', category: 'files', data: moreIcon54 },
+  { key: 'folder-lock', label: '加密文件夹', category: 'files', data: moreIcon55 },
+  { key: 'folder-search', label: '搜索文件夹', category: 'files', data: moreIcon56 },
+  { key: 'clipboard-check', label: '检查清单已完成', category: 'files', data: moreIcon57 },
+  { key: 'archive', label: '归档箱', category: 'files', data: moreIcon58 },
+  { key: 'files', label: '多个文件', category: 'files', data: moreIcon59 },
+  { key: 'mic', label: '麦克风', category: 'media', data: moreIcon60 },
+  { key: 'mic-off', label: '麦克风关闭', category: 'media', data: moreIcon61 },
+  { key: 'music', label: '音乐', category: 'media', data: moreIcon62 },
+  { key: 'radio', label: '广播', category: 'media', data: moreIcon63 },
+  { key: 'film', label: '胶片', category: 'media', data: moreIcon64 },
+  { key: 'clapperboard', label: '场记板', category: 'media', data: moreIcon65 },
+  { key: 'subtitles', label: '字幕', category: 'media', data: moreIcon66 },
+  { key: 'repeat', label: '循环播放', category: 'media', data: moreIcon67 },
+  { key: 'shuffle', label: '随机播放', category: 'media', data: moreIcon68 },
+  { key: 'fast-forward', label: '快进', category: 'media', data: moreIcon69 },
+  { key: 'rewind', label: '快退', category: 'media', data: moreIcon70 },
+  { key: 'picture-in-picture', label: '画中画', category: 'media', data: moreIcon71 },
+  { key: 'arrow-up', label: '向上', category: 'navigation', data: moreIcon72 },
+  { key: 'arrow-down', label: '向下', category: 'navigation', data: moreIcon73 },
+  { key: 'arrow-up-right', label: '右上方向', category: 'navigation', data: moreIcon74 },
+  { key: 'arrow-down-left', label: '左下方向', category: 'navigation', data: moreIcon75 },
+  { key: 'chevron-left', label: '向前展开', category: 'navigation', data: moreIcon76 },
+  { key: 'chevron-right', label: '向后展开', category: 'navigation', data: moreIcon77 },
+  { key: 'chevron-up', label: '收起', category: 'navigation', data: moreIcon78 },
+  { key: 'chevrons-left', label: '跳到开头', category: 'navigation', data: moreIcon79 },
+  { key: 'chevrons-right', label: '跳到末尾', category: 'navigation', data: moreIcon80 },
+  { key: 'corner-down-left', label: '返回上一层', category: 'navigation', data: moreIcon81 },
+  { key: 'log-in', label: '登录', category: 'navigation', data: moreIcon82 },
+  { key: 'log-out', label: '退出登录', category: 'navigation', data: moreIcon83 },
+  { key: 'crown', label: '王冠', category: 'games', data: moreIcon84 },
+  { key: 'sparkles', label: '闪光', category: 'games', data: moreIcon85 },
+  { key: 'zap', label: '闪电', category: 'games', data: moreIcon86 },
+  { key: 'heart-pulse', label: '生命值', category: 'games', data: moreIcon87 },
+  { key: 'shield-half', label: '护甲', category: 'games', data: moreIcon88 },
+  { key: 'sword', label: '剑', category: 'games', data: moreIcon89 },
+  { key: 'wand-sparkles', label: '魔杖', category: 'games', data: moreIcon90 },
+  { key: 'puzzle', label: '拼图', category: 'games', data: moreIcon91 },
+  { key: 'crosshair', label: '准星', category: 'games', data: moreIcon92 },
+  { key: 'dices', label: '多枚骰子', category: 'games', data: moreIcon93 },
+  { key: 'joystick', label: '摇杆', category: 'games', data: moreIcon94 },
+  { key: 'backpack', label: '背包', category: 'games', data: moreIcon95 },
 ].map(icon => ({ ...icon, paths: iconPaths(icon.data) }));
 
 export function navigationIcon(label: string) {
@@ -281,7 +609,7 @@ export function navigationIcon(label: string) {
     Avatar: '用户', Upload: '上传', DataTable: 'Table', '开始': '快速开始', '基础': '设计规范',
     '通用': '组件', '表单输入': 'Field', '导航菜单': '菜单', '数据展示': 'Table',
     '反馈状态': 'Alert', '弹层': 'Overlay', '设计资源': '设计规范',
-    ColorPicker: '设计规范', Rating: '星标', '视觉交互': 'PanZoom',
+    ColorPicker: '设计规范', ColorSwatch: '设计规范', Markdown: 'Markdown', Rating: '星标', '视觉交互': 'PanZoom',
   };
   return (docsIconCatalog.find(icon => icon.label === (aliases[label] ?? label)) ?? docsIconCatalog[0]).data;
 }

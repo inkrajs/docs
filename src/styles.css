@@ -11,29 +11,29 @@
   :root,
   [data-inkra-theme="light"],
   [data-inkra-theme="auto"] {
-    --inkra-accent: #4d5e54;
-    --inkra-accent-soft: #85958c;
+    --inkra-accent: #acb7b0;
+    --inkra-accent-soft: #ced4d0;
     --inkra-accent-strong: #293d33;
     --inkra-on-accent: #202d25;
     --inkra-blue: #293d33;
-    --inkra-blue-soft: #85958c;
+    --inkra-blue-soft: #ced4d0;
     --inkra-focus: #293d33;
     --inkra-selection: #ced4d0;
-    --inkra-selection-pigment: #4d5e54;
-    --inkra-selection-foreground: #202d25;
+    --inkra-selection-pigment: #85958c;
+    --inkra-selection-foreground: #141c17;
   }
 
   :root[data-inkra-theme="dark"],
   [data-inkra-theme="dark"] {
-    --inkra-accent: #a5b3a6;
-    --inkra-accent-soft: #91a194;
+    --inkra-accent: #627267;
+    --inkra-accent-soft: #55645b;
     --inkra-accent-strong: #cdd7ca;
     --inkra-on-accent: #f0f4eb;
     --inkra-blue: #cdd7ca;
-    --inkra-blue-soft: #91a194;
+    --inkra-blue-soft: #55645b;
     --inkra-focus: #cdd7ca;
     --inkra-selection: #55645b;
-    --inkra-selection-pigment: #a5b3a6;
+    --inkra-selection-pigment: #708173;
     --inkra-selection-foreground: #f0f4eb;
   }
 }
@@ -42,15 +42,15 @@
   :root:not([data-inkra-theme]),
   :root[data-inkra-theme="auto"],
   [data-inkra-theme="auto"] {
-    --inkra-accent: #a5b3a6;
-    --inkra-accent-soft: #91a194;
+    --inkra-accent: #627267;
+    --inkra-accent-soft: #55645b;
     --inkra-accent-strong: #cdd7ca;
     --inkra-on-accent: #f0f4eb;
     --inkra-blue: #cdd7ca;
-    --inkra-blue-soft: #91a194;
+    --inkra-blue-soft: #55645b;
     --inkra-focus: #cdd7ca;
     --inkra-selection: #55645b;
-    --inkra-selection-pigment: #a5b3a6;
+    --inkra-selection-pigment: #708173;
     --inkra-selection-foreground: #f0f4eb;
   }
 }
@@ -516,7 +516,7 @@ pre {
 .nav-link .inkra-pencil-text { min-width: 0; white-space: nowrap; overflow-wrap: normal; }
 
 .nav-link[aria-current="page"] .selection-control-content {
-  color: var(--inkra-selection-foreground);
+  color: var(--inkra-on-accent);
 }
 
 .nav-link:hover {

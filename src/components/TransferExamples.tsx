@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, PencilText, Switch, Transfer, type TransferChangeDetails, type TransferCountDetails, type TransferItem } from '@inkra/react';
+import { Button, Switch, Transfer, type TransferCountDetails, type TransferItem } from '@inkra/react';
 
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
@@ -50,13 +50,12 @@ export function TransferExamples() {
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const formatCount = ({ visible, total, selected }: TransferCountDetails) => selected > 0
     ? `${selected} ${t('已勾选')} · ${visible}/${total}` : `${visible}/${total}`;
-  const [lastEvent, setLastEvent] = useState<TransferChangeDetails | null>(null);
   const code = useMemo(() => `const [targetKeys, setTargetKeys] = useState(['grace', 'margaret']);
 
 <Transfer
   items={people}
   targetKeys={targetKeys}
-  onTargetKeysChange={(nextKeys, details) => setTargetKeys(nextKeys)}
+  onTargetKeysChange={setTargetKeys}
   labels={labels}
   formatCount={localizedCount}
   dir="${dir}"
@@ -81,16 +80,10 @@ export function TransferExamples() {
           formatCount={formatCount}
           items={localizedPeople}
           labels={labels}
-          onTargetKeysChange={(next, details) => {
-            setTargetKeys(next);
-            setLastEvent(details);
-          }}
+          onTargetKeysChange={setTargetKeys}
           searchable={searchable}
           targetKeys={targetKeys}
         />
-        <output aria-live="polite" className="transfer-example__status">
-          <PencilText>{lastEvent ? `${lastEvent.direction === 'to-target' ? text('已移到已选列表', 'Moved to selected') : text('已移回可选列表', 'Moved to available')} · ${lastEvent.movedKeys.map(key => localizedPeople.find(person => person.id === key)?.label ?? key).join(', ')}` : t('等待移动')}</PencilText>
-        </output>
       </div>
     </ComponentPlayground>
 

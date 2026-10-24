@@ -1,4 +1,4 @@
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useState } from 'react';
 import { Button, Field, Input, Textarea, Switch, Tooltip } from '@inkra/react';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
@@ -44,16 +44,16 @@ function InputPlayground() {
   const [type, setType] = useState<InputKind>('text');
   const [textAlign, setTextAlign] = useState<TextAlign>('start');
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
-  const [start, setStart] = useState(true);
+  const [start, setStart] = useState(false);
   const [end, setEnd] = useState(false);
-  const [clearable, setClearable] = useState(true);
+  const [clearable, setClearable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [invalid, setInvalid] = useState(false);
-  const [required, setRequired] = useState(true);
+  const [required, setRequired] = useState(false);
   const [prefix, setPrefix] = useState('');
   const [suffix, setSuffix] = useState('');
   const [status, setStatus] = useState('');
@@ -68,14 +68,10 @@ function InputPlayground() {
       setStatus(t('复制失败，请手动选择文本'));
     }
   }
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setStatus(password ? t('密码已读取') : JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
-  }
   const iconSize = size === 'sm' ? 18 : size === 'lg' ? 26 : 22;
   const code = `const [value, setValue] = useState(${quote(password ? '' : value)});
-const [status, setStatus] = useState('');
-${action && !password ? `async function copyValue() {
+${action && !password ? `const [status, setStatus] = useState('');
+async function copyValue() {
   try {
     await navigator.clipboard.writeText(value);
     setStatus(${quote(t('已复制'))});
@@ -84,11 +80,7 @@ ${action && !password ? `async function copyValue() {
   }
 }
 ` : ''}
-<form noValidate onSubmit={event => {
-  event.preventDefault();
-  setStatus(${password ? quote(t('密码已读取')) : 'JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))'});
-}}>
-  <Field label=${quote(label)}${password ? '' : ` description=${quote(t('用于识别这条笔记'))}`}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t(password ? '请输入密码' : '请输入名称'))}` : ''}>
+  <Field label=${quote(label)}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t(password ? '请输入密码' : '请输入名称'))}` : ''}>
     <Input
       name="title" type="${type}" size="${size}" variant="${variant}"
       value={value} onValueChange={setValue}
@@ -107,12 +99,8 @@ ${action && !password ? `async function copyValue() {
           </Tooltip.Root>
         </Tooltip.Provider>
       }` : ''}
-      onClear={() => setStatus(${quote(t('已清空'))})}
     />
-  </Field>
-  <Button type="submit" disabled={${disabled}}>${t('读取表单')}</Button>
-  <output aria-live="polite">{status}</output>
-</form>`;
+  </Field>`;
   return <ComponentPlayground code={code} controls={<PropertyTabs groups={[{ label: '基础', content: <>
     <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as InputSize)} options={controlSizes} />
     <DocsSelect label="外观" value={variant} onValueChange={next => setVariant(next as InputVariant)} options={variants} />
@@ -125,6 +113,7 @@ ${action && !password ? `async function copyValue() {
     <Switch label={t('前置图标')} checked={start} onCheckedChange={setStart} />
     <Switch label={t('后置图标')} checked={end} onCheckedChange={setEnd} />
     <Switch label={t('尾部操作')} checked={action && !password} disabled={password} onCheckedChange={setAction} />
+    {action && status && <output aria-live="polite">{status}</output>}
     <Field label={t('前缀文字')}><Input value={prefix} onChange={event => setPrefix(event.target.value)} placeholder="https://" /></Field>
     <Field label={t('后缀文字')}><Input value={suffix} onChange={event => setSuffix(event.target.value)} placeholder="kg" /></Field>
   </> }, { label: '状态', content: <>
@@ -135,8 +124,8 @@ ${action && !password ? `async function copyValue() {
     <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} />
     <Switch label={t('错误状态')} checked={invalid} onCheckedChange={setInvalid} />
   </> }]} />}>
-    <form className="component-demo-form" noValidate onSubmit={submit}>
-      <Field label={label} description={password ? undefined : t('用于识别这条笔记')} required={required} invalid={invalid} error={invalid ? t(password ? '请输入密码' : '请输入名称') : undefined}>
+    <div className="component-demo-form">
+      <Field label={label} required={required} invalid={invalid} error={invalid ? t(password ? '请输入密码' : '请输入名称') : undefined}>
         <Input
           name="title" type={type} size={size} variant={variant} value={value}
           onValueChange={setValue}
@@ -146,12 +135,9 @@ ${action && !password ? `async function copyValue() {
           startIcon={start ? <DocsIcon data={searchIcon} size={iconSize} /> : undefined}
           endIcon={end ? <DocsIcon data={checkIcon} size={iconSize} /> : undefined}
           endAction={action && !password ? <CopyAction size={size} disabled={disabled} onClick={() => void copyValue()} /> : undefined}
-          onClear={() => setStatus(t('已清空'))}
         />
       </Field>
-      <div className="component-demo-row"><Button type="submit" disabled={disabled}>{t('读取表单')}</Button></div>
-      <output aria-live="polite" className="component-demo-status input-examples__status">{status}</output>
-    </form>
+    </div>
   </ComponentPlayground>;
 }
 
@@ -347,6 +333,7 @@ export function InputExamples() {
 export function TextareaExamples() {
   const { t, locale } = useLocale();
   const [value, setValue] = useState('');
+  const [submitted, setSubmitted] = useState('');
   const [size, setSize] = useState<InputSize>('md');
   const [rows, setRows] = useState(3);
   const [maxLength, setMaxLength] = useState('120');
@@ -362,14 +349,8 @@ export function TextareaExamples() {
   const [readOnly, setReadOnly] = useState(false);
   const [invalid, setInvalid] = useState(false);
   const [required, setRequired] = useState(false);
-  const [status, setStatus] = useState('');
   const code = `const [value, setValue] = useState(${quote(value)});
-const [status, setStatus] = useState('');
 
-<form noValidate onReset={() => { setValue(''); setStatus(''); }} onSubmit={event => {
-  event.preventDefault();
-  setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
-}}>
   <Field label=${quote(t('笔记内容'))}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t('请输入笔记内容'))}` : ''}>
     <Textarea name="notes" size="${size}" rows={${rows}}${maxLength !== 'none' ? ` maxLength={${maxLength}}` : ''}
       countMode="${countMode}" countDisplay="${countDisplay}" countThreshold={${countThreshold}} resize="${resizable ? 'vertical' : 'none'}"
@@ -378,11 +359,7 @@ const [status, setStatus] = useState('');
       value={value} onChange={event => setValue(event.target.value)}
       placeholder=${quote(t('写下你的想法'))}${readOnly ? ' readOnly' : ''}${disabled ? ' disabled' : ''}
     />
-  </Field>
-  <Button type="submit" disabled={${disabled}}>${t('读取表单')}</Button>
-  <Button type="reset" variant="secondary">${t('重置')}</Button>
-  <output aria-live="polite">{status}</output>
-</form>`;
+  </Field>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
@@ -406,13 +383,30 @@ const [status, setStatus] = useState('');
         <Switch label={t('错误状态')} checked={invalid} onCheckedChange={setInvalid} />
       </> },
     ]} />}>
-      <form className="component-demo-form" noValidate onReset={() => { setValue(''); setStatus(''); }} onSubmit={event => { event.preventDefault(); setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))); }}>
+      <div className="component-demo-form">
         <Field label={t('笔记内容')} required={required} invalid={invalid} error={invalid ? t('请输入笔记内容') : undefined}><Textarea name="notes" size={size} rows={rows} maxLength={maxLength === 'none' ? undefined : Number(maxLength)} value={value} onChange={event => setValue(event.target.value)} placeholder={t('写下你的想法')} readOnly={readOnly} disabled={disabled}
           countMode={countMode} countDisplay={countDisplay} countThreshold={Number(countThreshold)} getCountLabel={countLabel} resize={resizable ? 'vertical' : 'none'} resizeLabel={zh ? '调整输入框高度' : 'Resize text area'} /></Field>
-        <div className="component-demo-row"><Button type="submit" disabled={disabled}>{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
-        <output aria-live="polite" className="component-demo-status input-examples__status">{status}</output>
-      </form>
+      </div>
     </ComponentPlayground>
+    <ComponentExample title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`const [submitted, setSubmitted] = useState('');
+<form onSubmit={event => {
+  event.preventDefault();
+  setSubmitted(String(new FormData(event.currentTarget).get('notes') ?? ''));
+}} onReset={() => setSubmitted('')}>
+  <Field label=${quote(t('笔记内容'))}><Textarea name="notes" defaultValue="Inkra" /></Field>
+  <Button type="submit">${t('读取表单')}</Button>
+  <Button type="reset" variant="outline">${t('重置')}</Button>
+  <output aria-live="polite">{submitted}</output>
+</form>`}>
+      <form className="component-demo-form" data-testid="textarea-form" onSubmit={event => {
+        event.preventDefault();
+        setSubmitted(String(new FormData(event.currentTarget).get('notes') ?? ''));
+      }} onReset={() => setSubmitted('')}>
+        <Field label={t('笔记内容')}><Textarea name="notes" defaultValue="Inkra" /></Field>
+        <div className="component-demo-actions"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="outline">{t('重置')}</Button></div>
+        <output aria-live="polite">{submitted}</output>
+      </form>
+    </ComponentExample>
     <ComponentExample title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('简短备注')} description={t('最多 40 个 UTF-16 码元')}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder={t('写下你的想法')} /></Field>
@@ -428,10 +422,10 @@ const [status, setStatus] = useState('');
 export function FieldExamples() {
   const { t } = useLocale();
   const [value, setValue] = useState('');
-  const [required, setRequired] = useState(true);
+  const [required, setRequired] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
-  const [description, setDescription] = useState(true);
+  const [description, setDescription] = useState(false);
   const [invalid, setInvalid] = useState(false);
   const [multiline, setMultiline] = useState(false);
   const tag = multiline ? 'Textarea' : 'Input';

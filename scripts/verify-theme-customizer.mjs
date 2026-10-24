@@ -121,7 +121,7 @@ try {
     await changed(line, lineBefore);
     await changed(cardInk, cardBefore);
     await changed(surface, buttonBefore);
-    await changed(iconInk, iconBefore);
+    assert.equal(await iconInk.evaluate(pixelHash), iconBefore, 'icon weight is independent of the general stroke weight');
     const thickLine = await line.evaluate(pixelHash);
     const thickCard = await cardInk.evaluate(pixelHash);
     const thickButton = await surface.evaluate(pixelHash);

@@ -18,7 +18,7 @@ const waitForValue = async (input, expected) => {
 
 async function assertPencilFocus(scope, focusTarget) {
   await focusTarget.focus();
-  const focusLayers = scope.locator('.inkra-color-picker__focus');
+  const focusLayers = scope.locator('.inkra-color-picker__focus, .inkra-color-swatch > .inkra-button__focus-ring');
   const activeIndex = await focusLayers.evaluateAll(nodes => nodes.findIndex(node => getComputedStyle(node).opacity === '1'));
   assert(activeIndex >= 0, 'focused action exposes a pencil focus surface');
   assert.equal(await focusLayers.evaluateAll(nodes => nodes.filter(node => getComputedStyle(node).opacity === '1').length), 1);

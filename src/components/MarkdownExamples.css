@@ -1,0 +1,4 @@
+.markdown-examples { display: grid; gap: var(--inkra-space-5); min-width: 0; }
+.markdown-examples .component-example__preview { align-items: start; }
+.markdown-examples .inkra-markdown { width: 100%; }
+.markdown-examples .inkra-markdown__image-frame { max-width: 96px; }

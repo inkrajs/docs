@@ -104,6 +104,7 @@ try {
   await internalInput.fill('Cancelled title');
   await internalCase.getByRole('button', { name: 'Cancel internal' }).click();
   assert.match(await internalCase.locator('[data-editable-display="true"]').innerText(), /Internal title/);
+  await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Edit internal title');
   assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Edit internal title');
   assert.deepEqual((await events()).internalCancel, ['Internal title']);
 
@@ -143,14 +144,14 @@ try {
       const height = selector => root.querySelector(selector)?.getBoundingClientRect().height ?? null;
       return {
         display: height('[data-editable-display="true"]'),
-        surface: height('.inkra-editable__display-surface'),
+        surface: height('.inkra-editable__focus-ring'),
         shell: height('.inkra-editable__display-shell'),
         frame: height('.inkra-editable__frame'),
         editButton: height('button[aria-label^="Edit "]'),
       };
     });
-    assert.ok(Math.abs(viewGeometry.display - expected) <= 1,
-      `${size} view surface matches ${expected}px control size; actual geometry ${JSON.stringify(viewGeometry)}`);
+    assert.ok(Math.abs(viewGeometry.display - Math.max(44, expected)) <= 1,
+      `${size} plain text keeps the input's hit geometry; actual geometry ${JSON.stringify(viewGeometry)}`);
     assert.ok(Math.abs(viewGeometry.surface - expected) <= 1,
       `${size} PencilSurface matches ${expected}px control size; actual geometry ${JSON.stringify(viewGeometry)}`);
     assert.ok(viewGeometry.shell >= 44 && viewGeometry.frame >= 44 && viewGeometry.editButton >= 44,
@@ -193,7 +194,8 @@ try {
   const customCase = page.getByTestId('custom-controlled-case');
   await customCase.getByRole('link', { name: 'Controlled note' }).click();
   assert.equal(await customCase.locator('[data-editable-editor="true"]').count(), 0, 'nested display link does not start editing');
-  await customCase.getByRole('button', { name: 'Edit controlled note' }).click();
+  await customCase.getByRole('button', { name: 'Edit controlled note' }).focus();
+  await page.keyboard.press('Enter');
   const customEditor = customCase.locator('[data-editable-editor="true"] textarea');
   await customEditor.fill('Updated controlled note');
   await customCase.getByRole('button', { name: 'Save controlled' }).click();

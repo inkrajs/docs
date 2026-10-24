@@ -45,8 +45,7 @@ const [status, setStatus] = useState('');
       </Overlay.Footer>
     </Overlay.Content>
   </Overlay.Portal>
-</Overlay.Root>
-<output aria-live="polite">{status}</output>`;
+</Overlay.Root>`;
   const nestedCode = `const [open, setOpen] = useState(false);
 const [notifications, setNotifications] = useState(false);
 
@@ -85,6 +84,7 @@ const [notifications, setNotifications] = useState(false);
         <Switch label={t('展开')} checked={open} onCheckedChange={setOpen} />
         <Switch label={t('外部点击关闭')} checked={outsideClose} onCheckedChange={setOutsideClose} />
         <Switch label={t('Escape 关闭')} checked={escapeClose} onCheckedChange={setEscapeClose} />
+        {status && <output aria-live="polite">{status}</output>}
       </> },
     ]} />}>
       <div className="component-demo-form">
@@ -112,7 +112,6 @@ const [notifications, setNotifications] = useState(false);
             </Overlay.Content>
           </Overlay.Portal>
         </Overlay.Root>
-        <output className="component-demo-status" aria-live="polite">{status}</output>
       </div>
     </ComponentPlayground>
     <ScrollableOverlayExample />

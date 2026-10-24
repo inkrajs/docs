@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Field,
   Hotkey,
@@ -37,19 +37,17 @@ function HotkeyPlayground() {
   const [blurOnCapture, setBlurOnCapture] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
-  const [checkConflict, setCheckConflict] = useState(true);
-  const [status, setStatus] = useState('');
+  const [checkConflict, setCheckConflict] = useState(false);
   const placeholder = zh ? '按下快捷键' : 'Press a shortcut';
   const recordingLabel = zh ? '正在录入，请按组合键…' : 'Recording: press a shortcut...';
   const clearButtonLabel = zh ? '清除快捷键' : 'Clear shortcut';
   const conflictMessage = zh ? '快捷键已被占用' : 'Shortcut already assigned';
-  useEffect(() => setStatus(''), [locale]);
   const code = `const [shortcut, setShortcut] = useState<HotkeyValue | null>(${JSON.stringify(value)});
 
 <Field label="${zh ? '命令面板快捷键' : 'Command palette shortcut'}">
   <HotkeyInput
     value={shortcut}
-    onValueChange={(next, details) => setShortcut(next)}
+    onValueChange={setShortcut}
     platform="${platform}" size="${size}"
     clearable={${clearable}} blurOnCapture={${blurOnCapture}}
     disabled={${disabled}} readOnly={${readOnly}}
@@ -62,7 +60,6 @@ function HotkeyPlayground() {
         ? '${zh ? '已分配给快速打开' : 'Already assigned to Quick Open'}'
         : undefined
     }
-    onCancel={() => setStatus('${zh ? '已取消录入' : 'Recording cancelled'}')}
   />
 </Field>`;
 
@@ -86,7 +83,6 @@ function HotkeyPlayground() {
     <div className="hotkey-examples__stage">
       <Field
         label={zh ? '命令面板快捷键' : 'Command palette shortcut'}
-        description={zh ? '聚焦后按下组合键；Escape 取消，Delete 或 Backspace 清除。' : 'Focus and press a combination. Escape cancels; Delete or Backspace clears.'}
       >
         <HotkeyInput
           aria-label={zh ? '录入命令面板快捷键' : 'Record command palette shortcut'}
@@ -95,11 +91,7 @@ function HotkeyPlayground() {
           clearButtonLabel={clearButtonLabel}
           conflictMessage={conflictMessage}
           disabled={disabled}
-          onCancel={() => setStatus(zh ? '已取消录入' : 'Recording cancelled')}
-          onValueChange={(next, details) => {
-            setValue(next);
-            setStatus(details.conflict ?? (details.reason === 'clear' ? (zh ? '已清除' : 'Cleared') : (zh ? '已录入' : 'Recorded')));
-          }}
+          onValueChange={setValue}
           platform={platform}
           placeholder={placeholder}
           readOnly={readOnly}
@@ -111,7 +103,6 @@ function HotkeyPlayground() {
           value={value}
         />
       </Field>
-      <output aria-live="polite" className="hotkey-examples__status">{status}</output>
     </div>
   </ComponentPlayground>;
 }

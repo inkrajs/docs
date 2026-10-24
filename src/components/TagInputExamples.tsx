@@ -73,10 +73,9 @@ function TagInputPlayground() {
   const [variant, setVariant] = useState<TagInputVariant>('outline');
   const [maxTags, setMaxTags] = useState(5);
   const [clearable, setClearable] = useState(true);
-  const [validateLength, setValidateLength] = useState(true);
+  const [validateLength, setValidateLength] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [status, setStatus] = useState('');
   const labels = useMemo(() => exampleLabels(zh), [zh]);
   const code = `const [tags, setTags] = useState<TagInputTag[]>([
   { id: 'react', value: 'react', label: 'React' },
@@ -85,12 +84,11 @@ function TagInputPlayground() {
 
 <Field
   label="${zh ? '项目标签' : 'Project tags'}"
-  description="${zh ? '输入后按 Enter，或粘贴逗号、分号、换行分隔的内容。' : 'Press Enter, or paste comma, semicolon, or newline-separated text.'}"
 >
   <TagInput
     name="tags"
     value={tags}
-    onValueChange={(next, details) => setTags([...next])}
+    onValueChange={next => setTags([...next])}
     size="${size}" variant="${variant}" maxTags={${maxTags}}
     clearable={${clearable}} readOnly={${readOnly}} disabled={${disabled}}
     validateTag={candidate =>
@@ -125,9 +123,6 @@ function TagInputPlayground() {
     <div className="tag-input-examples__stage">
       <Field
         label={zh ? '项目标签' : 'Project tags'}
-        description={zh
-          ? '输入后按 Enter，或粘贴逗号、分号、换行分隔的内容。'
-          : 'Press Enter, or paste comma, semicolon, or newline-separated text.'}
       >
         <TagInput
           clearable={clearable}
@@ -135,12 +130,7 @@ function TagInputPlayground() {
           labels={labels}
           maxTags={maxTags}
           name="tags"
-          onValidationError={message => setStatus(message)}
-          onValueChange={(next, details) => {
-            setTags([...next]);
-            const affected = details.tags.map(tag => tag.label ?? tag.value).join(', ');
-            setStatus(zh ? `${details.reason}：${affected}` : `${details.reason}: ${affected}`);
-          }}
+          onValueChange={next => setTags([...next])}
           placeholder={zh ? '添加标签' : 'Add a tag'}
           readOnly={readOnly}
           size={size}
@@ -151,9 +141,6 @@ function TagInputPlayground() {
           variant={variant}
         />
       </Field>
-      <output aria-live="polite" className="tag-input-examples__status">
-        {status || (zh ? `${tags.length}/${maxTags} 个标签` : `${tags.length}/${maxTags} tags`)}
-      </output>
     </div>
   </ComponentPlayground>;
 }

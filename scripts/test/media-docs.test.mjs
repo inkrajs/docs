@@ -21,3 +21,16 @@ test('image recovery example preserves the item id and changes its source', () =
   assert.match(viewer, /<ImageViewer\.Content dir=\{direction\}/);
   assert.match(viewer, /\{items\.map\(item => <img/);
 });
+
+test('mixed resource example uses local playable video and localized controls', () => {
+  const viewer = read('ImageViewer');
+  assert.match(viewer, /<MediaViewer\.Root items=/);
+  assert.match(viewer, /type: 'video'/);
+  assert.match(viewer, /src: '\/media\/inkra-artwork\.webm'/);
+  assert.match(viewer, /<MediaViewer\.Content videoLabels=/);
+  for (const label of ['controls', 'play', 'pause', 'seek', 'mute', 'unmute', 'volume', 'rate', 'playbackError']) {
+    assert(viewer.includes(`${label}: text(`), `${label} is localized`);
+  }
+  const bytes = readFileSync(new URL('../../public/media/inkra-artwork.webm', import.meta.url));
+  assert.equal(bytes.subarray(0, 4).toString('hex'), '1a45dfa3', 'local demo is a WebM container');
+});

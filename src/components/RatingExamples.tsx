@@ -35,16 +35,14 @@ export function RatingExamples() {
   const [readOnly, setReadOnly] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [hoverPreview, setHoverPreview] = useState(true);
-  const [preview, setPreview] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const zh = locale === 'zh-CN';
   const code = `const [value, setValue] = useState(${value});
-const [preview, setPreview] = useState<number | null>(null);
 
 <Rating aria-label="${text.quality}" value={value} onValueChange={setValue}
   count={${count}} step={${step}} size="${size}" dir="${dir}"
   clearable={${JSON.stringify(clearable)}} readOnly={${readOnly}} disabled={${disabled}}
-  hoverPreview={${hoverPreview}} onPreviewChange={setPreview}
+  hoverPreview={${hoverPreview}}
   getValueLabel={(value, count) => \`${'${value} / ${count}'}\`} />`;
 
   return <>
@@ -85,11 +83,8 @@ const [preview, setPreview] = useState<number | null>(null);
           readOnly={readOnly}
           disabled={disabled}
           hoverPreview={hoverPreview}
-          onPreviewChange={setPreview}
           getValueLabel={(nextValue, maximum) => `${nextValue} / ${maximum}`}
         />
-        <output className="rating-demo__value" aria-live="polite"><PencilText>{text.value}</PencilText>: {value} / {count}</output>
-        <span className="rating-demo__value"><PencilText>{`${zh ? '预览值' : 'Preview value'}: ${preview ?? '-'}`}</PencilText></span>
       </div>
     </ComponentPlayground>
     <ComponentExample title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`<form onSubmit={event => {

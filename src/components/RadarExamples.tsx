@@ -39,7 +39,7 @@ export function RadarExamples() {
   const [selected, setSelected] = useState<RadarKey | null>('alpha');
   const [showLabels, setShowLabels] = useState(true);
   const [showValues, setShowValues] = useState(true);
-  const [showTable, setShowTable] = useState(true);
+  const [showTable, setShowTable] = useState(false);
   const [levels, setLevels] = useState('4');
   const code = `<Radar\n  label=${quote(text('能力画像', 'Capability profile'))}\n  axes={axes}\n  series={series}\n  levels={${levels}}\n  showLabels={${showLabels}}\n  showValues={${showValues}}\n  showTable={${showTable}}\n  selectedSeries=${JSON.stringify(selected)}\n  onSelectedSeriesChange={setSelected}\n/>`;
   return <div className="radar-examples">
@@ -51,7 +51,7 @@ export function RadarExamples() {
         <Switch label={text('显示数据表', 'Show data table')} checked={showTable} onCheckedChange={setShowTable} />
       </> },
     ]} />}>
-      <Radar {...labels} axes={axes} series={series} label={text('能力画像', 'Capability profile')} description={text('每条线都有独立线型和可读数据摘要。', 'Each series has its own line pattern and readable data summary.')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
+      <Radar {...labels} axes={axes} series={series} label={text('能力画像', 'Capability profile')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
     </ComponentPlayground>
     <ComponentExample title={text('缺失值与负值', 'Missing and negative values')} code={'<Radar {...labels} axes={axes} series={[{ id: "beta", label: "Beta", data: [{ axisId: "speed", value: -4 }, { axisId: "clarity", value: null }] }]} label="Boundary values" />'}>
       <Radar {...labels} axes={axes.slice(0, 3)} series={[{ id: 'boundary', label: text('边界样本', 'Boundary sample'), data: [{ axisId: 'speed', value: -4 }, { axisId: 'quality', value: 0 }, { axisId: 'clarity', value: null }] }]} label={text('边界样本', 'Boundary sample')} description={text('0 是有效数值，空值显示为缺失。', 'Zero is measured; null is missing.')} showLegend={false} />

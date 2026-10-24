@@ -53,9 +53,11 @@ test('Native selection APIs expose input events, external forms and usable refs'
   assert(rows.get('radio-group').includes('ref / RadioGroupItem.ref'));
 });
 
-test('ColorPicker documents its hex contract, not unsupported format or readonly controls', () => {
+test('ColorPicker documents its hex and opt-in structured gradient contracts', () => {
   assert.deepEqual(rows.get('color-picker'), [
-    'value / defaultValue', 'onValueChange', 'onInvalidInput', 'presets', 'showAlpha',
+    'presentation',
+    'value / defaultValue', 'onValueChange', 'allowGradient', 'colorTypes', 'maxStops',
+    'gradientLabels', 'ColorGradient', 'formatColorPaint', 'onInvalidInput', 'presets', 'showAlpha',
     'label / labels', 'name / form', 'disabled', 'seed',
   ]);
 });

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, PencilText, Switch } from '@inkra/react';
 
-import { ImageViewer, type ImageViewerItem } from '@inkra/react';
+import { ImageViewer, MediaViewer, type ImageViewerItem } from '@inkra/react';
 import inkraArtwork from '../assets/inkra.png';
 import previewDark from '../assets/preview-dark.png';
 import previewLight from '../assets/preview-light.png';
@@ -138,6 +138,46 @@ export function ImageViewerExamples() {
         <PencilText as="span" aria-live="polite" className="image-viewer-examples__status">{lastChange ? `${text('当前', 'Current')}: ${t(gallery.find(item => item.id === lastChange)?.alt ?? '无')}` : ''}</PencilText>
       </div>
     </ComponentPlayground>
+
+    <ComponentExample title={text('图片与视频', 'Images and video')} code={`<MediaViewer.Root items={[
+  { id: 'artwork', src: artwork, alt: '${text('彩铅图案', 'Pencil artwork')}' },
+  { id: 'motion', type: 'video', src: '/media/inkra-artwork.webm', poster: artwork, alt: '${text('彩铅图案短片', 'Pencil artwork clip')}' },
+]}>
+  <MediaViewer.Trigger asChild><Button>${text('浏览图片与视频', 'Browse images and video')}</Button></MediaViewer.Trigger>
+  <MediaViewer.Content labels={localizedLabels} videoLabels={localizedVideoLabels} />
+</MediaViewer.Root>`}>
+      <div className="image-viewer-examples__gallery" data-testid="media-viewer-mixed">
+        <MediaViewer.Root items={[
+          { ...gallery[2], alt: text('彩铅图案', 'Pencil artwork') },
+          { id: 'artwork-motion', type: 'video', src: '/media/inkra-artwork.webm', poster: inkraArtwork, alt: text('彩铅图案短片', 'Pencil artwork clip') },
+          { ...gallery[0], alt: text('Inkra 文档浅色主题', 'Inkra documentation in light mode') },
+        ]}>
+          <MediaViewer.Trigger asChild><Button variant="outline">{text('浏览图片与视频', 'Browse images and video')}</Button></MediaViewer.Trigger>
+          <MediaViewer.Content videoLabels={{
+            controls: text('视频控制', 'Video controls'),
+            play: text('播放视频', 'Play video'),
+            pause: text('暂停视频', 'Pause video'),
+            seek: text('视频进度', 'Seek video'),
+            mute: text('静音', 'Mute video'),
+            unmute: text('取消静音', 'Unmute video'),
+            volume: text('视频音量', 'Video volume'),
+            rate: text('播放速度', 'Playback speed'),
+            playbackError: text('暂时无法开始播放，请重试。', 'Video playback could not start. Please try again.'),
+          }} labels={{
+            ...labels,
+            title: text('资源查看器', 'Media viewer'),
+            description: text('浏览图片和视频。', 'Browse images and videos.'),
+            close: text('关闭资源查看器', 'Close media viewer'),
+            previous: text('上一个资源', 'Previous resource'),
+            next: text('下一个资源', 'Next resource'),
+            thumbnails: text('资源缩略图', 'Resource thumbnails'),
+            imagePosition: (current, total) => text(`第 ${current} 项，共 ${total} 项`, `${current} of ${total}`),
+            thumbnail: (item, current, total) => text(`查看${item.alt}，第 ${current} 项，共 ${total} 项`, `Show ${item.alt}, ${current} of ${total}`),
+            failedTitle: text('资源暂时无法显示', 'Resource unavailable'),
+          }} />
+        </MediaViewer.Root>
+      </div>
+    </ComponentExample>
 
     <ComponentExample title={text('加载失败与恢复', 'Load failure and recovery')} code={`<Button onClick={() => setRecovered(value => !value)}>${text('切换图片源', 'Switch image source')}</Button>
 <ImageViewer.Root items={[{ id: 'preview', src: recovered ? previewLight : '/missing-image.png', alt: '${text('预览图片', 'Preview image')}' }]}>

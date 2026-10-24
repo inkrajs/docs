@@ -41,7 +41,6 @@ export function RangeSliderExamples() {
     valueLabels: ['最低值', '最高值'] as [string, string],
   };
   const [value, setValue] = useState<RangeSliderValue>([20, 80]);
-  const [committed, setCommitted] = useState<RangeSliderValue | null>(null);
   const [step, setStep] = useState(5);
   const [minDistance, setMinDistance] = useState(10);
   const [allowCross, setAllowCross] = useState(false);
@@ -52,12 +51,10 @@ export function RangeSliderExamples() {
   const [formResult, setFormResult] = useState('');
   const labels = copy.labels;
   const code = `const [value, setValue] = useState<[number, number]>(${JSON.stringify(value)});
-const [committed, setCommitted] = useState<[number, number] | null>(null);
 
 <RangeSlider
   value={value}
   onValueChange={setValue}
-  onValueCommit={setCommitted}
   min={0}
   max={100}
   step={${step}}
@@ -69,8 +66,7 @@ const [committed, setCommitted] = useState<[number, number] | null>(null);
   size="${size}"
   dir="${dir}"
   disabled={${disabled}}
-/>
-<output>{value.join(' - ')}</output>`;
+/>`;
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
@@ -80,16 +76,14 @@ const [committed, setCommitted] = useState<[number, number] | null>(null);
         <DocsSelect label={copy.direction} value={dir} onValueChange={next => setDir(next as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
       </> },
       { label: '交互', content: <>
-        <DocsSelect label={copy.step} value={String(step)} onValueChange={next => { setStep(Number(next)); setValue([20, 80]); setCommitted(null); }} options={[["1", "1"], ["5", "5"], ["10", "10"]]} />
-        <DocsSelect label={copy.minimumDistance} value={String(minDistance)} onValueChange={next => { setMinDistance(Number(next)); setValue([20, 80]); setCommitted(null); }} options={[["0", "0"], ["10", "10"], ["20", "20"]]} />
-        <Switch label={copy.allowCross} checked={allowCross} onCheckedChange={next => { setAllowCross(next); setMinDistance(0); setValue([20, 80]); setCommitted(null); }} />
+        <DocsSelect label={copy.step} value={String(step)} onValueChange={next => { setStep(Number(next)); setValue([20, 80]); }} options={[["1", "1"], ["5", "5"], ["10", "10"]]} />
+        <DocsSelect label={copy.minimumDistance} value={String(minDistance)} onValueChange={next => { setMinDistance(Number(next)); setValue([20, 80]); }} options={[["0", "0"], ["10", "10"], ["20", "20"]]} />
+        <Switch label={copy.allowCross} checked={allowCross} onCheckedChange={next => { setAllowCross(next); setMinDistance(0); setValue([20, 80]); }} />
       </> },
       { label: '状态', content: <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
       <div className="range-slider-demo">
-        <RangeSlider value={value} onValueChange={setValue} onValueCommit={setCommitted} min={0} max={100} step={step} minDistance={minDistance} allowCross={allowCross} thumbLabels={labels} getValueLabel={number => `$${number}`} variant={variant} size={size} dir={dir} disabled={disabled} />
-        <output className="range-slider-demo__value">${value[0]} - ${value[1]}</output>
-        <output className="range-slider-demo__commit" aria-live="polite">{t('提交值')}: {committed ? `$${committed[0]} - $${committed[1]}` : ''}</output>
+        <RangeSlider value={value} onValueChange={setValue} min={0} max={100} step={step} minDistance={minDistance} allowCross={allowCross} thumbLabels={labels} getValueLabel={number => `$${number}`} variant={variant} size={size} dir={dir} disabled={disabled} />
       </div>
     </ComponentPlayground>
 

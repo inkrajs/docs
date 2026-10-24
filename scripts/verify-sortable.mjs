@@ -45,6 +45,10 @@ async function touchDrag(page, source, target) {
     await page.waitForTimeout(24);
   }
   await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.locator('.inkra-sortable__overlay').waitFor({ state: 'detached' });
+  // dnd-kit's pointer sensor retains click suppression for 50ms after release.
+  await page.waitForTimeout(60);
+  await client.detach();
 }
 
 try {
@@ -88,6 +92,8 @@ try {
       await firstHandle.focus();
       await page.keyboard.press('Space');
       await page.locator('.inkra-sortable__overlay').waitFor();
+      // KeyboardSensor attaches its listener after activation; allow layout measurement too.
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       await page.keyboard.press('ArrowDown');
       await page.waitForFunction(() => document.querySelector('[data-testid="sortable-playground"] [data-sortable-id]')?.getAttribute('data-sortable-id') === 'sketch');
       await page.keyboard.press('Escape');
@@ -103,6 +109,7 @@ try {
       await firstHandle.focus();
       await page.keyboard.press('Space');
       await page.locator('.inkra-sortable__overlay').waitFor();
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       await page.keyboard.press('ArrowDown');
       await page.waitForFunction(() => document.querySelector('[data-testid="sortable-playground"] [data-sortable-id]')?.getAttribute('data-sortable-id') === 'sketch');
       assert.deepEqual(await ids(root), ['sketch', 'outline', 'review', 'polish'], 'one arrow moves one position before drop');

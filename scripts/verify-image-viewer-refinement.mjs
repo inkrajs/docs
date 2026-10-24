@@ -84,21 +84,56 @@ try {
   await trigger.press('Enter');
   const viewer = page.locator('.inkra-image-viewer');
   const stage = viewer.locator('.inkra-image-viewer__stage');
+  const bottom = viewer.locator('.inkra-image-viewer__bottom');
   const tools = viewer.locator('.inkra-image-viewer__tools');
+  const close = viewer.getByRole('button', { name: 'Close refined image viewer', exact: true });
   await viewer.waitFor();
   await stage.waitFor();
   await page.waitForFunction(node => node.querySelector('img')?.complete, await stage.elementHandle());
 
-  const centers = await viewer.evaluate(node => {
+  const geometry = await viewer.evaluate(node => {
+    const viewer = node.getBoundingClientRect();
     const stage = node.querySelector('.inkra-image-viewer__stage').getBoundingClientRect();
+    const bottom = node.querySelector('.inkra-image-viewer__bottom').getBoundingClientRect();
     const tools = node.querySelector('.inkra-image-viewer__tools').getBoundingClientRect();
-    const header = node.querySelector('.inkra-overlay__header').getBoundingClientRect();
-    return { headerHeight: header.height, stageCenter: stage.left + stage.width / 2, stageHeight: stage.height, toolsCenter: tools.left + tools.width / 2 };
+    return {
+      bottomTop: bottom.top,
+      stageBottom: stage.bottom,
+      stageHeight: stage.height,
+      toolsBottom: tools.bottom,
+      toolsTop: tools.top,
+      viewer: { bottom: viewer.bottom, height: viewer.height, left: viewer.left, right: viewer.right, top: viewer.top, width: viewer.width },
+      viewport: { height: innerHeight, width: innerWidth },
+    };
   });
-  assert(Math.abs(centers.stageCenter - centers.toolsCenter) <= 1, JSON.stringify(centers));
-  assert(centers.stageHeight >= 44, 'short viewport retains a usable stage');
+  assert(Math.abs(geometry.viewer.left) <= 1 && Math.abs(geometry.viewer.top) <= 1
+    && Math.abs(geometry.viewer.width - geometry.viewport.width) <= 1
+    && Math.abs(geometry.viewer.height - geometry.viewport.height) <= 1, JSON.stringify(geometry));
+  assert.equal(await viewer.locator('.inkra-overlay__header').count(), 0, 'fullscreen viewer has no visible header');
+  assert.equal(await viewer.locator('.inkra-image-viewer__accessible-label').count(), 2, 'dialog keeps hidden title and description');
+  assert(geometry.stageHeight >= 44 && geometry.stageBottom <= geometry.bottomTop + 1, JSON.stringify(geometry));
+  assert(geometry.toolsTop >= geometry.bottomTop - 1 && geometry.toolsBottom <= geometry.viewer.bottom + 1, JSON.stringify(geometry));
+  const shellInk = viewer.locator(':scope > .inkra-overlay__surface > .inkra-pencil-surface__ink');
+  assert.equal(await shellInk.evaluate(node => getComputedStyle(node).display), 'none');
+  assert(await shellInk.evaluate(node => node.width * node.height <= 300 * 150), 'fullscreen shell never allocates a viewport-sized decorative bitmap');
+  await assertNotClipped(close, viewer, 'corner close remains inside the fullscreen viewer');
   await assertPanZoomFitsStage(stage, 'initial image');
-  await assertNotClipped(tools, stage, 'all viewer tools remain inside every clipping ancestor');
+  await assertNotClipped(tools, bottom, 'all viewer tools remain inside bottom chrome');
+  const thumbnailGeometry = await viewer.locator('.inkra-image-viewer__thumbnails').evaluate(node => {
+    const items = [...node.querySelectorAll('.inkra-image-viewer__thumbnail')].map(item => item.getBoundingClientRect());
+    const rect = node.getBoundingClientRect();
+    return {
+      center: items.length ? (items[0].left + items.at(-1).right) / 2 : null,
+      overflow: node.scrollWidth > node.clientWidth + 1,
+      viewportCenter: rect.left + rect.width / 2,
+    };
+  });
+  if (!thumbnailGeometry.overflow && thumbnailGeometry.center !== null) {
+    assert(Math.abs(thumbnailGeometry.center - thumbnailGeometry.viewportCenter) <= 1, JSON.stringify(thumbnailGeometry));
+  }
+  for (const thumbnail of await viewer.locator('.inkra-image-viewer__thumbnail').all()) {
+    await assertNotClipped(thumbnail, bottom, 'thumbnail remains fully visible inside bottom chrome');
+  }
 
   await stage.focus();
   const stageFocus = stage.locator(':scope > .inkra-image-viewer__stage-focus');
@@ -131,7 +166,7 @@ try {
   for (const name of ['Zoom out refined image', 'Reset refined zoom', 'Zoom in refined image', 'Rotate refined image']) {
     const control = viewer.getByRole('button', { name, exact: true });
     await control.focus();
-    await assertNotClipped(control, stage, `${name} remains keyboard reachable`);
+    await assertNotClipped(control, bottom, `${name} remains keyboard reachable`);
     await control.press('Enter');
   }
   for (const name of ['Zoom out refined image', 'Zoom in refined image', 'Rotate refined image', 'Previous refined image', 'Next refined image']) {
@@ -155,7 +190,7 @@ try {
   await page.getByTestId('clear-images').evaluate(node => node.click());
   await viewer.getByText('Refined empty', { exact: true }).waitFor();
   const emptyState = viewer.locator('.inkra-image-viewer__state');
-  await viewer.getByRole('button', { name: 'Close refined image viewer', exact: true }).focus();
+  await close.focus();
   await page.keyboard.press('Tab');
   assert(await emptyState.evaluate(node => node === document.activeElement), 'Tab reaches the empty state from the close action');
   await page.waitForFunction(node => getComputedStyle(node.querySelector('.inkra-image-viewer__stage-focus')).opacity === '1', await emptyState.elementHandle());
@@ -166,9 +201,12 @@ try {
     && document.querySelectorAll('.inkra-image-viewer__navigation > .inkra-button').length === 2);
   const restoredStage = viewer.locator('.inkra-image-viewer__stage');
   await assertPanZoomFitsStage(restoredStage, 'restored image');
-  await assertNotClipped(viewer.locator('.inkra-image-viewer__tools'), restoredStage, 'restored tools remain visible');
+  await assertNotClipped(viewer.locator('.inkra-image-viewer__tools'), viewer.locator('.inkra-image-viewer__bottom'), 'restored tools remain visible');
   for (const control of await viewer.locator('.inkra-image-viewer__navigation > .inkra-button').all()) {
     await assertNotClipped(control, restoredStage, 'restored navigation remains visible');
+  }
+  for (const thumbnail of await viewer.locator('.inkra-image-viewer__thumbnail').all()) {
+    await assertNotClipped(thumbnail, viewer.locator('.inkra-image-viewer__bottom'), 'restored thumbnail remains fully visible');
   }
   assert.equal(await viewer.evaluate(node => getComputedStyle(node).animationName), 'none');
   assert.equal(await viewer.getAttribute('data-inkra-theme'), 'dark');

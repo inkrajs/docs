@@ -106,6 +106,10 @@ test('PanZoom examples use pencil primitives and declarative controlled fitting'
   assert.match(examples, /<output className="pan-zoom-examples__output"><PencilText>/);
   assert.match(examples, /<output><PencilText>/);
   assert.match(examples, /const \[minScale, setMinScale\] = useState\(0\.2\)/);
+  assert.match(examples, /const \[limitToBounds, setLimitToBounds\] = useState\(false\)/);
+  assert.match(examples, /label=\{text\('限制平移边界', 'Limit pan bounds'\)\}/);
+  assert.match(examples, /limitToBounds=\{limitToBounds\}/);
+  assert.match(examples, /centerZoomedOut=\{false\}/);
   assert.match(examples, /wheel="disabled"\s+fitOnInit/);
   assert.doesNotMatch(examples, /controlledRef\.current\?\.fit\(\{ duration: 0 \}\)/);
   assert.doesNotMatch(examples, /controlledDidFitRef/);

@@ -9,7 +9,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('http://127.0.0.1:4180/components/icon#preview');
     const playground = page.locator('.component-playground');
-    const icon = playground.locator('.icon-examples__stage > canvas');
+    const icon = playground.locator('.icon-examples__stage > canvas').first();
     const pixels = () => icon.evaluate(canvas => Array.from(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data));
     const select = async (label, option) => {
       await playground.getByRole('combobox', { name: label, exact: true }).click();

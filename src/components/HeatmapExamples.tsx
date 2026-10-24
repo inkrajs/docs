@@ -133,8 +133,6 @@ export function HeatmapExamples() {
   missingValueLabel="${text.missing}"
 />`;
 
-  const selectedRow = rows.find(row => row.id === selectedCell?.rowId)?.label;
-  const selectedColumn = columns.find(column => column.id === selectedCell?.columnId)?.label;
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
@@ -155,7 +153,6 @@ export function HeatmapExamples() {
       <div className="heatmap-demo">
         <Heatmap
           label={text.title}
-          description={text.description}
           rows={rows}
           columns={columns}
           cells={cells}
@@ -171,9 +168,6 @@ export function HeatmapExamples() {
           onSelectedCellChange={setSelectedCell}
           getValueLabel={value => `${value}%`}
         />
-        <output aria-live="polite" className="heatmap-demo__selection">
-          <PencilText>{text.selected}</PencilText>: {selectedRow && selectedColumn ? `${selectedRow} · ${selectedColumn}` : text.none}
-        </output>
       </div>
     </ComponentPlayground>
 

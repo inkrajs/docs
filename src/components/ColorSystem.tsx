@@ -127,12 +127,12 @@ type Palette = typeof themeScales[number];
 export function paletteStyle(scale: Palette, theme: ThemeName): TokenStyle {
   const dark = darkScales[scale.id];
   return {
-    '--inkra-accent': theme === 'light' ? scale.values[6][1] : dark[6],
-    '--inkra-accent-soft': theme === 'light' ? scale.values[4][1] : dark[5],
+    '--inkra-accent': theme === 'light' ? scale.values[3][1] : dark[2],
+    '--inkra-accent-soft': theme === 'light' ? scale.values[2][1] : dark[1],
     '--inkra-accent-strong': theme === 'light' ? scale.values[8][1] : dark[8],
     '--inkra-on-accent': theme === 'light' ? scale.values[9][1] : dark[10],
-    '--inkra-selection-pigment': theme === 'light' ? scale.values[6][1] : dark[6],
-    '--inkra-selection-foreground': theme === 'light' ? scale.values[9][1] : dark[10],
+    '--inkra-selection-pigment': theme === 'light' ? scale.values[4][1] : dark[3],
+    '--inkra-selection-foreground': theme === 'light' ? scale.values[10][1] : dark[10],
   };
 }
 

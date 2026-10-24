@@ -52,7 +52,8 @@ try {
     await controls(playground, false);
     const before = await tree.locator('.inkra-tree-select__control').boundingBox();
     await tree.getByRole('button', { name: copy('清空树选择', 'Clear tree selection'), exact: true }).click();
-    await page.waitForFunction(() => document.querySelector('.tree-select-demo__output')?.textContent.includes('[]'));
+    await tree.locator('.inkra-tree-select__value[data-placeholder="true"]').waitFor();
+    assert.equal(await tree.locator('.inkra-tree-select__value').textContent(), copy('选择工作区', 'Choose workspaces'));
     const after = await tree.locator('.inkra-tree-select__control').boundingBox();
     assert(Math.abs(after.height - 48) <= 1 && Math.abs(after.width - before.width) <= 1, 'clearing preserves the shared control geometry');
     await page.waitForFunction(() => document.activeElement?.classList.contains('inkra-tree-select__trigger'));

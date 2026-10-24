@@ -43,6 +43,10 @@ try {
       await page.goto(`${base}/docs/components/${component}#preview`);
       const preview = page.locator('.component-playground .preview-display');
       await preview.waitFor();
+      if (component === 'radar') {
+        await propertiesOpen(page, true);
+        await page.locator('.preview-controls').getByRole('switch', { name: '显示数据表', exact: true }).check();
+      }
       await propertiesOpen(page, false);
       await page.waitForFunction(({ selector, text }) => document.querySelector(selector)?.textContent.includes(text), { selector: '.component-playground .preview-display', text: chinese });
       let activePropertiesPanel;

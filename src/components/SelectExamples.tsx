@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Button, Field, PencilIcon, Select, Slider, Switch, Tooltip } from '@inkra/react';
 import { __iconData as languagesIcon } from 'lucide-react/dist/esm/icons/languages.mjs';
 import { __iconData as usersIcon } from 'lucide-react/dist/esm/icons/users.mjs';
@@ -70,7 +70,6 @@ function VisibilityItems() {
 
 export function SelectExamples() {
   const { t } = useLocale();
-  const triggerRef = useRef<HTMLButtonElement>(null);
   const [value, setValue] = useState('');
   const [multiple, setMultiple] = useState(false);
   const [interactionMode, setInteractionMode] = useState<'dropdown' | 'search-trigger' | 'search-popup' | 'stepper'>('dropdown');
@@ -81,7 +80,6 @@ export function SelectExamples() {
   const [disabled, setDisabled] = useState(false);
   const [invalid, setInvalid] = useState(false);
   const [required, setRequired] = useState(false);
-  const [submittedInvalid, setSubmittedInvalid] = useState(false);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [startIcon, setStartIcon] = useState(false);
   const [endIcon, setEndIcon] = useState(false);
@@ -95,13 +93,11 @@ export function SelectExamples() {
   const [align, setAlign] = useState<'start' | 'center' | 'end'>('start');
   const [offset, setOffset] = useState(8);
   const [collisionPadding, setCollisionPadding] = useState(12);
-  const [status, setStatus] = useState('');
   const [multipleStatus, setMultipleStatus] = useState('');
   const stepper = interactionMode === 'stepper';
   const searchPlacement = interactionMode === 'search-trigger' ? 'trigger' : interactionMode === 'search-popup' ? 'popup' : 'none';
   const playgroundMultiple = !stepper && multiple;
-  const empty = playgroundMultiple ? values.length === 0 : !value;
-  const resolvedInvalid = invalid || (required && submittedInvalid && empty && !disabled);
+  const resolvedInvalid = invalid;
   const items = visibilityOptions.map(([optionValue, label]) => ({ value: optionValue, label: t(label) }));
   const selectableItems = items.map(item => ({ ...item, disabled: item.value === 'public' }));
   const itemCode = visibilityOptions.map(([item, label]) => `              <Select.Item value="${item}"${item === 'public' ? ' disabled' : ''}><Select.ItemText>${t(label)}</Select.ItemText><Select.ItemIndicator /></Select.Item>`).join('\n');
@@ -121,38 +117,21 @@ ${playgroundMultiple ? `            <Select.Clear>${t('清空选择')}</Select.C
   const triggerPropsCode = `hideValue={${hideValue}} hideIndicator={${hideIndicator}} iconOnly={${iconOnly}} fullWidth={${fullWidth}} textAlign="${textAlign}"${startIcon ? ` startIcon={<PencilIcon paths={${JSON.stringify(usersPaths)}} size={${size === 'sm' ? 18 : size === 'lg' ? 26 : 22}} sourceSize={24} />}` : ''}${endIcon ? ` endIcon={<PencilIcon paths={${JSON.stringify(checkPaths)}} size={${size === 'sm' ? 18 : size === 'lg' ? 26 : 22}} sourceSize={24} />}` : ''}`;
   const dropdownCode = `const [value, setValue] = useState(${JSON.stringify(playgroundMultiple ? values : value)});
 const [open, setOpen] = useState(false);
-const [submittedInvalid, setSubmittedInvalid] = useState(false);
-const [status, setStatus] = useState('');
-const triggerRef = useRef(null);
 const required = ${required};
 const disabled = ${disabled};
-const invalid = ${invalid} || (required && submittedInvalid && ${playgroundMultiple ? 'value.length === 0' : '!value'} && !disabled);
+const invalid = ${invalid};
 
-<form noValidate dir="${dir}" onSubmit={event => {
-  event.preventDefault();
-  if (required && ${playgroundMultiple ? 'value.length === 0' : '!value'} && !disabled) {
-    setSubmittedInvalid(true);
-    setStatus('');
-    triggerRef.current?.focus();
-    return;
-  }
-  setStatus(JSON.stringify(${playgroundMultiple ? "{ visibility: new FormData(event.currentTarget).getAll('visibility') }" : 'Object.fromEntries(new FormData(event.currentTarget))'}));
-}} onReset={() => { setValue(${playgroundMultiple ? '[]' : "''"}); setSubmittedInvalid(false); setStatus(''); }}>
   <Field label="${t('可见范围')}" required={required} invalid={invalid} error={invalid ? '${t('请选择可见范围')}' : undefined}>
-    <Select.Root ${playgroundMultiple ? `multiple items={${JSON.stringify(items)}} ` : ''}name="visibility" value={value} onValueChange={next => { setValue(next); setSubmittedInvalid(false); }} open={open} onOpenChange={setOpen} disabled={disabled} readOnly={${readOnly}} dir="${dir}">
+    <Select.Root ${playgroundMultiple ? `multiple items={${JSON.stringify(items)}} ` : ''}name="visibility" value={value} onValueChange={setValue} open={open} onOpenChange={setOpen} disabled={disabled} readOnly={${readOnly}} dir="${dir}">
       <Tooltip.Provider><Tooltip.Root${iconOnly || hideValue ? '' : ' open={false}'}>
         <Tooltip.Trigger asChild>
-          <Select.Trigger ref={triggerRef} aria-label="${t('可见范围')}" size="${size}" ${triggerPropsCode}><Select.Value placeholder="${t('请选择')}" /></Select.Trigger>
+          <Select.Trigger aria-label="${t('可见范围')}" size="${size}" ${triggerPropsCode}><Select.Value placeholder="${t('请选择')}" /></Select.Trigger>
         </Tooltip.Trigger>
         <Tooltip.Portal><Tooltip.Content>${t('可见范围')}</Tooltip.Content></Tooltip.Portal>
       </Tooltip.Root></Tooltip.Provider>
 ${contentCode}
     </Select.Root>
-  </Field>
-  <Button type="submit">${t('读取表单')}</Button>
-  <Button type="reset" variant="secondary">${t('重置')}</Button>
-  <output aria-live="polite">{status}</output>
-</form>`;
+  </Field>`;
   const searchableCode = `const [value, setValue] = useState<${playgroundMultiple ? 'string[]' : 'string | null'}>(${JSON.stringify(playgroundMultiple ? values : value || null)});
 const [open, setOpen] = useState(${open});
 
@@ -167,7 +146,6 @@ const [open, setOpen] = useState(${open});
   const stepperCode = `const [value, setValue] = useState<string | null>(${JSON.stringify(value || null)});
 const items = ${JSON.stringify(selectableItems)};
 
-<form dir="${dir}" onReset={() => setValue(null)}>
   <Field label="${t('可见范围')}" required={${required}} invalid={${resolvedInvalid}}>
     <Select.Stepper
       name="visibility" items={items} value={value} onValueChange={setValue}
@@ -175,9 +153,7 @@ const items = ${JSON.stringify(selectableItems)};
       placeholder="${t('请选择')}"
       previousLabel="${t('选择上一项')}" nextLabel="${t('选择下一项')}"
       disabled={${disabled}} readOnly={${readOnly}} required={${required}} invalid={${resolvedInvalid}} />
-  </Field>
-  <Button type="reset" variant="secondary">${t('重置')}</Button>
-</form>`;
+  </Field>`;
   const defaultCode = `<form>
   <Field label="${t('可见范围')}">
     <Select.Root name="visibility" defaultValue="team">
@@ -216,10 +192,8 @@ ${itemCode}
         setInteractionMode(next as typeof interactionMode);
         if (next === 'stepper') setMultiple(false);
         setOpen(false);
-        setSubmittedInvalid(false);
-        setStatus('');
       }} options={[["dropdown", "下拉选择"], ["search-trigger", "触发器搜索"], ["search-popup", "弹层搜索"], ["stepper", "左右切换"]]} />
-      {!stepper && <Switch label={t('多选')} checked={multiple} onCheckedChange={next => { setMultiple(next); setOpen(false); setSubmittedInvalid(false); setStatus(''); }} />}
+      {!stepper && <Switch label={t('多选')} checked={multiple} onCheckedChange={next => { setMultiple(next); setOpen(false); }} />}
       <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as typeof size)} options={controlSizes} />
     </> }, ...(interactionMode === 'dropdown' ? [{ label: '内容', content: <>
       <Switch label={t('前置图标')} checked={startIcon} onCheckedChange={setStartIcon} />
@@ -246,20 +220,10 @@ ${itemCode}
       <Switch label={t('禁用')} checked={disabled} onCheckedChange={next => { setDisabled(next); if (next) setOpen(false); }} />
       <Switch label={t('错误状态')} checked={invalid} onCheckedChange={setInvalid} />
     </> }]} />}>
-      <form className="component-demo-form" noValidate dir={dir} onSubmit={event => {
-        event.preventDefault();
-        if (required && empty && !disabled) {
-          setSubmittedInvalid(true);
-          setStatus('');
-          event.currentTarget.querySelector<HTMLElement>(stepper ? '[role="spinbutton"]' : '[role="combobox"]')?.focus();
-          return;
-        }
-        const data = new FormData(event.currentTarget);
-        setStatus(JSON.stringify(playgroundMultiple ? { visibility: data.getAll('visibility') } : Object.fromEntries(data)));
-      }} onReset={() => { setValue(''); setValues([]); setSubmittedInvalid(false); setStatus(''); }}>
+      <div className="component-demo-form" dir={dir}>
         <Field label={t('可见范围')} required={required} invalid={resolvedInvalid} error={resolvedInvalid ? t('请选择可见范围') : undefined}>
-          {stepper ? <Select.Stepper ref={triggerRef} items={selectableItems} name="visibility"
-            value={value || null} onValueChange={next => { setValue(next); setSubmittedInvalid(false); }}
+          {stepper ? <Select.Stepper items={selectableItems} name="visibility"
+            value={value || null} onValueChange={setValue}
             loop={loop} size={size} dir={dir} placeholder={t('请选择')}
             previousLabel={t('选择上一项')} nextLabel={t('选择下一项')}
             disabled={disabled} readOnly={readOnly} required={required} invalid={resolvedInvalid}
@@ -270,11 +234,11 @@ ${itemCode}
             size={size} dir={dir} open={open} onOpenChange={setOpen} disabled={disabled} readOnly={readOnly}
             side={side} align={align} sideOffset={offset} collisionPadding={collisionPadding}
           /> : <Select.Root key={String(playgroundMultiple)} {...(playgroundMultiple
-            ? { multiple: true as const, items, value: values, onValueChange: (next: string[]) => { setValues(next); setSubmittedInvalid(false); } }
-            : { value, onValueChange: (next: string) => { setValue(next); setSubmittedInvalid(false); } })}
+            ? { multiple: true as const, items, value: values, onValueChange: setValues }
+            : { value, onValueChange: setValue })}
             name="visibility" open={open} onOpenChange={setOpen} disabled={disabled} readOnly={readOnly} dir={dir}>
             <Tooltip.Provider><Tooltip.Root open={iconOnly || hideValue ? undefined : false}>
-              <Tooltip.Trigger asChild><Select.Trigger ref={triggerRef} size={size} aria-label={t('可见范围')}
+              <Tooltip.Trigger asChild><Select.Trigger size={size} aria-label={t('可见范围')}
                 startIcon={startIcon ? <PencilIcon paths={usersPaths} size={size === 'sm' ? 18 : size === 'lg' ? 26 : 22} sourceSize={24} /> : undefined}
                 endIcon={endIcon ? <PencilIcon paths={checkPaths} size={size === 'sm' ? 18 : size === 'lg' ? 26 : 22} sourceSize={24} /> : undefined}
                 hideValue={hideValue} hideIndicator={hideIndicator} iconOnly={iconOnly} fullWidth={fullWidth} textAlign={textAlign}>
@@ -288,9 +252,7 @@ ${itemCode}
             </Select.Content></Select.Portal>
           </Select.Root>}
         </Field>
-        <div className="component-demo-row"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
-        <output className="component-demo-status" aria-live="polite">{status}</output>
-      </form>
+      </div>
     </ComponentPlayground>
     <TriggerExamples />
     <ComponentExample title="多选" code={`const [result, setResult] = useState('');

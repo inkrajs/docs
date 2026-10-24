@@ -34,8 +34,7 @@ try {
     assert.equal(await primary.getAttribute('type'), 'password');
     await primary.fill(secret);
     assert.equal(await primary.locator('..').locator('.inkra-editable-text').count(), 0);
-    await playground.getByRole('button', { name: zh ? '读取表单' : 'Read form', exact: true }).click();
-    assert(!(await playground.locator('output').innerText()).includes(secret), 'form feedback does not echo passwords');
+    assert(!(await playground.locator('.preview-display').innerText()).includes(secret), 'preview never echoes the password as visible text');
     await playground.getByRole('tab', { name: zh ? '代码' : 'Code', exact: true }).click();
     await settle(page);
     assert(!(await playground.locator('.code-panel').innerText()).includes(secret), 'live source does not contain passwords');

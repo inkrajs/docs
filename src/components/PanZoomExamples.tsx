@@ -82,8 +82,10 @@ export function PanZoomExamples() {
   const text = (chinese: string, english: string) => zh ? chinese : english;
   const ref = useRef<PanZoomRef>(null);
   const [wheel, setWheel] = useState<PanZoomWheelMode>('modifier');
+  const [wheelSpeed, setWheelSpeed] = useState(1);
   const [pan, setPan] = useState(true);
   const [pinch, setPinch] = useState(true);
+  const [limitToBounds, setLimitToBounds] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [minScale, setMinScale] = useState(0.2);
@@ -100,8 +102,11 @@ export function PanZoomExamples() {
     minScale={${minScale}}
     maxScale={${maxScale}}
     wheel="${wheel}"
+    wheelStep={${wheelSpeed * 0.001}}
     pan={${pan}}
     pinch={${pinch}}
+    limitToBounds={${limitToBounds}}
+    centerZoomedOut={false}
     readOnly={${readOnly}}
     disabled={${disabled}}
     fitOnInit
@@ -123,12 +128,14 @@ export function PanZoomExamples() {
           ['always', text('直接滚轮缩放', 'Always zoom')],
           ['disabled', text('关闭滚轮缩放', 'Disable wheel zoom')],
         ]} />
+        <DocsSlider label={text('滚轮缩放速度', 'Wheel zoom speed')} min={0.25} max={3} step={0.25} value={wheelSpeed} onValueChange={setWheelSpeed} unit="x" />
         <Switch label={text('拖动平移', 'Drag to pan')} checked={pan} onCheckedChange={setPan} />
         <Switch label={text('双指缩放', 'Pinch zoom')} checked={pinch} onCheckedChange={setPinch} />
       </> },
       { label: '布局', content: <>
         <DocsSlider label={text('最小缩放', 'Minimum scale')} min={0.1} max={1} step={0.1} value={minScale} onValueChange={value => setMinScale(Math.min(value, maxScale))} />
         <DocsSlider label={text('最大缩放', 'Maximum scale')} min={1} max={8} step={0.5} value={maxScale} onValueChange={value => setMaxScale(Math.max(value, minScale))} />
+        <Switch label={text('限制平移边界', 'Limit pan bounds')} checked={limitToBounds} onCheckedChange={setLimitToBounds} />
         <div className="pan-zoom-examples__control-row">
           <Button aria-label={text('缩小', 'Zoom out')} data-tooltip={text('缩小', 'Zoom out')} size="icon" variant="outline" onClick={() => void ref.current?.zoomOut()} disabled={disabled}><PencilIcon decorative paths={zoomOutPaths} seed="pan-zoom-control-zoom-out" size={22} sourceSize={24} /></Button>
           <Button aria-label={text('放大', 'Zoom in')} data-tooltip={text('放大', 'Zoom in')} size="icon" variant="outline" onClick={() => void ref.current?.zoomIn()} disabled={disabled}><PencilIcon decorative paths={zoomInPaths} seed="pan-zoom-control-zoom-in" size={22} sourceSize={24} /></Button>
@@ -150,8 +157,11 @@ export function PanZoomExamples() {
           minScale={minScale}
           maxScale={maxScale}
           wheel={wheel}
+          wheelStep={wheelSpeed * 0.001}
           pan={pan}
           pinch={pinch}
+          limitToBounds={limitToBounds}
+          centerZoomedOut={false}
           readOnly={readOnly}
           disabled={disabled}
           fitOnInit

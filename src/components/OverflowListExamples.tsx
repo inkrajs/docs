@@ -39,15 +39,17 @@ export function OverflowListExamples() {
     { id: 'share', label: text('分享', 'Share'), icon: icons[5], priority: 6 },
   ], [locale]);
   const gap = density === 'compact' ? 4 : 12;
-  const code = `<OverflowList
+  const code = `const [selected, setSelected] = useState('');
+
+<OverflowList
   items={items}
   strategy="${strategy}"
   gap={${gap}}
   overflowLabel=${JSON.stringify(text('更多操作', 'More actions'))}
-  renderItem={(item) => <Button size="sm" variant="ghost" startIcon={<Icon data={item.icon} />}>{item.label}</Button>}
+  renderItem={(item) => <Button disabled={${disabled}} size="sm" variant="ghost" aria-pressed={selected === item.id} onClick={() => setSelected(item.id)} startIcon={<Icon data={item.icon} />}>{item.label}</Button>}
   renderOverflow={(context) => <MoreIcon aria-hidden="true" />}
   renderOverflowItem={(item) => item.label}
-  onOverflowItemSelect={(item) => select(item.id)}
+  onOverflowItemSelect={(item) => setSelected(item.id)}
 />`;
 
   return <div className="overflow-list-examples">
@@ -73,18 +75,16 @@ export function OverflowListExamples() {
           gap={gap}
           items={items}
           measurementKey={`${locale}-${density}`}
-          onOverflowChange={change => setSelected(change.overflowItems.length ? `${change.overflowItems.length}` : '')}
           onOverflowItemSelect={item => setSelected(String(item.id))}
           overflowButtonProps={{ disabled, size: 'icon-sm' }}
           overflowLabel={text('更多操作', 'More actions')}
-          renderItem={(item) => <Button disabled={disabled} size="sm" variant="ghost" startIcon={<DocsIcon data={item.icon} size={18} />}>{item.label}</Button>}
+          renderItem={(item) => <Button disabled={disabled} size="sm" variant="ghost" aria-pressed={selected === item.id} onClick={() => setSelected(String(item.id))} startIcon={<DocsIcon data={item.icon} size={18} />}>{item.label}</Button>}
           renderOverflow={() => <DocsIcon data={shareIcon} size={18} />}
           renderOverflowItem={item => item.label}
           strategy={strategy}
         />
         <PencilLine />
         </div>
-        <p className="overflow-list-examples__status" role="status">{selected ? text(`已收纳 ${selected} 项`, `${selected} item(s) in More`) : text('调整容器宽度查看收纳', 'Resize the container to see overflow')}</p>
       </div>
     }</ComponentPlayground>
 

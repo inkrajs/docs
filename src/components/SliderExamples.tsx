@@ -20,18 +20,14 @@ export function SliderExamples() {
   const [minSteps, setMinSteps] = useState(1);
   const [disabled, setDisabled] = useState(false);
   const [inverted, setInverted] = useState(false);
-  const [committed, setCommitted] = useState<number[] | null>(null);
   const [formResult, setFormResult] = useState('');
   const thumbLabels = range ? [t('下限'), t('上限')] : [t('数值')];
   const code = `const [values, setValues] = useState(${JSON.stringify(values)});
-const [committed, setCommitted] = useState(null);
 
-<Slider value={values} onValueChange={setValues} onValueCommit={setCommitted}
+<Slider value={values} onValueChange={setValues}
   min={0} max={100} step={${step}} minStepsBetweenThumbs={${minSteps}} preserveThumbOrder
   size="${size}" variant="${variant}" orientation="${orientation}" dir="${dir}" inverted={${inverted}} disabled={${disabled}}
-  thumbLabels={${JSON.stringify(thumbLabels)}} getValueLabel={value => value + '%'} />
-<output>{values.join(' - ')}%</output>
-<output>${t('提交值')}:{committed?.join(' - ') ?? ''}</output>`;
+  thumbLabels={${JSON.stringify(thumbLabels)}} getValueLabel={value => value + '%'} />`;
   const formCode = `const [result, setResult] = useState('');
 
 <form onSubmit={event => {
@@ -55,9 +51,9 @@ const [committed, setCommitted] = useState(null);
         <DocsSelect label="阅读方向" value={dir} onValueChange={next => setDir(next as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
       </> },
       { label: '交互', content: <>
-        <DocsSelect label="步长" value={String(step)} onValueChange={next => { setStep(Number(next)); setValues(range ? [20, 80] : [40]); setCommitted(null); }} options={[["1", "1"], ["5", "5"], ["10", "10"]]} />
+        <DocsSelect label="步长" value={String(step)} onValueChange={next => { setStep(Number(next)); setValues(range ? [20, 80] : [40]); }} options={[["1", "1"], ["5", "5"], ["10", "10"]]} />
         <DocsSelect label="最小间隔步数" value={String(minSteps)} onValueChange={next => setMinSteps(Number(next))} options={[["0", "0"], ["1", "1"], ["2", "2"]]} />
-        <Switch label={t('范围选择')} checked={range} onCheckedChange={next => { setRange(next); setValues(next ? [20, 80] : [40]); setCommitted(null); }} />
+        <Switch label={t('范围选择')} checked={range} onCheckedChange={next => { setRange(next); setValues(next ? [20, 80] : [40]); }} />
         <Switch label={t('反向')} checked={inverted} onCheckedChange={setInverted} />
       </> },
       { label: '状态', content: <>
@@ -65,9 +61,7 @@ const [committed, setCommitted] = useState(null);
       </> },
     ]} />}>
       <div className="slider-demo" data-orientation={orientation}>
-        <Slider value={values} onValueChange={setValues} onValueCommit={setCommitted} min={0} max={100} step={step} minStepsBetweenThumbs={minSteps} preserveThumbOrder size={size} variant={variant} orientation={orientation} dir={dir} inverted={inverted} disabled={disabled} thumbLabels={thumbLabels} getValueLabel={number => `${number}%`} />
-        <output className="slider-demo__value">{values.join(' - ')}%</output>
-        <output className="slider-demo__commit"><PencilText>提交值</PencilText>: {committed?.join(' - ') ?? ''}</output>
+        <Slider value={values} onValueChange={setValues} min={0} max={100} step={step} minStepsBetweenThumbs={minSteps} preserveThumbOrder size={size} variant={variant} orientation={orientation} dir={dir} inverted={inverted} disabled={disabled} thumbLabels={thumbLabels} getValueLabel={number => `${number}%`} />
       </div>
     </ComponentPlayground>
     <ComponentExample title="内嵌滑块" code={`<Slider variant="inset" size="sm" aria-label="${t('音量')}" defaultValue={[40]} />\n<Slider variant="inset" thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} preserveThumbOrder />\n<Slider variant="inset" size="lg" aria-label="${t('音量')}" defaultValue={[60]} />`}>

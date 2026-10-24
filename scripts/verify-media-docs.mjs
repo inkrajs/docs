@@ -123,12 +123,13 @@ try {
     await viewer.getByRole('button', { name: zh ? '顺时针旋转' : 'Rotate clockwise', exact: true }).click();
     assert.equal(await viewer.locator('.inkra-image-viewer__image-transform').evaluate(node => node.style.transform), 'rotate(90deg)');
     await viewer.getByRole('button', { name: zh ? '放大图片' : 'Zoom in', exact: true }).click();
-    const centered = await viewer.evaluate(node => {
+    const toolbarBounds = await viewer.evaluate(node => {
+      const frame = node.getBoundingClientRect();
       const stage = node.querySelector('.inkra-image-viewer__stage').getBoundingClientRect();
       const tools = node.querySelector('.inkra-image-viewer__tools').getBoundingClientRect();
-      return Math.abs(stage.left + stage.width / 2 - tools.left - tools.width / 2);
+      return { inside: tools.left >= frame.left && tools.right <= frame.right && tools.bottom <= frame.bottom, below: tools.top >= stage.bottom - 1 };
     });
-    assert(centered < 1, `RTL tools offset ${centered}`);
+    assert(toolbarBounds.inside && toolbarBounds.below, `RTL bottom toolbar: ${JSON.stringify(toolbarBounds)}`);
     await capture(page, viewer, `viewer-${width}`);
     await page.keyboard.press('Escape');
     await page.waitForFunction(node => node === document.activeElement, await open.elementHandle());
@@ -143,6 +144,40 @@ try {
     assert.equal(await viewer.getByRole('alert').count(), 0);
     await page.keyboard.press('Escape');
     console.log(`PASS live ImageViewer bitmap, navigation, rotation, RTL tools, focus and source recovery: ${width}`);
+    const mixed = page.getByTestId('media-viewer-mixed');
+    const mixedTrigger = mixed.getByRole('button', { name: zh ? '浏览图片与视频' : 'Browse images and video', exact: true });
+    await mixedTrigger.click();
+    await loadedImage(page);
+    const rect = await viewer.boundingBox();
+    assert(rect && Math.abs(rect.x) < 1 && Math.abs(rect.y) < 1 && Math.abs(rect.width - width) < 1 && Math.abs(rect.height - 954) < 1, JSON.stringify(rect));
+    assert.equal(await viewer.locator('.inkra-overlay__header').count(), 0, 'no visible overlay header');
+    await viewer.getByRole('option').nth(1).click();
+    const video = viewer.locator('video');
+    await page.waitForFunction(() => document.querySelector('.inkra-image-viewer video')?.readyState >= 2);
+    assert.equal(await viewer.locator('.inkra-image-viewer__tools').count(), 0, 'no image tools on video');
+    assert.equal(await video.evaluate(node => node.paused && !node.autoplay && !node.controls && node.playsInline), true);
+    await viewer.getByRole('button', { name: zh ? '播放视频' : 'Play video', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('.inkra-image-viewer video')?.currentTime > 0.1);
+    await viewer.getByRole('button', { name: zh ? '暂停视频' : 'Pause video', exact: true }).click();
+    assert(await video.evaluate(node => node.paused));
+    const videoSeek = viewer.getByRole('slider', { name: zh ? '视频进度' : 'Seek video', exact: true });
+    await videoSeek.focus();
+    await videoSeek.press('End');
+    assert((await video.evaluate(node => node.currentTime)) > 5, 'video timeline seeks');
+    await videoSeek.press('Home');
+    await choose(page, zh ? '播放速度' : 'Playback speed', '1.5x');
+    assert.equal(await video.evaluate(node => node.playbackRate), 1.5);
+    await viewer.getByRole('button', { name: zh ? '静音' : 'Mute video', exact: true }).click();
+    assert(await video.evaluate(node => node.muted));
+    await capture(page, viewer, `mixed-video-${width}`);
+    const previousVideo = await video.elementHandle();
+    await viewer.getByRole('button', { name: zh ? '播放视频' : 'Play video', exact: true }).click();
+    await viewer.getByRole('option').nth(2).click();
+    await loadedImage(page);
+    assert(await previousVideo.evaluate(node => node.paused), 'switching resource pauses the removed video');
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(node => node === document.activeElement, await mixedTrigger.elementHandle());
+    console.log(`PASS mixed MediaViewer fullscreen, no header, localized video controls, playback, seek and resource cleanup: ${width}`);
     for (const [component, expected, obsolete] of [
       ['audio-player', 'onTimeChange', 'playing / defaultPlaying'],
       ['carousel', 'currentIndex / defaultIndex / onCurrentIndexChange', 'index / onIndexChange'],

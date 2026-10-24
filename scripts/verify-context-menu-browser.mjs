@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -12,10 +13,16 @@ try {
     await page.goto(`${base}/docs/components/context-menu#preview`);
     const target = page.locator('.preview-display [data-context-menu-trigger]');
     await target.waitFor();
+    const playground = page.locator('.component-playground');
+    await setPlaygroundControls(playground, true);
+    await playground.locator('.preview-controls').getByRole('tab', { name: 'State', exact: true }).click();
+    await setPlaygroundControls(playground, false);
     for (let attempt = 0; attempt < 3; attempt++) {
       await target.click({ button: 'right' });
       await page.getByRole('menuitem', { name: 'Duplicate note', exact: true }).click();
-      await page.getByText('Note duplicated', { exact: true }).waitFor();
+      await setPlaygroundControls(playground, true);
+      await playground.locator('.preview-controls output').filter({ hasText: 'Note duplicated' }).waitFor();
+      await setPlaygroundControls(playground, false);
       await target.focus();
       await page.keyboard.press('Shift+F10');
       await page.getByRole('menuitem', { name: 'Duplicate note', exact: true }).waitFor();

@@ -2,7 +2,6 @@ import { useMemo, useState, type ReactNode } from 'react';
 import {
   DataTable,
   PencilIcon,
-  PencilText,
   Switch,
   Tree,
   type DataTableColumnDef,
@@ -170,9 +169,6 @@ const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>({})
         pageLabel={text.page}
         sortStatusLabel={sortStatusLabel}
       />
-      {selectable && <output className="data-demo-output" data-testid="data-table-selection" aria-live="polite">
-        <PencilText>{zh ? `已选 ${Object.values(selection).filter(Boolean).length} 条笔记` : `${Object.values(selection).filter(Boolean).length} notes selected`}</PencilText>
-      </output>}
       </div>
     </ComponentPlayground>
     <ComponentExample title={text.basic} code={basicCode}>
@@ -202,7 +198,6 @@ function TreeExamples() {
   const [disclosureStyle, setDisclosureStyle] = useState<'folder' | 'chevron'>('folder');
   const [indent, setIndent] = useState(24);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
-  const selectedText = selectedKeys === 'all' ? '*' : [...selectedKeys].map(String).join(', ') || text.nothing;
   const selectedKeysCode = selectedKeys === 'all' ? "'all'" : `new Set<TreeKey>(${JSON.stringify([...selectedKeys])})`;
   const expandedKeysCode = `new Set<TreeKey>(${JSON.stringify([...expandedKeys])})`;
   const icon = (paths: readonly { d: string }[], seed: string) => <PencilIcon paths={paths} size={22} sourceSize={24} seed={seed} />;
@@ -314,7 +309,6 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
             <Tree.Item id="images" textValue={text.images}>{itemContent(text.images, undefined, icon(fileIcon, 'images'))}</Tree.Item>
           </Tree.Item>
         </Tree.Root>
-        <output className="data-demo-output" aria-live="polite">{text.selected}: {selectedText}</output>
       </div>
     </ComponentPlayground>
     <ComponentExample title={text.basic} code={basicCode}>
