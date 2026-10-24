@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { setPlaygroundControls as setControls } from './playground-test-helpers.mjs';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -27,16 +28,6 @@ async function waitForFocus(locator) {
     }
     throw new Error('Expected focus to return after popup dismissal');
   });
-}
-
-async function setControls(playground, open) {
-  const toggle = playground.locator('.playground-config-toggle');
-  if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
-  await playground.page().waitForFunction(({ node, open }) => new Promise(resolve => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve(
-      node.dataset.controlsPresent === String(open) && !node.querySelector('[data-playground-moving]'),
-    )));
-  }), { node: await playground.elementHandle(), open });
 }
 
 async function verifyCurrentCodeCopy(page, playground, expectedFragments, forbiddenFragments = []) {

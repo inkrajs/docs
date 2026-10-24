@@ -1,19 +1,10 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls as controls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
 const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
-
-async function controls(playground, open) {
-  const toggle = playground.locator('.playground-config-toggle');
-  if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
-  await playground.page().waitForFunction(({ node, open }) => new Promise(resolve => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve(
-      node.dataset.controlsPresent === String(open) && !node.querySelector('[data-playground-moving]'),
-    )));
-  }), { node: await playground.elementHandle(), open });
-}
 
 try {
   for (const [width, locale, theme] of [[1305, 'zh-CN', 'light'], [390, 'en', 'dark']]) {
