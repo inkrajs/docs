@@ -6,7 +6,7 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This working revision previews the `0.4.1` release candidate using
+This working revision previews the `0.4.2` release candidate using
 `vendor/inkra.tgz`. These are not yet the published
 registry bytes. library-candidate.json records the source commit (or null for an
 uncommitted local build) and pins the exact archive checksums. Prepare this candidate before npm ci.

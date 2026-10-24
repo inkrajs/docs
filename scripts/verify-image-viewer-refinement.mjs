@@ -3,7 +3,11 @@ import { chromium } from 'playwright';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
-const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
+const browser = await chromium.launch({
+  headless: true,
+  args: ['--disable-features=OverlayScrollbar,OverlayScrollbars'],
+  ...(executablePath ? { executablePath } : {}),
+});
 
 async function mount(page, id) {
   await page.goto(`${base}/docs/components/image-viewer#preview`, { waitUntil: 'networkidle' });
@@ -126,10 +130,12 @@ try {
       center: items.length ? (items[0].left + items.at(-1).right) / 2 : null,
       overflow: node.scrollWidth > node.clientWidth + 1,
       viewportCenter: rect.left + rect.width / 2,
+      viewerCenter: innerWidth / 2,
     };
   });
   if (!thumbnailGeometry.overflow && thumbnailGeometry.center !== null) {
     assert(Math.abs(thumbnailGeometry.center - thumbnailGeometry.viewportCenter) <= 1, JSON.stringify(thumbnailGeometry));
+    assert(Math.abs(thumbnailGeometry.center - thumbnailGeometry.viewerCenter) <= 1, JSON.stringify(thumbnailGeometry));
   }
   for (const thumbnail of await viewer.locator('.inkra-image-viewer__thumbnail').all()) {
     await assertNotClipped(thumbnail, bottom, 'thumbnail remains fully visible inside bottom chrome');
