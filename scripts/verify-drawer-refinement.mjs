@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
-const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
+const browser = await chromium.launch({ headless: true, args: ['--disable-features=OverlayScrollbar,OverlayScrollbars'], ...(executablePath ? { executablePath } : {}) });
 
 async function mount(page, id) {
   await page.goto(`${base}/docs/components/drawer#preview`, { waitUntil: 'networkidle' });
@@ -95,6 +95,8 @@ try {
   const footer = content.locator('.inkra-drawer__footer');
   await content.waitFor();
   await content.focus();
+  await content.evaluate(async node => { await node.ownerDocument.fonts.ready; });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const focusRing = content.locator(':scope > .inkra-drawer__focus-ring');
   await page.waitForFunction(node => getComputedStyle(node).opacity === '1', await focusRing.elementHandle());
   assert(await focusRing.evaluate(node => {
@@ -121,7 +123,7 @@ try {
   assert(geometry.content.top >= 0 && geometry.content.bottom <= geometry.viewportHeight, JSON.stringify(geometry));
   assert(geometry.header.height > 0 && geometry.footer.height > 0, JSON.stringify(geometry));
   assert(geometry.body.height >= 0 && geometry.header.bottom <= geometry.body.top + 1 && geometry.body.bottom <= geometry.footer.top + 1, JSON.stringify(geometry));
-  assert(geometry.footer.bottom <= geometry.content.bottom + 1, 'footer remains inside short drawer');
+  assert(geometry.footer.bottom <= geometry.content.bottom + 1, `footer remains inside short drawer: ${JSON.stringify(geometry)}`);
   assert(geometry.headingScrollHeight >= geometry.headingClientHeight, 'long heading remains scrollable when constrained');
   const headerAction = header.getByRole('button', { name: 'Header action', exact: true });
   const closeButton = header.getByRole('button', { name: 'Close constrained drawer', exact: true });
