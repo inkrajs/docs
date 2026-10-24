@@ -61,11 +61,11 @@ try {
     await datePage.locator('.inkra-date-picker__popover .rdp-day_button:focus').press('Enter');
     await waitForFocus(dateTrigger);
     assert(await dateTrigger.evaluate(node => node === document.activeElement), 'selection closes and returns focus');
-    assert.match(await datePlayground.locator('.dates-examples__status').textContent(), /^2026-10-2[3-9]$/);
+    assert.match(await dateTrigger.textContent(), /2026年10月23日|October 23, 2026/);
 
     const clearDate = datePlayground.getByRole('button', { name: /清空日期|Clear date/ });
     await clearDate.click();
-    assert.match(await datePlayground.locator('.dates-examples__status').textContent(), /未选择|No selection/);
+    assert.match(await dateTrigger.textContent(), /选择日期|Choose date|Select date/);
     assert(await dateTrigger.evaluate(node => node === document.activeElement), 'clear returns focus to trigger');
 
     await setControls(datePlayground, true);

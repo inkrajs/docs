@@ -65,6 +65,9 @@ try {
     assert.deepEqual(await directions.getByRole('button').allTextContents(), zh ? ['上', '右', '下', '左'] : ['Top', 'Right', 'Bottom', 'Left']);
     const tip = directions.getByRole('button').first();
     await page.keyboard.press('Tab');
+    // Radix dismisses on scroll; settle the test's viewport movement before focus.
+    await tip.scrollIntoViewIfNeeded();
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await tip.focus();
     await page.getByRole('tooltip').waitFor();
     await page.keyboard.press('Escape');

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Button, Card, Drawer, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Slider, Tabs, Tooltip } from '@inkra/react';
+import { Button, Card, ColorSwatch, Drawer, PencilLine, RadioGroup, RadioGroupItem, Slider, Tabs, Tooltip } from '@inkra/react';
 import { __iconData as paletteIcon } from 'lucide-react/dist/esm/icons/palette.mjs';
 import { __iconData as typeIcon } from 'lucide-react/dist/esm/icons/type.mjs';
 import { __iconData as penIcon } from 'lucide-react/dist/esm/icons/pen-line.mjs';
@@ -161,10 +161,7 @@ export function ThemeCustomizer({ theme, onThemeChange, renderTrigger }: {
               </RadioGroup>
               <PencilText as="h3">{en ? 'Accent color' : '主题色'}</PencilText>
               <div className="theme-customizer__swatches" role="group" aria-label={en ? 'Accent color' : '主题色'}>
-                {[{ id: 'default', label: '默认', color: 'var(--inkra-ink)' }, ...themeScales.map(scale => ({ id: scale.id, label: scale.label, color: scale.values[6][1] }))].map(scale => <button key={scale.id} type="button" aria-label={scale.id === 'default' ? en ? 'Default' : '默认' : t(scale.label)} aria-pressed={draft.palette === scale.id} title={scale.id === 'default' ? en ? 'Default' : '默认' : t(scale.label)} onClick={() => setDraft(previous => ({ ...previous, palette: scale.id }))}>
-                  <PencilSurface as="span" className="theme-customizer__swatch" variant="wash" style={{ '--inkra-accent': scale.color } as React.CSSProperties} />
-                  {draft.palette === scale.id && <PencilSurface as="span" className="theme-customizer__swatch-outline" variant="outline" />}
-                </button>)}
+                {[{ id: 'default', label: '默认', color: 'var(--inkra-ink)' }, ...themeScales.map(scale => ({ id: scale.id, label: scale.label, color: scale.values[6][1] }))].map(scale => <ColorSwatch key={scale.id} color={scale.color} label={scale.id === 'default' ? en ? 'Default' : '默认' : t(scale.label)} selected={draft.palette === scale.id} onClick={() => setDraft(previous => ({ ...previous, palette: scale.id }))} />)}
               </div>
             </Tabs.Content>
             {(['text', 'lines', 'wash'] as const).map(group => <Tabs.Content key={group} value={group} className="theme-customizer__panel">

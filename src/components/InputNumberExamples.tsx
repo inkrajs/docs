@@ -82,8 +82,7 @@ export function InputNumberExamples() {
     controls={${controls}} fullWidth={${fullWidth}}${disabled ? '\n    disabled' : ''}${readOnly ? '\n    readOnly' : ''}${suffix ? '\n    suffix="kg"' : ''}
     incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))}
   />
-</Field>
-<output>{value === null ? 'null' : value}</output>`;
+</Field>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
@@ -117,7 +116,6 @@ export function InputNumberExamples() {
         <Field label={t('数量')} required={required} error={invalid ? t('请输入范围内的数值') : undefined}>
           <InputNumber name="quantity" value={value} onValueChange={setValue} size={size} variant={variant} min={Number(min)} max={Number(max)} step={step === 'any' ? 'any' : Number(step)} stepModifiers={stepModifiers} pressAndHold={pressAndHold} repeatDelay={Number(repeatDelay)} repeatInterval={Number(repeatInterval)} controls={controls} disabled={disabled} readOnly={readOnly} fullWidth={fullWidth} dir={dir} textAlign={textAlign} suffix={suffix ? 'kg' : undefined} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} />
         </Field>
-        <output className="component-demo-status">{value === null ? 'null' : value}</output>
       </div>
     </ComponentPlayground>
     <ComponentExample title="组合键与长按" code={`<Field label=${quote(t('快捷调整'))}>\n  <InputNumber defaultValue={2} min={-1000} max={1000}\n    stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]}\n    pressAndHold repeatDelay={400} repeatInterval={80}\n    incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} />\n</Field>`}>

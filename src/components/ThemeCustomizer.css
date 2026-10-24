@@ -14,9 +14,6 @@
 .theme-customizer__mode .inkra-radio-segment__content { flex-wrap: wrap; justify-content: center; gap: 4px; }
 .theme-customizer__panel h3 { margin: 0; font-size: var(--inkra-text-md); font-weight: 400; }
 .theme-customizer__swatches { display: flex; flex-wrap: wrap; gap: 12px; }
-.theme-customizer__swatches button { position: relative; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; background: none; border: 0; cursor: pointer; }
-.theme-customizer__swatch { width: 28px; height: 28px; }
-.theme-customizer__swatch-outline { position: absolute !important; inset: 0; pointer-events: none; }
 .theme-customizer__control { min-width: 0; }
 .theme-customizer__control > div { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
 .theme-customizer__control output { font-variant-numeric: tabular-nums; color: var(--inkra-ink-muted); }

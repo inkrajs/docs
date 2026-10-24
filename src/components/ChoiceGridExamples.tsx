@@ -37,7 +37,6 @@ export function ChoiceGridExamples() {
     ? `<ChoiceGrid
   name="choice-grid-density"
   label=${quote(text('布局密度', 'Layout density'))}
-  description=${quote(text('方向键移动单选，Tab 离开选项组。', 'Use arrow keys within the radio group and Tab to leave it.'))}
   value=${quote(singleValue)}
   onValueChange={setValue}
   columns={${columns}}
@@ -50,7 +49,6 @@ ${optionsCode}
   type="multiple"
   name="choice-grid-layouts"
   label=${quote(text('可用布局', 'Available layouts'))}
-  description=${quote(text('每个复选项都保留独立的原生表单值。', 'Each checkbox keeps its own native form value.'))}
   values={${JSON.stringify(multipleValues)}}
   onValuesChange={setValues}
   columns={${columns}}
@@ -91,7 +89,6 @@ ${optionsCode}
       {mode === 'single' ? (
         <ChoiceGrid
           columns={columns}
-          description={text('方向键移动单选，Tab 离开选项组。', 'Use arrow keys within the radio group and Tab to leave it.')}
           disabled={disabled}
           error={showError ? text('请确认当前选择。', 'Review the current choice.') : undefined}
           label={text('布局密度', 'Layout density')}
@@ -104,7 +101,6 @@ ${optionsCode}
       ) : (
         <ChoiceGrid
           columns={columns}
-          description={text('每个复选项都保留独立的原生表单值。', 'Each checkbox keeps its own native form value.')}
           disabled={disabled}
           error={showError && multipleValues.length === 0 ? text('至少保留一个选项。', 'Keep at least one choice.') : undefined}
           label={text('可用布局', 'Available layouts')}

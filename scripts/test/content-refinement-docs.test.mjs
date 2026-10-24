@@ -19,7 +19,8 @@ test('DataTable examples expose stable selection and localized sorting status', 
   const source = read('src/components/expansion/DataExamples.tsx');
   assert.match(source, /rowSelection=\{selection\}/);
   assert.match(source, /onRowSelectionChange=\{setSelection\}/);
-  assert.match(source, /data-testid="data-table-selection"/);
+  assert.match(source, /getRowId=\{row => row.id\}/);
+  assert.match(source, /selectable=\{selectable\}/);
   assert.match(source, /name: text.name, status: text.status, items: text.items/);
   assert.match(source, /sortStatusLabel=\{sortStatusLabel\}/);
 });

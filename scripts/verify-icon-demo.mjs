@@ -9,7 +9,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('http://127.0.0.1:4180/components/icon#preview');
     const playground = page.locator('.component-playground');
-    const icon = playground.locator('.icon-examples__stage > canvas');
+    const icon = playground.locator('.icon-examples__stage > canvas').first();
     await icon.waitFor();
     await page.waitForTimeout(300);
     assert.equal(await page.locator('.icon-examples__grid button').count(), 91);

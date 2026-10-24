@@ -45,7 +45,7 @@ try {
       const middle = list.locator('[data-item-key="note-250"]');
       await middle.waitFor();
       await middle.getByRole('button').click();
-      await stage.getByText(/Selected: note-250|已选择: note-250/).waitFor();
+      assert.equal(await middle.getByRole('button').getAttribute('aria-pressed'), 'true', 'clicked row becomes selected');
       const scrolledFrame = await frameCanvas.boundingBox();
       const viewport = await list.boundingBox();
       assert(scrolledFrame && viewport && Math.abs(scrolledFrame.y - viewport.y) < 2, 'frame does not scroll away with rows');

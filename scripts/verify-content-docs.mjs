@@ -37,7 +37,7 @@ try {
     await configure(page.locator('.component-playground'), false);
     assert.equal(await tableStage.locator('tbody tr').count(), 3);
     await tableStage.getByRole('checkbox').nth(1).check();
-    assert.match(await page.getByTestId('data-table-selection').textContent(), /1/);
+    assert(await tableStage.getByRole('checkbox').nth(1).isChecked());
     await tableStage.getByRole('button', { name: zh ? '下一页' : 'Next page', exact: true }).click();
     await page.waitForFunction(node => node.querySelectorAll('tbody tr').length === 2, await tableStage.elementHandle());
     await tableStage.getByRole('button', { name: zh ? '上一页' : 'Previous page', exact: true }).click();

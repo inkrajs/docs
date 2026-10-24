@@ -21,7 +21,7 @@ export function TreeSelectExamples() {
   const { locale } = useLocale();
   const zh = locale === 'zh-CN';
   const text = (chinese: string, english: string) => zh ? chinese : english;
-  const [mode, setMode] = useState<'single' | 'multiple'>('multiple');
+  const [mode, setMode] = useState<'single' | 'multiple'>('single');
   const [branchSelection, setBranchSelection] = useState<TreeSelectBranchSelection>('leaf');
   const [selectionPropagation, setSelectionPropagation] = useState<TreeSelectSelectionPropagation>('none');
   const [singleValue, setSingleValue] = useState<string | null>('wireframes');
@@ -137,7 +137,6 @@ export function TreeSelectExamples() {
     ]} /> }>
       <div className="tree-select-demo">
         <Field
-          description={text('搜索只改变可见节点，不会清除隐藏的选中项。', 'Filtering changes visibility without clearing hidden selections.')}
           label={text('工作区', 'Workspace')}
         >
           {mode === 'multiple' ? <TreeSelect
@@ -153,9 +152,6 @@ export function TreeSelectExamples() {
             value={singleValue}
           />}
         </Field>
-        <output aria-live="polite" className="tree-select-demo__output">
-          {text('当前值', 'Current value')}: {JSON.stringify(mode === 'multiple' ? multipleValue : singleValue)}
-        </output>
       </div>
     </ComponentPlayground>
 

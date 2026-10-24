@@ -62,3 +62,10 @@ test('icon catalog keys stay unique and all catalog geometry can be rendered', (
     assert.ok(icon.paths.length > 0, `${icon.label} needs drawable paths`);
   }
 });
+
+test('Markdown navigation uses its own M and downward-arrow mark', () => {
+  const icon = navigationIcon('Markdown');
+  assert.equal(icon.name, 'markdown');
+  assert.notDeepEqual(docsIcon.iconPaths(icon), docsIcon.iconPaths(navigationIcon('代码')));
+  assert.equal(icon.node.length, 3);
+});

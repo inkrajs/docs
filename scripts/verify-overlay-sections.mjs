@@ -66,12 +66,12 @@ try {
     await page.screenshot({ path: `/tmp/inkra-overlay-sections-${width}.png` });
     await dialog.getByRole('button', { name: '保存更改', exact: true }).click();
     await dialog.waitFor({ state: 'hidden' });
-    assert.equal(await playground.locator('output').textContent(), '{"name":"Section form"}');
     await expectFocus(trigger);
 
     const configToggle = playground.locator('.playground-config-toggle');
     if (await configToggle.getAttribute('aria-expanded') === 'false') await configToggle.click();
     await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
+    assert.equal(await playground.locator('output').textContent(), '{"name":"Section form"}');
     await playground.getByRole('switch', { name: '显示关闭按钮', exact: true }).uncheck();
     await playground.getByRole('switch', { name: '分割线', exact: true }).uncheck();
     await configToggle.click();

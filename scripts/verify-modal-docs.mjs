@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -28,7 +29,11 @@ try {
     await drawer.getByRole('button', { name: zh ? '保存' : 'Save', exact: true }).click();
     await drawer.waitFor({ state: 'hidden' });
     await page.waitForFunction(node => document.activeElement === node, await trigger.elementHandle());
-    assert.match(await page.locator('.component-playground output').textContent(), /Inkra Studio/);
+    const drawerPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(drawerPlayground, true);
+    await drawerPlayground.locator('.preview-controls').getByRole('tab', { name: zh ? '状态' : /^States?$/, exact: true }).click();
+    assert.equal(await drawerPlayground.getByRole('textbox', { name: zh ? '已保存名称' : 'Saved name', exact: true }).inputValue(), 'Inkra Studio');
+    await setPlaygroundControls(drawerPlayground, false);
     await trigger.click();
     assert.equal(await input.inputValue(), 'Inkra Studio', 'saved draft survives reopening');
     const body = drawer.locator('.inkra-drawer__body');
@@ -61,8 +66,12 @@ try {
     await page.keyboard.press('Escape');
     assert(await alert.isVisible(), 'pending action rejects Escape dismissal');
     await alert.waitFor({ state: 'hidden' });
-    assert.equal(await page.locator('.component-playground output').textContent(), zh ? '归档完成' : 'Archived');
     await page.waitForFunction(node => document.activeElement === node, await archive.elementHandle());
+    const alertPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(alertPlayground, true);
+    await alertPlayground.locator('.preview-controls').getByRole('tab', { name: zh ? '状态' : /^States?$/, exact: true }).click();
+    assert.equal(await alertPlayground.locator('.preview-controls output').textContent(), zh ? '归档完成' : 'Archived');
+    await setPlaygroundControls(alertPlayground, false);
 
     await page.goto(`${base}/docs/components/command#preview`);
     await page.getByRole('button', { name: zh ? '打开命令面板' : 'Open command palette', exact: true }).click();

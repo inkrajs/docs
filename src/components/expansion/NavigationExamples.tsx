@@ -38,7 +38,6 @@ function PaginationExamples() {
   const [hideSingle, setHideSingle] = useState(false);
   const [rtl, setRtl] = useState(false);
   const [changingTotal, setChangingTotal] = useState(12);
-  const resolvedPage = totalPages ? Math.min(totalPages, Math.max(1, page)) : 0;
   return <div className="component-examples navigation-examples">
     <ComponentPlayground code={`const [page, setPage] = useState(${page});
 <Pagination totalPages={${totalPages}} page={page} onPageChange={setPage}
@@ -63,10 +62,6 @@ function PaginationExamples() {
       ]} />}>
       <div className="navigation-examples__stage" dir={rtl ? 'rtl' : 'ltr'} data-testid="pagination-playground">
         <Pagination totalPages={totalPages} page={page} onPageChange={setPage} siblingCount={siblings} boundaryCount={boundaries} showFirstLast={firstLast} simple={simple} showPreviousNext={previousNext} hideOnSinglePage={hideSingle} disabled={disabled} size={size} labels={labels} />
-        <output aria-live="polite" data-testid="pagination-value">{zh ? '当前页' : 'Current page'}: {resolvedPage} / {totalPages}</output>
-        <ol start={Math.max(1, (resolvedPage - 1) * 3 + 1)} className="navigation-examples__results">
-          {resolvedPage > 0 && [1, 2, 3].map(index => <li key={index}>{zh ? '笔记' : 'Note'} {(resolvedPage - 1) * 3 + index}</li>)}
-        </ol>
       </div>
     </ComponentPlayground>
     <ComponentExample title={zh ? '基本分页' : 'Basic pagination'} code={'<Pagination totalPages={5} defaultPage={1} />'}>
@@ -141,7 +136,6 @@ const [selected, setSelected] = useState('');
   </Command.Group>
   </Command.List>
 </Command.Root>
-<output aria-live="polite">{selected || 'No command executed'}</output>
 </div>`} controls={<PropertyTabs groups={[
       { label: '交互', content: <>
         <Switch label={zh ? '循环选择' : 'Loop selection'} checked={loop} onCheckedChange={setLoop} />
@@ -149,6 +143,7 @@ const [selected, setSelected] = useState('');
       </> },
       { label: '状态', content: <>
         <Switch label={zh ? '禁用归档' : 'Disable archive'} checked={disableArchive} onCheckedChange={setDisableArchive} />
+        {selected && <output aria-live="polite">{selected}</output>}
         <DocsSelect label={zh ? '预览主题' : 'Preview theme'} value={theme} onValueChange={value => setTheme(value as typeof theme)} options={[["light", zh ? '浅色' : 'Light'], ["dark", zh ? '深色' : 'Dark']]} />
       </> },
       { label: '布局', content: <Switch label="RTL" checked={rtl} onCheckedChange={setRtl} /> },
@@ -158,7 +153,6 @@ const [selected, setSelected] = useState('');
           <Command.Input value={search} onValueChange={setSearch} placeholder={zh ? '搜索命令' : 'Search commands'} />
           <Command.List label={zh ? '搜索结果' : 'Search results'}><CommandItems zh={zh} onSelect={setSelected} disabled={disableArchive} /></Command.List>
         </Command.Root>
-        <output aria-live="polite">{selected || (zh ? '尚未执行' : 'No command executed')}</output>
         <Overlay.Root open={open} onOpenChange={setOpen}>
           <Overlay.Trigger asChild><Button variant="outline">{zh ? '打开命令面板' : 'Open command palette'}</Button></Overlay.Trigger>
           <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" className="navigation-command-overlay" aria-describedby={undefined}>

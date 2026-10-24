@@ -30,17 +30,17 @@ function MenuExamples() {
       { label: '状态', content: <>
         <Switch label={t('禁用复制')} checked={disabled} onCheckedChange={setDisabled} />
         <Switch label={t('接收更新')} checked={checked} onCheckedChange={setChecked} />
+        {result && <output aria-live="polite">{t(result)}</output>}
       </> },
     ]} />}>
       <div className="content-demo-stack">
         <DropdownMenu.Root><DropdownMenu.Trigger asChild><Button>{t('笔记操作')}</Button></DropdownMenu.Trigger><DropdownMenu.Portal><DropdownMenu.Content side={side} align={align}>
           <DropdownMenu.Label>{t('笔记操作')}</DropdownMenu.Label>
-          <DropdownMenu.Item disabled={disabled} onSelect={() => setResult(t('已复制笔记'))}>{t('复制笔记')}</DropdownMenu.Item>
+          <DropdownMenu.Item disabled={disabled} onSelect={() => setResult('已复制笔记')}>{t('复制笔记')}</DropdownMenu.Item>
           <DropdownMenu.CheckboxItem checked={checked} onCheckedChange={setChecked}>{t('接收更新')}</DropdownMenu.CheckboxItem>
           <DropdownMenu.Separator />
           <DropdownMenu.RadioGroup value={view} onValueChange={setView}><DropdownMenu.RadioItem value="list">{t('列表')}</DropdownMenu.RadioItem><DropdownMenu.RadioItem value="grid">{t('网格')}</DropdownMenu.RadioItem></DropdownMenu.RadioGroup>
         </DropdownMenu.Content></DropdownMenu.Portal></DropdownMenu.Root>
-        <output aria-live="polite">{result}</output>
       </div>
     </ComponentPlayground>
     <ComponentExample title="危险操作" code={`<DropdownMenu.Root>\n  <DropdownMenu.Trigger asChild><Button variant="outline">${t('更多设置')}</Button></DropdownMenu.Trigger>\n  <DropdownMenu.Portal><DropdownMenu.Content>\n    <DropdownMenu.Item destructive onSelect={handleArchive}>${t('归档笔记')}</DropdownMenu.Item>\n  </DropdownMenu.Content></DropdownMenu.Portal>\n</DropdownMenu.Root>`}>

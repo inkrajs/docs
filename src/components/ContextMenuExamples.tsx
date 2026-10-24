@@ -56,6 +56,7 @@ export function ContextMenuExamples() {
         <Switch label={text('展开菜单', 'Open menu')} checked={open} disabled={!controlled || disabled} onCheckedChange={setOpen} />
         <Switch label={text('禁用触发区域', 'Disable trigger area')} checked={disabled} onCheckedChange={next => { setDisabled(next); if (next) setOpen(false); }} />
         <Switch label={text('紧凑笔记', 'Compact note')} checked={compact} onCheckedChange={setCompact} />
+        {lastAction !== 'none' && <output aria-live="polite"><PencilText>{actionText}</PencilText></output>}
       </> },
     ]} />}>
       <div className="context-menu-demo">
@@ -95,7 +96,6 @@ export function ContextMenuExamples() {
             </ContextMenu.Content>
           </ContextMenu.Portal>
         </ContextMenu.Root>
-        <output aria-live="polite" className="context-menu-demo__status"><PencilText>{actionText}</PencilText></output>
       </div>
     </ComponentPlayground>
 

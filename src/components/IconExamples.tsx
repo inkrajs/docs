@@ -1,6 +1,6 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Button, Input, Field, PencilIcon, Switch, Tabs, Tooltip } from '@inkra/react';
+import { Button, ColorSwatch, Input, Field, PencilIcon, Switch, Tooltip } from '@inkra/react';
 import type { PencilIconBadge } from '@inkra/react';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
@@ -21,11 +21,14 @@ import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { DocsSlider } from './DocsSlider';
-import { DocsIcon, iconPaths } from './DocsIcon';
-import { docsIconCatalog, iconCategories } from './iconCatalog';
+import { iconPaths } from './DocsIcon';
+import { docsIconCatalog } from './iconCatalog';
+import { IconCatalogGrid } from './IconCatalogGrid';
 import './IconExamples.css';
 
 const icons = docsIconCatalog;
+const commonIcons = ['search', 'plus', 'check', 'pencil', 'settings', 'download', 'bookmark', 'folder', 'user']
+  .map(key => icons.find(icon => icon.key === key)!);
 
 const colors = [
   { key: 'ink', label: '主要文字', value: 'var(--inkra-ink)' },
@@ -105,12 +108,16 @@ const [saved, setSaved] = useState(false);
 export function IconExamples() {
   const { t } = useLocale();
   const [selected, setSelected] = useState('search');
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('all');
-  const [size, setSize] = useState('40');
+  const [size, setSize] = useState(40);
   const [sourceSize, setSourceSize] = useState('24');
   const [seed, setSeed] = useState('inkra-icon');
   const [active, setActive] = useState(false);
+  const [customStroke, setCustomStroke] = useState(false);
+  const [strokeWidth, setStrokeWidth] = useState(1.5);
+  const [intensity, setIntensity] = useState(1);
+  const [breaks, setBreaks] = useState(0.18);
+  const [breakCount, setBreakCount] = useState(1);
+  const [pressureVariation, setPressureVariation] = useState(0.82);
   const [decorative, setDecorative] = useState(true);
   const [composite, setComposite] = useState(false);
   const [badgeIcon, setBadgeIcon] = useState('plus');
@@ -119,32 +126,45 @@ export function IconExamples() {
   const [direction, setDirection] = useState('ltr');
   const [color, setColor] = useState<typeof colors[number]['key']>('ink');
   const item = icons.find(icon => icon.key === selected) ?? icons[0];
+  const previewIcons = [item, ...commonIcons.filter(icon => icon.key !== item.key)].slice(0, 9);
   const colorValue = colors.find(option => option.key === color)!.value;
   const badgeItem = icons.find(icon => icon.key === badgeIcon)!;
-  const keyword = query.trim().toLocaleLowerCase();
-  const visibleIcons = icons.filter(icon => (category === 'all' || icon.category === category)
-    && `${icon.key} ${icon.label} ${t(icon.label)}`.toLocaleLowerCase().includes(keyword));
   const badge = composite ? { paths: badgeItem.paths, sourceSize: 24, position: badgePosition, scale: badgeScale / 100 } : undefined;
-  const iconLabel = composite ? `${t(item.label)} / ${t(badgeItem.label)}` : t(item.label);
+  const iconLabel = (label: string) => composite ? `${t(label)} / ${t(badgeItem.label)}` : t(label);
   const code = `import { PencilIcon } from '@inkra/react';
 
-const paths = ${JSON.stringify(item.paths, null, 2)};
+const icons = ${JSON.stringify(previewIcons.map(icon => ({ key: icon.key, label: iconLabel(icon.label), paths: icon.paths })), null, 2)};
 ${composite ? `const badgePaths = ${JSON.stringify(badgeItem.paths, null, 2)};\n` : ''}
 const color = ${JSON.stringify(colorValue)};
 
-<PencilIcon paths={paths} sourceSize={${sourceSize}} size={${size}}
-${composite ? `  badge={{ paths: badgePaths, sourceSize: 24, position: '${badgePosition}', scale: ${badgeScale / 100} }} dir="${direction}"\n` : ''}
-  style={{ color }} seed=${JSON.stringify(seed)} active={${active}}
-  decorative={${decorative}}${decorative ? '' : ` aria-label=${JSON.stringify(iconLabel)}`}
-/>`;
+<div style={{ width: '100%', overflowX: 'auto' }}>
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+  gridTemplateRows: 'repeat(3, minmax(0, 1fr))', placeItems: 'center',
+  width: ${Math.max(240, size * 3 + 24)}, minWidth: ${size * 3 + 24}, maxWidth: '100%', aspectRatio: '1', marginInline: 'auto' }}>
+  {icons.map(icon => <PencilIcon key={icon.key} paths={icon.paths} sourceSize={${sourceSize}} size={${size}}
+${customStroke ? `    strokeWidth={${strokeWidth}} intensity={${intensity}} breaks={${breaks}} breakCount={${breakCount}} pressureVariation={${pressureVariation}}\n` : ''}
+${composite ? `    badge={{ paths: badgePaths, sourceSize: 24, position: '${badgePosition}', scale: ${badgeScale / 100} }}\n` : ''}
+    dir="${direction}" style={{ color }} seed=${JSON.stringify(seed)} active={${active}}
+    decorative={${decorative}}${decorative ? '' : ' aria-label={icon.label}'}
+  />)}
+</div>
+</div>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label="图标" value={selected} onValueChange={setSelected} options={icons.map(icon => [icon.key, icon.label])} />
-        <DocsSelect label="图标尺寸" value={size} onValueChange={setSize} options={['16', '20', '24', '28', '32', '40', '48'].map(value => [value, `${value}px`])} />
+        <DocsSlider label="图标尺寸" value={size} onValueChange={setSize} min={16} max={128} step={1} unit="px" />
         <DocsSelect label="源坐标范围" value={sourceSize} onValueChange={setSourceSize} options={['24', '28', '32'].map(value => [value, value])} />
-        <div className="icon-examples__colors"><PencilText>颜色</PencilText><div role="group" aria-label={t('图标颜色')}>{colors.map(option => <Button key={option.key} type="button" size="icon" variant={color === option.key ? 'outline' : 'ghost'} aria-label={t(option.label)} aria-pressed={color === option.key} onClick={() => setColor(option.key)}><span aria-hidden="true" className="icon-examples__swatch" style={{ backgroundColor: option.value }} /></Button>)}</div></div>
+        <div className="icon-examples__colors"><PencilText>颜色</PencilText><div role="group" aria-label={t('图标颜色')}>{colors.map(option => <ColorSwatch key={option.key} color={option.value} label={t(option.label)} selected={color === option.key} onClick={() => setColor(option.key)} />)}</div></div>
         <Field label={t('笔迹种子')}><Input value={seed} onChange={event => setSeed(event.target.value)} maxLength={40} /></Field>
+      </> },
+      { label: '笔触', content: <>
+        <Switch label={t('自定义图标笔触')} checked={customStroke} onCheckedChange={setCustomStroke} />
+        <DocsSlider label="图标粗细" min={0.3} max={3} step={0.1} value={strokeWidth} onValueChange={setStrokeWidth} disabled={!customStroke} />
+        <DocsSlider label="图标浓度" min={0} max={100} step={5} value={Math.round(intensity * 100)} onValueChange={value => setIntensity(value / 100)} unit="%" disabled={!customStroke} />
+        <DocsSlider label="图标断裂程度" min={0} max={100} step={1} value={Math.round(breaks * 100)} onValueChange={value => setBreaks(value / 100)} unit="%" disabled={!customStroke} />
+        <DocsSlider label="最大断裂个数" min={0} max={12} step={1} value={breakCount} onValueChange={setBreakCount} disabled={!customStroke} />
+        <DocsSlider label="笔压变化" min={0} max={100} step={1} value={Math.round(pressureVariation * 100)} onValueChange={value => setPressureVariation(value / 100)} unit="%" disabled={!customStroke} />
       </> },
       { label: '组合', content: <>
         <Switch label={t('组合图标')} checked={composite} onCheckedChange={setComposite} />
@@ -162,21 +182,12 @@ ${composite ? `  badge={{ paths: badgePaths, sourceSize: 24, position: '${badgeP
         <Switch label={t('装饰性图标')} checked={decorative} onCheckedChange={setDecorative} />
       </> },
     ]} />}>
-      <div className="icon-examples__stage"><PencilIcon paths={item.paths} badge={badge} dir={direction} size={Number(size)} sourceSize={Number(sourceSize)} seed={seed} active={active} decorative={decorative} aria-label={decorative ? undefined : iconLabel} style={{ color: colorValue }} /></div>
+      <div className="icon-examples__viewport">
+        <div className="icon-examples__stage" style={{ width: Math.max(240, size * 3 + 24), minWidth: size * 3 + 24 }}>{previewIcons.map(icon => <PencilIcon key={icon.key} paths={icon.paths} badge={badge} dir={direction} size={size} sourceSize={Number(sourceSize)} strokeWidth={customStroke ? strokeWidth : undefined} intensity={customStroke ? intensity : undefined} breaks={customStroke ? breaks : undefined} breakCount={customStroke ? breakCount : undefined} pressureVariation={customStroke ? pressureVariation : undefined} seed={seed} active={active} decorative={decorative} aria-label={decorative ? undefined : iconLabel(icon.label)} style={{ color: colorValue }} />)}</div>
+      </div>
     </ComponentPlayground>
     <ComponentExample title="图标目录" code={`const paths = ${JSON.stringify(item.paths, null, 2)};\n<PencilIcon paths={paths} sourceSize={24} size={32} decorative />`}>
-      <div className="icon-examples__catalog">
-        <Input type="search" aria-label={t('搜索图标')} placeholder={t('搜索图标')} value={query} onValueChange={setQuery} clearable clearButtonLabel={t('清空搜索')} startIcon={<PencilIcon paths={icons[0].paths} sourceSize={24} size={22} />} />
-        <Tabs.Root value={category} onValueChange={setCategory} size="sm">
-          <Tabs.List aria-label={t('图标分类')}>{iconCategories.map(([key, label, icon]) => <Tabs.Trigger key={key} value={key} startIcon={<DocsIcon data={icon} size={24} />}>{t(label)}</Tabs.Trigger>)}</Tabs.List>
-          <Tabs.Content value={category}>
-            <div key={`${category}:${query}`} className="icon-examples__grid" role="group" tabIndex={0} aria-label={t('图标目录')}>
-              {visibleIcons.map(icon => <Button key={icon.key} fullWidth variant={selected === icon.key ? 'outline' : 'ghost'} aria-pressed={selected === icon.key} onClick={() => setSelected(icon.key)} className="icon-examples__choice"><span className="icon-examples__choice-content"><PencilIcon paths={icon.paths} sourceSize={24} size={32} decorative /><PencilText>{icon.label}</PencilText></span></Button>)}
-              {!visibleIcons.length && <PencilText as="p" role="status" className="icon-examples__empty">没有匹配的图标</PencilText>}
-            </div>
-          </Tabs.Content>
-        </Tabs.Root>
-      </div>
+      <IconCatalogGrid selected={selected} onSelect={setSelected} />
     </ComponentExample>
     <ComponentExample title="尺寸" code={`const paths = ${JSON.stringify(item.paths, null, 2)};\n\n${['16', '20', '24', '32', '40'].map(value => `<PencilIcon paths={paths} sourceSize={24} size={${value}} decorative />`).join('\n')}`}>
       <div className="icon-examples__sizes">{[16, 20, 24, 32, 40].map(value => <div key={value}><span className="icon-examples__size-box"><PencilIcon paths={item.paths} sourceSize={24} size={value} decorative /></span><PencilText>{`${value}px`}</PencilText></div>)}</div>

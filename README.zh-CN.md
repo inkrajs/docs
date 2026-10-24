@@ -10,8 +10,8 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-当前工作区使用 `vendor/inkra.tgz` 预览尚未发布的组件属性扩展。
-版本仍为 0.3.0，但归档不等同于 npm 已发布的同版本包。
+当前工作区使用 `vendor/inkra.tgz` 预览尚未发布的 0.4.2 候选版本。
+此归档尚未发布至 npm。
 library-candidate.json 固定组件仓精确提交及本地归档校验和。
 先按下文准备本地候选包，再安装和构建：
 

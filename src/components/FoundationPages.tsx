@@ -30,6 +30,7 @@ import { AudioPlayerExamples } from './AudioPlayerExamples';
 import { CarouselExamples } from './CarouselExamples';
 import { ChoiceGridExamples } from './ChoiceGridExamples';
 import { ColorPickerExamples } from './ColorPickerExamples';
+import { ColorSwatchExamples } from './ColorSwatchExamples';
 import { ContextMenuExamples } from './ContextMenuExamples';
 import { DockablePanelExamples } from './DockablePanelExamples';
 import { EditableExamples } from './EditableExamples';
@@ -55,6 +56,8 @@ import { TransferExamples } from './TransferExamples';
 import { TreeSelectExamples } from './TreeSelectExamples';
 import { TypewriterExamples } from './TypewriterExamples';
 import { VirtualListExamples } from './VirtualListExamples';
+import { MarkdownExamples, markdownAccessibility } from './MarkdownExamples';
+import { GuidanceMarkdown } from './GuidanceMarkdown';
 const LazyTravelExamples = lazy(() => import('./TravelExamples').then(module => ({ default: module.TravelExamples })));
 function TravelExamples(props: { kind: 'calendar' | 'day-agenda' | 'journey-map' }) {
   return <Suspense fallback={<span role="status">...</span>}><LazyTravelExamples {...props} /></Suspense>;
@@ -71,6 +74,7 @@ const independentExamples: Partial<Record<FoundationComponent, ComponentType>> =
   carousel: CarouselExamples,
   'choice-grid': ChoiceGridExamples,
   'color-picker': ColorPickerExamples,
+  'color-swatch': ColorSwatchExamples,
   'context-menu': ContextMenuExamples,
   'dockable-panel': DockablePanelExamples,
   editable: EditableExamples,
@@ -79,6 +83,7 @@ const independentExamples: Partial<Record<FoundationComponent, ComponentType>> =
   'hover-card': HoverCardExamples,
   'image-cropper': ImageCropperExamples,
   'image-viewer': ImageViewerExamples,
+  markdown: MarkdownExamples,
   keypad: KeypadExamples,
   'node-graph': NodeGraphExamples,
   'overflow-list': OverflowListExamples,
@@ -166,6 +171,14 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
 
 
 const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, [string, string][]>> = {
+  markdown: [
+    ['children', 'string'],
+    ['headingLevelOffset', 'number (default 0; clamped to h1-h6)'],
+    ['labels', 'MarkdownLabels; code / plainText / copy / copied / copyFailed / table / taskChecked / taskUnchecked'],
+    ['transformUrl', "(url, kind: 'link' | 'image') => string | null | undefined"],
+    ['components', 'react-markdown Components'],
+    ['className / style / ref', 'native div props / HTMLDivElement'],
+  ],
   slot: [['children', 'ReactNode; arbitrary visual content'], ['interactive', 'boolean (default false); div or native button'], ['empty / emptyContent', 'boolean / ReactNode; preserves geometry'], ['selected', 'boolean (default false); visual selection and aria-pressed for buttons'], ['disabled', 'boolean; native disabled for interactive slots'], ['size', 'sm (48px) | md (64px) | lg (80px)'], ['count', 'number; rendered with Badge'], ['renderCount', '(count: number) => ReactNode'], ['aria-label / aria-labelledby', 'string; name interactive or meaningful slots'], ['seed', 'string | number'], ['ref', 'HTMLDivElement | HTMLButtonElement']],
   breadcrumb: [['Root', 'native nav props; aria-label defaults to Breadcrumb; dir supports RTL'], ['List / Item', 'native ol / li props; paths wrap in narrow containers'], ['Link', 'ButtonLinkProps; real href, startIcon, disabled; default variant ghost'], ['Page', 'native span props; aria-current=page; noninteractive current location'], ['Separator.children', 'ReactNode; default /; decorative and hidden from assistive technology']],
   icon: [
@@ -176,6 +189,15 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['badge.scale / badge.sourceSize', '0.35-0.65 (default 0.55) / 1-32 (default 24); clamped to keep the badge inside the canvas'],
     ['dir', 'ltr | rtl; mirrors badge placement, not icon paths'],
     ['size / sourceSize', 'number; canvas size defaults 40px / source coordinates default 32; Lucide uses 24'],
+    ['strokeWidth', 'number (0.3-3); inherits icon stroke token; default 1.5'],
+    ['intensity', 'number (0-1); inherits icon intensity token or defaults to 1'],
+    ['breaks', 'number (0-1); inherits icon breaks token or defaults to 0.18'],
+    ['breakCount', 'integer (0-12); maximum gaps per continuous path, limited by displayed length; defaults to 1'],
+    ['--inkra-icon-break-count', 'CSS custom property; inherited per container; explicit breakCount takes precedence'],
+    ['pressureVariation', 'number (0-1); inherits icon pressure variation token or defaults to 0.82'],
+    ['--inkra-icon-pressure-variation', 'CSS custom property; inherited per container; explicit pressureVariation takes precedence'],
+    ['--inkra-icon-breaks', 'CSS custom property; inherited per container; explicit breaks takes precedence'],
+    ['--inkra-icon-stroke-width / --inkra-icon-intensity', 'CSS custom properties; inherited per container; explicit props take precedence'],
     ['seed', 'string | number; stable pencil grain'],
     ['active', 'boolean (default false); accent pencil mark, not semantic selection'],
     ['decorative', 'boolean (default true); false exposes role=img'],
@@ -243,7 +265,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   separator: [['orientation', 'horizontal | vertical'], ['decorative', 'boolean (default false)'], ['weight', 'number (0.3..2, default 0.9)'], ['seed', 'string | number']],
   skeleton: [['width / height', 'CSSProperties["width"] / CSSProperties["height"]'], ['animation', 'none (default) | pulse'], ['style / className', 'CSSProperties / string'], ['radius', 'number (0..8)'], ['seed', 'string | number']],
   progress: [['value', 'number | null'], ['max', 'number (default 100)'], ['shape', 'linear (default) | circular'], ['size', 'sm | md | lg: linear 12/16/24px; circular 64/96/128px'], ['diameter', 'number (32-512px)'], ['thickness', 'number (1-diameter/8; default 4/6/8px)'], ['contentPosition', 'center | top | bottom | start | end'], ['children', 'ReactNode | (state: ProgressRenderState) => ReactNode'], ['label', 'ReactNode'], ['dir', 'ltr | rtl'], ['aria-label / aria-labelledby / aria-valuetext', 'string'], ['seed', 'string | number']],
-  tabs: [['Root.value / defaultValue', 'string'], ['Root.onValueChange', '(value: string) => void'], ['Root.size', 'sm | md (default) | lg'], ['Root.animated', 'boolean (default true)'], ['Root.orientation', 'horizontal | vertical'], ['Root.activationMode', 'automatic | manual'], ['Root.dir', 'ltr | rtl'], ['List.align', 'start (default) | center | end'], ['List.fullWidth', 'boolean (default false)'], ['List.divided', 'boolean (default false)'], ['List.loop', 'boolean (default true)'], ['Trigger.value / disabled', 'string / boolean'], ['Trigger.startIcon / endIcon', 'ReactNode'], ['Content.value / forceMount', 'string / true']],
+  tabs: [['Root.value / defaultValue', 'string'], ['Root.onValueChange', '(value: string) => void'], ['Root.size', 'sm | md (default) | lg'], ['Root.animated', 'boolean (default true)'], ['Root.orientation', 'horizontal | vertical'], ['Root.activationMode', 'automatic | manual'], ['Root.dir', 'ltr | rtl'], ['List.align', 'start (default) | center | end'], ['List.fullWidth', 'boolean (default false)'], ['List.divided', 'boolean (default false)'], ['List.loop', 'boolean (default true)'], ['List.overflow', 'scroll (default) | menu | buttons'], ['List.moreLabel', 'string (default "More tabs")'], ['List.scrollPreviousLabel / scrollNextLabel', 'string'], ['Trigger.value / disabled', 'string / boolean'], ['Trigger.startIcon / endIcon', 'ReactNode'], ['Trigger.overflowLabel', 'string'], ['Content.value / forceMount', 'string / true']],
   select: [
     ['Searchable.items', 'readonly SearchableSelectOption[]; value, label, disabled?, keywords?'],
     ['Searchable.searchPlacement', 'trigger (default) | popup'],
@@ -309,6 +331,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['ref / className / style', 'native HTMLInputElement / native input class / native input style'],
   ],
   textarea: [
+    ['variant', 'outline (default) | underline'], ['endAction', 'ReactNode'],
     ['size', 'sm | md (default) | lg'], ['value / defaultValue', 'string'],
     ['onChange', 'ChangeEventHandler<HTMLTextAreaElement>'], ['rows / cols', 'number'],
     ['minLength / maxLength', 'number; native UTF-16 code-unit limits'],
@@ -354,8 +377,15 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['ref / ChoiceGridOption.ref', 'HTMLFieldSetElement / HTMLInputElement'],
   ],
   'color-picker': [
-    ['value / defaultValue', 'string; #RGB | #RGBA | #RRGGBB | #RRGGBBAA'],
-    ['onValueChange', '(value: ColorValue, details: ColorPickerChangeDetails) => void'],
+    ['presentation', 'inline (default) | compact | popover | swatches'],
+    ['value / defaultValue', 'string; with allowGradient: string | ColorGradient'],
+    ['onValueChange', '(value: ColorValue | ColorPaint, details: ColorPickerChangeDetails) => void'],
+    ['allowGradient', 'boolean (default false)'],
+    ['colorTypes', 'readonly (solid | linear | radial | conic)[]'],
+    ['maxStops', 'number (default 8; 2-64)'],
+    ['gradientLabels', 'ColorGradientLabels'],
+    ['ColorGradient', '{ type; stops: { id?, color, position }[]; angle?; center?: { x, y }; shape?; extent?; repeating? }'],
+    ['formatColorPaint', '(paint: string | ColorGradient) => string'],
     ['onInvalidInput', '(input: string) => void'],
     ['presets', 'readonly (string | ColorPreset)[]'],
     ['showAlpha', 'boolean (default true)'],
@@ -363,9 +393,14 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['name / form', 'string'], ['disabled', 'boolean (default false)'],
     ['seed', 'string | number'],
   ],
+  'color-swatch': [
+    ['color', 'string'], ['background', 'CSSProperties[background]'], ['label', 'string'], ['selected', 'boolean (default false)'],
+    ['size', 'sm | md (default) | lg'], ['onClick', 'MouseEventHandler<HTMLButtonElement>'],
+    ['disabled', 'boolean'], ['seed', 'string | number'], ['ref', 'HTMLButtonElement'],
+  ],
   'context-menu': [['Root.open / defaultOpen', 'boolean'], ['Root.onOpenChange', '(open: boolean, details: ContextMenuOpenChangeDetails) => void'], ['Root.modal / dir', 'boolean / ltr | rtl'], ['Trigger.as / disabled', 'ElementType / boolean'], ['Trigger.longPress', 'boolean | { delay?: number; movementTolerance?: number }'], ['Trigger.nativeContextMenu', 'editable | always | never'], ['Trigger.exclude', 'string | (target: Element, currentTarget: HTMLElement) => boolean'], ['Content.onCloseAutoFocus', '(event: Event) => void'], ['Content.side / align / sideOffset / collisionPadding', 'top | right | bottom | left / start | center | end / number / number'], ['Item.disabled / destructive / icon / onSelect', 'boolean / boolean / ReactNode / (event: Event) => void'], ['CheckboxItem.checked / onCheckedChange', 'boolean | indeterminate / (checked: boolean) => void'], ['RadioGroup.value / onValueChange', 'string / (value: string) => void'], ['Sub.open / defaultOpen / onOpenChange', 'boolean / boolean / (open: boolean) => void'], ['SubTrigger.disabled / icon', 'boolean / ReactNode'], ['SubContent.sideOffset / collisionPadding', 'number'], ['Portal.container', 'HTMLElement']],
   'dockable-panel': [['position / defaultPosition', '{ x; y }'], ['onPositionChange', 'position callback'], ['collapsed / defaultCollapsed', 'boolean'], ['snap', 'viewport edge options'], ['bounds', 'viewport | HTMLElement'], ['panelId / activePanelId', 'layer management']],
-  editable: [['value / defaultValue', 'string'], ['editing / defaultEditing', 'boolean'], ['onValueChange / onEditingChange', 'callbacks'], ['multiline', 'boolean'], ['validate', 'sync or async validator'], ['display / editor', 'ReactNode | render callback'], ['blurBehavior', 'ignore (default) | save | cancel'], ['submitOnEnter', 'boolean; default !multiline'], ['inputProps / textareaProps', 'InputProps / TextareaProps; excludes value handlers'], ['startEditingLabel / saveLabel / cancelLabel', 'string'], ['onSave / onCancel', 'EditableSaveHandler / (value: string) => void'], ['EditableEditorProps', 'value, onValueChange, onKeyDown, onBlur, disabled, readOnly, invalid, error, autoFocus, ARIA'], ['ref', 'EditableHandle: focus / startEditing / save / cancel']],
+  editable: [['value / defaultValue', 'string'], ['editing / defaultEditing', 'boolean'], ['onValueChange / onEditingChange', 'callbacks'], ['editorType', 'input (default) | textarea | select'], ['selectProps', 'EditableSelectProps: items, mode (dropdown | searchable | stepper), size, dir, labels, clearable, loop'], ['multiline', 'boolean; legacy textarea shorthand'], ['validate', 'sync or async validator'], ['display / editor', 'ReactNode | render callback'], ['blurBehavior', 'ignore (default) | save | cancel'], ['submitOnEnter', 'boolean (default true); multiline uses Ctrl/Command + Enter'], ['inputProps / textareaProps', 'InputProps / TextareaProps; excludes value handlers'], ['startEditingLabel / saveLabel / cancelLabel', 'string'], ['onSave / onCancel', 'EditableSaveHandler / (value: string) => void'], ['EditableEditorProps', 'value, onValueChange, onKeyDown, onBlur, disabled, readOnly, invalid, error, autoFocus, ARIA'], ['ref', 'EditableHandle: focus / startEditing / save / cancel']],
   flip: [['flipped / defaultFlipped', 'boolean'], ['onFlippedChange', '(flipped) => void'], ['front / back', 'ReactNode'], ['tilt', 'boolean | TiltOptions'], ['axis', 'x | y'], ['disabled', 'boolean']],
   heatmap: [['rows / columns / cells', 'axis and cell data'], ['scaleType / domain / binCount', 'continuous | quantize'], ['selectedCell / defaultSelectedCell', 'HeatmapSelection'], ['onSelectedCellChange', 'selection callback'], ['renderCell / renderDetails', 'render hooks'], ['showLegend / showValues', 'boolean']],
   'hover-card': [['open / defaultOpen', 'boolean'], ['onOpenChange', '(open) => void'], ['openDelay / closeDelay', 'milliseconds'], ['interactive', 'boolean'], ['Trigger / Content', 'compound parts'], ['side / align / collisionPadding', 'positioning']],
@@ -377,13 +412,16 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['Content.showThumbnails / zoomable / rotatable', 'boolean (defaults true / true / false)'],
     ['Content.minScale / maxScale / wheel', 'number / number / disabled | always | modifier'],
     ['Content.labels', 'Partial<ImageViewerLabels>'], ['Content.renderImage', '(item: ImageViewerItem, props: ImageViewerImageRenderProps) => ReactNode'],
+    ['Content.videoLabels', 'Partial<VideoResourceLabels>'],
     ['Content.emptyState', 'ReactNode'], ['Content.dir / onOpenAutoFocus', 'ltr | rtl / (event: Event) => void'],
     ['ImageViewerItem.id / src / alt', 'string'], ['ImageViewerItem.thumbnailSrc / thumbnailAlt / width / height', 'string / string / number / number'],
+    ['ImageViewerItem.type / poster', 'image | video (default image) / string'],
+    ['MediaViewer', 'ImageViewer alias'],
   ],
   keypad: [['keys', 'readonly KeypadKey[]'], ['value / defaultValue', 'string'], ['onValueChange', '(value, details) => void'], ['columns / maxLength', 'number'], ['onConfirm', '(value) => void'], ['disabled / readOnly', 'boolean']],
   'node-graph': [['nodes / edges', 'React Flow data'], ['onNodesChange / onEdgesChange', 'change callbacks'], ['onConnect', 'connection callback'], ['fitView / minZoom / maxZoom', 'viewport options'], ['Node / Edge', 'bounded Inkra renderers'], ['ref', 'NodeGraphRef']],
   'overflow-list': [['items', 'readonly OverflowListItem[]'], ['strategy', 'end | start | priority'], ['renderItem / renderOverflowItem', 'render hooks'], ['renderOverflowTrigger', 'trigger hook'], ['onOverflowChange', 'visible and overflow ids'], ['minVisibleItems', 'number']],
-  'pan-zoom': [['value / defaultValue', 'PanZoomTransform'], ['onTransformChange', '(transform, details) => void'], ['minScale / maxScale', 'number'], ['wheel / pinch / pan / keyboard', 'interaction options'], ['fitOnInit / bounds', 'viewport options'], ['ref', 'PanZoomRef']],
+  'pan-zoom': [['value / defaultValue', 'PanZoomTransform'], ['onTransformChange', '(transform, details) => void'], ['minScale / maxScale', 'number'], ['wheel / pinch / pan / keyboard', 'interaction options'], ['wheelStep', 'number'], ['fitOnInit / limitToBounds / centerZoomedOut', 'boolean | FitToViewMode / boolean / boolean'], ['ref', 'PanZoomRef']],
   radar: [['axes / series', 'radar data'], ['hiddenSeries / defaultHiddenSeries', 'string[]'], ['onHiddenSeriesChange', 'callback'], ['showLegend / showTable', 'boolean'], ['tableCaption / seriesLabel', 'ReactNode'], ['renderLabel / renderTooltip', 'render hooks'], ['domain', 'per-axis ranges']],
   'range-slider': [
     ['value / defaultValue', '[number, number]; default [min, max]'],
@@ -470,6 +508,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
   carousel: '前后按钮和分页有可访问名称，键盘可移动当前项；自动播放默认关闭，启用时在交互、页面隐藏和减少动态效果时暂停。',
   'choice-grid': '复用原生单选或多选语义，方向键与 Tab 遵循对应控件规则；图标、图片和颜色不替代文字标签与错误说明。',
   'color-picker': '颜色值同时用文本和通道数值表达；色块不是唯一信息。每个通道控件有名称，预设按钮暴露实际颜色值。',
+  'color-swatch': '色样使用具名原生按钮，Enter 或 Space 选择，选中状态通过轮廓和 aria-pressed 表达；禁用项不进入键盘顺序。',
   'context-menu': '右键、ContextMenu 键或 Shift+F10 打开；Escape 关闭并返回实际触发区域。长按不得阻止页面滚动或文本选择。',
   'dockable-panel': '标题栏是移动把手但不劫持内部按钮；键盘可移动、收起和恢复。面板始终夹在视口内，缩小视口后标题栏仍可到达。',
   editable: '展示态与编辑态共享清晰名称；Enter 提交、Escape 取消，多行与输入法组合期间不误提交。异步校验保留焦点并播报错误。',
@@ -477,7 +516,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
   heatmap: '网格单元提供行、列和数值名称，方向键在网格中移动，Enter 或 Space 选择。缺失值与 0 明确区分，不只依赖颜色。',
   'hover-card': '触发器聚焦或悬停显示补充信息；交互内容可进入并操作，Escape 关闭并返回触发器。触摸设备不依赖悬停。',
   'image-cropper': '拖动和缩放均有键盘替代控件；裁剪坐标与原图像素关系明确。加载、CORS 和导出错误以可读文字反馈。',
-  'image-viewer': 'Dialog 管理焦点、Escape 和后台滚动；图片提供 alt，缩略图和前后按钮有名称。加载失败与空列表保留可操作出口。',
+  'image-viewer': '全屏查看器保留隐藏标题、焦点管理、Escape 关闭和焦点返回，不显示顶部标题栏。图片提供替代文本；视频控制与缩略图有名称，切换资源或关闭时停止播放。加载失败与空列表保留关闭入口。',
   keypad: '每个按键都是原生按钮并有稳定名称；输入、删除与确认提供可读反馈。列跨度仅影响布局，不改变按键顺序。',
   'node-graph': '节点与边保留可读名称和键盘可达操作；画布手势不是唯一入口。缩放、适配与连接状态通过有名称控件提供。',
   'overflow-list': '被收纳项目仍通过菜单可达；测量副本对读屏和焦点隐藏。当前焦点项目被收纳时，焦点转移到更多菜单。',
@@ -497,7 +536,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
 };
 
 export function FoundationPage({ component, activeTab, onTabChange }: { component: FoundationComponent; activeTab: ComponentPageTab; onTabChange: (tab: ComponentPageTab) => void }) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   if (isExpansionComponent(component)) return <Suspense fallback={<span role="status">{t('加载中')}</span>}><ExpansionPage component={component} activeTab={activeTab} onTabChange={onTabChange} /></Suspense>;
   const IndependentExamples = independentExamples[component];
   return <article className="documentation">
@@ -507,7 +546,9 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>
       {activeTab === 'preview' && (component === 'breadcrumb' ? <BreadcrumbExamples /> : IndependentExamples ? <IndependentExamples /> : component === 'progress' ? <><MoreExamples kind="progress" /><SegmentedProgressExamples /></> : component === 'slot' ? <SlotExamples /> : component === 'log' ? <LogExamples /> : component === 'hotkey' ? <HotkeyExamples /> : component === 'number-ticker' ? <NumberTickerExamples /> : component === 'icon' ? <IconExamples /> : component === 'input-number' ? <InputNumberExamples /> : component === 'slider' ? <SliderExamples /> : component === 'calendar' || component === 'day-agenda' || component === 'journey-map' ? <TravelExamples key={component} kind={component} /> : component === 'dropdown-menu' || component === 'alert' || component === 'avatar' || component === 'card' || component === 'table' ? <ContentExamples kind={component} /> : component === 'tooltip' || component === 'accordion' || component === 'badge' || component === 'separator' || component === 'skeleton' ? <MoreExamples kind={component} /> : component === 'tabs' ? <TabsExamples /> : component === 'select' ? <SelectExamples /> : component === 'popover' ? <PopoverExamples /> : component === 'overlay' ? <OverlayExamples /> : component === 'field' || component === 'input' || component === 'textarea' ? <FormInputExamples key={component} kind={component} /> : component === 'checkbox' || component === 'radio-group' || component === 'switch' ? <SelectionExamples key={component} kind={component} /> : null)}
       {activeTab === 'api' && <section className="component-api"><ApiTable rows={apiRows[component] ?? [['component', foundationNames[component]]]} component={component} label={`${foundationNames[component]} API`} /></section>}
-      {activeTab === 'accessibility' && <section className="component-api"><PencilText as="p">{additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。')}</PencilText></section>}
+      {activeTab === 'accessibility' && <section className="component-api"><GuidanceMarkdown source={component === 'markdown'
+        ? markdownAccessibility[locale === 'en' ? 'en' : 'zh']
+        : t(additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。'))} /></section>}
     </section>
   </article>;
 }

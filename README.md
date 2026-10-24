@@ -6,10 +6,10 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This working revision previews unpublished component property extensions using
-`vendor/inkra.tgz`. The version remains `0.3.0`, but these are not the published
-registry bytes. library-candidate.json pins the exact library commit and archive
-checksums. Prepare this candidate before npm ci.
+This working revision previews the `0.4.2` release candidate using
+`vendor/inkra.tgz`. These are not yet the published
+registry bytes. library-candidate.json records the source commit (or null for an
+uncommitted local build) and pins the exact archive checksums. Prepare this candidate before npm ci.
 Build verifies the archive and installed dependency without a source alias.
 
 ## Local Development
@@ -74,6 +74,73 @@ Rebuild the product and prepare again after library edits; there is no implicit
 source link. Review and commit the exact revision, integrity and lockfile together.
 
 ## Checks And Publication
+
+Primary playgrounds show the component and necessary labels, without demo-only
+debug outputs, helper prose or form actions. Advanced composition and native
+submit/reset examples remain below. `verify-minimal-playgrounds.mjs` checks ten
+representative pages in both locales; the AST contract guards playground children
+without hiding component-owned validation or accessibility feedback.
+
+Editable defaults to plain clickable text and supports built-in Input, Textarea
+and dropdown/searchable/stepper Select editors. Text actions occupy the existing
+right action slot; multiline Enter inserts a line and Ctrl/Command+Enter saves.
+`verify-editable-builtins.mjs` covers shared surfaces, focus, portals, validation
+and async saves on desktop and narrow screens using the installed candidate.
+
+Markdown shares Inkra typography, Checkbox task states, pencil list markers,
+links, quotes, separators and Table, and renders actual accessibility guidance.
+Its examples show emphasis, inline/block code and structured content separately.
+Inline links keep the surrounding text baseline, with decorative underlines out
+of flow. Code blocks reuse the getting-started Card treatment with a language
+header, pencil syntax coloring, and a localized copy action. Inline code uses a
+clipped theme-pigment wash seeded by its content, stable across rerenders.
+Selected navigation text and icons use the theme's on-accent foreground;
+`verify-nav-foreground.mjs` compares them with the design-standard samples.
+Task checkboxes and text occupy
+separate columns, and deletion marks follow the real wrapped lines.
+`verify-markdown.mjs` checks rendering, safe URLs, stable focus, local scrolling,
+painted pixels and forced-color/print fallbacks. `verify-pencil-emphasis.mjs`
+compares actual regular/bold/italic/combined glyph pixels and cache invalidation.
+
+PanZoom defaults to a gentle wheel step of 0.001; wheelStep configures sensitivity
+without changing touch pinch or keyboard zoom. verify-pan-zoom-speed.mjs checks
+actual wheel deltas, modifiers, boundaries and controlled reconciliation.
+The icon catalog has 286 pencil-rendered icons, including editing, devices,
+tools, weather, file states, media, navigation and game rewards.
+Catalog paint is mounted only for visible or focused items using one shared
+intersection observer; offscreen buttons retain labels and SVG fallbacks.
+`verify-icon-performance.mjs` guards canvas bounds, stable native focus/clicks,
+scrolling, search and preview-only edits. `measure-icon-page.mjs` reports three
+fresh-context runs; timings are local development measurements, not production SLAs.
+verify-icon-expansion.mjs checks paths, painted pixels, bilingual search and
+desktop/narrow layouts against the installed candidate.
+PencilIcon defaults to an independent 1.5 stroke weight and full intensity.
+It accepts strokeWidth and intensity overrides and inherited
+--inkra-icon-stroke-width / --inkra-icon-intensity tokens. verify-icon-stroke.mjs
+checks actual pixels, composed badges, cache reuse, bounds and live controls.
+The nine-icon preview uses a 16-128px size slider. Pressure and gap strength are
+independent; breakCount is a maximum limited by displayed stroke length, so
+larger icons may have more gaps while short strokes stay readable. DPR does not
+change the count. The short-stroke check measures actual width and gap pixels.
+verify-palette-softness.mjs checks all four palettes in both themes, sampled
+foreground contrast over the rendered pencil backgrounds and narrow layouts.
+
+Tabs keeps native horizontal scrolling by default. Optional menu overflow retains
+the selected tab when it fits, while optional edge buttons only scroll the strip.
+`verify-tabs-overflow.mjs` covers controlled selection, focus, resize, changing
+labels/items, RTL and system colors. `verify-tabs-overflow-docs.mjs` exercises the
+localized controls and examples against the installed package.
+
+Empty includes eight theme-aware pencil illustrations, responsive preset sizes and
+custom visual slots. `verify-empty.mjs` checks distinct rendered pixels, localized
+controls, narrow containers, accessible names, canvas loss and SVG fallbacks in
+forced colors and print against the installed candidate.
+
+Toast supports nine independently managed positions and interchangeable card/compact
+appearances. `verify-toast.mjs` checks per-position limits and timers, pause isolation,
+updates, async notifications, keyboard focus, swipe dismissal and responsive layouts.
+`verify-toast-docs.mjs` exercises localized placement/style controls, the position grid
+and multi-queue example against the installed candidate.
 
 The header theme customizer uses the installed Drawer, Tabs and Slider components.
 Theme mode, palette, lettering, stroke and fill edits affect only the preview Card until
@@ -182,6 +249,16 @@ slides, pencil focus, RTL tools and same-id source recovery. `verify-media-docs.
 exercises the live localized examples, a generated WAV, real project actions,
 loaded image assets and desktop/narrow screenshots using one browser worker.
 
+ImageViewer now fills the viewport without a visible title bar. `MediaViewer`
+is the same public component under a resource-oriented name and supports mixed
+image/video items. The local video example is generated from public repository
+artwork by `node scripts/generate-viewer-video.mjs` (requires ffmpeg); it uses no
+remote media. `verify-media-viewer-video.mjs` covers real playback and cleanup,
+while `verify-media-viewer-layout.mjs` checks decoded pixels and reachable controls
+at desktop, narrow and short viewport sizes. `verify-pan-zoom-drag.mjs` exercises
+pointer and touch movement immediately after fitting, without first zooming in.
+These are local Chromium checks, not real-device acceptance or arbitrary-file support.
+
 Layout primitives have their own navigation
 category and interactive pages. Textarea supports near-limit or always-visible
 remaining/fraction/progress indicators and an optional pencil resize handle.
@@ -227,6 +304,20 @@ in the client. Website deployment and npm publication remain separate workflows.
 Run `node scripts/verify-homepage.mjs` against the local server for homepage
 interaction checks and desktop/mobile screenshots in Chinese and English.
 Set `BASE_URL` to verify another preview or the deployed website.
+
+ColorSwatch is shared by the icon playground, theme customization and ColorPicker
+presets. ColorPicker supports inline, compact, popover and swatches presentations.
+ColorSwatch lives with form inputs; primary color previews omit demo-only status
+text. `allowGradient` opts into structured linear, radial, conic and repeating
+gradients, editable stops and geometry. `formatColorPaint` serializes CSS/form
+values; arbitrary CSS gradient parsing is not supported. `maxStops` limits new
+stops without truncating imported values. `verify-color-gradients.mjs` checks the
+installed editor and its controlled, form, disabled and responsive contracts.
+`verify-color-presentations.mjs` exercises both locales, keyboard selection,
+controlled rejection, external form reset, focus return, disabled state, real
+pigment pixels, light/dark, forced colors and narrow/short RTL layouts using the
+installed package. `verify-color-picker-refinement.mjs` retains the input/IME and
+reset regression checks. These are local Chromium checks, not device acceptance.
 
 ## License
 

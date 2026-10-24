@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button, ImageViewer } from '@inkra/react';
-import type { ImageViewerItem } from '@inkra/react';
+import { Button, MediaViewer } from '@inkra/react';
+import type { MediaViewerItem } from '@inkra/react';
 
 const svg = (label: string, color: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="100%" height="100%" fill="${color}"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="42">${label}</text></svg>`)}`;
 
-const baseItems: readonly ImageViewerItem[] = [
+const baseItems: readonly MediaViewerItem[] = [
   { id: 'one', src: svg('One', '#d9ecef'), alt: 'First inline image' },
   { id: 'two', src: svg('Two', '#f2ead7'), alt: 'Second inline image' },
   { id: 'broken', src: 'data:image/not-valid;base64,broken', alt: 'Broken inline image' },
@@ -24,11 +24,11 @@ function Fixture({ events }: { events: Events }) {
     ? { ...item, src: brokenRecovered ? svg('Recovered', '#d9ecef') : item.src, alt: `${item.alt} version ${version}` }
     : { ...item, alt: `${item.alt} version ${version}` }), [brokenRecovered, items, version]);
   return <main data-inkra-theme="dark" dir="rtl" style={{ padding: 16 }}>
-    <ImageViewer.Root items={mappedItems} activeId={activeId} open={open} loop={false}
+    <MediaViewer.Root items={mappedItems} activeId={activeId} open={open} loop={false}
       onOpenChange={next => { events.open.push(next); setOpen(next); }}
       onActiveIdChange={(id, details) => { events.active.push({ id, reason: details.reason }); if (!rejectChanges) setActiveId(id); }}>
-      <ImageViewer.Trigger asChild><Button variant="outline">Open refined image viewer</Button></ImageViewer.Trigger>
-      <ImageViewer.Content rotatable labels={{
+      <MediaViewer.Trigger asChild><Button variant="outline">Open refined image viewer</Button></MediaViewer.Trigger>
+      <MediaViewer.Content rotatable labels={{
         title: 'An intentionally very long image viewer heading that must remain readable without hiding the stage or tools in a short viewport',
         description: 'Use keyboard and visible controls.',
         close: 'Close refined image viewer',
@@ -38,7 +38,7 @@ function Fixture({ events }: { events: Events }) {
         imagePosition: (current, total) => `${current} / ${total}`, thumbnail: item => `Show ${item.id}`,
         panZoom: item => `Pan zoom ${item.id}`, emptyTitle: 'Refined empty', emptyDescription: 'No refined images',
       }} />
-    </ImageViewer.Root>
+    </MediaViewer.Root>
     <button data-testid="refresh-same" type="button" onClick={() => setVersion(value => value + 1)}>Refresh same ids</button>
     <button data-testid="toggle-rejection" type="button" onClick={() => setRejectChanges(value => !value)}>Toggle controlled rejection</button>
     <button data-testid="select-second" type="button" onClick={() => setActiveId('two')}>Select second externally</button>

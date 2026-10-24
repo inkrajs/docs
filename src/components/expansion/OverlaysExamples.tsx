@@ -101,7 +101,7 @@ function archive() {
 
   return <ComponentPlayground code={code} controls={<PropertyTabs groups={[
     { label: '交互', content: <DocsSelect label={zh ? '异步时长' : 'Async duration'} value={String(delay)} onValueChange={value => setDelay(Number(value))} options={[["300", "300 ms"], ["700", "700 ms"], ["1200", "1200 ms"]]} /> },
-    { label: '状态', content: <><p className="component-demo-status">{pending ? (zh ? '正在处理，关闭已锁定' : 'Pending; dismissal is locked') : (zh ? '空闲' : 'Idle')}</p><Button variant="secondary" onClick={() => setOpen(true)} disabled={open}>{zh ? '从属性区打开' : 'Open from controls'}</Button></> },
+    { label: '状态', content: <>{message !== 'idle' && <output aria-live="polite">{message === 'pending' ? (zh ? '正在归档…' : 'Archiving...') : (zh ? '归档完成' : 'Archived')}</output>}<Button variant="secondary" onClick={() => setOpen(true)} disabled={open}>{zh ? '从属性区打开' : 'Open from controls'}</Button></> },
   ]} />}>
     <div className="expansion-overlay-demo">
       <AlertDialog.Root open={open} onOpenChange={setOpen} pending={pending}>
@@ -121,7 +121,6 @@ function archive() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      <output className="expansion-overlay-demo__status" aria-live="polite">{message === 'idle' ? (zh ? '等待操作' : 'Waiting') : message === 'pending' ? (zh ? '正在归档…' : 'Archiving...') : (zh ? '归档完成' : 'Archived')}</output>
     </div>
   </ComponentPlayground>;
 }
@@ -190,7 +189,6 @@ function DrawerPlayground() {
   const [open, setOpen] = useState(false);
   const [savedName, setSavedName] = useState('Inkra');
   const [draftName, setDraftName] = useState(savedName);
-  const [saved, setSaved] = useState(false);
   const directionLabels = { top: zh ? '上' : 'Top', right: zh ? '右' : 'Right', bottom: zh ? '下' : 'Bottom', left: zh ? '左' : 'Left' };
   const sizeLabels = { sm: zh ? '小' : 'Small', md: zh ? '中' : 'Medium', lg: zh ? '大' : 'Large' };
   function changeOpen(next: boolean) {
@@ -199,7 +197,6 @@ function DrawerPlayground() {
   }
   function saveDraft() {
     setSavedName(draftName);
-    setSaved(true);
     setOpen(false);
   }
   const paragraphs = Array.from({ length: 24 }, (_, index) => zh ? `第 ${index + 1} 条更新：这里是可滚动的完整正文，不会推动头部和底部操作。` : `Update ${index + 1}: this scrollable body does not move the header or footer actions.`);
@@ -233,6 +230,7 @@ const [draftName, setDraftName] = useState(savedName);
   return <ComponentPlayground code={code} controls={<PropertyTabs groups={[
     { label: '布局', content: <><DocsSelect label={zh ? '方向' : 'Direction'} value={direction} onValueChange={value => setDirection(value as typeof direction)} options={Object.entries(directionLabels)} /><DocsSelect label={zh ? '尺寸' : 'Size'} value={size} onValueChange={value => setSize(value as typeof size)} options={Object.entries(sizeLabels)} /></> },
     { label: '内容', content: <><Switch checked={showClose} onCheckedChange={setShowClose} label={zh ? '显示关闭按钮' : 'Show close button'} /><Switch checked={divided} onCheckedChange={setDivided} label={zh ? '显示分割线' : 'Show dividers'} /></> },
+    { label: '状态', content: <Field label={zh ? '已保存名称' : 'Saved name'}><Input value={savedName} readOnly /></Field> },
   ]} />}>
     <div className="expansion-overlay-demo">
     <Drawer.Root open={open} onOpenChange={changeOpen}>
@@ -249,7 +247,6 @@ const [draftName, setDraftName] = useState(savedName);
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
-    <output className="expansion-overlay-demo__status" aria-live="polite">{saved ? (zh ? `本次预览已保存：${savedName}` : `Saved in this preview: ${savedName}`) : savedName}</output>
     </div>
   </ComponentPlayground>;
 }

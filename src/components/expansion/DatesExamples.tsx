@@ -19,9 +19,6 @@ import './DatesExamples.css';
 
 const initialDate = new Date(2026, 9, 22);
 const initialRange: DatePickerRange = { from: initialDate, to: new Date(2026, 9, 25) };
-const localDate = (date: Date | undefined) => date
-  ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-  : '';
 
 function DatePickerExamples() {
   const { locale } = useLocale();
@@ -34,9 +31,6 @@ function DatePickerExamples() {
   const [readOnly, setReadOnly] = useState(false);
   const [clearable, setClearable] = useState(true);
   const value: DatePickerValue = mode === 'single' ? single : range;
-  const summary = mode === 'single'
-    ? localDate(single)
-    : `${localDate(range?.from)} → ${localDate(range?.to)}`;
   const code = mode === 'single'
     ? `const [date, setDate] = useState<Date | undefined>(new Date(2026, 9, 22));\n\n<DatePicker\n  locale="${locale}"\n  size="${size}"\n  value={date}\n  onValueChange={next => setDate(next instanceof Date ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`
     : `const [range, setRange] = useState<DatePickerRange | undefined>({\n  from: new Date(2026, 9, 22),\n  to: new Date(2026, 9, 25),\n});\n\n<DatePicker\n  mode="range"\n  locale="${locale}"\n  size="${size}"\n  value={range}\n  onValueChange={next => setRange(next && !(next instanceof Date) ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`;
@@ -57,7 +51,7 @@ function DatePickerExamples() {
       </> },
     ]} />}>
       <div className="dates-examples__stage">
-        <Field label={mode === 'single' ? (zh ? '出发日期' : 'Departure date') : (zh ? '住宿日期' : 'Stay dates')} description={zh ? '值始终表示当地日历日期' : 'Values always represent local calendar dates'}>
+        <Field label={mode === 'single' ? (zh ? '出发日期' : 'Departure date') : (zh ? '住宿日期' : 'Stay dates')}>
           <DatePicker
             locale={locale}
             mode={mode}
@@ -75,7 +69,6 @@ function DatePickerExamples() {
             clearButtonLabel={zh ? '清空日期' : 'Clear date'}
           />
         </Field>
-        <output className="dates-examples__status" aria-live="polite">{summary || (zh ? '未选择' : 'No selection')}</output>
       </div>
     </ComponentPlayground>
 

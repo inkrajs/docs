@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Editable, Field, Switch, Textarea, type EditableBlurBehavior } from '@inkra/react';
+import { Editable, Field, Switch, Textarea, type EditableBlurBehavior, type EditableEditorType } from '@inkra/react';
 
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
@@ -13,27 +13,37 @@ export function EditableExamples() {
   const zh = locale === 'zh-CN';
   const [value, setValue] = useState(zh ? '点击编辑标题' : 'Click to edit this title');
   const [editing, setEditing] = useState(false);
-  const [multiline, setMultiline] = useState(false);
+  const [editorType, setEditorType] = useState<EditableEditorType>('input');
+  const [selectMode, setSelectMode] = useState<'dropdown' | 'searchable' | 'stepper'>('dropdown');
+  const [status, setStatus] = useState('draft');
   const [blurBehavior, setBlurBehavior] = useState<EditableBlurBehavior>('ignore');
-  const [validate, setValidate] = useState(true);
-  const [status, setStatus] = useState('');
+  const [validate, setValidate] = useState(false);
   const [customNote, setCustomNote] = useState(zh ? '保留一个简短备注。' : 'Keep a short note.');
   const [memberName, setMemberName] = useState(zh ? '林墨' : 'Alex Lin');
   const startEditingLabel = zh ? '编辑项目标题' : 'Edit project title';
   const saveLabel = zh ? '保存标题' : 'Save title';
   const cancelLabel = zh ? '取消编辑' : 'Cancel editing';
   const placeholder = zh ? '输入项目标题' : 'Enter a project title';
+  const items = [
+    { value: 'draft', label: zh ? '草稿' : 'Draft' },
+    { value: 'review', label: zh ? '待审核' : 'In review' },
+    { value: 'published', label: zh ? '已发布' : 'Published' },
+    { value: 'archived', label: zh ? '已归档' : 'Archived', disabled: true },
+  ];
   useEffect(() => {
     setValue(zh ? '点击编辑标题' : 'Click to edit this title');
     setCustomNote(zh ? '保留一个简短备注。' : 'Keep a short note.');
     setMemberName(zh ? '林墨' : 'Alex Lin');
     setEditing(false);
-    setStatus('');
   }, [zh]);
-  const code = `<Editable
+  const code = `const [value, setValue] = useState(${JSON.stringify(editorType === 'select' ? status : value)});
+const [editing, setEditing] = useState(false);
+${editorType === 'select' ? `const items = ${JSON.stringify(items, null, 2)};\n` : ''}
+<Editable
   value={value}
-  editing={${editing}}
-  multiline={${multiline}}
+  editing={editing}
+  editorType="${editorType}"
+  ${editorType === 'select' ? `selectProps={{ items, mode: '${selectMode}' }}` : ''}
   blurBehavior="${blurBehavior}"
   onEditingChange={setEditing}
   onValueChange={setValue}
@@ -47,7 +57,10 @@ export function EditableExamples() {
   return <div className="component-examples editable-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: zh ? '交互' : 'Interaction', content: <>
-        <Switch label={zh ? '多行编辑' : 'Multiline editor'} checked={multiline} onCheckedChange={setMultiline} />
+        <DocsSelect label={zh ? '编辑器' : 'Editor'} value={editorType} onValueChange={next => { setEditing(false); setEditorType(next as EditableEditorType); }}
+          options={[['input', zh ? '单行输入' : 'Input'], ['textarea', zh ? '多行输入' : 'Textarea'], ['select', zh ? '选项选择' : 'Select']]} />
+        {editorType === 'select' && <DocsSelect label={zh ? '选择模式' : 'Selection mode'} value={selectMode} onValueChange={next => { setEditing(false); setSelectMode(next as typeof selectMode); }}
+          options={[['dropdown', zh ? '下拉选择' : 'Dropdown'], ['searchable', zh ? '搜索选择' : 'Searchable'], ['stepper', zh ? '左右切换' : 'Stepper']]} />}
         <DocsSelect label={zh ? '失焦行为' : 'Blur behavior'} value={blurBehavior} onValueChange={next => setBlurBehavior(next as EditableBlurBehavior)} options={[
           ['ignore', zh ? '忽略' : 'Ignore'], ['save', zh ? '保存' : 'Save'], ['cancel', zh ? '取消' : 'Cancel'],
         ]} />
@@ -55,34 +68,43 @@ export function EditableExamples() {
       { label: zh ? '校验' : 'Validation', content: <Switch label={zh ? '启用非空校验' : 'Require non-empty value'} checked={validate} onCheckedChange={setValidate} /> },
     ]} />}>
       <div className="editable-examples__stage">
-        <Field label={zh ? '项目标题' : 'Project title'} description={zh ? 'Enter 键保存，Escape 键取消。' : 'Enter saves; Escape cancels.'}>
+        <Field label={zh ? '项目标题' : 'Project title'}>
           <Editable
             aria-label={zh ? '编辑项目标题' : 'Edit project title'}
             blurBehavior={blurBehavior}
             cancelLabel={cancelLabel}
             editing={editing}
-            multiline={multiline}
-            onCancel={() => setStatus(zh ? '已取消编辑' : 'Editing cancelled')}
-            onEditingChange={next => {
-              setEditing(next);
-              if (next) setStatus(zh ? '正在编辑标题' : 'Editing title');
-            }}
-            onSave={async next => {
-              await Promise.resolve();
-              setStatus(zh ? `已保存：${next}` : `Saved: ${next}`);
-            }}
-            onValueChange={setValue}
+            editorType={editorType}
+            selectProps={{ items, mode: selectMode, searchPlaceholder: zh ? '搜索状态' : 'Search status', emptyContent: zh ? '没有匹配选项' : 'No matching options', previousLabel: zh ? '上一个状态' : 'Previous status', nextLabel: zh ? '下一个状态' : 'Next status' }}
+            onEditingChange={setEditing}
+            onValueChange={editorType === 'select' ? setStatus : setValue}
             placeholder={placeholder}
             saveLabel={saveLabel}
             startEditingLabel={startEditingLabel}
             validate={next => validate && !next.trim() ? (zh ? '标题不能为空' : 'Title is required') : undefined}
-            value={value}
+            value={editorType === 'select' ? status : value}
           />
         </Field>
-        <output aria-live="polite" className="editable-examples__status">{status}</output>
       </div>
     </ComponentPlayground>
 
+    <ComponentExample title={zh ? '多行文本' : 'Multiline text'} code={`<Editable editorType="textarea" defaultValue="Inkra" textareaProps={{ rows: 3 }} />`}>
+      <Editable editorType="textarea" defaultValue={zh ? '保留一个简短备注。\n稍后继续补充。' : 'Keep a short note.\nAdd more details later.'}
+        aria-label={zh ? '编辑多行备注' : 'Edit multiline note'} startEditingLabel={zh ? '编辑多行备注' : 'Edit multiline note'}
+        saveLabel={zh ? '确认备注' : 'Confirm note'} cancelLabel={cancelLabel} textareaProps={{ rows: 3 }} />
+    </ComponentExample>
+    <ComponentExample title={zh ? '选择器编辑' : 'Select editors'} code={`<Editable editorType="select" defaultValue="draft" selectProps={{ items }} />
+<Editable editorType="select" defaultValue="draft" selectProps={{ items, mode: 'searchable' }} />
+<Editable editorType="select" defaultValue="draft" selectProps={{ items, mode: 'stepper' }} />`}>
+      <div className="component-demo-stack">
+        {(['dropdown', 'searchable', 'stepper'] as const).map((mode, index) => <Field key={mode} label={(zh ? ['下拉选择', '搜索选择', '左右切换'] : ['Dropdown', 'Searchable', 'Stepper'])[index]}>
+          <Editable editorType="select" defaultValue="draft"
+            selectProps={{ items, mode, searchPlaceholder: zh ? '搜索状态' : 'Search status', emptyContent: zh ? '没有匹配选项' : 'No matching options', previousLabel: zh ? '上一个状态' : 'Previous status', nextLabel: zh ? '下一个状态' : 'Next status' }}
+            aria-label={zh ? '编辑状态' : 'Edit status'} startEditingLabel={zh ? '编辑状态' : 'Edit status'}
+            saveLabel={zh ? '确认状态' : 'Confirm status'} cancelLabel={cancelLabel} />
+        </Field>)}
+      </div>
+    </ComponentExample>
     <ComponentExample title={zh ? '自定义显示与编辑器' : 'Custom display and editor'} code={`<Editable
   value={title}
   onValueChange={setTitle}

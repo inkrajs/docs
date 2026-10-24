@@ -146,11 +146,7 @@ const [selectedId, setSelectedId] = useState('note-3');
       {item.title}
     </Button>
   )}
-/>
-
-<Button onClick={() => listRef.current?.scrollToIndex(249, { align: 'center' })}>
-  ${copy.middle}
-</Button>`;
+/>`;
 
   function prependItem() {
     const id = `new-${nextItemRef.current++}`;
@@ -230,9 +226,6 @@ const [selectedId, setSelectedId] = useState('note-3');
           </Button>}
           ssrItemCount={6}
         />
-        <output className="virtual-list-examples__selection" aria-live="polite">
-          <PencilText>{`${copy.selected}: ${selectedId ?? '—'}`}</PencilText>
-        </output>
       </div>
     </ComponentPlayground>
 

@@ -96,11 +96,15 @@ try {
     await routeSearch.fill(`/components/${component}`);
     await page.locator(`.desktop-sidebar .nav-link[href="/docs/components/${component}"]`).click();
     await page.locator(`#${component}-panel-preview`).waitFor();
-    await page.locator('.component-playground, .playground').first().waitFor().catch(error => {
+    const primarySelector = component === 'markdown'
+      ? '.markdown-examples > .component-example:first-child'
+      : '.component-playground, .playground';
+    const primary = page.locator(primarySelector).first();
+    await primary.waitFor().catch(error => {
       throw new Error(`${component}: main playground did not appear; page errors: ${errors.join('; ')}`, { cause: error });
     });
-    assert.ok(await page.evaluate(() => {
-      const playground = document.querySelector('.component-playground, .playground');
+    if (component === 'markdown') await primary.locator('.inkra-markdown').waitFor();
+    assert.ok(await primary.evaluate(playground => {
       return [...document.querySelectorAll('.component-example')].every(example => playground.contains(example) || Boolean(playground.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING));
     }), `${component}: main playground precedes supporting examples`);
   }

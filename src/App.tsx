@@ -39,6 +39,7 @@ import { componentNavigationGroups } from './componentRoutes';
 import { pageTitle } from './pageTitle';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
 import { ComponentPageTabs } from './components/ComponentPageTabs';
+import { buttonAccessibilityGuidance, GuidanceMarkdown } from './components/GuidanceMarkdown';
 import { PageHeading } from './components/PageHeading';
 import { ApiTable } from './components/ApiTable';
 import { CodeBlock } from './components/CodeBlock';
@@ -771,7 +772,7 @@ function ButtonPlayground() {
 }
 
 function ButtonPage({ activeTab, onTabChange }: { activeTab: ButtonTab; onTabChange: (tab: ButtonTab) => void }) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   return (
     <article className="documentation">
       <PageHeading title="Button" />
@@ -822,7 +823,7 @@ function ButtonPage({ activeTab, onTabChange }: { activeTab: ButtonTab; onTabCha
         </section>
       ) : (
         <section aria-labelledby="button-tab-accessibility" className="content-section" id="button-panel-accessibility" role="tabpanel">
-          <ul className="guidance-list"><li>{t("Button 渲染真实")}<code>button</code>{t("；ButtonLink 渲染真实")}<code>a</code>{t("，保留各自原生键盘语义。")}</li><li>{t("纯图标尺寸必须提供")}<code>aria-label</code>{t("；文档示例同时提供 tooltip，但 tooltip 不是唯一名称来源。")}</li><li>{t("Loading 保留 DOM 标签和稳定几何，设置")}<code>aria-busy</code>{t("并阻止重复激活；异步示例会真实结束。")}</li><li>{t("ButtonGroup 需要可访问名称；horizontal 与 vertical 只改变视觉排列，不发明方向键行为。")}</li><li><code>startIcon</code> / <code>endIcon</code>{t("使用逻辑方向，局部")}<code>dir="rtl"</code>{t("时顺序随文字方向调整。")}</li><li>{t("材质 canvas 不接收事件；强制颜色和绘制失败时保留 DOM 回退。")}</li></ul>
+          <GuidanceMarkdown source={buttonAccessibilityGuidance[locale === 'en' ? 'en' : 'zh']} />
         </section>
       )}
     </article>

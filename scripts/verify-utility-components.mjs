@@ -46,9 +46,13 @@ try {
     await page.keyboard.press('Control+Shift+K');
     await page.waitForFunction(() => document.querySelector('.preview-display .inkra-hotkey-input__native')?.value.includes('K'));
     assert.match(await hotkeyInput.inputValue(), /K/);
+    const capturedShortcut = await hotkeyInput.inputValue();
     await hotkeyInput.focus();
+    assert.equal(await page.locator('.preview-display .inkra-hotkey-input').getAttribute('data-recording'), 'true');
     await page.keyboard.press('Escape');
-    assert.equal(await page.locator('.preview-display output').textContent(), config.locale === 'en' ? 'Recording cancelled' : '已取消录入');
+    assert.equal(await page.locator('.preview-display .inkra-hotkey-input').getAttribute('data-recording'), null);
+    assert.equal(await hotkeyInput.inputValue(), capturedShortcut, 'cancel preserves the captured shortcut');
+    assert.equal(await hotkeyInput.evaluate(node => node === document.activeElement), false, 'cancel ends recording focus');
 
     await open(page, 'number-ticker');
     const ticker = page.locator('.preview-display .inkra-number-ticker');

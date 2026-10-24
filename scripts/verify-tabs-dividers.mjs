@@ -9,8 +9,9 @@ try {
   const tabs = playground.getByRole('tablist', { name: '笔记分类', exact: true });
   assert.equal(await tabs.locator('.inkra-tabs__divider').count(), 0);
   await playground.getByRole('switch', { name: '分割线', exact: true }).check();
-  const line = tabs.locator('.inkra-tabs__divider:visible');
-  assert.equal(await line.count(), 1);
+  const lines = tabs.locator('.inkra-tabs__divider:visible');
+  assert.equal(await lines.count(), await tabs.getByRole('tab').count() - 1);
+  const line = lines.first();
   assert.equal(await line.getAttribute('data-orientation'), 'vertical');
   const rect = await line.boundingBox();
   const first = await tabs.getByRole('tab').nth(0).boundingBox();
@@ -35,7 +36,7 @@ try {
   const rtlLine = await line.boundingBox();
   assert(Math.abs(rtlFirst.x - rtlLine.x - rtlLine.width - 8) < 1);
   await playground.getByRole('switch', { name: '分割线', exact: true }).uncheck();
-  assert.equal(await line.count(), 0);
+  assert.equal(await lines.count(), 0);
   const headerSpacing = await page.locator('.site-navigation').evaluate(nav => {
     const items = Array.from(nav.querySelectorAll('a'));
     return items.map((item, index) => {

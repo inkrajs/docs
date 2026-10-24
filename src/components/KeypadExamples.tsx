@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Field, Input, Keypad, Switch, type KeypadKey, type KeypadPressDetails } from '@inkra/react';
+import { Button, Field, Input, Keypad, Switch, type KeypadKey } from '@inkra/react';
 
 import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
@@ -55,10 +55,6 @@ const operationMessages: readonly (readonly KeypadKey[])[] = [
   ],
 ];
 
-function eventText(details: KeypadPressDetails, t: (value: string) => string) {
-  return `${typeof details.key.label === 'string' ? t(details.key.label) : details.key.id}: ${details.previousValue} → ${details.nextValue}`;
-}
-
 export function KeypadExamples() {
   const { t } = useLocale();
   const localizeLayout = (rows: readonly (readonly KeypadKey[])[]) => rows.map(row => row.map(key => ({
@@ -74,7 +70,6 @@ export function KeypadExamples() {
   const [layoutName, setLayoutName] = useState<'numeric' | 'custom'>('numeric');
   const [disabled, setDisabled] = useState(false);
   const [maxLength, setMaxLength] = useState('6');
-  const [lastEvent, setLastEvent] = useState<KeypadPressDetails | null>(null);
   const [password, setPassword] = useState('');
   const [passwordStatus, setPasswordStatus] = useState('');
   const [operation, setOperation] = useState('');
@@ -90,8 +85,6 @@ export function KeypadExamples() {
   layout={${layoutName === 'numeric' ? 'numericLayout' : 'customLayout'}}
   value={value}
   onValueChange={setValue}
-  onKeyPress={details => console.log(details)}
-  onConfirm={current => submit(current)}
   maxLength={${limit}}
   disabled={${disabled}}
 />`, [disabled, layoutName, limit, t, value]);
@@ -110,7 +103,7 @@ export function KeypadExamples() {
       { label: t('状态'), content: <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
       <div className="keypad-example__playground" data-testid="keypad-playground">
-        <Field label={t('可编辑值')} description={t('实体键盘与按键面板都可输入')}>
+        <Field label={t('可编辑值')}>
           <Input value={value} onValueChange={setValue} maxLength={limit} disabled={disabled} />
         </Field>
         <Keypad
@@ -118,11 +111,9 @@ export function KeypadExamples() {
           label={t('输入面板')}
           layout={layout}
           maxLength={limit}
-          onKeyPress={details => setLastEvent({ ...details, key: numericLayoutMessages.flat().concat(compactLayoutMessages.flat()).find(key => key.id === details.key.id) ?? details.key })}
           onValueChange={setValue}
           value={value}
         />
-        <output className="keypad-example__status" aria-live="polite">{lastEvent ? eventText(lastEvent, t) : t('等待按键')}</output>
       </div>
     </ComponentPlayground>
 
