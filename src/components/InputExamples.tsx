@@ -336,6 +336,8 @@ export function TextareaExamples() {
   const [submitted, setSubmitted] = useState('');
   const [size, setSize] = useState<InputSize>('md');
   const [rows, setRows] = useState(3);
+  const [autoSize, setAutoSize] = useState(false);
+  const [maxRows, setMaxRows] = useState(6);
   const [maxLength, setMaxLength] = useState('120');
   const [countMode, setCountMode] = useState<'remaining' | 'fraction' | 'progress' | 'none'>('remaining');
   const [countDisplay, setCountDisplay] = useState<'auto' | 'always'>('auto');
@@ -352,7 +354,7 @@ export function TextareaExamples() {
   const code = `const [value, setValue] = useState(${quote(value)});
 
   <Field label=${quote(t('笔记内容'))}${required ? ' required' : ''}${invalid ? ` invalid error=${quote(t('请输入笔记内容'))}` : ''}>
-    <Textarea name="notes" size="${size}" rows={${rows}}${maxLength !== 'none' ? ` maxLength={${maxLength}}` : ''}
+    <Textarea name="notes" size="${size}" rows={${rows}}${autoSize ? ` autoSize={{ minRows: ${rows}, maxRows: ${maxRows} }}` : ''}${maxLength !== 'none' ? ` maxLength={${maxLength}}` : ''}
       countMode="${countMode}" countDisplay="${countDisplay}" countThreshold={${countThreshold}} resize="${resizable ? 'vertical' : 'none'}"
       resizeLabel=${quote(zh ? '调整输入框高度' : 'Resize text area')}
       ${zh ? 'getCountLabel={({ remaining }) => remaining < 0 ? `超出 ${-remaining}` : `剩余 ${remaining}`}' : ''}
@@ -364,7 +366,9 @@ export function TextareaExamples() {
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label="尺寸" value={size} onValueChange={next => setSize(next as InputSize)} options={controlSizes} />
-        <DocsSelect label="行数" value={String(rows)} onValueChange={next => setRows(Number(next))} options={[["2", "2"], ["3", "3"], ["5", "5"]]} />
+        <DocsSelect label="行数" value={String(rows)} onValueChange={next => setRows(Number(next))} options={[["1", "1"], ["2", "2"], ["3", "3"], ["5", "5"]]} />
+        <Switch label={zh ? '自动高度' : 'Automatic height'} checked={autoSize} onCheckedChange={setAutoSize} />
+        {autoSize && <DocsSelect label={zh ? '最大正文行数' : 'Maximum text rows'} value={String(maxRows)} onValueChange={next => setMaxRows(Number(next))} options={[["3", "3"], ["6", "6"], ["10", "10"]]} />}
         <DocsSelect label="最大长度" value={maxLength} onValueChange={setMaxLength} options={[["none", "不限"], ["40", "40"], ["120", "120"], ["240", "240"]]} />
       </> },
       { label: '交互', content: <>
@@ -374,7 +378,7 @@ export function TextareaExamples() {
           options={[['auto', zh ? '接近上限时' : 'Near the limit'], ['always', zh ? '始终显示' : 'Always']]} />
         {countDisplay === 'auto' && <DocsSelect label={zh ? '提示阈值' : 'Threshold'} value={countThreshold} onValueChange={setCountThreshold}
           options={[['0.5', '50%'], ['0.8', '80%'], ['0.9', '90%'], ['1', '100%']]} />}
-        <Switch label={zh ? '手绘高度调节' : 'Pencil resize handle'} checked={resizable} onCheckedChange={setResizable} />
+        <Switch label={zh ? '手绘高度调节' : 'Pencil resize handle'} checked={resizable} onCheckedChange={setResizable} disabled={autoSize} />
       </> },
       { label: '状态', content: <>
         <Switch label={t('必填')} checked={required} onCheckedChange={setRequired} />
@@ -384,7 +388,7 @@ export function TextareaExamples() {
       </> },
     ]} />}>
       <div className="component-demo-form">
-        <Field label={t('笔记内容')} required={required} invalid={invalid} error={invalid ? t('请输入笔记内容') : undefined}><Textarea name="notes" size={size} rows={rows} maxLength={maxLength === 'none' ? undefined : Number(maxLength)} value={value} onChange={event => setValue(event.target.value)} placeholder={t('写下你的想法')} readOnly={readOnly} disabled={disabled}
+        <Field label={t('笔记内容')} required={required} invalid={invalid} error={invalid ? t('请输入笔记内容') : undefined}><Textarea name="notes" size={size} rows={rows} autoSize={autoSize ? { minRows: rows, maxRows } : false} maxLength={maxLength === 'none' ? undefined : Number(maxLength)} value={value} onChange={event => setValue(event.target.value)} placeholder={t('写下你的想法')} readOnly={readOnly} disabled={disabled}
           countMode={countMode} countDisplay={countDisplay} countThreshold={Number(countThreshold)} getCountLabel={countLabel} resize={resizable ? 'vertical' : 'none'} resizeLabel={zh ? '调整输入框高度' : 'Resize text area'} /></Field>
       </div>
     </ComponentPlayground>
@@ -406,6 +410,9 @@ export function TextareaExamples() {
         <div className="component-demo-actions"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="outline">{t('重置')}</Button></div>
         <output aria-live="polite">{submitted}</output>
       </form>
+    </ComponentExample>
+    <ComponentExample id="input-auto-size" title={zh ? '从一行增长到最多六行' : 'Grow from one to six rows'} code={`<Field label=${quote(t('笔记内容'))}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder=${quote(t('写下你的想法'))} /></Field>`}>
+      <Field label={t('笔记内容')}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder={t('写下你的想法')} /></Field>
     </ComponentExample>
     <ComponentExample id="input-rows-and-length-limits" title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
       <div className="input-examples__fields">
