@@ -1,8 +1,8 @@
 {
   "repository": "inkrajs/inkra",
   "name": "@inkra/react",
-  "revision": "fbcfa108d837c1a5e69126b51da71767b648ff4e",
-  "version": "0.7.0",
-  "sha256": "644a49cbbd6aa8033a3aa34cf9986e813fd697cff40fc5aa3045835ac71c55f2",
-  "integrity": "sha512-Ct+l4caq7PdPaMqH4Kf494SzCRGUFNZyj0CmgK2k8k002cvqkEom/+2HX5JpIrxo6IiZvVemB9PDJ5edf2VgzQ=="
+  "revision": "a307cb59adba5e110938f28a663c1b32d1d09f1f",
+  "version": "0.8.0",
+  "sha256": "03e32eba54a107112013caf304f90ca0473d12559d1eb47ea3a9f73e68787cb2",
+  "integrity": "sha512-1VkICygqjHl0mRHVqnHqRlKigkSHfCxJuATU1VZWiI04BkUFIng5cw3kjiBHZxwj+OUj5ty4c9AnLhKHpj/vPQ=="
 }

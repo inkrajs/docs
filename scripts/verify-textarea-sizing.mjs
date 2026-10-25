@@ -178,7 +178,7 @@ try {
 
   const responsive = page.locator('[data-sizing-case="responsive"]');
   await waitForSize('responsive', { rows: 1, overflowY: 'hidden' });
-  await responsive.evaluate(node => { node.style.width = '160px'; });
+  await responsive.evaluate(node => { node.style.width = '100px'; });
   await waitForSize('responsive', { rows: 3, overflowY: 'auto', scrolls: true });
   await responsive.evaluate(node => { node.style.width = '480px'; });
   await waitForSize('responsive', { rows: 1, overflowY: 'hidden' });
