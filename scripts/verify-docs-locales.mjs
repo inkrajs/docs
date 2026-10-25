@@ -24,7 +24,14 @@ try {
       await sidebar.locator('.language-control [role="combobox"]').click();
       await page.getByRole('option', { name: label, exact: true }).click();
       await page.waitForFunction(locale => document.documentElement.lang === locale, locale);
-      if (width < 800) await page.keyboard.press('Escape');
+      if (width < 800) {
+        await page.keyboard.press('Escape');
+        await page.locator('.mobile-drawer').waitFor({ state: 'hidden' });
+        await page.waitForFunction(() => {
+          const layout = document.querySelector('.docs-layout');
+          return layout && !layout.inert && layout.getAttribute('aria-hidden') !== 'true';
+        });
+      }
       assert.equal(await page.title(), translated(locale, '国际化') + ' · Inkra');
       assert.equal(await page.locator('form.i18n-examples__preview').getAttribute('lang'), locale);
       assert.equal(await note.inputValue(), 'Keep my draft');
