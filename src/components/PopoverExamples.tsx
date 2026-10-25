@@ -83,7 +83,7 @@ const [onlyPending, setOnlyPending] = useState(${onlyPending});
         </Popover.Content></Popover.Portal>
       </Popover.Root>
     </ComponentPlayground>
-    <ComponentExample title="初始焦点与焦点返回" code={focusCode}>
+    <ComponentExample id="popover-initial-focus-and-focus-return" title="初始焦点与焦点返回" code={focusCode}>
       <Popover.Root><Popover.Trigger asChild><Button variant="outline">{t('编辑名称')}</Button></Popover.Trigger>
         <Popover.Portal><Popover.Content sideOffset={8} onOpenAutoFocus={event => { event.preventDefault(); focusRef.current?.focus(); }}>
           <div className="component-demo-stack">

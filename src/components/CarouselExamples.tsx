@@ -96,7 +96,7 @@ export function CarouselExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('图片与交互内容', 'Images and interactive content')} code={`<Carousel aria-label="${text('主题预览', 'Theme previews')}" visibleItems={{ base: 1, sm: 2 }}>
+    <ComponentExample id="carousel-images-and-interactive-content" title={text('图片与交互内容', 'Images and interactive content')} code={`<Carousel aria-label="${text('主题预览', 'Theme previews')}" visibleItems={{ base: 1, sm: 2 }}>
   <PencilSurface as="figure" variant="paper" data-inkra-theme="light"><img src="/favicon.png" alt="${text('浅色 Inkra 标志', 'Light Inkra mark')}" /></PencilSurface>
   <PencilSurface as="figure" variant="paper" data-inkra-theme="dark"><img src="/favicon-dark.png" alt="${text('深色 Inkra 标志', 'Dark Inkra mark')}" /></PencilSurface>
 </Carousel>`}>
@@ -118,7 +118,7 @@ export function CarouselExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('空状态与单项', 'Empty and single item')} code={`<Carousel emptyState={<Empty />}>{items}</Carousel>`}>
+    <ComponentExample id="carousel-empty-and-single-item" title={text('空状态与单项', 'Empty and single item')} code={`<Carousel emptyState={<Empty />}>{items}</Carousel>`}>
       <div className="carousel-examples__states">
         <Carousel aria-label={text('空项目', 'Empty projects')} labels={labels} emptyState={<PencilText>{text('还没有可浏览的项目。', 'There are no projects to browse yet.')}</PencilText>} />
         <Carousel aria-label={text('唯一项目', 'Only project')} labels={labels}><ProjectCard project={projects[0]} /></Carousel>

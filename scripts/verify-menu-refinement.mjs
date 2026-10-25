@@ -68,11 +68,14 @@ try {
   await page.screenshot({ path: '/tmp/inkra-menu-round7-narrow.png', animations: 'disabled' });
 
   await page.keyboard.press('Home');
+  await page.waitForFunction(node => document.activeElement === node, await longItem.elementHandle());
   await page.keyboard.press('ArrowDown');
+  await page.waitForFunction(node => document.activeElement === node.closest('[role="menuitem"]'), await customLabel.elementHandle());
   assert.equal(await page.evaluate(() => document.activeElement?.textContent?.includes('Disabled action')), false,
     'keyboard navigation skips disabled items');
   const checkbox = page.getByRole('menuitemcheckbox', { name: 'Receive updates' });
   await checkbox.focus();
+  await page.waitForFunction(node => document.activeElement === node, await checkbox.elementHandle());
   await page.keyboard.press('Enter');
   await dropdown.waitFor({ state: 'hidden' });
   await page.getByRole('button', { name: 'Open dropdown refinement' }).click();

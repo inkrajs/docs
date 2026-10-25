@@ -52,7 +52,7 @@ export function ScrollAreaExamples() {
       </div>
     }</ComponentPlayground>
 
-    <ComponentExample title={text('可聚焦视口', 'Focusable viewport')} code={`<ScrollArea
+    <ComponentExample id="scroll-area-focusable-viewport" title={text('可聚焦视口', 'Focusable viewport')} code={`<ScrollArea
   type="always"
   viewportLabel="${text('结果列表', 'Results list')}"
   viewportProps={{ tabIndex: 0 }}

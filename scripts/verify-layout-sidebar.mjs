@@ -102,10 +102,8 @@ try {
     await content.evaluate(node => { node.scrollTop = node.scrollHeight; });
     assert(await content.evaluate(node => node.scrollTop > 100), 'long notes scroll inside the workspace content');
     await content.evaluate(node => { node.scrollTop = 0; });
-    await preview.getByRole('button', { name: locale === 'zh-CN' ? '原尺寸查看' : 'Actual size', exact: true }).click();
     await preview.getByRole('radio', { name: '1024', exact: true }).check();
-    assert(await scroll.evaluate(node => node.scrollWidth > node.clientWidth), 'actual size has intentional local horizontal scrolling');
-    await preview.getByRole('button', { name: locale === 'zh-CN' ? '适应窗口' : 'Fit to preview', exact: true }).click();
+    assert.equal(await preview.locator('.layout-viewport__toolbar > button, .layout-viewport__dimensions').count(), 0, 'preview always fits without a manual zoom control');
     await assertBounds();
     await preview.getByRole('radio', { name: '390', exact: true }).check();
     await frame.locator('html').evaluate(node => { node.dir = 'rtl'; });
@@ -115,15 +113,15 @@ try {
     await toggle.press('Escape');
     await frame.locator('html').evaluate(node => { node.removeAttribute('dir'); });
     const layouts = [
-      ['top', '顶部通栏', 'Full-width header'], ['side', '侧栏通高', 'Full-height sidebar'],
+      ['top', '顶部通栏', 'Full-width header'], ['header-tabs', '品牌与导航分栏', 'Brand and navigation'], ['side', '侧栏通高', 'Full-height sidebar'],
       ['split', '分区页头', 'Split headers'], ['right', '右侧导航', 'Right navigation'],
       ['right-side', '右侧通高', 'Full-height right sidebar'], ['right-split', '右侧分区页头', 'Split right headers'],
       ['dual', '双侧栏', 'Two sidebars'], ['content', '上下通栏', 'Header and footer'],
     ];
     const chooseLayout = async choice => {
       await setControls(playground, true);
-      const picker = playground.locator('.layout-mode-picker');
-      assert.equal(await picker.getByRole('radio').count(), 8);
+      const picker = playground.locator('.layout-mode-picker').first();
+      assert.equal(await picker.getByRole('radio').count(), layouts.length);
       await picker.getByRole('radio', { name: choice[locale === 'zh-CN' ? 1 : 2], exact: true }).check();
       await showPreview(playground);
     };
@@ -191,6 +189,7 @@ try {
     }
     await chooseLayout(layouts[0]);
     await setControls(playground, true);
+    await playground.locator('.property-tabs').getByRole('tab', { name: locale === 'zh-CN' ? '交互' : 'Interaction', exact: true }).click();
     await playground.getByRole('switch', { name: locale === 'zh-CN' ? '启用侧栏' : 'Enable sidebar', exact: true }).click();
     await showPreview(playground);
     assert.equal(await toggle.count(), 0);

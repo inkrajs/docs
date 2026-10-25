@@ -177,7 +177,7 @@ const toggleLabel = visible ? ${quote(t('隐藏密码'))} : ${quote(t('显示密
   setDisabled(next);
   if (next) setVisible(false);
 }} />`;
-  return <ComponentExample title="密码输入" code={code}>
+  return <ComponentExample id="input-password-input" title="密码输入" code={code}>
     <div className="component-demo-form" data-password-example="">
       <Field id={id} label={t('密码')}>
         <Input
@@ -223,7 +223,7 @@ const [status, setStatus] = useState('');
   <Button type="reset" variant="secondary">${t('重置')}</Button>
   <output aria-live="polite">{status}</output>
 </form>`;
-  return <ComponentExample title="清空与表单重置" code={code}>
+  return <ComponentExample id="input-clear-and-form-reset" title="清空与表单重置" code={code}>
     <form className="component-demo-form" onReset={() => { setValue('Inkra'); setStatus(''); }} onSubmit={event => { event.preventDefault(); setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))); }}>
       <Field label={t('受控输入')}><Input name="controlled" value={value} onValueChange={setValue} clearable clearButtonLabel={t('清空受控输入')} onClear={() => setStatus(t('已清空'))} /></Field>
       <Field label={t('非受控输入')}><Input name="uncontrolled" defaultValue="Notes" clearable clearButtonLabel={t('清空非受控输入')} onClear={() => setStatus(t('已清空'))} /></Field>
@@ -286,7 +286,7 @@ async function copyValue() {
       setLoading(false);
     }
   }
-  return <ComponentExample title="加载与尾部操作" code={code}>
+  return <ComponentExample id="input-loading-and-trailing-action" title="加载与尾部操作" code={code}>
     <div className="component-demo-stack">
       <div className="input-examples__fields">{(['underline', 'outline'] as const).map(variant => <Field key={variant} label={t(variant === 'underline' ? '下划线' : '描边')}><Input variant={variant} value={value} onValueChange={setValue} loading={loading} clearable clearButtonLabel={t('清空名称')} endAction={<CopyAction disabled={loading} onClick={() => void copyValue()} />} /></Field>)}</div>
       <Switch label={t('加载中')} checked={loading} onCheckedChange={setLoading} />
@@ -300,13 +300,13 @@ export function InputExamples() {
   return <>
     <InputPlayground />
     <PasswordExample />
-    <ComponentExample title="首尾图标" code={`<Field label=${quote(t('搜索文档'))}><Input type="search" placeholder=${quote(t('搜索文档'))} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>\n<Field label=${quote(t('电子邮箱'))}><Input type="email" defaultValue="hello@example.com" startIcon={<DocsIcon data={mailIcon} size={22} />} endIcon={<DocsIcon data={checkIcon} size={22} />} /></Field>`}>
+    <ComponentExample id="input-leading-and-trailing-icons" title="首尾图标" code={`<Field label=${quote(t('搜索文档'))}><Input type="search" placeholder=${quote(t('搜索文档'))} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>\n<Field label=${quote(t('电子邮箱'))}><Input type="email" defaultValue="hello@example.com" startIcon={<DocsIcon data={mailIcon} size={22} />} endIcon={<DocsIcon data={checkIcon} size={22} />} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('搜索文档')}><Input type="search" placeholder={t('搜索文档')} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>
         <Field label={t('电子邮箱')}><Input type="email" defaultValue="hello@example.com" startIcon={<DocsIcon data={mailIcon} size={22} />} endIcon={<DocsIcon data={checkIcon} size={22} />} /></Field>
       </div>
     </ComponentExample>
-    <ComponentExample title="前缀与后缀" code={`<Field label=${quote(t('网站域名'))} description=${quote(t('协议为 HTTPS'))}><Input prefix="https://" defaultValue="example.com" /></Field>\n<Field label=${quote(t('行李重量'))} description=${quote(t('单位：千克'))}><Input inputMode="decimal" suffix="kg" defaultValue="12.5" textAlign="end" /></Field>`}>
+    <ComponentExample id="input-prefix-and-suffix" title="前缀与后缀" code={`<Field label=${quote(t('网站域名'))} description=${quote(t('协议为 HTTPS'))}><Input prefix="https://" defaultValue="example.com" /></Field>\n<Field label=${quote(t('行李重量'))} description=${quote(t('单位：千克'))}><Input inputMode="decimal" suffix="kg" defaultValue="12.5" textAlign="end" /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('网站域名')} description={t('协议为 HTTPS')}><Input prefix="https://" defaultValue="example.com" /></Field>
         <Field label={t('行李重量')} description={t('单位：千克')}><Input inputMode="decimal" suffix="kg" defaultValue="12.5" textAlign="end" /></Field>
@@ -314,13 +314,13 @@ export function InputExamples() {
     </ComponentExample>
     <ClearExamples />
     <ActionExamples />
-    <ComponentExample title="外观" code={variants.map(([variant, label]) => `<Field label=${quote(t(label))}><Input variant="${variant}" defaultValue="Inkra" /></Field>`).join('\n')}>
+    <ComponentExample id="input-appearance" title="外观" code={variants.map(([variant, label]) => `<Field label=${quote(t(label))}><Input variant="${variant}" defaultValue="Inkra" /></Field>`).join('\n')}>
       <div className="input-examples__fields">{variants.map(([variant, label]) => <Field key={variant} label={t(label)}><Input variant={variant} defaultValue="Inkra" /></Field>)}</div>
     </ComponentExample>
-    <ComponentExample title="尺寸" code={controlSizes.map(([size, label]) => `<Field label=${quote(t(label))}><Input size="${size}" defaultValue="Inkra" /></Field>`).join('\n')}>
+    <ComponentExample id="input-size" title="尺寸" code={controlSizes.map(([size, label]) => `<Field label=${quote(t(label))}><Input size="${size}" defaultValue="Inkra" /></Field>`).join('\n')}>
       <div className="input-examples__fields">{controlSizes.map(([size, label]) => <Field key={size} label={t(label)}><Input size={size} defaultValue="Inkra" /></Field>)}</div>
     </ComponentExample>
-    <ComponentExample title="状态" code={`<Field label=${quote(t('只读'))}><Input readOnly defaultValue="Inkra" clearable clearButtonLabel=${quote(t('清空名称'))} /></Field>\n<Field label=${quote(t('禁用'))} disabled><Input defaultValue="Inkra" clearable clearButtonLabel=${quote(t('清空名称'))} /></Field>\n<Field label=${quote(t('名称'))} required error=${quote(t('请输入名称'))}><Input placeholder=${quote(t('笔记名称'))} /></Field>`}>
+    <ComponentExample id="input-states" title="状态" code={`<Field label=${quote(t('只读'))}><Input readOnly defaultValue="Inkra" clearable clearButtonLabel=${quote(t('清空名称'))} /></Field>\n<Field label=${quote(t('禁用'))} disabled><Input defaultValue="Inkra" clearable clearButtonLabel=${quote(t('清空名称'))} /></Field>\n<Field label=${quote(t('名称'))} required error=${quote(t('请输入名称'))}><Input placeholder=${quote(t('笔记名称'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('只读')}><Input readOnly defaultValue="Inkra" clearable clearButtonLabel={t('清空名称')} /></Field>
         <Field label={t('禁用')} disabled><Input defaultValue="Inkra" clearable clearButtonLabel={t('清空名称')} /></Field>
@@ -392,7 +392,7 @@ export function TextareaExamples() {
           countMode={countMode} countDisplay={countDisplay} countThreshold={Number(countThreshold)} getCountLabel={countLabel} resize={resizable ? 'vertical' : 'none'} resizeLabel={zh ? '调整输入框高度' : 'Resize text area'} /></Field>
       </div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`const [submitted, setSubmitted] = useState('');
+    <ComponentExample id="input-form-submission-and-reset" title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`const [submitted, setSubmitted] = useState('');
 <form onSubmit={event => {
   event.preventDefault();
   setSubmitted(String(new FormData(event.currentTarget).get('notes') ?? ''));
@@ -411,16 +411,16 @@ export function TextareaExamples() {
         <output aria-live="polite">{submitted}</output>
       </form>
     </ComponentExample>
-    <ComponentExample title={zh ? '从一行增长到最多六行' : 'Grow from one to six rows'} code={`<Field label=${quote(t('笔记内容'))}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder=${quote(t('写下你的想法'))} /></Field>`}>
+    <ComponentExample id="input-auto-size" title={zh ? '从一行增长到最多六行' : 'Grow from one to six rows'} code={`<Field label=${quote(t('笔记内容'))}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder=${quote(t('写下你的想法'))} /></Field>`}>
       <Field label={t('笔记内容')}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder={t('写下你的想法')} /></Field>
     </ComponentExample>
-    <ComponentExample title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
+    <ComponentExample id="input-rows-and-length-limits" title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('简短备注')} description={t('最多 40 个 UTF-16 码元')}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder={t('写下你的想法')} /></Field>
         <Field label={t('笔记内容')} description={t('最多 120 个 UTF-16 码元')}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>
       </div>
     </ComponentExample>
-    <ComponentExample title="状态" code={`<Field label=${quote(t('只读'))}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field>\n<Field label=${quote(t('禁用'))} disabled><Textarea rows={3} defaultValue="Inkra" /></Field>`}>
+    <ComponentExample id="input-states-textarea" title="状态" code={`<Field label=${quote(t('只读'))}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field>\n<Field label=${quote(t('禁用'))} disabled><Textarea rows={3} defaultValue="Inkra" /></Field>`}>
       <div className="input-examples__fields"><Field label={t('只读')}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field><Field label={t('禁用')} disabled><Textarea rows={3} defaultValue="Inkra" /></Field></div>
     </ComponentExample>
   </>;
@@ -458,7 +458,7 @@ export function FieldExamples() {
         {multiline ? <Textarea name="title" value={value} onChange={event => setValue(event.target.value)} placeholder={t('笔记名称')} /> : <Input name="title" value={value} onChange={event => setValue(event.target.value)} placeholder={t('笔记名称')} />}
       </Field></div>
     </ComponentPlayground>
-    <ComponentExample title="标签、描述与错误" code={`<Field label=${quote(t('名称'))} required description=${quote(t('用于识别这条笔记'))}><Input placeholder=${quote(t('笔记名称'))} /></Field>\n<Field label=${quote(t('笔记内容'))} required error=${quote(t('请输入笔记内容'))}><Textarea /></Field>`}>
+    <ComponentExample id="input-labels-descriptions-and-errors" title="标签、描述与错误" code={`<Field label=${quote(t('名称'))} required description=${quote(t('用于识别这条笔记'))}><Input placeholder=${quote(t('笔记名称'))} /></Field>\n<Field label=${quote(t('笔记内容'))} required error=${quote(t('请输入笔记内容'))}><Textarea /></Field>`}>
       <div className="input-examples__fields"><Field label={t('名称')} required description={t('用于识别这条笔记')}><Input placeholder={t('笔记名称')} /></Field><Field label={t('笔记内容')} required error={t('请输入笔记内容')}><Textarea /></Field></div>
     </ComponentExample>
   </>;

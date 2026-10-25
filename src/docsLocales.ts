@@ -1,3 +1,6 @@
+import { gridDocsMessages } from './gridDocsMessages.ts';
+import { componentIntroductionMessages } from './componentIntroductionLocales.ts';
+
 export const docsLanguages = [['zh-CN', '中文'], ['en', 'English'], ['ja', '日本語'], ['ko', '한국어'], ['fr', 'Français']] as const;
 export type DocsLocale = typeof docsLanguages[number][0];
 
@@ -7,6 +10,15 @@ export function resolveDocsLocale(value: unknown): DocsLocale {
 
 // Chinese source keys stay stable. Untranslated reference prose falls back to English.
 export const docsMessages: Record<string, readonly [string, string, string, string]> = {
+  ...gridDocsMessages,
+  ...componentIntroductionMessages,
+  '侧栏呈现': ['Mobile navigation', 'サイドバーの表示', '사이드바 표시', 'Affichage latéral'],
+  '覆盖抽屉': ['Overlay drawer', '重ねるドロワー', '오버레이 서랍', 'Tiroir superposé'],
+  '全页面导航': ['Full-page navigation', '全画面ナビゲーション', '전체 화면 탐색', 'Navigation plein écran'],
+  '推开页面': ['Push page', 'ページを押し出す', '페이지 밀기', 'Décaler la page'],
+  '整页推开': ['Push entire page', 'ページ全体を押し出す', '전체 페이지 밀기', 'Décaler toute la page'],
+  '内容遮罩': ['Content backdrop', 'コンテンツの遮光', '콘텐츠 배경막', 'Voile sur le contenu'],
+  '滑动手势': ['Swipe gestures', 'スワイプ操作', '스와이프 제스처', 'Gestes de balayage'],
   '先放一个按钮，别急着写整个应用。': ['Start with a button. The rest of the app can wait.', 'まずはボタンをひとつ。アプリ全部を作るのは、そのあとで。', '버튼 하나부터 놓아 보세요. 앱 전체는 천천히 만들어도 돼요.', 'Commencez par un bouton. Le reste de l’appli peut attendre.'],
   '换种语言打招呼，别让用户自己翻译。': ['Say hello in their language. Spare them the translation.', '相手の言葉でこんにちは。翻訳までお任せしないで。', '사용자의 언어로 인사하세요. 번역까지 맡기지는 말고요.', 'Dites bonjour dans leur langue. Épargnez-leur la traduction.'],
   '颜色、笔触都能改，不用和我长得一样。': ['Your colors, your pencil strokes. No need to look just like me.', '色もタッチもお好みで。私と同じ見た目じゃなくていいんです。', '색도 필치도 마음대로. 꼭 저처럼 생길 필요는 없어요.', 'Vos couleurs, vos traits de crayon. Pas besoin de me ressembler.'],

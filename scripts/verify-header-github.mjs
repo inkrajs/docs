@@ -17,7 +17,7 @@ try {
     const link = page.locator('.header-github');
     const label = 'GitHub 仓库（新标签页打开）';
     await page.getByRole('link', { name: label, exact: true }).waitFor();
-    assert.equal(await link.getAttribute('data-variant'), 'outline', 'Border is present without hover or focus');
+    assert.equal(await link.getAttribute('data-variant'), 'ghost', 'Documentation header actions remain unframed');
     assert.equal(await link.getAttribute('href'), 'https://github.com/inkrajs/inkra');
     assert.equal(await link.getAttribute('target'), '_blank');
     assert.match(await link.getAttribute('rel'), /noopener/);
@@ -27,7 +27,9 @@ try {
     if (width > 768) assert(box.x >= search.x + search.width, 'GitHub follows search');
     else {
       assert(box.x + box.width <= width, 'GitHub remains inside narrow header');
-      assert(search.y >= box.y + box.height, 'Search has its own narrow-screen row');
+      assert.equal(search, null, 'Mobile search does not occupy a separate row');
+      const searchTrigger = await page.locator('.mobile-search-trigger').boundingBox();
+      assert(searchTrigger.x < box.x && Math.abs(searchTrigger.y - box.y) < 1, 'Search shares the mobile action row');
     }
     await page.waitForFunction(() => {
       const canvas = document.querySelector('.header-github canvas.inkra-pencil-icon');

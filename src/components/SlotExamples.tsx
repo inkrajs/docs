@@ -43,7 +43,7 @@ export function SlotExamples() {
       </Slot>
     </ComponentPlayground>
 
-    <ComponentExample title={t('快捷工具')} code={`<div className="tool-slots">
+    <ComponentExample id="slot-quick-tools" title={t('快捷工具')} code={`<div className="tool-slots">
   <Slot interactive aria-label="${t('使用手电筒')}" selected><TorchIcon /></Slot>
   <Slot interactive aria-label="${t('打开地图')}"><MapIcon /></Slot>
   <Slot interactive aria-label="${t('空快捷槽')}" empty />
@@ -55,7 +55,7 @@ export function SlotExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('资源槽位')} code={`<div className="resource-slots">
+    <ComponentExample id="slot-resource-slots" title={t('资源槽位')} code={`<div className="resource-slots">
   <Slot aria-label="${t('木材')}" count={18}><WoodIcon /></Slot>
   <Slot aria-label="${t('补给箱')}" count={120}
     renderCount={count => <Badge variant="accent">{count}+</Badge>}>

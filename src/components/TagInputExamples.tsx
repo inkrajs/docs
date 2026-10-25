@@ -49,7 +49,7 @@ function SizeAlignmentExample() {
   />
 </div>`).join('\n');
 
-  return <ComponentExample title={zh ? '尺寸与外框内距' : 'Sizes and control inset'} code={code}>
+  return <ComponentExample id="tag-input-sizes-and-control-inset" title={zh ? '尺寸与外框内距' : 'Sizes and control inset'} code={code}>
     <div className="tag-input-examples__size-list">
       {sizes.map(size => <div className="tag-input-examples__size-row" data-size={size} key={size}>
         <PencilText as="span" className="tag-input-examples__size-label">{size}</PencilText>
@@ -161,7 +161,7 @@ function ContractExample() {
     label: candidate,
   })}
 />`;
-  return <ComponentExample title={zh ? '稳定身份、表单值与显示文字' : 'Stable identity, form value, and display text'} code={code}>
+  return <ComponentExample id="tag-input-stable-identity-form-value-and-display-text" title={zh ? '稳定身份、表单值与显示文字' : 'Stable identity, form value, and display text'} code={code}>
     <div className="tag-input-examples__stage">
       <Field
         label={zh ? '负责领域' : 'Areas of ownership'}
@@ -193,7 +193,7 @@ function PasteAndStateExamples() {
   const zh = locale === 'zh-CN';
   const labels = exampleLabels(zh);
   return <>
-    <ComponentExample title={zh ? '非受控粘贴与校验' : 'Uncontrolled paste and validation'} code={`<TagInput
+    <ComponentExample id="tag-input-uncontrolled-paste-and-validation" title={zh ? '非受控粘贴与校验' : 'Uncontrolled paste and validation'} code={`<TagInput
   defaultValue={[{ id: 'docs', value: 'docs', label: 'Docs' }]}
   delimiters={[',', ';', '\\n']}
   maxTags={6}
@@ -218,7 +218,7 @@ function PasteAndStateExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '只读与禁用' : 'Read-only and disabled'} code={`<TagInput readOnly value={tags} />
+    <ComponentExample id="tag-input-read-only-and-disabled" title={zh ? '只读与禁用' : 'Read-only and disabled'} code={`<TagInput readOnly value={tags} />
 <TagInput disabled value={tags} />`}>
       <div className="tag-input-examples__state-grid">
         <Field label={zh ? '只读' : 'Read only'} readOnly>

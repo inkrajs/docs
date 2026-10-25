@@ -26,7 +26,7 @@ function ExactNumberExamples() {
   const [decimal, setDecimal] = useState(draft);
   const [invalid, setInvalid] = useState(false);
   const [scientific, setScientific] = useState(false);
-  return <ComponentExample title={text('大整数与数字字符串', 'BigInt and decimal strings')} code={`<NumberTicker value={9007199254740993n} showDelta />
+  return <ComponentExample id="number-ticker-big-int-and-decimal-strings" title={text('大整数与数字字符串', 'BigInt and decimal strings')} code={`<NumberTicker value={9007199254740993n} showDelta />
 <NumberTicker value="12345678901234567890.123456" formatOptions={{ maximumFractionDigits: 6 }} />
 <NumberTicker value="1.23456789e1000" formatOptions={{ notation: 'scientific' }} />
 <NumberTicker value="1.234e1001" compact="en" compactOptions={{ units: [{ factor: '1e1000', threshold: '1e1001', label: 'U' }] }} />`}>
@@ -197,7 +197,7 @@ export function NumberTickerExamples() {
 
     <ExactNumberExamples />
 
-    <ComponentExample title={text('自动单位换算', 'Automatic compact units')} code={`<NumberTicker value={12840} compact="en" />
+    <ComponentExample id="number-ticker-automatic-compact-units" title={text('自动单位换算', 'Automatic compact units')} code={`<NumberTicker value={12840} compact="en" />
 <NumberTicker value={12840} compact="zh" />
 <NumberTicker value={1250000000} compact="en" />
 <NumberTicker value={1250000000} compact="zh" />
@@ -211,7 +211,7 @@ export function NumberTickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('固定单位与独立阈值', 'Fixed units and custom thresholds')} code={`<NumberTicker value={1e8} compact="zh" compactOptions={{ maxUnit: '万' }} />
+    <ComponentExample id="number-ticker-fixed-units-and-custom-thresholds" title={text('固定单位与独立阈值', 'Fixed units and custom thresholds')} code={`<NumberTicker value={1e8} compact="zh" compactOptions={{ maxUnit: '万' }} />
 <NumberTicker value={12840} compact="zh" compactOptions={{ minUnit: '万', maxUnit: '万' }} formatOptions={{ roundingMode: 'trunc', minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
 <NumberTicker value={100000} compact="zh" compactOptions={{ units: [{ factor: 10000, label: '万', threshold: 100000 }] }} />`}>
       <div className="number-ticker-examples__statistics">
@@ -221,7 +221,7 @@ export function NumberTickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('科学与工程计数法', 'Scientific and engineering notation')} code={`<NumberTicker value={12840} formatOptions={{ notation: 'scientific', maximumFractionDigits: 2 }} />
+    <ComponentExample id="number-ticker-scientific-and-engineering-notation" title={text('科学与工程计数法', 'Scientific and engineering notation')} code={`<NumberTicker value={12840} formatOptions={{ notation: 'scientific', maximumFractionDigits: 2 }} />
 <NumberTicker value={12840} formatOptions={{ notation: 'engineering', maximumFractionDigits: 2 }} />
 <NumberTicker value={0.000001284} formatOptions={{ notation: 'scientific', maximumFractionDigits: 2 }} />`}>
       <div className="number-ticker-examples__statistics">
@@ -231,13 +231,13 @@ export function NumberTickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('图标前后缀', 'Icon prefixes and suffixes')} code={`const coinPaths = ${JSON.stringify(coinPaths)};
+    <ComponentExample id="number-ticker-icon-prefixes-and-suffixes" title={text('图标前后缀', 'Icon prefixes and suffixes')} code={`const coinPaths = ${JSON.stringify(coinPaths)};
 const gemPaths = ${JSON.stringify(gemPaths)};
 <NumberTicker value={12840} compact="en" prefix={<PencilIcon paths={coinPaths} size={28} sourceSize={24} decorative />} suffix={<PencilIcon paths={gemPaths} size={28} sourceSize={24} decorative />} getValueLabel={(_value, formatted) => ${quote(text('积分 ', 'Points '))} + formatted} />`}>
       <NumberTicker value={12840} compact="en" prefix={<PencilIcon paths={coinPaths} size={28} sourceSize={24} decorative />} suffix={<PencilIcon paths={gemPaths} size={28} sourceSize={24} decorative />} getValueLabel={(_value, formatted) => text(`积分 ${formatted}`, `Points ${formatted}`)} />
     </ComponentExample>
 
-    <ComponentExample title={text('积分与资源', 'Points and resources')} code={`<NumberTicker value={4820} prefix="${text('积分', 'Points')}" showDelta />
+    <ComponentExample id="number-ticker-points-and-resources" title={text('积分与资源', 'Points and resources')} code={`<NumberTicker value={4820} prefix="${text('积分', 'Points')}" showDelta />
 <NumberTicker value={73650} suffix="${text('晶石', 'crystals')}" locale="en-US" />`}>
       <div className="number-ticker-examples__specimens">
         <PencilSurface as="section" className="number-ticker-examples__metric" variant="quiet" radius={8}>
@@ -251,7 +251,7 @@ const gemPaths = ${JSON.stringify(gemPaths)};
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('普通统计与边界值', 'Statistics and edge values')} code={`<NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2 }} />
+    <ComponentExample id="number-ticker-statistics-and-edge-values" title={text('普通统计与边界值', 'Statistics and edge values')} code={`<NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2 }} />
 <NumberTicker value={0.0038} formatOptions={{ style: 'percent', maximumFractionDigits: 2 }} />`}>
       <div className="number-ticker-examples__statistics">
         <div><span>{text('周环比', 'Weekly change')}</span><NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} getValueLabel={(_number, formatted) => text(`周环比 ${formatted}%`, `Weekly change ${formatted}%`)} /></div>
@@ -260,7 +260,7 @@ const gemPaths = ${JSON.stringify(gemPaths)};
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('自定义展示', 'Custom display')} code={`<NumberTicker value={4.8} formatOptions={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }} renderValue={(_value, { animating, formattedValue }) => (
+    <ComponentExample id="number-ticker-custom-display" title={text('自定义展示', 'Custom display')} code={`<NumberTicker value={4.8} formatOptions={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }} renderValue={(_value, { animating, formattedValue }) => (
   <span className={animating ? 'is-changing' : undefined}>{formattedValue} / 5</span>
 )} renderDelta={(_delta, { direction, formattedDelta }) => <span>{direction === 'increase' ? '↑' : '↓'} {formattedDelta}</span>} showDelta />`}>
       <div className="number-ticker-examples__custom">

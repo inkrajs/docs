@@ -99,7 +99,7 @@ export function ContextMenuExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('浏览器菜单排除策略', 'Native-menu exclusion policy')} code={`const [copied, setCopied] = useState(false);
+    <ComponentExample id="context-menu-native-menu-exclusion-policy" title={text('浏览器菜单排除策略', 'Native-menu exclusion policy')} code={`const [copied, setCopied] = useState(false);
 
 <ContextMenu.Root>
   <ContextMenu.Trigger nativeContextMenu="editable" exclude="[data-context-menu-native]" aria-label="${text('草稿操作区域', 'Draft actions region')}">

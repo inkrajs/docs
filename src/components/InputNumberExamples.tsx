@@ -33,7 +33,7 @@ const [status, setStatus] = useState('');
   <Button type="reset" variant="secondary">${t('重置')}</Button>
   <output aria-live="polite">{status}</output>
 </form>`;
-  return <ComponentExample title="表单重置" code={code}>
+  return <ComponentExample id="input-number-form-reset" title="表单重置" code={code}>
     <form className="component-demo-form" onReset={() => { setValue(2); setStatus(''); }} onSubmit={event => { event.preventDefault(); setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))); }}>
       <Field label={t('受控输入')}><InputNumber name="controlled" value={value} onValueChange={setValue} min={0} max={10} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
       <Field label={t('非受控输入')}><InputNumber name="uncontrolled" defaultValue={3} min={0} max={10} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
@@ -118,26 +118,26 @@ export function InputNumberExamples() {
         </Field>
       </div>
     </ComponentPlayground>
-    <ComponentExample title="组合键与长按" code={`<Field label=${quote(t('快捷调整'))}>\n  <InputNumber defaultValue={2} min={-1000} max={1000}\n    stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]}\n    pressAndHold repeatDelay={400} repeatInterval={80}\n    incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} />\n</Field>`}>
+    <ComponentExample id="input-number-modifiers-and-hold-repeat" title="组合键与长按" code={`<Field label=${quote(t('快捷调整'))}>\n  <InputNumber defaultValue={2} min={-1000} max={1000}\n    stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]}\n    pressAndHold repeatDelay={400} repeatInterval={80}\n    incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} />\n</Field>`}>
       <div className="component-demo-form"><Field label={t('快捷调整')}><InputNumber defaultValue={2} min={-1000} max={1000} stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]} pressAndHold repeatDelay={400} repeatInterval={80} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field></div>
     </ComponentExample>
-    <ComponentExample title="范围与步长" code={`<Field label=${quote(t('数量'))}><InputNumber defaultValue={0} min={0} max={5} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('小数步长'))}><InputNumber defaultValue={1.25} min={0} max={3} step={0.25} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
+    <ComponentExample id="input-number-range-and-step" title="范围与步长" code={`<Field label=${quote(t('数量'))}><InputNumber defaultValue={0} min={0} max={5} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('小数步长'))}><InputNumber defaultValue={1.25} min={0} max={3} step={0.25} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('数量')}><InputNumber defaultValue={0} min={0} max={5} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
         <Field label={t('小数步长')}><InputNumber defaultValue={1.25} min={0} max={3} step={0.25} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
       </div>
     </ComponentExample>
-    <ComponentExample title="前缀与后缀" code={`<Field label=${quote(t('预算'))} description="NZD"><InputNumber prefix="NZ$" defaultValue={120} min={0} step={5} variant="outline" incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('行李重量'))} description=${quote(t('单位：千克'))}><InputNumber suffix="kg" defaultValue={12.5} min={0} step={0.5} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
+    <ComponentExample id="input-number-prefix-and-suffix" title="前缀与后缀" code={`<Field label=${quote(t('预算'))} description="NZD"><InputNumber prefix="NZ$" defaultValue={120} min={0} step={5} variant="outline" incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('行李重量'))} description=${quote(t('单位：千克'))}><InputNumber suffix="kg" defaultValue={12.5} min={0} step={0.5} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('预算')} description="NZD"><InputNumber prefix="NZ$" defaultValue={120} min={0} step={5} variant="outline" incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
         <Field label={t('行李重量')} description={t('单位：千克')}><InputNumber suffix="kg" defaultValue={12.5} min={0} step={0.5} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
       </div>
     </ComponentExample>
-    <ComponentExample title="任意小数" code={`<Field label=${quote(t('测量值'))}><InputNumber defaultValue={1.2345} step="any" controls={false} /></Field>`}>
+    <ComponentExample id="input-number-arbitrary-decimals" title="任意小数" code={`<Field label=${quote(t('测量值'))}><InputNumber defaultValue={1.2345} step="any" controls={false} /></Field>`}>
       <div className="component-demo-form"><Field label={t('测量值')}><InputNumber defaultValue={1.2345} step="any" controls={false} /></Field></div>
     </ComponentExample>
     <ResetExample />
-    <ComponentExample title="状态" code={`<Field label=${quote(t('只读'))} readOnly><InputNumber defaultValue={2} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('禁用'))} disabled><InputNumber defaultValue={2} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('数量'))} error=${quote(t('请输入范围内的数值'))}><InputNumber defaultValue={12} min={0} max={10} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
+    <ComponentExample id="input-number-states" title="状态" code={`<Field label=${quote(t('只读'))} readOnly><InputNumber defaultValue={2} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('禁用'))} disabled><InputNumber defaultValue={2} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('数量'))} error=${quote(t('请输入范围内的数值'))}><InputNumber defaultValue={12} min={0} max={10} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('只读')} readOnly><InputNumber defaultValue={2} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
         <Field label={t('禁用')} disabled><InputNumber defaultValue={2} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>

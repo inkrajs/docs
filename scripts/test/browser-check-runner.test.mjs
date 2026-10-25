@@ -39,3 +39,15 @@ test('browser runner rejects unbounded concurrency', async () => {
     await assert.rejects(runBrowserChecks([], { workers }), /must be 1 or 2/);
   }
 });
+
+test('browser runner can collect every failure while completing all checks', async () => {
+  const completed = [];
+  await assert.rejects(runBrowserChecks(['fail-one', 'pass', 'fail-two', 'last'], {
+    workers: 2, failFast: false, run: async script => {
+      await setTimeout(2);
+      completed.push(script);
+      if (script.startsWith('fail')) throw new Error(script);
+    },
+  }), error => error instanceof AggregateError && error.errors.length === 2);
+  assert.deepEqual(completed.sort(), ['fail-one', 'fail-two', 'last', 'pass']);
+});

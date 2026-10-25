@@ -86,7 +86,7 @@ export function ImageCropperExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('切换来源与错误状态', 'Source switching and failure')} code={`<ImageCropper source={image} alt="${text('合法本地图片', 'Legitimate local asset')}" onLoadError={handleLoadError} />`}>
+    <ComponentExample id="image-cropper-source-switching-and-failure" title={text('切换来源与错误状态', 'Source switching and failure')} code={`<ImageCropper source={image} alt="${text('合法本地图片', 'Legitimate local asset')}" onLoadError={handleLoadError} />`}>
       <div className="image-cropper-examples__stack">
         <ImageCropper source={previewLight} alt={text('浅色本地预览', 'Light local preview')} aspect={4 / 3} showControls={false} />
         <ImageCropper source="/assets/missing-image.png" alt={text('失败示例', 'Failure example')} aspect={4 / 3} showControls={false} />

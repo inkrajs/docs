@@ -87,7 +87,7 @@ export function RatingExamples() {
         />
       </div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`<form onSubmit={event => {
+    <ComponentExample id="rating-form-submission-and-reset" title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`<form onSubmit={event => {
   event.preventDefault();
   setSubmitted(String(new FormData(event.currentTarget).get('quality')));
 }}>
@@ -106,14 +106,14 @@ export function RatingExamples() {
       </form>
     </ComponentExample>
 
-    <ComponentExample title={text.uncontrolled} code={`<Rating aria-label="${text.difficulty}" defaultValue={2} count={4} />\n<Rating aria-label="${text.completion}" defaultValue={3.5} step={0.5} readOnly />`}>
+    <ComponentExample id="rating-uncontrolled" title={text.uncontrolled} code={`<Rating aria-label="${text.difficulty}" defaultValue={2} count={4} />\n<Rating aria-label="${text.completion}" defaultValue={3.5} step={0.5} readOnly />`}>
       <div className="rating-example-list">
         <Rating aria-label={text.difficulty} defaultValue={2} count={4} />
         <Rating aria-label={text.completion} defaultValue={3.5} step={0.5} readOnly />
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text.custom} code={`<Rating aria-label="${text.priority}" defaultValue={2} count={4}
+    <ComponentExample id="rating-custom" title={text.custom} code={`<Rating aria-label="${text.priority}" defaultValue={2} count={4}
   renderSymbol={({ filled, index }) => (
     <PencilIcon paths={bookmarkPaths} sourceSize={24} size={32}
       active={filled} seed={\`bookmark-\${index}\`} />

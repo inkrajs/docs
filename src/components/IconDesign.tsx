@@ -64,7 +64,7 @@ export function IconDesign() {
         <div aria-live="polite"><PencilText as="h3">{item.label}</PencilText><code>{item.data.name}</code><PencilText as="p">{item.use}</PencilText></div>
       </div>
     </div>
-    <ComponentExample title="图标接入" code={`import { Button, PencilIcon } from '@inkra/react';
+    <ComponentExample id="icon-design-using-icons" title="图标接入" code={`import { Button, PencilIcon } from '@inkra/react';
 
 const plusPaths = [{ d: 'M12 5v14' }, { d: 'M5 12h14' }];
 

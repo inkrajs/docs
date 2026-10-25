@@ -7,6 +7,8 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentPageTabs, type ComponentPageTab } from './ComponentPageTabs';
 import { PageHeading } from './PageHeading';
 import { ApiTable } from './ApiTable';
+import { ApiGroups } from './ApiGroups';
+import { getFoundationApiGroups } from './foundationApiGroups';
 import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.mjs';
 import { __iconData as sunIcon } from 'lucide-react/dist/esm/icons/sun.mjs';
 import { __iconData as moonIcon } from 'lucide-react/dist/esm/icons/moon.mjs';
@@ -140,7 +142,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
         <output className="component-demo-status" aria-live="polite">{status}</output>
       </form>
     </ComponentPlayground>
-    <ComponentExample title={t('原生默认值')} code={`<form>
+    <ComponentExample id="foundation-pages-native-defaults" title={t('原生默认值')} code={`<form>
   ${choice ? `<RadioGroup name="visibility" defaultValue="private" label="${t('可见范围')}">
     <RadioGroupItem value="private" label="${t('仅自己')}" />
     <RadioGroupItem value="team" label="${t('团队')}" />
@@ -160,10 +162,10 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
         <output className="component-demo-status" aria-live="polite">{nativeStatus}</output>
       </form>
     </ComponentExample>
-    {choice && <ComponentExample title="图标分段选择" code={`<RadioGroup name="example-theme" label="${t('主题模式')}" variant="segmented" orientation="horizontal" defaultValue="auto">\n  <RadioGroupItem value="auto" label="${t('跟随系统')}" icon={<MonitorIcon />} />\n  <RadioGroupItem value="light" label="${t('浅色')}" icon={<SunIcon />} />\n  <RadioGroupItem value="dark" label="${t('深色')}" icon={<MoonIcon />} />\n</RadioGroup>`}>
+    {choice && <ComponentExample id="foundation-pages-icon-segments" title="图标分段选择" code={`<RadioGroup name="example-theme" label="${t('主题模式')}" variant="segmented" orientation="horizontal" defaultValue="auto">\n  <RadioGroupItem value="auto" label="${t('跟随系统')}" icon={<MonitorIcon />} />\n  <RadioGroupItem value="light" label="${t('浅色')}" icon={<SunIcon />} />\n  <RadioGroupItem value="dark" label="${t('深色')}" icon={<MoonIcon />} />\n</RadioGroup>`}>
       <RadioGroup name="example-theme" label={t('主题模式')} variant="segmented" orientation="horizontal" defaultValue="auto"><RadioGroupItem value="auto" label={t('跟随系统')} icon={<DocsIcon data={monitorIcon} size={20} />} /><RadioGroupItem value="light" label={t('浅色')} icon={<DocsIcon data={sunIcon} size={20} />} /><RadioGroupItem value="dark" label={t('深色')} icon={<DocsIcon data={moonIcon} size={20} />} /></RadioGroup>
     </ComponentExample>}
-    {!choice && <ComponentExample title="状态" code={`<${name} checked={checked} onCheckedChange={setChecked} label="${t('受控状态')}" />\n<${name} disabled label="${t('禁用')}" />${kind === 'checkbox' ? `\n<Checkbox indeterminate label="${t('半选')}" />` : ''}`}>
+    {!choice && <ComponentExample id="foundation-pages-states" title="状态" code={`<${name} checked={checked} onCheckedChange={setChecked} label="${t('受控状态')}" />\n<${name} disabled label="${t('禁用')}" />${kind === 'checkbox' ? `\n<Checkbox indeterminate label="${t('半选')}" />` : ''}`}>
       <div className="component-demo-form"><Toggle checked={checked} onCheckedChange={setChecked} label={t('受控状态')} /><Toggle disabled label={t('禁用')} /><Toggle disabled defaultChecked label={t('已选且禁用')} />{kind === 'checkbox' && <Checkbox indeterminate label={t('半选')} />}</div>
     </ComponentExample>}
   </>;
@@ -180,7 +182,6 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['className / style / ref', 'native div props / HTMLDivElement'],
   ],
   slot: [['children', 'ReactNode; arbitrary visual content'], ['interactive', 'boolean (default false); div or native button'], ['empty / emptyContent', 'boolean / ReactNode; preserves geometry'], ['selected', 'boolean (default false); visual selection and aria-pressed for buttons'], ['disabled', 'boolean; native disabled for interactive slots'], ['size', 'sm (48px) | md (64px) | lg (80px)'], ['count', 'number; rendered with Badge'], ['renderCount', '(count: number) => ReactNode'], ['aria-label / aria-labelledby', 'string; name interactive or meaningful slots'], ['seed', 'string | number'], ['ref', 'HTMLDivElement | HTMLButtonElement']],
-  breadcrumb: [['Root', 'native nav props; aria-label defaults to Breadcrumb; dir supports RTL'], ['List / Item', 'native ol / li props; paths wrap in narrow containers'], ['Link', 'ButtonLinkProps; real href, startIcon / endIcon, disabled; default variant link'], ['MenuTrigger', 'ButtonProps; use inside DropdownMenu.Root; default variant link'], ['ContextLink', 'BreadcrumbLinkProps plus longPress / nativeContextMenu / exclude; use inside ContextMenu.Root'], ['Page', 'native span props plus startIcon / endIcon; aria-current=page; noninteractive current location'], ['Separator.children', 'ReactNode; default /; decorative and hidden from assistive technology']],
   icon: [
     ['import', "import { PencilIcon } from '@inkra/react'"],
     ['paths', "readonly { d: string; mode?: 'stroke' | 'wash' | 'scuff' }[]"],
@@ -402,9 +403,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   'context-menu': [['Root.open / defaultOpen', 'boolean'], ['Root.onOpenChange', '(open: boolean, details: ContextMenuOpenChangeDetails) => void'], ['Root.modal / dir', 'boolean / ltr | rtl'], ['Trigger.as / disabled', 'ElementType / boolean'], ['Trigger.longPress', 'boolean | { delay?: number; movementTolerance?: number }'], ['Trigger.nativeContextMenu', 'editable | always | never'], ['Trigger.exclude', 'string | (target: Element, currentTarget: HTMLElement) => boolean'], ['Content.onCloseAutoFocus', '(event: Event) => void'], ['Content.side / align / sideOffset / collisionPadding', 'top | right | bottom | left / start | center | end / number / number'], ['Item.disabled / destructive / icon / onSelect', 'boolean / boolean / ReactNode / (event: Event) => void'], ['CheckboxItem.checked / onCheckedChange', 'boolean | indeterminate / (checked: boolean) => void'], ['RadioGroup.value / onValueChange', 'string / (value: string) => void'], ['Sub.open / defaultOpen / onOpenChange', 'boolean / boolean / (open: boolean) => void'], ['SubTrigger.disabled / icon', 'boolean / ReactNode'], ['SubContent.sideOffset / collisionPadding', 'number'], ['Portal.container', 'HTMLElement']],
   'dockable-panel': [['position / defaultPosition', '{ x; y }'], ['onPositionChange', 'position callback'], ['collapsed / defaultCollapsed', 'boolean'], ['snap', 'viewport edge options'], ['bounds', 'viewport | HTMLElement'], ['panelId / activePanelId', 'layer management']],
   editable: [['value / defaultValue', 'string'], ['editing / defaultEditing', 'boolean'], ['onValueChange / onEditingChange', 'callbacks'], ['editorType', 'input (default) | textarea | select'], ['selectProps', 'EditableSelectProps: items, mode (dropdown | searchable | stepper), size, dir, labels, clearable, loop'], ['multiline', 'boolean; legacy textarea shorthand'], ['validate', 'sync or async validator'], ['display / editor', 'ReactNode | render callback'], ['blurBehavior', 'ignore (default) | save | cancel'], ['submitOnEnter', 'boolean (default true); multiline uses Ctrl/Command + Enter'], ['inputProps / textareaProps', 'InputProps / TextareaProps; excludes value handlers'], ['startEditingLabel / saveLabel / cancelLabel', 'string'], ['onSave / onCancel', 'EditableSaveHandler / (value: string) => void'], ['EditableEditorProps', 'value, onValueChange, onKeyDown, onBlur, disabled, readOnly, invalid, error, autoFocus, ARIA'], ['ref', 'EditableHandle: focus / startEditing / save / cancel']],
-  flip: [['flipped / defaultFlipped', 'boolean'], ['onFlippedChange', '(flipped) => void'], ['front / back', 'ReactNode'], ['tilt', 'boolean | TiltOptions'], ['axis', 'x | y'], ['disabled', 'boolean']],
   heatmap: [['rows / columns / cells', 'axis and cell data'], ['scaleType / domain / binCount', 'continuous | quantize'], ['selectedCell / defaultSelectedCell', 'HeatmapSelection'], ['onSelectedCellChange', 'selection callback'], ['renderCell / renderDetails', 'render hooks'], ['showLegend / showValues', 'boolean']],
-  'hover-card': [['open / defaultOpen', 'boolean'], ['onOpenChange', '(open) => void'], ['openDelay / closeDelay', 'milliseconds'], ['interactive', 'boolean'], ['Trigger / Content', 'compound parts'], ['side / align / collisionPadding', 'positioning']],
   'image-cropper': [['src', 'string'], ['crop / defaultCrop', 'crop state'], ['zoom / rotation / aspect', 'number'], ['onCropChange / onCropComplete', 'callbacks'], ['exportImage', 'bounded export options'], ['keyboardStep / zoomStep', 'number']],
   'image-viewer': [
     ['Root.items', 'readonly ImageViewerItem[]'], ['Root.activeId / defaultActiveId', 'string | null'],
@@ -438,7 +437,6 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['name / form / ref', 'form field name / form id / HTMLSpanElement'],
   ],
   rating: [['value / defaultValue', 'number'], ['onValueChange', '(value: number) => void'], ['count', 'number = 5'], ['step', 'number = 1'], ['clearable', 'boolean | reselect | keyboard = false'], ['hoverPreview', 'boolean = true'], ['onPreviewChange', '(value: number | null) => void'], ['name / form', 'string'], ['readOnly / disabled', 'boolean'], ['size', 'sm | md | lg'], ['dir', 'ltr | rtl'], ['symbol', 'ReactNode'], ['renderSymbol', '(state: RatingSymbolState) => ReactNode'], ['getValueLabel', '(value: number, count: number) => string']],
-  resizable: [['orientation', 'horizontal | vertical'], ['layout / defaultLayout', 'ResizableLayout'], ['onLayoutChange / onLayoutCommit', 'callbacks'], ['Panel', 'min/max/collapsible sizes'], ['Handle', 'label and separator props'], ['ref hooks', 'group and panel imperative handles']],
   'scroll-area': [['type', 'auto (default) | always'], ['viewportLabel', 'string'], ['viewportProps', 'native div props; scroll events and tabIndex'], ['overflowEdgeThreshold', 'number | { xStart?: number; xEnd?: number; yStart?: number; yEnd?: number }'], ['seed', 'string | number'], ['className / style / ref', 'native root div props / HTMLDivElement'], ['Root', 'alias of ScrollArea; viewport, scrollbars and corner included']],
   sortable: [['items', 'readonly SortableItem[]'], ['onItemsChange', '(items, details) => void'], ['containers', 'optional grouped data'], ['strategy / orientation', 'sorting strategy'], ['renderItem / renderOverlay', 'render hooks'], ['disabled / announcements', 'accessibility options']],
   sparkline: [['data', 'readonly SparklineDatum[]'], ['variant', 'line | bar'], ['xDomain / yDomain', 'domains'], ['showExtrema / showCurrent', 'boolean'], ['getValueLabel', 'accessible formatter'], ['renderTooltip', 'render hook']],
@@ -540,13 +538,14 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
   const { locale, t } = useLocale();
   if (isExpansionComponent(component)) return <Suspense fallback={<span role="status">{t('加载中')}</span>}><ExpansionPage component={component} activeTab={activeTab} onTabChange={onTabChange} /></Suspense>;
   const IndependentExamples = independentExamples[component];
+  const groups = activeTab === 'api' ? getFoundationApiGroups(component, apiRows[component] ?? []) : undefined;
   return <article className="documentation">
     <PageHeading title={foundationNames[component]} />
     <ComponentPageTabs name={foundationNames[component]} id={component} value={activeTab} onChange={onTabChange} />
     <PencilLine className="section-divider" />
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>
       {activeTab === 'preview' && (component === 'breadcrumb' ? <BreadcrumbExamples /> : IndependentExamples ? <IndependentExamples /> : component === 'progress' ? <><MoreExamples kind="progress" /><SegmentedProgressExamples /></> : component === 'slot' ? <SlotExamples /> : component === 'log' ? <LogExamples /> : component === 'hotkey' ? <HotkeyExamples /> : component === 'number-ticker' ? <NumberTickerExamples /> : component === 'icon' ? <IconExamples /> : component === 'input-number' ? <InputNumberExamples /> : component === 'slider' ? <SliderExamples /> : component === 'calendar' || component === 'day-agenda' || component === 'journey-map' ? <TravelExamples key={component} kind={component} /> : component === 'dropdown-menu' || component === 'alert' || component === 'avatar' || component === 'card' || component === 'table' ? <ContentExamples kind={component} /> : component === 'tooltip' || component === 'accordion' || component === 'badge' || component === 'separator' || component === 'skeleton' ? <MoreExamples kind={component} /> : component === 'tabs' ? <TabsExamples /> : component === 'select' ? <SelectExamples /> : component === 'popover' ? <PopoverExamples /> : component === 'overlay' ? <OverlayExamples /> : component === 'field' || component === 'input' || component === 'textarea' ? <FormInputExamples key={component} kind={component} /> : component === 'checkbox' || component === 'radio-group' || component === 'switch' ? <SelectionExamples key={component} kind={component} /> : null)}
-      {activeTab === 'api' && <section className="component-api"><ApiTable rows={apiRows[component] ?? [['component', foundationNames[component]]]} component={component} label={`${foundationNames[component]} API`} /></section>}
+    {activeTab === 'api' && <section className="component-api">{groups ? <ApiGroups component={component} groups={groups} /> : <ApiTable rows={apiRows[component] ?? [['component', foundationNames[component]]]} component={component} label={`${foundationNames[component]} API`} />}</section>}
       {activeTab === 'accessibility' && <section className="component-api"><GuidanceMarkdown source={component === 'markdown'
         ? markdownAccessibility[locale === 'en' ? 'en' : 'zh']
         : t(additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。'))} /></section>}

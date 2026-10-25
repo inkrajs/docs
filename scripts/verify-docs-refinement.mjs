@@ -24,12 +24,15 @@ try {
   }
   console.log('PASS 10 page tab sets: deep links, exclusive panels, history and keyboard');
   await page.goto(`${base}/components/button`);
-  const divider = page.locator('.desktop-sidebar .sidebar-divider');
+  const divider = page.locator('.desktop-sidebar.inkra-layout__sidebar > .inkra-layout__sidebar-divider');
   const top = (await divider.boundingBox()).y;
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(300);
   assert(Math.abs((await divider.boundingBox()).y - top) < 1, 'Sidebar divider moved with page');
   assert((await divider.boundingBox()).height <= 900, 'Divider tracks document height');
+  const headerDivider = await page.locator('.app-header--docs .inkra-layout__header-sidebar-divider').boundingBox();
+  const sidebarDivider = await divider.boundingBox();
+  assert(Math.abs(headerDivider.x + headerDivider.width / 2 - sidebarDivider.x - sidebarDivider.width / 2) < 1, 'Shared header/sidebar divider axis stays aligned after page scrolling');
   const bottomGap = await page.evaluate(() => innerHeight - document.querySelector('.documentation').lastElementChild.getBoundingClientRect().bottom);
   assert(bottomGap <= 40, `Extra scroll tail: ${bottomGap}`);
   await page.goto(`${base}/getting-started`);

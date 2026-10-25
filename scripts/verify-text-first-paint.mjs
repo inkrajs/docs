@@ -55,7 +55,11 @@ try {
       await config.click();
     }
     await page.screenshot({ path: `/tmp/inkra-text-first-paint-${width}.png` });
-    await page.locator('.brand').click();
+    if (width > 768) await page.locator('.brand').click();
+    else {
+      await page.getByRole('button', { name: '打开文档目录', exact: true }).click();
+      await page.locator('.drawer-brand').click();
+    }
     await page.locator('#home-title[data-pencil-ready="true"]').waitFor();
     assert.deepEqual(errors, []);
     console.log(`${width}px${slowFont ? ' delayed font' : ''} first visible frame: ${frames[0].total} pencil labels ready.`);

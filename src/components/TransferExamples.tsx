@@ -87,13 +87,13 @@ export function TransferExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={t('非受控初始选择')} code={`<Transfer items={people} defaultTargetKeys={['ada', 'katherine']} labels={labels} formatCount={localizedCount} />`}>
+    <ComponentExample id="transfer-uncontrolled-initial-selection" title={t('非受控初始选择')} code={`<Transfer items={people} defaultTargetKeys={['ada', 'katherine']} labels={labels} formatCount={localizedCount} />`}>
       <div className="transfer-example__frame" data-testid="transfer-uncontrolled">
         <Transfer items={localizedPeople.slice(0, 5)} defaultTargetKeys={['ada', 'katherine']} labels={labels} formatCount={formatCount} />
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('空态与外部重置')} code={`<Transfer items={people.slice(0, 2)} targetKeys={targetKeys} onTargetKeysChange={setTargetKeys} labels={labels} formatCount={localizedCount} />`}>
+    <ComponentExample id="transfer-empty-state-and-external-reset" title={t('空态与外部重置')} code={`<Transfer items={people.slice(0, 2)} targetKeys={targetKeys} onTargetKeysChange={setTargetKeys} labels={labels} formatCount={localizedCount} />`}>
       <div className="transfer-example__stack" data-testid="transfer-empty-state">
         <Transfer
           items={localizedPeople.slice(0, 2)}

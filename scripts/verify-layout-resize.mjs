@@ -18,8 +18,8 @@ try {
     await frame.locator('.layout-notebook').waitFor();
     const choose = async name => {
       await setControls(playground, true);
-      const choices = playground.locator('.layout-mode-picker');
-      assert.equal(await choices.getByRole('radio').count(), 8);
+      const choices = playground.locator('.layout-mode-picker').first();
+      assert.equal(await choices.getByRole('radio').count(), 9);
       await choices.getByRole('radio', { name, exact: true }).check();
       assert(await choices.getByRole('radio', { name, exact: true }).isChecked());
       assert(await choices.evaluate(node => [...node.querySelectorAll('.inkra-choice-grid__option-label, .inkra-choice-grid__media')].every(option => option.scrollWidth <= option.clientWidth + 1)));
@@ -31,8 +31,11 @@ try {
     };
     await choose('侧栏通高');
     await playground.getByRole('radio', { name: '1024', exact: true }).check();
+    await page.waitForFunction(() => document.querySelector('.layout-viewport__canvas')?.contentDocument
+      ?.querySelector('.layout-notebook')?.dataset.compact === 'false');
     const sidebar = frame.locator('.layout-notebook__sidebar:not(.layout-notebook__motion-copy)');
     const sideHeader = sidebar.locator('header');
+    await sideHeader.locator('.layout-notebook__sidebar-brand > canvas').waitFor({ state: 'attached' });
     assert.equal(await sideHeader.locator('.layout-notebook__sidebar-brand > canvas').count(), 1);
     const positions = await sideHeader.evaluate(node => {
       const brand = node.querySelector('.layout-notebook__sidebar-brand').getBoundingClientRect();
@@ -108,6 +111,7 @@ try {
     await details.waitFor({ state: 'visible' });
 
     await setControls(playground, true);
+    await playground.locator('.property-tabs').getByRole('tab', { name: '交互', exact: true }).click();
     await playground.getByRole('switch', { name: '拖拽调宽', exact: true }).click();
     await playground.getByRole('switch', { name: '允许折叠', exact: true }).click();
     await showPreview(playground);

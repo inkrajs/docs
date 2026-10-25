@@ -10,7 +10,8 @@ async function gap(page, before, after, expected = 20) {
     const examples = article.querySelector('.component-examples');
     return { padding: [style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft], examples: examples && getComputedStyle(examples).rowGap };
   });
-  assert.deepEqual(spacing.padding, ['20px', '20px', '20px', '20px']);
+  const inset = page.viewportSize().width <= 480 ? '12px' : '20px';
+  assert.deepEqual(spacing.padding, [inset, inset, inset, inset]);
   if (spacing.examples) assert.equal(spacing.examples, '20px');
   const result = await page.evaluate(({ before, after }) => {
     const a = document.querySelector(before).getBoundingClientRect();

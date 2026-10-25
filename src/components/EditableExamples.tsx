@@ -88,12 +88,12 @@ ${editorType === 'select' ? `const items = ${JSON.stringify(items, null, 2)};\n`
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={zh ? '多行文本' : 'Multiline text'} code={`<Editable editorType="textarea" defaultValue="Inkra" textareaProps={{ rows: 3 }} />`}>
+    <ComponentExample id="editable-multiline-text" title={zh ? '多行文本' : 'Multiline text'} code={`<Editable editorType="textarea" defaultValue="Inkra" textareaProps={{ rows: 3 }} />`}>
       <Editable editorType="textarea" defaultValue={zh ? '保留一个简短备注。\n稍后继续补充。' : 'Keep a short note.\nAdd more details later.'}
         aria-label={zh ? '编辑多行备注' : 'Edit multiline note'} startEditingLabel={zh ? '编辑多行备注' : 'Edit multiline note'}
         saveLabel={zh ? '确认备注' : 'Confirm note'} cancelLabel={cancelLabel} textareaProps={{ rows: 3 }} />
     </ComponentExample>
-    <ComponentExample title={zh ? '选择器编辑' : 'Select editors'} code={`<Editable editorType="select" defaultValue="draft" selectProps={{ items }} />
+    <ComponentExample id="editable-select-editors" title={zh ? '选择器编辑' : 'Select editors'} code={`<Editable editorType="select" defaultValue="draft" selectProps={{ items }} />
 <Editable editorType="select" defaultValue="draft" selectProps={{ items, mode: 'searchable' }} />
 <Editable editorType="select" defaultValue="draft" selectProps={{ items, mode: 'stepper' }} />`}>
       <div className="component-demo-stack">
@@ -105,7 +105,7 @@ ${editorType === 'select' ? `const items = ${JSON.stringify(items, null, 2)};\n`
         </Field>)}
       </div>
     </ComponentExample>
-    <ComponentExample title={zh ? '自定义显示与编辑器' : 'Custom display and editor'} code={`<Editable
+    <ComponentExample id="editable-custom-display-and-editor" title={zh ? '自定义显示与编辑器' : 'Custom display and editor'} code={`<Editable
   value={title}
   onValueChange={setTitle}
   display={value => <strong>{value}</strong>}
@@ -128,7 +128,7 @@ ${editorType === 'select' ? `const items = ${JSON.stringify(items, null, 2)};\n`
       />
     </ComponentExample>
 
-    <ComponentExample title={zh ? '显示内容中的操作' : 'Interactive display content'} code={`<Editable
+    <ComponentExample id="editable-interactive-display-content" title={zh ? '显示内容中的操作' : 'Interactive display content'} code={`<Editable
   value={name}
   onValueChange={setName}
   display={value => <span><a href="/profile">{value}</a></span>}

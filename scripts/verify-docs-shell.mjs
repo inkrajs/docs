@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 
 const browser = await chromium.launch();
 try {
-  for (const width of [1305, 1024, 800, 390, 320]) {
+  for (const width of [1305, 1024, 800, 769, 768, 390, 320]) {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -12,14 +12,24 @@ try {
     await page.locator('.page-heading__actions').waitFor();
     const nav = page.getByRole('navigation', { name: '主导航', exact: true });
     assert.equal(await nav.getByRole('link', { name: '文档', exact: true }).getAttribute('data-state'), 'active');
+    const shell = page.locator('.docs-shell.inkra-layout');
+    assert.equal(await shell.count(), 1, 'Documentation uses the shared Layout root');
+    assert.equal(await shell.locator(':scope > .inkra-layout__header[data-shared-sidebar]').count(), 1, 'Header uses the shared brand column');
+    assert.equal(await shell.locator(':scope > .docs-layout.inkra-layout__body > .docs-resizable > [data-panel] > .docs-sidebar-panel > .desktop-sidebar.inkra-layout__sidebar').count(), 1);
+    assert.equal(await shell.locator(':scope > .docs-layout > .docs-resizable > [data-panel] > .docs-content-panel > main#main-content.inkra-layout__content').count(), 1, 'Content retains the main landmark and anchor root');
+    assert.equal(await shell.locator('.header-brand-divider, .sidebar-divider').count(), 0, 'Documentation does not duplicate Layout dividers');
     if (width > 768) {
-      const line = page.locator('.header-brand-divider');
+      const line = page.locator('.app-header--docs > .inkra-layout__header-sidebar > .inkra-layout__header-sidebar-divider');
       const head = await line.boundingBox();
-      const side = await page.locator('.desktop-sidebar > .sidebar-divider').boundingBox();
-      assert(Math.abs(head.x - side.x) < 1, 'Brand divider and sidebar share an axis');
+      const side = await page.locator('.desktop-sidebar > .inkra-layout__sidebar-divider').boundingBox();
+      const brandColumn = await page.locator('.app-header--docs > .inkra-layout__header-sidebar').boundingBox();
+      const sidebar = await page.locator('.desktop-sidebar').boundingBox();
+      assert(Math.abs(brandColumn.x - sidebar.x) < 1 && Math.abs(brandColumn.width - sidebar.width) < 1, 'Header and body inherit the same column width');
+      assert(Math.abs(head.x + head.width / 2 - side.x - side.width / 2) < 1, 'Brand divider and sidebar share an axis');
+      assert(Math.abs(head.x + head.width / 2 - sidebar.x - sidebar.width) < 1, 'The shared divider is centered on the column boundary');
       assert(head.height === 32, 'Vertical header line has an explicit height');
       await page.waitForFunction(() => {
-        const canvas = document.querySelector('.header-brand-divider');
+        const canvas = document.querySelector('.app-header--docs .inkra-layout__header-sidebar-divider');
         const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
         const rows = new Set();
         data.forEach((alpha, index) => { if (index % 4 === 3 && alpha > 20) rows.add(Math.floor(index / 4 / canvas.width)); });
@@ -29,6 +39,19 @@ try {
         node.scrollLeft = 100;
         return node.scrollWidth <= node.clientWidth && node.scrollLeft === 0;
       }), 'Sidebar never scrolls horizontally');
+    } else {
+      assert.equal(await page.locator('.desktop-sidebar').isVisible(), false, 'Mobile uses the navigation drawer, not a stacked desktop sidebar');
+      assert.equal(await page.locator('.app-header--docs .inkra-layout__header-sidebar-divider').isVisible(), false);
+      const openNavigation = page.getByRole('button', { name: '打开文档目录', exact: true });
+      await openNavigation.click();
+      const drawer = page.getByRole('dialog', { name: '文档目录', exact: true });
+      await drawer.waitFor();
+      assert(await drawer.evaluate(node => !node.closest('[inert]')), 'The mobile drawer is outside inert background regions');
+      assert(await page.locator('.docs-layout').evaluate(node => node.inert && node.getAttribute('aria-hidden') === 'true'));
+      await drawer.getByRole('button', { name: '关闭文档目录', exact: true }).click();
+      await drawer.waitFor({ state: 'hidden' });
+      await page.waitForFunction(() => document.activeElement?.classList.contains('menu-button'));
+      assert(await page.locator('.docs-layout').evaluate(node => !node.inert && node.getAttribute('aria-hidden') !== 'true'));
     }
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `No overflow at ${width}`);
     await page.getByRole('button', { name: '更多页面操作', exact: true }).click();
@@ -38,7 +61,11 @@ try {
     assert.match(await markdown.locator('pre').textContent(), /# Button/);
     await markdown.getByRole('button', { name: '关闭', exact: true }).click();
     await markdown.waitFor({ state: 'hidden' });
-    await page.locator('.brand').click();
+    if (width > 768) await page.locator('.brand').click();
+    else {
+      await page.getByRole('button', { name: '打开文档目录', exact: true }).click();
+      await page.locator('.drawer-brand').click();
+    }
     await page.waitForURL((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/');
     assert.equal(await page.locator('.desktop-sidebar').count(), 0);
     assert.equal(await page.locator('#main-content h1').innerText(), 'Inkra');

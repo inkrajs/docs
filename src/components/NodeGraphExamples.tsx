@@ -237,7 +237,7 @@ const [edges, setEdges] = useState(initialEdges);
       </GraphFrame>
     </ComponentPlayground>
 
-    <ComponentExample title={text('依赖关系与自定义节点', 'Dependencies and custom nodes')} code={`const renderNode = useCallback(props => <DependencyCardNode {...props} />, []);
+    <ComponentExample id="node-graph-dependencies-and-custom-nodes" title={text('依赖关系与自定义节点', 'Dependencies and custom nodes')} code={`const renderNode = useCallback(props => <DependencyCardNode {...props} />, []);
 const renderEdge = useCallback(props => <DependencyEdge {...props} />, []);
 
 <NodeGraph.Root

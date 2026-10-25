@@ -1,6 +1,8 @@
 import { runBrowserChecks } from './browser-check-runner.mjs';
 
 await runBrowserChecks([
+  'verify-grid-docs',
+  'verify-breadcrumb',
   'verify-textarea-sizing',
   'verify-i18n',
   'verify-docs-locales',
@@ -16,7 +18,8 @@ await runBrowserChecks([
   'verify-layout-sidebar',
   'verify-layout-resize',
   'verify-layout-header',
-  'verify-breadcrumb',
+  'verify-layout-mobile',
+  'verify-inventory-grid',
   'verify-layout-scroll-refinements',
   'verify-layout-stability',
   'verify-layout-resilience',
@@ -76,6 +79,8 @@ await runBrowserChecks([
   'verify-header-github',
   'verify-home-header-actions',
   'verify-docs-shell',
+  'verify-docs-layout',
+  'verify-mobile-search',
   'verify-page-titles',
   'verify-docs-actions',
   'verify-tabs-dividers',
@@ -94,4 +99,4 @@ await runBrowserChecks([
   'verify-example-i18n',
   'verify-sortable',
   'verify-virtual-list',
-], { workers: process.env.CI === 'true' ? 2 : 1 });
+], { workers: process.env.CI === 'true' ? 2 : 1, failFast: false });

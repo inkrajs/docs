@@ -173,7 +173,7 @@ export function PanZoomExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('受控变换与缩放锚点', 'Controlled transform and zoom anchor')} code={`const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
+    <ComponentExample id="pan-zoom-controlled-transform-and-zoom-anchor" title={text('受控变换与缩放锚点', 'Controlled transform and zoom anchor')} code={`const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
 const view = useRef<PanZoomRef>(null);
 const marker = useRef<HTMLSpanElement>(null);
 <PanZoom ref={view} value={transform} onTransformChange={setTransform} minScale={0.2} fitOnInit>

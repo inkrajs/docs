@@ -61,7 +61,7 @@ const badgePaths = ${JSON.stringify(item.badgePaths, null, 2)};
   badge={{ paths: badgePaths, sourceSize: 24, position: 'bottom-end', scale: 0.55 }}
   decorative={false} aria-label=${JSON.stringify(t(item.label))}
 />`;
-  return <ComponentExample title="组合图标" code={code}>
+  return <ComponentExample id="icon-composite-icons" title="组合图标" code={code}>
     <div className="icon-examples__composites" role="group" aria-label={t('组合图标')}>
       {compositeIcons.map(icon => <Button key={icon.key} fullWidth variant={selected === icon.key ? 'outline' : 'ghost'} aria-pressed={selected === icon.key} onClick={() => setSelected(icon.key)} className="icon-examples__choice">
         <span className="icon-examples__choice-content"><PencilIcon paths={icon.paths} sourceSize={24} size={48} badge={{ paths: icon.badgePaths }} decorative /><PencilText>{icon.label}</PencilText></span>
@@ -94,7 +94,7 @@ const [saved, setSaved] = useState(false);
   </Tooltip.Root>
 </Tooltip.Provider>
 <output aria-live="polite">{saved ? ${JSON.stringify(t('已收藏'))} : ${JSON.stringify(t('未收藏'))}}</output>`;
-  return <ComponentExample title="图标按钮与提示" code={code}>
+  return <ComponentExample id="icon-icon-buttons-and-tooltips" title="图标按钮与提示" code={code}>
     <div className="icon-examples__action">
       <Tooltip.Provider><Tooltip.Root>
         <Tooltip.Trigger asChild><Button size="icon" variant="outline" aria-pressed={saved} aria-label={label} onClick={() => setSaved(current => !current)}><PencilIcon paths={saved ? bookmarkCheckPaths : bookmarkPaths} sourceSize={24} size={28} decorative /></Button></Tooltip.Trigger>
@@ -186,13 +186,13 @@ ${composite ? `    badge={{ paths: badgePaths, sourceSize: 24, position: '${badg
         <div className="icon-examples__stage" style={{ width: Math.max(240, size * 3 + 24), minWidth: size * 3 + 24 }}>{previewIcons.map(icon => <PencilIcon key={icon.key} paths={icon.paths} badge={badge} dir={direction} size={size} sourceSize={Number(sourceSize)} strokeWidth={customStroke ? strokeWidth : undefined} intensity={customStroke ? intensity : undefined} breaks={customStroke ? breaks : undefined} breakCount={customStroke ? breakCount : undefined} pressureVariation={customStroke ? pressureVariation : undefined} seed={seed} active={active} decorative={decorative} aria-label={decorative ? undefined : iconLabel(icon.label)} style={{ color: colorValue }} />)}</div>
       </div>
     </ComponentPlayground>
-    <ComponentExample title="图标目录" code={`const paths = ${JSON.stringify(item.paths, null, 2)};\n<PencilIcon paths={paths} sourceSize={24} size={32} decorative />`}>
+    <ComponentExample id="icon-icon-catalog" title="图标目录" code={`const paths = ${JSON.stringify(item.paths, null, 2)};\n<PencilIcon paths={paths} sourceSize={24} size={32} decorative />`}>
       <IconCatalogGrid selected={selected} onSelect={setSelected} />
     </ComponentExample>
-    <ComponentExample title="尺寸" code={`const paths = ${JSON.stringify(item.paths, null, 2)};\n\n${['16', '20', '24', '32', '40'].map(value => `<PencilIcon paths={paths} sourceSize={24} size={${value}} decorative />`).join('\n')}`}>
+    <ComponentExample id="icon-size" title="尺寸" code={`const paths = ${JSON.stringify(item.paths, null, 2)};\n\n${['16', '20', '24', '32', '40'].map(value => `<PencilIcon paths={paths} sourceSize={24} size={${value}} decorative />`).join('\n')}`}>
       <div className="icon-examples__sizes">{[16, 20, 24, 32, 40].map(value => <div key={value}><span className="icon-examples__size-box"><PencilIcon paths={item.paths} sourceSize={24} size={value} decorative /></span><PencilText>{`${value}px`}</PencilText></div>)}</div>
     </ComponentExample>
-    <ComponentExample title="装饰与语义" code={`const checkPaths = ${JSON.stringify(checkPaths, null, 2)};
+    <ComponentExample id="icon-decoration-and-semantics" title="装饰与语义" code={`const checkPaths = ${JSON.stringify(checkPaths, null, 2)};
 
 <span>
   <PencilIcon paths={checkPaths} sourceSize={24} size={28} decorative />

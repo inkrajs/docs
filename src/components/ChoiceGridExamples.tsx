@@ -114,7 +114,7 @@ ${optionsCode}
       )}
     </ComponentPlayground>
 
-    <ComponentExample title={text('原生默认值', 'Native defaults')} code={`<form onSubmit={event => {
+    <ComponentExample id="choice-grid-native-defaults" title={text('原生默认值', 'Native defaults')} code={`<form onSubmit={event => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   setResult({ format: data.get('choice-grid-format'), sections: data.getAll('choice-grid-sections') });

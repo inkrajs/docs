@@ -68,14 +68,14 @@ export function TypewriterExamples() {
       </PencilSurface>
     </ComponentPlayground>
 
-    <ComponentExample title={text('表情与组合字符', 'Emoji and combining characters')} code={`<Typewriter speed={42}>\n  {${JSON.stringify(text('你好，世界 👩🏽‍💻', 'Hello, world 👩🏽‍💻 — élan!'))}}\n</Typewriter>`}>
+    <ComponentExample id="typewriter-emoji-and-combining-characters" title={text('表情与组合字符', 'Emoji and combining characters')} code={`<Typewriter speed={42}>\n  {${JSON.stringify(text('你好，世界 👩🏽‍💻', 'Hello, world 👩🏽‍💻 — élan!'))}}\n</Typewriter>`}>
       <div className="typewriter-examples__specimens">
         <Typewriter speed={42} punctuationDelay={220}>{text('你好，世界 👩🏽‍💻', 'Hello, world 👩🏽‍💻 — élan!')}</Typewriter>
         <Typewriter speed={34} punctuationDelay={180}>{text('计划、起稿、修改……完成。 ✏️', 'Plan, sketch, revise… Done. ✏️')}</Typewriter>
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('命令式控制', 'Imperative controls')} code={`const writer = useRef<TypewriterHandle>(null);\n\n<Typewriter ref={writer}>A controllable note.</Typewriter>\n<Button onClick={() => writer.current?.pause()}>Pause</Button>\n<Button onClick={() => writer.current?.resume()}>Resume</Button>\n<Button onClick={() => writer.current?.complete()}>Show all</Button>\n<Button onClick={() => writer.current?.restart()}>Restart</Button>`}>
+    <ComponentExample id="typewriter-imperative-controls" title={text('命令式控制', 'Imperative controls')} code={`const writer = useRef<TypewriterHandle>(null);\n\n<Typewriter ref={writer}>A controllable note.</Typewriter>\n<Button onClick={() => writer.current?.pause()}>Pause</Button>\n<Button onClick={() => writer.current?.resume()}>Resume</Button>\n<Button onClick={() => writer.current?.complete()}>Show all</Button>\n<Button onClick={() => writer.current?.restart()}>Restart</Button>`}>
       <div className="typewriter-examples__note">
         <Typewriter ref={noteWriter} speed={68}>{text('这段便签可以暂停、继续或立即完成。', 'This note can pause, resume, or finish immediately.')}</Typewriter>
         <div className="typewriter-examples__controls">

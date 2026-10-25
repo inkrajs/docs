@@ -75,7 +75,7 @@ export function ResizableExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('纵向检查区', 'Vertical inspector')} code={`<Resizable.Root orientation="vertical" defaultLayout={{ preview: 62, details: 38 }}>
+    <ComponentExample id="resizable-vertical-inspector" title={text('纵向检查区', 'Vertical inspector')} code={`<Resizable.Root orientation="vertical" defaultLayout={{ preview: 62, details: 38 }}>
   <Resizable.Panel id="preview" minSize="35%"><Preview /></Resizable.Panel>
   <Resizable.Handle label="${text('调整预览与详情', 'Resize preview and details')}" />
   <Resizable.Panel id="details" minSize="24%" maxSize="55%"><Details /></Resizable.Panel>

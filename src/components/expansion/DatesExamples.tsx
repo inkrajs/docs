@@ -72,13 +72,13 @@ function DatePickerExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={zh ? '基础日期选择' : 'Basic date selection'} code={`<Field label="${zh ? '出发日期' : 'Departure date'}">\n  <DatePicker locale="${locale}" defaultValue={new Date(2026, 9, 22)} />\n</Field>`}>
+    <ComponentExample id="dates-basic-date-selection" title={zh ? '基础日期选择' : 'Basic date selection'} code={`<Field label="${zh ? '出发日期' : 'Departure date'}">\n  <DatePicker locale="${locale}" defaultValue={new Date(2026, 9, 22)} />\n</Field>`}>
       <Field label={zh ? '出发日期' : 'Departure date'}>
         <DatePicker locale={locale} defaultValue={initialDate} />
       </Field>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '表单字段与重置' : 'Form fields and reset'} code={`<form>\n  <DatePicker name="departure" required defaultValue={new Date(2026, 9, 22)} />\n  <DatePicker mode="range" name="stayStart" endName="stayEnd" />\n  <button type="reset">Reset</button>\n</form>`}>
+    <ComponentExample id="dates-form-fields-and-reset" title={zh ? '表单字段与重置' : 'Form fields and reset'} code={`<form>\n  <DatePicker name="departure" required defaultValue={new Date(2026, 9, 22)} />\n  <DatePicker mode="range" name="stayStart" endName="stayEnd" />\n  <button type="reset">Reset</button>\n</form>`}>
       <form className="dates-examples__form" onSubmit={event => event.preventDefault()}>
         <Field label={zh ? '出发日期' : 'Departure date'}>
           <DatePicker name="departure" required locale={locale} defaultValue={initialDate} />
@@ -90,7 +90,7 @@ function DatePickerExamples() {
       </form>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '当地日历日期' : 'Local calendar dates'} code={`// The selected Date is serialized from local fields.\n// 2026-10-22 stays 2026-10-22 and is never converted with toISOString().\n<DatePicker name="eventDate" locale="${locale}" />`}>
+    <ComponentExample id="dates-local-calendar-dates" title={zh ? '当地日历日期' : 'Local calendar dates'} code={`// The selected Date is serialized from local fields.\n// 2026-10-22 stays 2026-10-22 and is never converted with toISOString().\n<DatePicker name="eventDate" locale="${locale}" />`}>
       <p className="dates-examples__note">{zh
         ? 'DatePicker 保留用户选中的当地年、月、日。它不是时刻或时区转换器，表单值固定为 YYYY-MM-DD。'
         : 'DatePicker preserves the selected local year, month, and day. It is not an instant or time-zone converter; form values use YYYY-MM-DD.'}</p>
@@ -145,7 +145,7 @@ function TimePickerExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={zh ? '基础时间选择' : 'Basic time selection'} code={`<Field label="${zh ? '出发时间' : 'Departure time'}">\n  <TimePicker defaultValue="09:30" />\n</Field>`}>
+    <ComponentExample id="dates-basic-time-selection" title={zh ? '基础时间选择' : 'Basic time selection'} code={`<Field label="${zh ? '出发时间' : 'Departure time'}">\n  <TimePicker defaultValue="09:30" />\n</Field>`}>
       <div className="dates-examples__stage">
         <Field label={zh ? '出发时间' : 'Departure time'}>
           <TimePicker defaultValue="09:30" locale={locale} clearButtonLabel={zh ? '清空时间' : 'Clear time'} />
@@ -153,7 +153,7 @@ function TimePickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '边界、步进与秒' : 'Limits, steps, and seconds'} code={`<TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" />\n<TimePicker showSeconds defaultValue="09:30:15" />`}>
+    <ComponentExample id="dates-limits-steps-and-seconds" title={zh ? '边界、步进与秒' : 'Limits, steps, and seconds'} code={`<TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" />\n<TimePicker showSeconds defaultValue="09:30:15" />`}>
       <div className="dates-examples__fields">
         <Field label={zh ? '15 分钟步进' : '15-minute steps'} description="08:00–18:00">
           <TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" locale={locale} />
@@ -164,7 +164,7 @@ function TimePickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '表单、空值与重置' : 'Forms, empty values, and reset'} code={`<form>\n  <TimePicker name="meetingTime" defaultValue="09:30" />\n  <button type="reset">Reset</button>\n</form>`}>
+    <ComponentExample id="dates-forms-empty-values-and-reset" title={zh ? '表单、空值与重置' : 'Forms, empty values, and reset'} code={`<form>\n  <TimePicker name="meetingTime" defaultValue="09:30" />\n  <button type="reset">Reset</button>\n</form>`}>
       <form className="dates-examples__form" onSubmit={event => event.preventDefault()}>
         <Field label={zh ? '集合时间' : 'Meeting time'}>
           <TimePicker name="meetingTime" defaultValue="09:30" locale={locale} clearButtonLabel={zh ? '清空时间' : 'Clear time'} />

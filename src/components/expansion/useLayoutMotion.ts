@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 
-const selector = '.layout-notebook__sidebar, .layout-notebook__secondary, .layout-notebook__column, .layout-notebook__content';
+const selector = '.layout-notebook__sidebar, .layout-notebook__secondary, .layout-notebook__column, .layout-notebook__content, .layout-notebook__header, .layout-notebook > .inkra-layout__footer';
 
 // Snapshot only disappearing sidebars; moving live regions keep their own canvas and focus.
 export function useLayoutMotion() {
@@ -13,7 +13,7 @@ export function useLayoutMotion() {
     const element = root.current;
     if (!element || element.ownerDocument.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     pending.current = [...element.querySelectorAll<HTMLElement>(selector)]
-      .filter(node => !node.classList.contains('layout-notebook__content') || !node.closest('.layout-notebook__column'))
+      .filter(node => !node.matches('.layout-notebook__content, .layout-notebook__header') || !node.closest('.layout-notebook__column'))
       .map(node => {
         const rect = node.getBoundingClientRect();
         let copy: HTMLElement | undefined;
@@ -38,6 +38,7 @@ export function useLayoutMotion() {
     if (!element || !snapshots.length) return;
     const bounds = element.getBoundingClientRect();
     const duration = 180;
+    const push = element.dataset.compact === 'true' && element.dataset.mobileNavigation?.startsWith('push');
     for (const { node, rect: before, copy } of snapshots) {
       if (!node.isConnected) continue;
       const after = node.getBoundingClientRect();
@@ -50,10 +51,12 @@ export function useLayoutMotion() {
         target = copy;
         copy.classList.add('layout-notebook__motion-copy');
         Object.assign(copy.style, { position: 'absolute', left: `${before.left - bounds.left}px`, top: `${before.top - bounds.top}px`,
-          width: `${before.width}px`, height: `${before.height}px`, margin: '0', zIndex: '3', pointerEvents: 'none' });
+          width: `${before.width}px`, height: `${before.height}px`, margin: '0', zIndex: push ? '0' : '3', pointerEvents: 'none' });
         element.append(copy);
-        frames = [{ transform: 'translateX(0)', opacity: 1 }, { transform: `translateX(${direction * before.width}px)`, opacity: 0 }];
+        frames = push ? [{ opacity: 1 }, { opacity: 1 }]
+          : [{ transform: 'translateX(0)', opacity: 1 }, { transform: `translateX(${direction * before.width}px)`, opacity: 0 }];
       } else if (!before.width && after.width > 0) {
+        if (push && node.matches('aside')) continue;
         frames = [{ transform: `translateX(${direction * after.width}px)`, opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }];
       } else if (before.width > 0 && after.width > 0 && Math.abs(before.left - after.left) > 1) {
         frames = [{ transform: `translateX(${before.left - after.left}px)` }, { transform: 'translateX(0)' }];

@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
-const probes = ['.brand-word', '.page-heading h1', 'main .inkra-accordion__trigger-label .inkra-pencil-text', '.brand .inkra-pencil-icon'];
+const probes = ['.site-navigation .inkra-pencil-text', '.page-heading h1', 'main .inkra-accordion__trigger-label .inkra-pencil-text', '.header-customize .inkra-pencil-icon'];
 
 async function verifyInk(page, context) {
   for (const selector of probes) {
@@ -55,7 +55,7 @@ try {
         await verifyInk(page, `${width}px switched ${theme} ${reducedMotion}`);
       }
       if (reducedMotion === 'reduce') {
-        assert.equal(await page.locator('.brand-word').evaluate(node => getComputedStyle(node).transitionDuration), '0s');
+        assert.equal(await page.locator('.site-navigation .inkra-pencil-text').first().evaluate(node => getComputedStyle(node).transitionDuration), '0s');
         await page.screenshot({ path: `/tmp/inkra-initial-dark-round6-${width}.png`, animations: 'disabled' });
       }
       assert.deepEqual(errors, []);

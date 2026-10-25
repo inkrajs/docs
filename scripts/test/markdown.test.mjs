@@ -33,10 +33,17 @@ test('Markdown documentation separates concise and advanced examples in both loc
   assert.match(source, /media: `### Code and image/);
   assert.match(source, /const count: number = 2/);
   assert.match(source, /function CreateButton\(\)/);
-  assert.match(source, /<ComponentExample title=\{t\('基础排版'\)\}/);
-  assert.match(source, /<ComponentExample title=\{t\('行内排版'\)\}/);
-  assert.match(source, /<ComponentExample title=\{t\('任务与表格'\)\}/);
-  assert.match(source, /<ComponentExample title=\{t\('代码与媒体'\)\}/);
+  const syntax = ts.createSourceFile('MarkdownExamples.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const titles = [];
+  const visit = node => {
+    if (ts.isJsxOpeningElement(node) && node.tagName.getText(syntax) === 'ComponentExample') {
+      const title = node.attributes.properties.find(attribute => ts.isJsxAttribute(attribute) && attribute.name.getText(syntax) === 'title');
+      titles.push(title?.initializer?.getText(syntax));
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(syntax);
+  assert.deepEqual(titles, ["{t('基础排版')}", "{t('行内排版')}", "{t('任务与表格')}", "{t('代码与媒体')}"]);
   assert.match(source, /code: 'Code example'/);
   assert.match(source, /code: '代码示例'/);
   assert.match(source, /taskChecked: 'Completed release check'/);

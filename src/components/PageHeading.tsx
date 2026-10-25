@@ -13,14 +13,15 @@ import { componentIntroductions } from './componentIntroductions';
 import { pageMarkdown } from './pageMarkdown';
 import { assistantServices, assistantUrl } from './assistantLinks';
 
-export function PageHeading({ title, description }: { title: string; description?: string }) {
+export function PageHeading({ title, description }: { title: string; description?: string | { zh: string; en: string } }) {
   const { locale, t } = useLocale();
   const en = locale !== 'zh-CN';
   const header = useRef<HTMLElement>(null);
   const menu = useRef<HTMLButtonElement>(null);
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [status, setStatus] = useState('');
-  const intro = description ?? componentIntroductions[title]?.[en ? 'en' : 'zh'];
+  const sourceIntro = description ?? componentIntroductions[title];
+  const intro = typeof sourceIntro === 'string' ? t(sourceIntro) : sourceIntro && t(sourceIntro.zh, sourceIntro.en);
   const content = () => {
     const article = header.current?.closest('article');
     const view = article?.querySelector('.page-tabs [aria-selected="true"]')?.textContent?.trim();

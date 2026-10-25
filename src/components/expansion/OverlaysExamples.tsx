@@ -130,7 +130,7 @@ function AlertDialogExamples() {
   const zh = locale === 'zh-CN';
   return <div className="component-examples expansion-overlays-examples">
     <AlertDialogPlayground />
-    <ComponentExample title={zh ? '安全确认' : 'Safe confirmation'} code={`import { useState } from 'react';
+    <ComponentExample id="overlays-safe-confirmation" title={zh ? '安全确认' : 'Safe confirmation'} code={`import { useState } from 'react';
 import { AlertDialog, Button } from '@inkra/react';
 
 export function DeleteDraftDialog() {
@@ -256,7 +256,7 @@ function DrawerExamples() {
   const zh = locale === 'zh-CN';
   return <div className="component-examples expansion-overlays-examples">
     <DrawerPlayground />
-    <ComponentExample title={zh ? '侧边详情' : 'Side details'} code={`import { Button, Drawer } from '@inkra/react';
+    <ComponentExample id="overlays-side-details" title={zh ? '侧边详情' : 'Side details'} code={`import { Button, Drawer } from '@inkra/react';
 
 export function ProjectDetailsDrawer() {
   return <Drawer.Root>
@@ -286,12 +286,61 @@ export const overlaysDocs: Record<string, ExpansionDoc> = {
       zh: '手比脑子快的时候，还好有一句「确定吗」。',
       en: 'For when your click gets ahead of your thinking. Are you sure?',
     },
-    api: [
-      ['Root', 'open, defaultOpen, onOpenChange, pending; always modal'],
-      ['Content', 'Radix content props; outside interaction never dismisses'],
-      ['Header / Body / Footer', 'section layout; divided and footer align options'],
-      ['Cancel', 'secondary close button; disabled while pending'],
-      ['Action', 'closes by default; closeOnAction=false for controlled async work'],
+    apiGroups: [
+      { id: 'root', title: 'AlertDialog.Root', rows: [
+        ['open / defaultOpen', 'boolean', '受控或非受控打开状态；始终为模态弹窗，不接受 modal。', 'Controlled or initial open state; always modal, with no modal prop.'],
+        ['onOpenChange', '(open: boolean) => void', '打开状态变化回调。', 'Called when the open state changes.'],
+        ['pending', 'boolean = false', '等待时禁用内部关闭与操作；受控父组件仍负责 open 状态。', 'Disable internal dismissal and actions while pending; controlled parents still own open.'],
+      ] },
+      { id: 'trigger', title: 'AlertDialog.Trigger', rows: [
+        ['asChild / children', 'boolean / ReactNode', '通过 asChild 复用真实触发按钮；支持 Radix Trigger 属性。', 'Use asChild to reuse a real trigger button; accepts Radix Trigger props.'],
+      ] },
+      { id: 'portal', title: 'AlertDialog.Portal', rows: [
+        ['container', 'HTMLElement | null', '指定挂载容器，保留局部主题。', 'Choose the portal container while preserving the local theme.'],
+        ['forceMount', 'true', '由外部动画控制挂载。', 'Keep mounted for external animation control.'],
+      ] },
+      { id: 'backdrop', title: 'AlertDialog.Backdrop', rows: [
+        ['asChild / forceMount', 'boolean / true', '透传 Radix Overlay 配置；点击遮罩不会关闭确认弹窗。', 'Forward Radix Overlay configuration; clicking the backdrop does not dismiss the alert dialog.'],
+        ['className / style', 'string / CSSProperties', '遮罩样式。', 'Backdrop styling.'],
+      ] },
+      { id: 'content', title: 'AlertDialog.Content', rows: [
+        ['seed', 'string | number', '纸面笔触种子。', 'Seed for the pencil surface.'],
+        ['onOpenAutoFocus / onCloseAutoFocus', '(event: Event) => void', '打开与关闭时的焦点生命周期；默认优先聚焦可用的 Cancel。', 'Focus lifecycle on open and close; an available Cancel receives initial focus by default.'],
+        ['onEscapeKeyDown', '(event: KeyboardEvent) => void', 'Escape 事件；pending 时不关闭。', 'Escape handler; pending prevents dismissal.'],
+        ['onPointerDownOutside / onInteractOutside', 'DialogContentProps handlers', '可以观察外部交互，但组件始终阻止外部交互关闭。', 'Observe outside interactions; the component always prevents outside dismissal.'],
+        ['children / className / style', 'ReactNode / string / CSSProperties', '内容与样式；支持其余 Radix Content 属性。', 'Content and styling; other Radix Content props are supported.'],
+      ] },
+      { id: 'header', title: 'AlertDialog.Header', rows: [
+        ['divided', 'boolean = true', '显示页头分割线。', 'Show the header divider.'],
+        ['children', 'ReactNode', '通常放置 Title 与 Description；支持原生 div 属性。', 'Usually contains Title and Description; accepts native div attributes.'],
+      ] },
+      { id: 'body', title: 'AlertDialog.Body', rows: [
+        ['children', 'ReactNode', '正文区域；支持原生 div 属性。', 'Body content; accepts native div attributes.'],
+      ] },
+      { id: 'footer', title: 'AlertDialog.Footer', rows: [
+        ['align', '"start" | "center" | "end" = "end"', '操作区对齐。', 'Action alignment.'],
+        ['divided', 'boolean = true', '显示页脚分割线。', 'Show the footer divider.'],
+        ['children', 'ReactNode', '通常放置 Cancel 与 Action；支持原生 div 属性。', 'Usually contains Cancel and Action; accepts native div attributes.'],
+      ] },
+      { id: 'title', title: 'AlertDialog.Title', rows: [
+        ['children', 'string', '弹窗名称，由 Radix 关联到内容。', 'Dialog title associated with the content by Radix.'],
+        ['seed', 'string | number', '标题笔迹种子；支持其余 Radix Title 属性。', 'Title lettering seed; accepts other Radix Title props.'],
+      ] },
+      { id: 'description', title: 'AlertDialog.Description', rows: [
+        ['children', 'string', '弹窗说明，由 Radix 关联到内容。', 'Dialog description associated with the content by Radix.'],
+        ['seed', 'string | number', '说明笔迹种子；支持其余 Radix Description 属性。', 'Description lettering seed; accepts other Radix Description props.'],
+      ] },
+      { id: 'cancel', title: 'AlertDialog.Cancel', rows: [
+        ['variant', 'ButtonProps["variant"] = "secondary"', '取消按钮样式。', 'Cancel button appearance.'],
+        ['disabled', 'boolean', '禁用按钮；Root.pending 也会禁用。', 'Disable the button; Root.pending also disables it.'],
+        ['children / onClick', 'ReactNode / MouseEventHandler<HTMLButtonElement>', '按钮内容与点击事件；支持除 type 外的 Button 属性。', 'Button content and click handler; accepts Button props except type.'],
+      ] },
+      { id: 'action', title: 'AlertDialog.Action', rows: [
+        ['closeOnAction', 'boolean = true', '点击后默认关闭；异步操作设为 false 并自行控制 open。', 'Close on activation by default; use false and control open for async actions.'],
+        ['variant', 'ButtonProps["variant"] = "destructive"', '确认按钮样式。', 'Action button appearance.'],
+        ['disabled / loading', 'boolean', '禁用与加载状态；Root.pending 同时启用两者。', 'Disabled and loading states; Root.pending enables both.'],
+        ['children / onClick', 'ReactNode / MouseEventHandler<HTMLButtonElement>', '按钮内容与点击事件；支持除 type 外的 Button 属性。', 'Button content and click handler; accepts Button props except type.'],
+      ] },
     ],
     a11y: {
       zh: '使用 alertdialog 语义；优先聚焦可用的取消按钮，否则聚焦弹窗本身，不默认聚焦危险操作。焦点被限制在弹层内并在关闭后返回触发器，pending 时会阻止组件内的取消、Escape 与关闭控件；受控父组件仍负责自身 open 状态。',
@@ -305,12 +354,61 @@ export const overlaysDocs: Record<string, ExpansionDoc> = {
       zh: '主线先别关，支线任务从旁边拉出来。',
       en: 'A side quest slides in. Your main quest stays put.',
     },
-    api: [
-      ['Content.direction', "'top' | 'right' | 'bottom' | 'left'"],
-      ['Content.size', "'sm' | 'md' | 'lg' | number | CSS length"],
-      ['Header', 'showClose, closeLabel, divided, action'],
-      ['Body', 'scroll owner for long drawer content'],
-      ['Footer', "divided; align 'start' | 'center' | 'end'"],
+    apiGroups: [
+      { id: 'root', title: 'Drawer.Root', rows: [
+        ['open / defaultOpen', 'boolean', '受控或非受控打开状态。', 'Controlled or initial open state.'],
+        ['onOpenChange', '(open: boolean) => void', '打开状态变化回调。', 'Called when the open state changes.'],
+        ['modal', 'boolean', '继承 Radix Dialog 的模态行为配置。', 'Inherit Radix Dialog modal behavior configuration.'],
+      ] },
+      { id: 'trigger', title: 'Drawer.Trigger', rows: [
+        ['asChild / children', 'boolean / ReactNode', '通过 asChild 复用触发按钮；支持 Radix Trigger 属性。', 'Use asChild to reuse the trigger button; accepts Radix Trigger props.'],
+      ] },
+      { id: 'portal', title: 'Drawer.Portal', rows: [
+        ['container', 'HTMLElement | null', '指定挂载容器，保留局部主题。', 'Choose the portal container while preserving the local theme.'],
+        ['forceMount', 'true', '由外部动画控制挂载。', 'Keep mounted for external animation control.'],
+      ] },
+      { id: 'backdrop', title: 'Drawer.Backdrop', rows: [
+        ['asChild / forceMount', 'boolean / true', '透传 Radix Overlay 配置。', 'Forward Radix Overlay configuration.'],
+        ['className / style', 'string / CSSProperties', '遮罩样式。', 'Backdrop styling.'],
+      ] },
+      { id: 'content', title: 'Drawer.Content', rows: [
+        ['direction', '"top" | "right" | "bottom" | "left" = "right"', '抽屉进入方向。', 'Edge from which the drawer enters.'],
+        ['size', '"sm" | "md" | "lg" | number | string = "md"', '预设为 20/28/36rem；数字按 px，自定义字符串为 CSS 长度。', 'Presets are 20/28/36rem; numbers use px and strings accept CSS lengths.'],
+        ['seed', 'string | number', '纸面笔触种子。', 'Seed for the pencil surface.'],
+        ['onOpenAutoFocus / onCloseAutoFocus', '(event: Event) => void', '打开与关闭时的焦点生命周期。', 'Focus lifecycle on open and close.'],
+        ['onEscapeKeyDown / onPointerDownOutside / onInteractOutside', 'DialogContentProps handlers', '取消事件默认行为可阻止关闭。', 'Prevent the event default to stop dismissal.'],
+        ['children / className / style', 'ReactNode / string / CSSProperties', '内容与样式；支持其余 Radix Content 属性。', 'Content and styling; other Radix Content props are supported.'],
+      ] },
+      { id: 'header', title: 'Drawer.Header', rows: [
+        ['action', 'ReactNode', '页头右侧的自定义操作。', 'Custom actions at the end of the header.'],
+        ['showClose', 'boolean = true', '是否显示关闭按钮。', 'Show the close button.'],
+        ['closeLabel', 'string', '关闭按钮名称，默认来自当前语言字典。', 'Close button label, defaulting to the active locale dictionary.'],
+        ['divided', 'boolean = true', '显示页头分割线。', 'Show the header divider.'],
+        ['children', 'ReactNode', '通常放置 Title 与 Description；支持原生 div 属性。', 'Usually contains Title and Description; accepts native div attributes.'],
+      ] },
+      { id: 'body', title: 'Drawer.Body', rows: [
+        ['children', 'ReactNode', '负责长内容滚动的正文区域；支持原生 div 属性。', 'Body region that owns long-content scrolling; accepts native div attributes.'],
+      ] },
+      { id: 'footer', title: 'Drawer.Footer', rows: [
+        ['align', '"start" | "center" | "end" = "end"', '操作区对齐。', 'Action alignment.'],
+        ['divided', 'boolean = true', '显示页脚分割线。', 'Show the footer divider.'],
+        ['children', 'ReactNode', '页脚内容；支持原生 div 属性。', 'Footer content; accepts native div attributes.'],
+      ] },
+      { id: 'title', title: 'Drawer.Title', rows: [
+        ['children', 'string', '抽屉名称，由 Radix 关联到内容。', 'Drawer title associated with the content by Radix.'],
+        ['seed', 'string | number', '标题笔迹种子；支持其余 Radix Title 属性。', 'Title lettering seed; accepts other Radix Title props.'],
+      ] },
+      { id: 'description', title: 'Drawer.Description', rows: [
+        ['children', 'string', '抽屉说明，由 Radix 关联到内容。', 'Drawer description associated with the content by Radix.'],
+        ['seed', 'string | number', '说明笔迹种子；支持其余 Radix Description 属性。', 'Description lettering seed; accepts other Radix Description props.'],
+      ] },
+      { id: 'close', title: 'Drawer.Close', rows: [
+        ['asChild / children', 'boolean / ReactNode', '将现有按钮组合为关闭触发器；支持 Radix Close 属性。', 'Compose an existing button as a close trigger; accepts Radix Close props.'],
+      ] },
+      { id: 'close-button', title: 'Drawer.CloseButton', rows: [
+        ['label', 'string', '关闭图标及 Tooltip 的名称，默认来自当前语言字典。', 'Label for the close icon and tooltip, defaulting to the active locale dictionary.'],
+        ['disabled / onClick', 'boolean / MouseEventHandler<HTMLButtonElement>', '关闭按钮状态与点击事件；type、size、variant、loading、children 和 aria-label 由组件管理。', 'Close button state and click handler; type, size, variant, loading, children and aria-label are component-owned.'],
+      ] },
     ],
     a11y: {
       zh: '由成熟 Dialog 原语提供焦点限制、Escape 关闭和触发器焦点返回。关闭图标始终需要本地化名称；本版不声明滑动关闭。',

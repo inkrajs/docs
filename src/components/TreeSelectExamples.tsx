@@ -155,7 +155,7 @@ export function TreeSelectExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('非受控表单与自定义值标签', 'Uncontrolled form and custom value label')} code={`<form>
+    <ComponentExample id="tree-select-uncontrolled-form-and-custom-value-label" title={text('非受控表单与自定义值标签', 'Uncontrolled form and custom value label')} code={`<form>
   <Field label=${JSON.stringify(text('发布位置', 'Publish location'))}>
     <TreeSelect
       items={workspaceTree}

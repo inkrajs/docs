@@ -139,7 +139,7 @@ export function HoverCardExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text.notes} code={`<HoverCard.Root openDelay={300} closeDelay={300}>
+    <ComponentExample id="hover-card-notes" title={text.notes} code={`<HoverCard.Root openDelay={300} closeDelay={300}>
   <HoverCard.Trigger asChild><Button variant="link">${text.notes}</Button></HoverCard.Trigger>
   <HoverCard.Content>
     <HoverCard.Title>${text.noteTitle}</HoverCard.Title>

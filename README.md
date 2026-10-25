@@ -7,7 +7,8 @@ This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
 This checkout consumes an unpublished `@inkra/react@0.8.0` candidate from
-`vendor/inkra.tgz` to document Pagination options and Textarea row-based sizing.
+`vendor/inkra.tgz` to document shared Layout columns, interactive grids,
+Pagination options and Textarea row-based sizing.
 library-candidate.json pins the exact source revision and archive checksums.
 Build verifies the installed archive without a source alias. The published
 0.6.0 package does not include these Pagination or Textarea additions; the
@@ -300,15 +301,43 @@ These are local Chromium checks, not real-device acceptance or arbitrary-file su
 
 Layout primitives have their own navigation
 category and interactive pages. The Layout notebook offers full-width headers,
+shared-column brand/navigation headers,
 full-height sidebars, split headers on either side, right navigation, two sidebars
 and a header/content/footer composition. Its 390/768/1024/1920px preview scales to the available width
 and height; content scrolls inside the workspace while the header and footer
-remain visible. Compact navigation opens from the header toggle without moving
-the content. `verify-layout-sidebar.mjs` covers these compositions, resizing,
+remain visible. Compact navigation offers an overlay drawer, full-page navigation,
+partial push or full-page push. Push modes do not dim content by default; the
+backdrop is independently configurable. The mobile example enables the library's
+optional `Layout.Root.swipeNavigation`: swipe inward from the sidebar edge to open,
+or back toward that edge to close. Release commits at 48 local CSS pixels;
+`side`, `edgeWidth` and `threshold` are configurable. Inputs, horizontal scrollers,
+multitouch and vertical scrolling are excluded; custom tools can use
+`data-layout-swipe-ignore`. Button and Escape navigation remain available.
+`verify-layout-gestures.mjs` uses Chromium touch input, not a real device.
+`verify-layout-sidebar.mjs` covers these compositions, resizing,
 disclosure focus/keyboard behavior, RTL and local scroll boundaries.
 `verify-layout-header.mjs` checks equal navigation padding and aligned icons,
 unframed header actions, and stable first/second-level breadcrumb text when a
 current page becomes a link. Long header paths scroll within their own region.
+`Layout.Root.sidebarWidth` shares a column between `Layout.Header.sidebar` and
+an inherited-width `Layout.Sidebar`. The brand/navigation example synchronizes
+that column with resizing and collapse; its header divider uses the same muted,
+inset pencil treatment as Tabs. `verify-layout-shared-header.mjs` exercises
+pointer and keyboard resizing, collapse restoration, live tabs and narrow/RTL
+layouts. Layout examples and API are split into its six actual subcomponents.
+Other compound pages use the same `ApiGroups` renderer with stable deep links;
+`verify-api-groups.mjs` checks reload, history navigation and narrow layouts.
+The documentation shell itself now consumes `Layout.Root`, `Layout.Header`,
+`Layout.Body`, `Layout.Sidebar` and `Layout.Content`. Its brand and navigation
+share the sidebar width; only site content and responsive placement remain in
+docs CSS. The mobile directory stays outside the Layout containment and inert
+background, preserving viewport positioning and focus return. Header actions
+use ghost buttons, while homepage controls retain their existing appearance.
+`verify-docs-layout.mjs` checks shared geometry, sticky scrolling, width changes,
+search and drawers from 320px to 1543px.
+The sidebar uses Resizable with a shared 200-360px header boundary. On mobile,
+navigation tabs replace the brand row and a search icon opens a full-screen
+search interface; `verify-mobile-search.mjs` covers focus, results and dismissal.
 Textarea supports near-limit or always-visible
 remaining/fraction/progress indicators and an optional pencil resize handle.
 Selection stays native without hiding editable text or doubling painted glyphs.
@@ -339,8 +368,8 @@ Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
 Local smoke checks run sequentially. CI runs at most two independent checks
-against the same server; it does not start a server for each check. A failure
-stops new checks and waits for active checks to close their browsers. The full
+against the same server; it does not start a server for each check. The smoke
+suite completes every check, closes its browsers and reports all failures together. The full
 catalog scan follows actual sidebar links while reusing the application shell.
 
 Public hosting is owned by inkrajs/inkrajs.github.io. Its release.json pins this

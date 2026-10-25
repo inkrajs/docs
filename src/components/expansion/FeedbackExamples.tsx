@@ -177,7 +177,7 @@ toast.add({ title: '${text('保存完成', 'Saved')}', placement: 'top-center', 
 toast.add({ title: '${text('文件上传完成', 'File uploaded')}', placement: 'bottom-end', timeout: 8000 });
 toast.add({ title: '${text('等待确认', 'Waiting for confirmation')}', placement: 'center', variant: 'card', timeout: 0 });
 toast.closeAll('top-center');`;
-  return <ComponentExample title={text('独立位置与样式', 'Independent positions and styles')} code={code}>
+  return <ComponentExample id="feedback-independent-positions-and-styles" title={text('独立位置与样式', 'Independent positions and styles')} code={code}>
     <div className="toast-position-grid">
       {toastPositions.map(([position, zh, en]) => <Button key={position} variant="outline" onClick={() => toast.add({ placement: position, variant: 'auto', title: text('保存完成', 'Saved'), timeout: 5000 })}>{text(zh, en)}</Button>)}
     </div>
@@ -204,7 +204,7 @@ function BasicToastButton() {
     ${text('显示通知', 'Show notification')}
   </Button>;
 }`;
-  return <ComponentExample title={text('基础通知', 'Basic notification')} code={code}>
+  return <ComponentExample id="feedback-basic-notification" title={text('基础通知', 'Basic notification')} code={code}>
     <Button onClick={() => toast.add({ title: text('保存好了', 'Saved'), description: text('可以继续下一步。', 'You can move on to the next step.') })}>{text('显示通知', 'Show notification')}</Button>
   </ComponentExample>;
 }
@@ -225,7 +225,7 @@ function QueueButton() {
   };
   return <Button onClick={queue}>${text('加入四条通知', 'Queue four notifications')}</Button>;
 }`;
-  return <ComponentExample title={text('队列、更新与关闭', 'Queue, update, and close')} code={code}>
+  return <ComponentExample id="feedback-queue-update-and-close" title={text('队列、更新与关闭', 'Queue, update, and close')} code={code}>
     <Button variant="outline" onClick={() => {
       for (let index = 1; index <= 4; index += 1) {
         const id = toast.add({ title: text(`通知 ${index}`, `Notification ${index}`), timeout: 0 });
@@ -271,7 +271,7 @@ function EmptyExamples() {
         {showActions && <Empty.Actions><Button onClick={() => setNoteCreated(current => !current)}>{noteCreated ? text('重置', 'Reset') : text('新建笔记', 'Create note')}</Button></Empty.Actions>}
       </Empty.Root>
     </ComponentPlayground>
-    <ComponentExample title={text('通用场景插画', 'Illustration collection')} code={'<Empty.Icon illustration="search" />\n<Empty.Icon illustration="folder" size={144} />'}>
+    <ComponentExample id="feedback-illustration-collection" title={text('通用场景插画', 'Illustration collection')} code={'<Empty.Icon illustration="search" />\n<Empty.Icon illustration="folder" size={144} />'}>
       <div className="empty-illustration-gallery">
         {emptyIllustrations.map(([value, zh, en]) => <Empty.Root key={value} size="sm">
           <Empty.Icon illustration={value} />
@@ -279,16 +279,16 @@ function EmptyExamples() {
         </Empty.Root>)}
       </div>
     </ComponentExample>
-    <ComponentExample title={text('自定义图形', 'Custom visual')} code={'<Empty.Icon><PencilIcon paths={[{ d: "M5 12.5 10 17l9-10" }]} size={64} sourceSize={24} /></Empty.Icon>'}>
+    <ComponentExample id="feedback-custom-visual" title={text('自定义图形', 'Custom visual')} code={'<Empty.Icon><PencilIcon paths={[{ d: "M5 12.5 10 17l9-10" }]} size={64} sourceSize={24} /></Empty.Icon>'}>
       <Empty.Root>
         <Empty.Icon><PencilIcon paths={checkPaths} size={64} sourceSize={24} decorative /></Empty.Icon>
         <Empty.Title>{text('全部处理完了', 'All caught up')}</Empty.Title>
       </Empty.Root>
     </ComponentExample>
-    <ComponentExample title={text('最小空态', 'Minimal empty state')} code={`<Empty.Root><Empty.Title>${text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>`}>
+    <ComponentExample id="feedback-minimal-empty-state" title={text('最小空态', 'Minimal empty state')} code={`<Empty.Root><Empty.Title>${text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>`}>
       <Empty.Root><Empty.Title>{text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>
     </ComponentExample>
-    <ComponentExample title={text('说明与操作', 'Description and actions')} code={`const [status, setStatus] = useState('');
+    <ComponentExample id="feedback-description-and-actions" title={text('说明与操作', 'Description and actions')} code={`const [status, setStatus] = useState('');
 
 <Empty.Root aria-labelledby="empty-title">
   <Empty.Icon illustration="messages" />
@@ -308,7 +308,7 @@ function EmptyExamples() {
         <output className="component-demo-status" aria-live="polite">{inboxStatus}</output>
       </Empty.Root>
     </ComponentExample>
-    <ComponentExample title={text('非卡片布局', 'Unframed layout')} code={`<Empty.Root align="start" size="sm"><Empty.Title>${text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>…</Empty.Description></Empty.Root>`}>
+    <ComponentExample id="feedback-unframed-layout" title={text('非卡片布局', 'Unframed layout')} code={`<Empty.Root align="start" size="sm"><Empty.Title>${text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>…</Empty.Description></Empty.Root>`}>
       <Empty.Root align="start" size="sm"><Empty.Title>{text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>{text('尝试移除一个筛选条件。', 'Try removing one filter.')}</Empty.Description></Empty.Root>
     </ComponentExample>
   </div>;
@@ -360,13 +360,13 @@ const rtl = ${rtl};
         </ToggleGroup.Root>
       </div>
     </ComponentPlayground>
-    <ComponentExample title={text('基础单选', 'Basic single selection')} code={`<ToggleGroup.Root aria-label="${text('文字对齐', 'Text alignment')}" defaultValue={['start']}><ToggleGroup.Item value="start">${text('靠前', 'Start')}</ToggleGroup.Item><ToggleGroup.Item value="center">${text('居中', 'Center')}</ToggleGroup.Item></ToggleGroup.Root>`}>
+    <ComponentExample id="feedback-basic-single-selection" title={text('基础单选', 'Basic single selection')} code={`<ToggleGroup.Root aria-label="${text('文字对齐', 'Text alignment')}" defaultValue={['start']}><ToggleGroup.Item value="start">${text('靠前', 'Start')}</ToggleGroup.Item><ToggleGroup.Item value="center">${text('居中', 'Center')}</ToggleGroup.Item></ToggleGroup.Root>`}>
       <ToggleGroup.Root aria-label={text('基础文字对齐', 'Basic text alignment')} defaultValue={['start']}><ToggleGroup.Item value="start">{text('靠前', 'Start')}</ToggleGroup.Item><ToggleGroup.Item value="center">{text('居中', 'Center')}</ToggleGroup.Item></ToggleGroup.Root>
     </ComponentExample>
-    <ComponentExample title={text('多选与禁用项', 'Multiple selection and disabled item')} code={`<ToggleGroup.Root multiple defaultValue={['bold']} aria-label="${text('文字样式', 'Text style')}"><ToggleGroup.Item value="bold">Bold</ToggleGroup.Item><ToggleGroup.Item value="italic">Italic</ToggleGroup.Item><ToggleGroup.Item value="strike" disabled>Strike</ToggleGroup.Item></ToggleGroup.Root>`}>
+    <ComponentExample id="feedback-multiple-selection-and-disabled-item" title={text('多选与禁用项', 'Multiple selection and disabled item')} code={`<ToggleGroup.Root multiple defaultValue={['bold']} aria-label="${text('文字样式', 'Text style')}"><ToggleGroup.Item value="bold">Bold</ToggleGroup.Item><ToggleGroup.Item value="italic">Italic</ToggleGroup.Item><ToggleGroup.Item value="strike" disabled>Strike</ToggleGroup.Item></ToggleGroup.Root>`}>
       <ToggleGroup.Root multiple defaultValue={['bold']} aria-label={text('文字样式', 'Text style')}><ToggleGroup.Item value="bold">{text('粗体', 'Bold')}</ToggleGroup.Item><ToggleGroup.Item value="italic">{text('斜体', 'Italic')}</ToggleGroup.Item><ToggleGroup.Item value="strike" disabled>{text('删除线', 'Strike')}</ToggleGroup.Item></ToggleGroup.Root>
     </ComponentExample>
-    <ComponentExample title={text('仅图标按钮', 'Icon-only buttons')} code={`const checkPaths = ${JSON.stringify(checkPaths, null, 2)};
+    <ComponentExample id="feedback-icon-only-buttons" title={text('仅图标按钮', 'Icon-only buttons')} code={`const checkPaths = ${JSON.stringify(checkPaths, null, 2)};
 <ToggleGroup.Root aria-label="${text('完成状态', 'Completion state')}" defaultValue={['done']}><ToggleGroup.Item value="done" aria-label="${text('完成', 'Done')}"><PencilIcon paths={checkPaths} /></ToggleGroup.Item></ToggleGroup.Root>`}>
       <ToggleGroup.Root aria-label={text('完成状态', 'Completion state')} defaultValue={['done']}><ToggleGroup.Item value="done" aria-label={text('完成', 'Done')}><PencilIcon paths={checkPaths} size={22} sourceSize={24} decorative /></ToggleGroup.Item></ToggleGroup.Root>
     </ComponentExample>
@@ -377,18 +377,31 @@ export const feedbackDocs: Record<string, ExpansionDoc> = {
   toast: {
     name: 'Toast',
     intro: { zh: '通知你一下，没打算跟你开个会。', en: 'A quick heads-up. This does not need to be a meeting.' },
-    api: [
-      ['Toast.Provider', 'timeout, limit, limits, placement, variant, swipeDirection, toastManager, closeLabel, viewportLabel, viewportClassName'],
+    apiGroups: [
+      { id: 'provider', title: 'Toast.Provider', rows: [
       ['placement', 'top-start | top-center | top-end | center-start | center | center-end | bottom-start | bottom-center | bottom-end', '默认 bottom-end；start/end 随 RTL 翻转。修改默认位置只影响之后创建的通知。', 'Defaults to bottom-end. Start/end follow RTL. Changing the default only affects new notifications.'],
       ['variant', 'auto | card | compact', '默认 auto：四角使用卡片，其余位置使用紧凑提示。两种样式均可用于任意位置，单条通知可覆盖。', 'Auto uses cards at corners and compact messages elsewhere. Either style can be used at any position and overridden per toast.'],
       ['limit / limits', 'number / Partial<Record<ToastPlacement, number>>', 'limit 默认 3，独立应用于每个位置；limits 按位置覆盖。超额旧通知隐藏，新通知优先显示。', 'Limit defaults to 3 per position; limits overrides individual queues. Excess older notifications are hidden, with newer ones displayed first.'],
       ['timeout', 'number', '默认 5000 毫秒，0 表示不自动关闭；单条通知可独立覆盖，悬停和聚焦只暂停所在队列。', 'Defaults to 5000 ms; 0 disables automatic dismissal. Each toast can override it. Hover and focus pause only that queue.'],
-      ['useToastManager', 'toasts, add(options), update(id, options), close(id?), closeAll(placement?), promise(promise, states)'],
+      ['swipeDirection', 'ToastSwipeDirection | ToastSwipeDirection[]', '允许滑动关闭的方向，默认随通知位置选择。', 'Allowed swipe-dismiss directions, defaulting to directions appropriate for the placement.'],
+      ['toastManager', 'ToastManager', '传入 createToastManager 创建的外部管理器。', 'Supply an external manager created by createToastManager.'],
+      ['closeLabel', 'string', '关闭按钮名称，默认来自当前语言字典。', 'Close button label, defaulting to the active locale dictionary.'],
+      ['viewportLabel', 'string | (placement: ToastPlacement) => string', '通知队列的无障碍名称。', 'Accessible name for each toast queue.'],
+      ['viewportClassName', 'string', '通知队列容器的样式类名。', 'Class name for toast queue containers.'],
+      ['children', 'ReactNode', '可以调用 useToastManager 的应用区域。', 'Application content that can call useToastManager.'],
+      ] },
+      { id: 'use-toast-manager', title: 'useToastManager', rows: [
+      ['useToastManager<Data>()', 'ToastManager<Data> & { toasts: ToastObject<Data>[] }', '在 Toast.Provider 内调用，读取通知列表与下列操作；也可通过 Toast.useToastManager 调用。', 'Call inside Toast.Provider for the toast list and operations below; also available as Toast.useToastManager.'],
+      ['toasts', 'ToastObject<Data>[]', '当前各位置的通知快照。', 'Current toast snapshots across all placements.'],
       ['add', '({ title, description, placement?, variant?, timeout?, type?, actionProps?, data?, ... }) => string', '返回通知 id；位置在创建时确定，同 id 再次添加会在原队列更新并重置计时。', 'Returns a toast ID. Placement is fixed on creation; adding the same ID updates it in its original queue and resets its timer.'],
       ['update', '(id, options | (previous) => options) => void', '原位更新文字、样式、超时或操作，保留所属队列。', 'Update content, appearance, timeout or actions in place without changing queues.'],
       ['close / closeAll', 'close(id?) / closeAll(placement?)', 'close(id) 关闭单条，close() 关闭全部；closeAll(placement) 仅关闭指定位置。', 'Close one by ID, or all when omitted. closeAll(placement) only clears the specified queue.'],
       ['promise', '(promise, { loading, success, error, placement?, variant? }) => Promise', '异步通知从等待到成功或失败保持同一位置和 id，拒绝状态仍需调用方处理。', 'Loading, success and error retain the same ID and position. The caller must still handle a rejected promise.'],
-      ['createToastManager', 'Create an external manager and pass it to Toast.Provider'],
+      ] },
+      { id: 'create-toast-manager', title: 'createToastManager', rows: [
+        ['createToastManager<Data>()', 'ToastManager<Data>', '创建可在 React 外使用的稳定管理器，并传给 Toast.Provider；也可通过 Toast.createToastManager 调用。', 'Create a stable manager usable outside React and pass it to Toast.Provider; also available as Toast.createToastManager.'],
+        ['add / update / close / closeAll / promise', 'ToastManager<Data> methods', '与 useToastManager 返回的同名操作一致；外部管理器不包含 toasts 快照。', 'The same operations returned by useToastManager; the external manager does not expose the toasts snapshot.'],
+      ] },
     ],
     a11y: { zh: 'Base UI 负责播报、各队列的悬停与聚焦暂停、滑动关闭及数量限制。F6 / Shift+F6 在非空队列间移动，边界 Tab 或键盘关闭返回原控件。关闭操作始终有名称；高优先级只用于紧急更新。', en: 'Base UI owns announcements, per-queue hover/focus pause, swipe dismissal and limits. F6 / Shift+F6 move between nonempty queues; boundary Tab or keyboard dismissal returns to the original control. Close actions are named; reserve high priority for urgent updates.' },
     Examples: ToastExamples,
@@ -396,13 +409,28 @@ export const feedbackDocs: Record<string, ExpansionDoc> = {
   empty: {
     name: 'Empty',
     intro: { zh: '这里真的什么都没有，不是你网卡了。', en: 'Nothing here. Your internet is fine.' },
-    api: [
-      ['Empty.Root', 'size: sm | md | lg; align: start | center; native div props', '组件尺寸和对齐；预设插画分别为 112 / 160 / 192px。', 'Size and alignment; preset illustrations are 112 / 160 / 192px.'],
-      ['Empty.Icon.illustration', 'inbox | search | folder | documents | messages | image | offline | favorites', '默认 inbox，复用彩铅笔触渲染 SVG 路径。', 'Defaults to inbox. SVG paths use the shared pencil renderer.'],
-      ['Empty.Icon.size', 'number', '覆盖预设插画尺寸（像素），不超过容器可用宽度；无效值回退默认尺寸。', 'Override preset size in pixels, bounded by available width. Invalid values use the default.'],
-      ['Empty.Icon.children', 'ReactNode', '传入自定义图形时替换预设；null 隐藏图形。', 'Custom children replace the preset; null hides the visual.'],
-      ['Empty.Icon.decorative', 'boolean = true', '默认对辅助技术隐藏；设为 false 时用 aria-label 提供名称。', 'Hidden from assistive technology by default. When false, supply an aria-label.'],
-      ['Empty.Title', 'Optional heading; as selects the heading element'], ['Empty.Description', 'Optional supporting paragraph'], ['Empty.Actions', 'Optional action group'],
+    apiGroups: [
+      { id: 'root', title: 'Empty.Root', rows: [
+        ['size', '"sm" | "md" | "lg" = "md"', '组件尺寸；预设插画分别为 112 / 160 / 192px。', 'Component size; preset illustrations are 112 / 160 / 192px.'],
+        ['align', '"start" | "center" = "center"', '内容对齐。', 'Content alignment.'],
+        ['children', 'ReactNode', '空状态各个子组件；支持原生 div 属性。', 'Empty-state parts; accepts native div attributes.'],
+      ] },
+      { id: 'icon', title: 'Empty.Icon', rows: [
+        ['illustration', 'inbox | search | folder | documents | messages | image | offline | favorites', '默认 inbox，复用彩铅笔触渲染 SVG 路径。', 'Defaults to inbox. SVG paths use the shared pencil renderer.'],
+        ['size', 'number', '覆盖预设插画尺寸（像素），不超过容器可用宽度；无效值回退默认尺寸。', 'Override preset size in pixels, bounded by available width. Invalid values use the default.'],
+        ['children', 'ReactNode', '传入自定义图形时替换预设；null 隐藏图形。', 'Custom children replace the preset; null hides the visual.'],
+        ['decorative', 'boolean = true', '默认对辅助技术隐藏；设为 false 时用 aria-label 提供名称。', 'Hidden from assistive technology by default. When false, supply an aria-label.'],
+      ] },
+      { id: 'title', title: 'Empty.Title', rows: [
+        ['as', 'ElementType = "h3"', '根据页面层级选择标题元素，并支持对应元素的属性。', 'Choose the heading element for the page hierarchy; accepts that element\'s props.'],
+        ['children', 'ReactNode', '可选标题文字。', 'Optional heading content.'],
+      ] },
+      { id: 'description', title: 'Empty.Description', rows: [
+        ['children', 'ReactNode', '可选说明文字；支持原生 p 属性。', 'Optional supporting content; accepts native p attributes.'],
+      ] },
+      { id: 'actions', title: 'Empty.Actions', rows: [
+        ['children', 'ReactNode', '可选操作区；支持原生 div 属性。', 'Optional action group; accepts native div attributes.'],
+      ] },
     ],
     a11y: { zh: '按页面层级选择标题元素，并用 aria-labelledby 或周边结构建立名称。插画默认仅作装饰；有独立含义时设 decorative={false} 并提供 aria-label。强制颜色、打印和绘制失败保留 SVG 后备；交互只放在真实控件中。', en: 'Choose a heading that fits the hierarchy and name the region with aria-labelledby or surrounding structure. Illustrations are decorative by default; use decorative={false} with aria-label for meaningful visuals. SVG fallbacks remain in forced colors, print and drawing failures. Actions stay real controls.' },
     Examples: EmptyExamples,
@@ -410,7 +438,24 @@ export const feedbackDocs: Record<string, ExpansionDoc> = {
   'toggle-group': {
     name: 'ToggleGroup',
     intro: { zh: '加粗壮胆，斜体歪头。也可以一起。', en: 'Feeling bold? Leaning italic? Both is an option.' },
-    api: [['ToggleGroup.Root', 'value/defaultValue: string[]; onValueChange; multiple; orientation; loopFocus; disabled; size'], ['ToggleGroup.Item', 'value; disabled; startIcon; endIcon; native button and ARIA props']],
+    apiGroups: [
+      { id: 'root', title: 'ToggleGroup.Root', rows: [
+        ['value / defaultValue', 'readonly Value[]', '受控或非受控的选中值数组。', 'Controlled or initial selected-value array.'],
+        ['onValueChange', '(value: Value[], details) => void', '选中值变化回调。', 'Called when the selected values change.'],
+        ['multiple', 'boolean = false', '允许多个按钮同时选中。', 'Allow multiple pressed buttons.'],
+        ['orientation', '"horizontal" | "vertical" = "horizontal"', '排列与方向键导航方向。', 'Layout and arrow-key navigation direction.'],
+        ['loopFocus', 'boolean = true', '方向键焦点循环。', 'Wrap keyboard navigation at the ends.'],
+        ['disabled', 'boolean = false', '禁用整组。', 'Disable the whole group.'],
+        ['size', '"sm" | "md" | "lg" = "md"', '按钮组尺寸。', 'Toggle group size.'],
+        ['dir', '"ltr" | "rtl"', '文字方向与键盘导航方向。', 'Text and keyboard navigation direction.'],
+      ] },
+      { id: 'item', title: 'ToggleGroup.Item', rows: [
+        ['value', 'Value extends string', '组内唯一的按钮值。', 'Unique button value within the group.'],
+        ['disabled', 'boolean = false', '禁用当前项。', 'Disable this item.'],
+        ['startIcon / endIcon', 'ReactNode', '文字前后的装饰图标。', 'Decorative icons before and after the label.'],
+        ['children', 'ReactNode', '按钮内容；支持 Base UI Toggle、原生按钮和 ARIA 属性。', 'Button content; accepts Base UI Toggle, native button and ARIA props.'],
+      ] },
+    ],
     a11y: { zh: 'Root 使用 group，Item 是带 aria-pressed 的原生按钮。水平组用左右方向键，垂直组用上下方向键；Tab 只进入当前漫游焦点项。', en: 'Root uses group semantics and each Item is a native button with aria-pressed. Horizontal groups use Left/Right, vertical groups use Up/Down, and Tab enters the current roving item.' },
     Examples: ToggleGroupExamples,
   },

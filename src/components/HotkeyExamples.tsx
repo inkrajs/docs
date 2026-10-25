@@ -116,7 +116,7 @@ export function HotkeyExamples() {
   const zh = locale === 'zh-CN';
   return <div className="component-examples hotkey-examples">
     <HotkeyPlayground />
-    <ComponentExample title={zh ? '编辑器快捷键' : 'Editor shortcuts'} code={`<Hotkey value={{ key: 'S', code: 'KeyS', modifiers: ['meta'] }} />
+    <ComponentExample id="hotkey-editor-shortcuts" title={zh ? '编辑器快捷键' : 'Editor shortcuts'} code={`<Hotkey value={{ key: 'S', code: 'KeyS', modifiers: ['meta'] }} />
 <Hotkey value={{ key: 'F', code: 'KeyF', modifiers: ['control', 'shift'] }} />`}>
       <div className="hotkey-examples__list">
         <ShortcutRow label={zh ? '保存文档' : 'Save document'} shortcut={saveShortcut} />
@@ -124,7 +124,7 @@ export function HotkeyExamples() {
         <ShortcutRow label={zh ? '快速打开' : 'Quick open'} shortcut={paletteShortcut} />
       </div>
     </ComponentExample>
-    <ComponentExample title={zh ? '非受控录入与冲突校验' : 'Uncontrolled recording and conflicts'} code={`<Field label="${zh ? '格式化文档' : 'Format document'}">
+    <ComponentExample id="hotkey-uncontrolled-recording-and-conflicts" title={zh ? '非受控录入与冲突校验' : 'Uncontrolled recording and conflicts'} code={`<Field label="${zh ? '格式化文档' : 'Format document'}">
   <HotkeyInput
     defaultValue={{ key: 'F', code: 'KeyF', modifiers: ['alt', 'shift'] }}
     placeholder="${zh ? '按下快捷键' : 'Press a shortcut'}"
@@ -145,7 +145,7 @@ export function HotkeyExamples() {
         />
       </Field>
     </ComponentExample>
-    <ComponentExample title={zh ? '游戏操作映射' : 'Game action mapping'} code={`<Field label="${zh ? '打开地图' : 'Open map'}">
+    <ComponentExample id="hotkey-game-action-mapping" title={zh ? '游戏操作映射' : 'Game action mapping'} code={`<Field label="${zh ? '打开地图' : 'Open map'}">
   <HotkeyInput
     defaultValue={{ key: 'M', code: 'KeyM' }}
     blurOnCapture={false}
