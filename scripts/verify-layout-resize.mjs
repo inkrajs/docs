@@ -18,8 +18,8 @@ try {
     await frame.locator('.layout-notebook').waitFor();
     const choose = async name => {
       await setControls(playground, true);
-      const choices = playground.locator('.layout-mode-picker');
-      assert.equal(await choices.getByRole('radio').count(), 8);
+      const choices = playground.locator('.layout-mode-picker').first();
+      assert.equal(await choices.getByRole('radio').count(), 9);
       await choices.getByRole('radio', { name, exact: true }).check();
       assert(await choices.getByRole('radio', { name, exact: true }).isChecked());
       assert(await choices.evaluate(node => [...node.querySelectorAll('.inkra-choice-grid__option-label, .inkra-choice-grid__media')].every(option => option.scrollWidth <= option.clientWidth + 1)));

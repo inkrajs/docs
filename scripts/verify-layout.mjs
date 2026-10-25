@@ -12,7 +12,7 @@ try {
     for (const component of ['stack', 'flex', 'grid', 'container', 'layout']) {
       await page.goto(`${base}/docs/components/${component}#preview`);
       await page.locator('.component-playground').waitFor();
-      assert.equal(await page.locator('.component-examples > .layout-examples > :first-child').getAttribute('class'), 'inkra-pencil-surface inkra-pencil-surface--paper playground component-playground');
+      assert.equal(await page.locator('.component-playground').count(), 1, 'each route has one shared playground');
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${component} overflow at ${width}`);
       if (width > 1024) {
         const display = await page.locator('.component-playground .preview-display').boundingBox();
@@ -32,9 +32,14 @@ try {
       }
       await page.screenshot({ path: `/tmp/inkra-layout-${component}-${width}.png` });
       await page.getByRole('tab', { name: 'API', exact: true }).click();
-      assert.equal(await page.locator('.docs-api-table th').count(), 3);
+      const tables = page.locator('.docs-api-table');
+      assert(await tables.count() > 0);
+      for (const table of await tables.all()) assert.equal(await table.locator('th').count(), ['layout', 'grid'].includes(component) ? 4 : 3);
+      if (component === 'layout' || component === 'grid') {
+        assert.equal(await page.locator('.component-api-group').count(), component === 'layout' ? 6 : 3);
+      }
       assert(await page.locator('.docs-api-table tbody tr').count() >= 5);
-      assert.equal(await page.locator('.component-api h2').count(), 0, 'API tab does not repeat its title');
+      assert.equal(await page.locator('.component-api h2').filter({ hasText: /^API$/ }).count(), 0, 'API tab does not repeat its title');
       await page.locator('.page-tabs [role="tab"]').last().click();
       assert.equal(await page.locator('.component-api h2').count(), 0, 'accessibility tab does not repeat its title');
       assert(await page.locator('.component-api p').textContent());
@@ -47,7 +52,8 @@ try {
       await preview.getByRole('radio', { name: preset, exact: true }).check();
       const canvas = preview.locator('.layout-viewport__canvas');
       assert.equal(await canvas.evaluate(node => node.offsetWidth), Number(preset), 'preset sets actual container pixels');
-      assert.equal(await notebook.locator('.layout-notebook > .inkra-layout__body').evaluate(node => getComputedStyle(node).flexDirection), preset === '390' ? 'column' : 'row');
+      await page.waitForFunction(preset => document.querySelector('.layout-viewport__canvas').contentDocument.querySelector('.layout-notebook').dataset.compact === String(preset < 640), Number(preset));
+      assert.equal(await notebook.locator('.layout-notebook__sidebar').isVisible(), preset !== '390', 'compact navigation starts collapsed');
       await page.waitForFunction(() => {
         const extent = document.querySelector('.layout-viewport__extent').getBoundingClientRect();
         const content = document.querySelector('.layout-viewport__canvas').getBoundingClientRect();
@@ -57,9 +63,7 @@ try {
       await notebook.locator('.layout-notebook').evaluate(async node => { await node.ownerDocument.fonts.ready; });
       await page.screenshot({ path: `/tmp/inkra-layout-revised-${width}-${preset}.png`, animations: 'disabled' });
     }
-    await preview.getByRole('button', { name: locale === 'en' ? 'Actual size' : '原尺寸查看', exact: true }).click();
-    assert.match(await preview.locator('.layout-viewport__dimensions').textContent(), /100%/);
-    await preview.getByRole('button', { name: locale === 'en' ? 'Fit to preview' : '适应窗口', exact: true }).click();
+    assert.equal(await preview.locator('.layout-viewport__toolbar > button, .layout-viewport__dimensions').count(), 0, 'automatic fitting needs no size toggle or zoom metadata');
     await notebook.getByRole('button', { name: locale === 'en' ? 'New note' : '新建笔记', exact: true }).click();
     assert.equal(await notebook.locator('.layout-notebook__note').count(), 4);
     await notebook.getByRole('button', { name: locale === 'en' ? 'Favorites' : '收藏', exact: true }).click();
