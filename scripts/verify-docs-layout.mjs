@@ -107,6 +107,7 @@ try {
     await search.press('Escape');
     if (width <= 768) {
       await page.getByRole('dialog', { name: '搜索文档', exact: true }).waitFor({ state: 'hidden' });
+      await page.waitForFunction(() => document.activeElement?.classList.contains('mobile-search-trigger'));
       assert(await page.locator('.mobile-search-trigger').evaluate(node => node === document.activeElement));
     }
     await page.locator('.header-customize').click();
