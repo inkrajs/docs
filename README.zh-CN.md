@@ -12,7 +12,7 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 
 当前版本从 `vendor/inkra.tgz` 安装尚未发布的组件候选包。
 library-candidate.json 固定组件源码的精确提交和归档校验和，构建时同时验证
-候选归档与实际安装包。包版本暂时仍为 0.4.3，但新增 Provider API 不属于
+候选归档与实际安装包。0.5.0 候选包新增的 Provider API 不属于
 npm 上已发布的 0.4.3。请先按下文准备候选包，归档存在后才能直接安装和构建：
 
 ```sh

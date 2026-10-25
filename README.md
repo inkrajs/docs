@@ -8,7 +8,7 @@ Component implementation and API contracts remain in inkrajs/inkra.
 
 This revision consumes an unpublished `@inkra/react` candidate from
 `vendor/inkra.tgz`. library-candidate.json pins its exact library commit and
-archive checksums. Its package version is still 0.4.3, but its new provider APIs
+archive checksums. The 0.5.0 candidate adds provider APIs that
 are not part of the published npm 0.4.3 release. Build verifies the candidate
 archive and installed dependency without a source alias.
 

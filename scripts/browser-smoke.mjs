@@ -1,6 +1,9 @@
 import { runBrowserChecks } from './browser-check-runner.mjs';
 
 await runBrowserChecks([
+  'verify-i18n',
+  'verify-docs-locales',
+  'verify-theme-provider',
   'verify-text-first-paint',
   'verify-docs-code',
   'verify-code-samples',
