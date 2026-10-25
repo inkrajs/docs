@@ -1,6 +1,7 @@
 import { runBrowserChecks } from './browser-check-runner.mjs';
 
 await runBrowserChecks([
+  'verify-grid-docs',
   'verify-i18n',
   'verify-docs-locales',
   'verify-theme-provider',
@@ -16,7 +17,6 @@ await runBrowserChecks([
   'verify-layout-resize',
   'verify-layout-header',
   'verify-layout-mobile',
-  'verify-grid-docs',
   'verify-inventory-grid',
   'verify-breadcrumb',
   'verify-layout-scroll-refinements',
