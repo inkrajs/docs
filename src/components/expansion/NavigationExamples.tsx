@@ -257,7 +257,7 @@ export const navigationDocs: Record<string, ExpansionDoc> = {
       ['showFirstLast / disabled / size', 'boolean / boolean / sm | md | lg'],
       ['simple', 'boolean = false', '用当前页 / 总页数替代页码列表；保留已启用的翻页操作。空结果显示 0 / 0。', 'Replace page buttons with current / total while retaining enabled navigation controls. Empty results show 0 / 0.'],
       ['showPreviousNext', 'boolean = true', '显示上一页和下一页，不影响独立的首尾页开关。', 'Show previous and next controls independently of first/last controls.'],
-      ['hideOnSinglePage', 'boolean = false', '总页数不超过 1 时隐藏翻页操作，但保留已启用的页容量选择器；不触发变化回调。', 'Hide page controls for at most one page, retaining an enabled page-size selector without emitting a change callback.'],
+      ['hideOnSinglePage', 'boolean = false', '总页数不超过 1 时隐藏翻页操作，但保留已配置的页容量选择器；不触发变化回调。', 'Hide page controls for at most one page, retaining the page-size selector when configured without emitting a change callback.'],
       ['variant', 'ButtonVariant = ghost', '页码及首尾、前后按钮的外观，沿用 Button 的六种样式。', 'Appearance of page and boundary buttons using the six Button variants.'],
       ['align', 'start | center | end = start', '导航整体按逻辑方向对齐；换行列表沿用该对齐，横滚保留可达起点。', 'Logical alignment for the navigation and wrapped lists; scrolling lists retain a reachable start.'],
       ['wrap', 'boolean = false', '允许页码列表换行；默认保留局部横向滚动。', 'Wrap the page list instead of its default local horizontal scrolling.'],
