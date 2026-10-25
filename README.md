@@ -6,10 +6,10 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This revision consumes the published `@inkra/react@0.5.0` from the public npm
-registry. library-candidate.json pins its exact library commit and archive
-checksums. Build verifies the public archive and installed dependency without
-a source alias.
+This checkout currently consumes an unpublished local candidate of
+`@inkra/react@0.6.0` from `vendor/inkra.tgz`. library-candidate.json records the
+source revision and archive checksums. Build verifies the installed archive
+without a source alias; these refinements are not a published release.
 
 ## Local Development
 
@@ -108,6 +108,14 @@ debug outputs, helper prose or form actions. Advanced composition and native
 submit/reset examples remain below. `verify-minimal-playgrounds.mjs` checks ten
 representative pages in both locales; the AST contract guards playground children
 without hiding component-owned validation or accessibility feedback.
+
+Breadcrumb links default to the pencil-underlined link appearance and accept
+logical start/end icons. Page, link and dropdown-trigger items share header-safe
+text, icon, padding, gap and baseline geometry without hover movement. The
+composition example uses the installed DropdownMenu and ContextMenu for selection,
+right-click, keyboard menu keys and optional touch long press.
+`node scripts/verify-breadcrumb.mjs` covers those contracts plus RTL, constrained
+long paths and stable header geometry; it is an installed-package browser check.
 
 Editable defaults to plain clickable text and supports built-in Input, Textarea
 and dropdown/searchable/stepper Select editors. Text actions occupy the existing
@@ -288,7 +296,17 @@ pointer and touch movement immediately after fitting, without first zooming in.
 These are local Chromium checks, not real-device acceptance or arbitrary-file support.
 
 Layout primitives have their own navigation
-category and interactive pages. Textarea supports near-limit or always-visible
+category and interactive pages. The Layout notebook offers full-width headers,
+full-height sidebars, split headers on either side, right navigation, two sidebars
+and a header/content/footer composition. Its 390/768/1024/1920px preview scales to the available width
+and height; content scrolls inside the workspace while the header and footer
+remain visible. Compact navigation opens from the header toggle without moving
+the content. `verify-layout-sidebar.mjs` covers these compositions, resizing,
+disclosure focus/keyboard behavior, RTL and local scroll boundaries.
+`verify-layout-header.mjs` checks equal navigation padding and aligned icons,
+unframed header actions, and stable first/second-level breadcrumb text when a
+current page becomes a link. Long header paths scroll within their own region.
+Textarea supports near-limit or always-visible
 remaining/fraction/progress indicators and an optional pencil resize handle.
 Selection stays native without hiding editable text or doubling painted glyphs.
 Regression checks include `verify-textarea-selection.mjs`, `verify-layout.mjs`

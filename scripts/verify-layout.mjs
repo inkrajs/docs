@@ -43,7 +43,7 @@ try {
     const preview = page.locator('.component-playground .preview-stage');
     const notebook = page.frameLocator('.layout-viewport__canvas');
     await notebook.locator('.layout-notebook').waitFor();
-    for (const preset of ['390', '768', '1024']) {
+    for (const preset of ['390', '768', '1024', '1920']) {
       await preview.getByRole('radio', { name: preset, exact: true }).check();
       const canvas = preview.locator('.layout-viewport__canvas');
       assert.equal(await canvas.evaluate(node => node.offsetWidth), Number(preset), 'preset sets actual container pixels');
@@ -59,11 +59,12 @@ try {
     }
     await preview.getByRole('button', { name: locale === 'en' ? 'Actual size' : '原尺寸查看', exact: true }).click();
     assert.match(await preview.locator('.layout-viewport__dimensions').textContent(), /100%/);
-    await preview.getByRole('button', { name: locale === 'en' ? 'Fit to width' : '适应宽度', exact: true }).click();
+    await preview.getByRole('button', { name: locale === 'en' ? 'Fit to preview' : '适应窗口', exact: true }).click();
     await notebook.getByRole('button', { name: locale === 'en' ? 'New note' : '新建笔记', exact: true }).click();
     assert.equal(await notebook.locator('.layout-notebook__note').count(), 4);
     await notebook.getByRole('button', { name: locale === 'en' ? 'Favorites' : '收藏', exact: true }).click();
-    assert.equal(await notebook.locator('h3').textContent(), locale === 'en' ? 'Favorites' : '收藏');
+    assert.equal(await notebook.locator('.layout-notebook__content h3').count(), 0, 'content does not repeat the navigation title');
+    assert.equal(await notebook.getByRole('button', { name: locale === 'en' ? 'Favorites' : '收藏', exact: true }).getAttribute('aria-current'), 'page');
     assert.equal(await notebook.locator('.layout-notebook__note').count(), 1, 'favorites filters actual note content');
     await notebook.locator('.layout-notebook__note button').click();
     assert.equal(await notebook.locator('.layout-notebook__note').count(), 0);

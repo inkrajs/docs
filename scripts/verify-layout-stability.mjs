@@ -52,7 +52,11 @@ try {
       const settled = await read();
       await page.waitForTimeout(500);
       assert.deepEqual(await read(), settled, 'idle preview does not continuously repaint, resize or allocate');
-      assert(settled.height > 0 && settled.height < 1500);
+      assert(settled.height > 0 && settled.height < 3000);
+      assert(await page.locator('.layout-viewport__scroll').evaluate(node => {
+        const frame = node.querySelector('iframe').getBoundingClientRect();
+        return Math.abs(frame.height - node.clientHeight) < 1 && node.scrollHeight <= node.clientHeight + 1;
+      }), 'fitted workspace fills the available height without outer scrolling');
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
       await page.screenshot({ path: `/tmp/inkra-layout-stability-${width}-${visit}.png`, animations: 'disabled' });
       console.log(`PASS Layout ${width}px ${theme} visit ${visit + 1}`, JSON.stringify(settled));

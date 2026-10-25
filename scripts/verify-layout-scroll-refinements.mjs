@@ -126,7 +126,7 @@ try {
       });
   });
   assert.equal(await darkFrame.locator('.layout-notebook').evaluate(node => getComputedStyle(node).backgroundColor), 'rgb(25, 29, 30)');
-  assert.notEqual(await darkFrame.locator('.layout-notebook h3').first().evaluate(node => getComputedStyle(node).color), 'rgb(41, 61, 51)');
+  assert.notEqual(await darkFrame.locator('.layout-notebook h4').first().evaluate(node => getComputedStyle(node).color), 'rgb(41, 61, 51)');
   await darkPage.screenshot({ path: '/tmp/inkra-layout-perf-after.png', animations: 'disabled' });
   await darkPage.close();
 
