@@ -25,7 +25,8 @@ try {
     }));
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({ path: `/tmp/inkra-deployed-${width}.png`, fullPage: true });
-    for (const path of ['/docs', '/docs/getting-started', '/docs/components/button#preview',
+    for (const path of ['/docs', '/docs/getting-started', '/docs/internationalization',
+      '/docs/theming', '/docs/components/button#preview',
       '/docs/components/calendar/', '/docs/components/journey-map#preview',
       '/components/breadcrumb#preview']) {
       const result = await page.goto(new URL(path, baseURL).href);

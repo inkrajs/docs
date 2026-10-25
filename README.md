@@ -6,16 +6,14 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This revision consumes an unpublished `@inkra/react` candidate from
-`vendor/inkra.tgz`. library-candidate.json pins its exact library commit and
-archive checksums. The 0.5.0 candidate adds provider APIs that
-are not part of the published npm 0.4.3 release. Build verifies the candidate
-archive and installed dependency without a source alias.
+This revision consumes the published `@inkra/react@0.5.0` from the public npm
+registry. library-candidate.json pins its exact library commit and archive
+checksums. Build verifies the public archive and installed dependency without
+a source alias.
 
 ## Local Development
 
-First prepare the pinned library candidate using **Prepare An Unpublished
-Candidate** below. Once the ignored vendor archive exists, run:
+Install the pinned registry release and run:
 
 ```sh
 npm ci
@@ -23,8 +21,8 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-Fresh checkouts need the vendor archive before `npm ci`; preparation installs
-the dependency as well. Do not replace it with the registry release.
+Fresh checkouts do not need a vendor archive. To test unpublished library
+changes, use **Prepare An Unpublished Candidate** below instead.
 
 ## Local Routes And Page Actions
 
@@ -91,7 +89,7 @@ portals, retained input/selection, regional date and exact-bigint formatting,
 painted text and 1543/1305/390/320px layouts against the installed candidate.
 `node scripts/verify-docs-locales.mjs` checks actual site language menus,
 provider inheritance, persistence, preserved drafts and responsive navigation.
-The new API is a local candidate until a release containing it is published.
+These provider APIs are included in the published 0.5.0 release.
 
 The theme page uses the installed `ThemeProvider` from `@inkra/react/theme`.
 It demonstrates local light/dark/system modes, palette variables and icon weight,
