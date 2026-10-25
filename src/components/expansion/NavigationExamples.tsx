@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Command, InputNumber, Overlay, Pagination, PencilText, Switch } from '@inkra/react';
-import type { PaginationLabels } from '@inkra/react';
+import type { ButtonVariant, PaginationLabels } from '@inkra/react';
 import { __iconData as fileIcon } from 'lucide-react/dist/esm/icons/file-text.mjs';
 import { __iconData as searchIcon } from 'lucide-react/dist/esm/icons/search.mjs';
 import { __iconData as settingsIcon } from 'lucide-react/dist/esm/icons/settings.mjs';
@@ -38,16 +38,29 @@ function PaginationExamples() {
   const [hideSingle, setHideSingle] = useState(false);
   const [rtl, setRtl] = useState(false);
   const [changingTotal, setChangingTotal] = useState(12);
+  const [variant, setVariant] = useState<ButtonVariant>('ghost');
+  const [align, setAlign] = useState<'start' | 'center' | 'end'>('start');
+  const [wrap, setWrap] = useState(false);
+  const [showSizes, setShowSizes] = useState(false);
+  const [pageSize, setPageSize] = useState(20);
+  const [resultPage, setResultPage] = useState(1);
+  const [resultPageSize, setResultPageSize] = useState(20);
+  const resultCount = 86;
   return <div className="component-examples navigation-examples">
-    <ComponentPlayground code={`const [page, setPage] = useState(${page});
+    <ComponentPlayground code={`const [page, setPage] = useState(${page});${showSizes ? `
+const [pageSize, setPageSize] = useState(${pageSize});` : ''}
 <Pagination totalPages={${totalPages}} page={page} onPageChange={setPage}
   siblingCount={${siblings}} boundaryCount={${boundaries}}
   simple={${simple}} showPreviousNext={${previousNext}} hideOnSinglePage={${hideSingle}}
+  variant="${variant}" align="${align}" wrap={${wrap}}${showSizes ? `
+  pageSize={pageSize} onPageSizeChange={setPageSize} pageSizeOptions={[10, 20, 50]}` : ''}
   showFirstLast={${firstLast}} size="${size}" disabled={${disabled}} dir="${rtl ? 'rtl' : 'ltr'}" />`}
       controls={<PropertyTabs groups={[
         { label: '基础', content: <>
           <label>{zh ? '总页数' : 'Total pages'}<InputNumber aria-label={zh ? '总页数' : 'Total pages'} min={0} max={1000} value={totalPages} onValueChange={value => setTotalPages(value ?? 0)} /></label>
           <DocsSelect label={zh ? '尺寸' : 'Size'} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "sm"], ["md", "md"], ["lg", "lg"]]} />
+          <DocsSelect label={zh ? '按钮样式' : 'Button appearance'} value={variant} onValueChange={value => setVariant(value as ButtonVariant)} options={['primary', 'secondary', 'outline', 'ghost', 'destructive', 'link'].map(value => [value, value])} />
+          <Switch label={zh ? '页容量选择' : 'Page-size selector'} checked={showSizes} onCheckedChange={setShowSizes} />
         </> },
         { label: '布局', content: <>
           <DocsSelect label={zh ? '相邻页数' : 'Sibling count'} value={String(siblings)} onValueChange={value => setSiblings(Number(value))} options={[["0", "0"], ["1", "1"], ["2", "2"], ["3", "3"]]} />
@@ -57,15 +70,27 @@ function PaginationExamples() {
           <Switch label={zh ? '上一页与下一页' : 'Previous and next controls'} checked={previousNext} onCheckedChange={setPreviousNext} />
           <Switch label={zh ? '仅一页时隐藏' : 'Hide for a single page'} checked={hideSingle} onCheckedChange={setHideSingle} />
           <Switch label="RTL" checked={rtl} onCheckedChange={setRtl} />
+          <DocsSelect label={zh ? '对齐' : 'Alignment'} value={align} onValueChange={value => setAlign(value as typeof align)} options={[["start", "start"], ["center", "center"], ["end", "end"]]} />
+          <Switch label={zh ? '换行' : 'Wrap controls'} checked={wrap} onCheckedChange={setWrap} />
         </> },
         { label: '状态', content: <Switch label={zh ? '禁用' : 'Disabled'} checked={disabled} onCheckedChange={setDisabled} /> },
       ]} />}>
       <div className="navigation-examples__stage" dir={rtl ? 'rtl' : 'ltr'} data-testid="pagination-playground">
-        <Pagination totalPages={totalPages} page={page} onPageChange={setPage} siblingCount={siblings} boundaryCount={boundaries} showFirstLast={firstLast} simple={simple} showPreviousNext={previousNext} hideOnSinglePage={hideSingle} disabled={disabled} size={size} labels={labels} />
+        <Pagination totalPages={totalPages} page={page} onPageChange={setPage} siblingCount={siblings} boundaryCount={boundaries} showFirstLast={firstLast} simple={simple} showPreviousNext={previousNext} hideOnSinglePage={hideSingle} disabled={disabled} size={size} labels={labels} variant={variant} align={align} wrap={wrap} pageSize={pageSize} onPageSizeChange={setPageSize} pageSizeOptions={showSizes ? [10, 20, 50] : undefined} />
       </div>
     </ComponentPlayground>
     <ComponentExample title={zh ? '基本分页' : 'Basic pagination'} code={'<Pagination totalPages={5} defaultPage={1} />'}>
       <Pagination totalPages={5} defaultPage={1} labels={labels} data-testid="pagination-basic" />
+    </ComponentExample>
+    <ComponentExample title={zh ? '页容量与逻辑对齐' : 'Page size and logical alignment'} code={`const [page, setPage] = useState(1);
+const [pageSize, setPageSize] = useState(20);
+<Pagination totalPages={Math.ceil(86 / pageSize)} page={page} onPageChange={setPage}
+  pageSize={pageSize} onPageSizeChange={setPageSize} pageSizeOptions={[10, 20, 50, 100]}
+  variant="outline" align="end" wrap hideOnSinglePage />`}>
+      <Pagination totalPages={Math.ceil(resultCount / resultPageSize)} page={resultPage} onPageChange={setResultPage}
+        pageSize={resultPageSize} onPageSizeChange={setResultPageSize} pageSizeOptions={[10, 20, 50, 100]}
+        variant="outline" align="end" wrap hideOnSinglePage data-testid="pagination-sized" />
+      <p><PencilText>{zh ? '调用方按容量计算总页数并请求数据；容量变化先通知容量回调，当前页大于 1 时再请求第 1 页。单页仍可调整容量。' : 'The caller computes totalPages and fetches data. A size change requests the size first, then page 1 when needed. The selector remains available for a single page.'}</PencilText></p>
     </ComponentExample>
     <ComponentExample title={zh ? '自定义页码与摘要' : 'Custom page labels and summary'} code={`<Pagination totalPages={3} renderPage={page => <PencilText>{String(page).padStart(2, '0')}</PencilText>} />
 <Pagination totalPages={12} simple renderSummary={(page, total) => <PencilText>{\`${zh ? '第 ${page} 页，共 ${total} 页' : 'Page ${page} of ${total}'}\`}</PencilText>} />`}>
@@ -232,10 +257,17 @@ export const navigationDocs: Record<string, ExpansionDoc> = {
       ['showFirstLast / disabled / size', 'boolean / boolean / sm | md | lg'],
       ['simple', 'boolean = false', '用当前页 / 总页数替代页码列表；保留已启用的翻页操作。空结果显示 0 / 0。', 'Replace page buttons with current / total while retaining enabled navigation controls. Empty results show 0 / 0.'],
       ['showPreviousNext', 'boolean = true', '显示上一页和下一页，不影响独立的首尾页开关。', 'Show previous and next controls independently of first/last controls.'],
-      ['hideOnSinglePage', 'boolean = false', '总页数不超过 1 时不渲染导航，不触发页码变化回调。', 'Render no navigation when total pages is at most one, without emitting a page-change callback.'],
+      ['hideOnSinglePage', 'boolean = false', '总页数不超过 1 时隐藏翻页操作，但保留已启用的页容量选择器；不触发变化回调。', 'Hide page controls for at most one page, retaining an enabled page-size selector without emitting a change callback.'],
+      ['variant', 'ButtonVariant = ghost', '页码及首尾、前后按钮的外观，沿用 Button 的六种样式。', 'Appearance of page and boundary buttons using the six Button variants.'],
+      ['align', 'start | center | end = start', '导航整体按逻辑方向对齐；换行列表沿用该对齐，横滚保留可达起点。', 'Logical alignment for the navigation and wrapped lists; scrolling lists retain a reachable start.'],
+      ['wrap', 'boolean = false', '允许页码列表换行；默认保留局部横向滚动。', 'Wrap the page list instead of its default local horizontal scrolling.'],
+      ['pageSize / defaultPageSize', 'number / number = 10', '受控容量或非受控初值，只接受正安全整数；非法值回退 10。调用方负责数据切分和总页数。', 'Controlled size or initial uncontrolled size; positive safe integers only, falling back to 10. The caller slices data and computes totalPages.'],
+      ['pageSizeOptions', 'readonly number[]', '提供有效选项时启用容量 Select；忽略非法项、去重排序并保留当前容量。空有效列表不显示选择器。', 'Enable the Select with valid options. Invalid entries are ignored, duplicates removed and values sorted, retaining the current size. No valid options hides the selector.'],
+      ['onPageSizeChange', '(pageSize: number) => void', '先请求新容量，当前页大于 1 时再请求 onPageChange(1)；两个受控状态仍由调用方决定。渲染及选项变化不触发回调。', 'Request the size first, then onPageChange(1) when the current page exceeds one. Each controlled state stays caller-owned. Rendering and option changes emit no callback.'],
       ['renderPage', '(page, { isCurrent }) => ReactNode', '自定义页码按钮内的非交互内容；不改变按钮语义，名称仍由 labels.page 提供。', 'Customize non-interactive page button content. Button semantics and labels.page naming remain intact.'],
       ['renderSummary', '(page, totalPages) => ReactNode', '简洁模式下自定义非交互摘要，接收规范化页码。', 'Customize the non-interactive simple-mode summary with normalized page numbers.'],
       ['labels', 'Partial<PaginationLabels>; localize nav, first, previous, next, last, page(number), ellipsis'],
+      ['labels.pageSize / labels.pageSizeOption', 'string / (pageSize: number) => string', '覆盖容量选择器的可访问名称及选项文案，默认跟随 InkraProvider。', 'Override the accessible size-selector name and option text; defaults follow InkraProvider.'],
     ],
     a11y: { zh: 'nav 内的原生按钮通过 Tab、Enter、Space 操作，当前页带 aria-current="page"。省略符不可交互。此组件只支持数据翻页按钮，不提供链接导航。', en: 'Native buttons inside nav support Tab, Enter, and Space; the current page has aria-current="page". Ellipses are noninteractive. This component supports data pagination buttons, not link navigation.' },
     Examples: PaginationExamples,
