@@ -25,14 +25,16 @@ try {
     const { dataDocs } = await import('/src/components/expansion/DataExamples.tsx');
     const { flowsDocs } = await import('/src/components/expansion/FlowsExamples.tsx');
     const { layoutDocs } = await import('/src/components/expansion/LayoutExamples.tsx');
+    const { inventoryGridDoc } = await import('/src/components/expansion/InventoryGridExamples.tsx');
     const introductions = { ...componentIntroductions };
+    introductions[inventoryGridDoc.name] = inventoryGridDoc.intro;
     for (const doc of Object.values({ ...feedbackDocs, ...overlaysDocs, ...datesDocs, ...navigationDocs, ...dataDocs, ...flowsDocs, ...layoutDocs })) {
       introductions[doc.name] = doc.intro;
     }
     return ['Button', ...Object.values(foundationNames)].map(name => ({ name, ...introductions[name] }));
   });
   assert.equal(new Set(coverage.map(component => component.name)).size, coverage.length);
-  for (const name of ['Button', 'Breadcrumb', 'Stack', 'Flex', 'Grid', 'Container', 'Layout']) {
+  for (const name of ['Button', 'Breadcrumb', 'Stack', 'Flex', 'Grid', 'Container', 'Layout', 'InventoryGrid']) {
     assert(coverage.some(component => component.name === name), `Introduction coverage includes ${name}`);
   }
   for (const intro of coverage) assert(intro.zh && intro.en, `Bilingual introduction: ${intro.name}`);
