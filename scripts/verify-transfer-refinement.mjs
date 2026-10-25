@@ -68,6 +68,8 @@ try {
   await delayedMove.click();
   assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Move to selected: Alpha',
     'focus stays on the origin while controlled value is pending');
+  assert.equal(await delayed.locator('[data-side="target"] [data-transfer-item-id="alpha"]').count(), 0);
+  await page.evaluate(() => window.transferRefinementFixture.resolve('delayedProposals'));
   await page.waitForFunction(() => document.querySelector('[data-testid="delayed-controlled"] [data-side="target"] [data-transfer-item-id="alpha"]'));
   await page.waitForFunction(() => document.activeElement?.closest('[data-testid="delayed-controlled"] [data-side="target"]') != null);
   assert.equal(await activeTransferItem(), 'alpha');
@@ -76,6 +78,7 @@ try {
   const rejectedMove = itemMove(rejected, 'Move to selected: Alpha');
   await rejectedMove.focus();
   await rejectedMove.click();
+  await page.evaluate(() => window.transferRefinementFixture.resolve('rejectedProposals'));
   await page.waitForFunction(() => document.querySelector('[data-testid="rejected-controlled"] [data-side="target"] [data-transfer-item-id="beta"]'));
   assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Move to selected: Alpha',
     'mismatched controlled update cancels the pending focus move');
@@ -86,6 +89,7 @@ try {
   await movedFocusMove.focus();
   await movedFocusMove.click();
   await page.getByTestId('outside-focus').focus();
+  await page.evaluate(() => window.transferRefinementFixture.resolve('movedFocusProposals'));
   await page.waitForFunction(() => document.querySelector('[data-testid="moved-focus-controlled"] [data-side="target"] [data-transfer-item-id="alpha"]'));
   assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('data-testid')), 'outside-focus',
     'accepted delayed move does not steal focus after the user moved elsewhere');
@@ -97,6 +101,7 @@ try {
   await batchButton.focus();
   await batchButton.click();
   assert.equal(await batchButton.isDisabled(), true, 'batch origin becomes disabled while the move is pending');
+  await page.evaluate(() => window.transferRefinementFixture.resolve('batchProposals'));
   await page.waitForFunction(() => document.querySelector('[data-testid="batch-controlled"] [data-side="target"] [data-transfer-item-id="alpha"]'));
   await page.waitForFunction(() => document.activeElement?.closest('[data-testid="batch-controlled"] [data-side="target"]') != null);
   assert.equal(await activeTransferItem(), 'alpha');

@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { Badge, Button, Card, Container, Flex, Grid, Layout, Progress, Stack, Switch } from '@inkra/react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { Badge, Breadcrumb, Button, Card, ChoiceGrid, ChoiceGridOption, Container, Flex, Grid, Layout, PencilLine, Progress, Resizable, Stack, Switch } from '@inkra/react';
 import { __iconData as notebookIcon } from 'lucide-react/dist/esm/icons/notebook-pen.mjs';
 import { __iconData as starIcon } from 'lucide-react/dist/esm/icons/star.mjs';
 import { __iconData as historyIcon } from 'lucide-react/dist/esm/icons/rotate-ccw-clock.mjs';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
+import { __iconData as sidebarIcon } from 'lucide-react/dist/esm/icons/panel-left.mjs';
+import { __iconData as rightSidebarIcon } from 'lucide-react/dist/esm/icons/panel-right.mjs';
 import type { ContainerProps, FlexProps, LayoutSpace } from '@inkra/react';
 import { PencilText, useLocale } from '../../i18n';
 import { ComponentExample } from '../ComponentExample';
@@ -12,10 +14,33 @@ import { DocsSelect } from '../DocsSelect';
 import { PropertyTabs } from '../PropertyTabs';
 import { DocsIcon } from '../DocsIcon';
 import { LayoutViewport } from './LayoutViewport';
+import { LayoutSidebarPanel } from './LayoutPanels';
+import { useLayoutMotion } from './useLayoutMotion';
 import type { ExpansionDoc } from './types';
 import './LayoutExamples.css';
 
 const spacingOptions = [[0, '0 px'], [2, '8 px'], [3, '12 px'], [4, '16 px'], [5, '20 px'], [6, '24 px'], [8, '32 px']] as const;
+const notebookLayouts = [
+  ['top', '顶部通栏', 'Full-width header'],
+  ['side', '侧栏通高', 'Full-height sidebar'],
+  ['split', '分区页头', 'Split headers'],
+  ['right', '右侧导航', 'Right navigation'],
+  ['right-side', '右侧通高', 'Full-height right sidebar'],
+  ['right-split', '右侧分区页头', 'Split right headers'],
+  ['dual', '双侧栏', 'Two sidebars'],
+  ['content', '上下通栏', 'Header and footer'],
+] as const;
+type NotebookLayout = typeof notebookLayouts[number][0];
+type HeaderPath = 'simple' | 'section' | 'long';
+
+function LayoutDiagram({ layout }: { layout: NotebookLayout }) {
+  return <span className="layout-diagram" data-layout={layout} aria-hidden="true">
+    {['header', 'navigation', 'details', 'footer'].map(region =>
+      <PencilLine key={region} seed={`layout-${layout}-${region}`}
+        orientation={region === 'navigation' || region === 'details' ? 'vertical' : 'horizontal'}
+        className={`layout-diagram__${region}`} />)}
+  </span>;
+}
 function GapControl({ value, onChange }: { value: LayoutSpace; onChange: (value: LayoutSpace) => void }) {
   const { locale } = useLocale();
   return <DocsSelect label={locale === 'zh-CN' ? '间距' : 'Gap'} value={String(value)}
@@ -154,7 +179,30 @@ function ContainerExamples() {
 function LayoutExamples() {
   const { locale } = useLocale();
   const zh = locale === 'zh-CN';
+  const [layout, setLayout] = useState<NotebookLayout>('top');
+  const [headerPath, setHeaderPath] = useState<HeaderPath>('simple');
+  const rightSidebar = layout === 'right' || layout === 'right-side' || layout === 'right-split';
+  const fullHeightSidebar = layout === 'side' || layout === 'right-side';
+  const splitHeader = layout === 'split' || layout === 'right-split';
+  const sectionalHeader = fullHeightSidebar || splitHeader;
   const [sidebar, setSidebar] = useState(true);
+  const [desktopOpen, setDesktopOpen] = useState(true);
+  const [compactOpen, setCompactOpen] = useState(false);
+  const [resizable, setResizable] = useState(true);
+  const [collapsible, setCollapsible] = useState(true);
+  const [detailsOpen, setDetailsOpen] = useState(true);
+  const sidebarId = useId();
+  const detailsId = useId();
+  const sidebarToggle = useRef<HTMLButtonElement>(null);
+  const motion = useLayoutMotion();
+  const detailsToggle = useRef<HTMLButtonElement>(null);
+  const focusAfterCollapse = useRef(false);
+  useEffect(() => {
+    if (focusAfterCollapse.current) {
+      sidebarToggle.current?.focus({ preventScroll: true });
+      focusAfterCollapse.current = false;
+    }
+  }, [desktopOpen, compactOpen]);
   const [divided, setDivided] = useState(true);
   const [width, setWidth] = useState('200');
   const [collapseAt, setCollapseAt] = useState<'sm' | 'md' | 'never'>('sm');
@@ -179,6 +227,12 @@ function LayoutExamples() {
     setActive(0);
   };
   const code = `const [active, setActive] = useState(0);
+const [sidebarOpen, setSidebarOpen] = useState(true);
+const [detailsOpen, setDetailsOpen] = useState(true);
+const navigationRef = useResizablePanelRef();
+const detailsRef = useResizablePanelRef();
+const sidebarId = useId();
+const [headerPath, setHeaderPath] = useState('${headerPath}');
 const labels = ${JSON.stringify(labels)};
 const [notes, setNotes] = useState(${JSON.stringify(notes.map(note => ({ ...note, title: note.title[zh ? 0 : 1], description: note.description[zh ? 0 : 1] })), null, 2)});
 const visible = active === 1 ? notes.filter(note => note.favorite)
@@ -194,15 +248,61 @@ const addNote = () => {
   setActive(0);
 };
 
-<Layout.Root collapseAt="${collapseAt}">
-  <Layout.Header divided={${divided}}>
-    <Flex align="center" justify="between" wrap>
-      <PencilText>${zh ? '笔记空间' : 'Notebook'}</PencilText>
-      <Button onClick={addNote}>${zh ? '新建笔记' : 'New note'}</Button>
-    </Flex>
+const sidebarToggle = ${sidebar && layout !== 'content' && collapsible ? `(
+  <Button variant="ghost" size={${sectionalHeader ? "'icon'" : "sidebarOpen ? 'md' : 'icon'"}}
+    fullWidth={${sectionalHeader ? 'false' : 'sidebarOpen'}} align="start" aria-label="${zh ? '切换侧栏' : 'Toggle sidebar'}"
+    ${!sectionalHeader ? `startIcon={sidebarOpen ? <${rightSidebar ? 'PanelRight' : 'PanelLeft'} size={26} aria-hidden="true" /> : undefined}` : ''}
+    aria-expanded={sidebarOpen} aria-controls={sidebarId}
+    onClick={() => sidebarOpen ? navigationRef.current?.collapse() : navigationRef.current?.expand()}>
+    ${sectionalHeader ? `<${rightSidebar ? 'PanelRight' : 'PanelLeft'} size={26} aria-hidden="true" />` : `{sidebarOpen ? '${zh ? '收起侧栏' : 'Close sidebar'}' : <${rightSidebar ? 'PanelRight' : 'PanelLeft'} size={26} aria-hidden="true" />}`}
+  </Button>
+);` : 'null;'}
+const headerTitle = (
+  <div className="layout-notebook__header-title">
+    <NotebookPen size={26} aria-hidden="true" />
+    <div className="layout-notebook__header-location">
+      <Breadcrumb.Root aria-label="${zh ? '当前笔记位置' : 'Current notebook location'}">
+        <Breadcrumb.List>
+          {headerPath === 'simple' ? <Breadcrumb.Item><Breadcrumb.Page>${zh ? '笔记空间' : 'Notebook'}</Breadcrumb.Page></Breadcrumb.Item> : <>
+            <Breadcrumb.Item><Breadcrumb.Link href="#notebook" onClick={event => { event.preventDefault(); setHeaderPath('simple'); }}>${zh ? '笔记空间' : 'Notebook'}</Breadcrumb.Link></Breadcrumb.Item>
+            <Breadcrumb.Separator />
+            {headerPath === 'section' ? <Breadcrumb.Item><Breadcrumb.Page>${zh ? '产品研究与项目归档' : 'Product research and project archive'}</Breadcrumb.Page></Breadcrumb.Item> : <>
+              <Breadcrumb.Item><Breadcrumb.Link href="#research" onClick={event => { event.preventDefault(); setHeaderPath('section'); }}>${zh ? '产品研究与项目归档' : 'Product research and project archive'}</Breadcrumb.Link></Breadcrumb.Item>
+              <Breadcrumb.Separator />
+              <Breadcrumb.Item><Breadcrumb.Page>${zh ? '2026 年跨区域用户研究与产品决策记录' : '2026 cross-regional user research and product decision records'}</Breadcrumb.Page></Breadcrumb.Item>
+            </>}
+          </>}
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
+    </div>
+  </div>
+);
+const header = (
+  <Layout.Header className="layout-notebook__header" divided={${divided}}>
+    <div className="layout-notebook__header-grid">
+      <div className="layout-notebook__header-leading">
+        ${!rightSidebar ? '{!sidebarOpen && sidebarToggle}' : ''}
+        {headerTitle}
+      </div>
+      <div className="layout-notebook__header-actions">
+        <Button variant="ghost" onClick={addNote}>${zh ? '新建笔记' : 'New note'}</Button>
+        ${rightSidebar ? '{!sidebarOpen && sidebarToggle}' : ''}
+        ${layout === 'dual' && collapsible ? `<Button variant="ghost" size="icon" aria-label="${zh ? '切换详情' : 'Toggle details'}"
+        onClick={() => detailsRef.current?.isCollapsed() ? detailsRef.current.expand() : detailsRef.current?.collapse()}>
+        <PanelRight aria-hidden="true" />
+      </Button>` : ''}
+      </div>
+    </div>
   </Layout.Header>
-  <Layout.Body>
-    ${sidebar ? `<Layout.Sidebar width={${width}} padding={3} divided={${divided}}>
+);
+const navigation = ${sidebar && layout !== 'content' ? `(
+    <Layout.Sidebar id={sidebarId} hidden={!sidebarOpen} width="100%" padding={3} style={{ height: '100%', overflow: 'auto', display: sidebarOpen ? 'flex' : 'none', flexDirection: 'column' }}>
+      ${sectionalHeader ? `<Layout.Header divided={${divided}} padding={0}>
+        <Flex align="center" justify="between">
+          <Flex align="center" gap={2}><NotebookPen aria-hidden="true" /><PencilText>${zh ? '我的笔记' : 'My notes'}</PencilText></Flex>
+          {sidebarOpen && sidebarToggle}
+        </Flex>
+      </Layout.Header>` : ''}
       <Stack as="nav" gap={1} aria-label="${zh ? '笔记目录' : 'Notes navigation'}">
         {labels.map((label, index) => (
           <Button key={label} variant={active === index ? 'secondary' : 'ghost'}
@@ -210,10 +310,14 @@ const addNote = () => {
             onClick={() => setActive(index)}>{label}</Button>
         ))}
       </Stack>
-    </Layout.Sidebar>` : ''}
-    <Layout.Content>
+      <div style={{ marginTop: 'auto', paddingTop: 24 }}>
+        ${sectionalHeader ? `<Progress value={notes.filter(note => note.published).length} max={notes.length} label="${zh ? '发布进度' : 'Publishing'}" />` : '{sidebarOpen && sidebarToggle}'}
+      </div>
+    </Layout.Sidebar>
+);` : 'null;'}
+const content = (
+    <Layout.Content style={{ minHeight: 0, overflow: 'auto' }}>
       <Stack gap={5}>
-        <PencilText as="h3">{labels[active]}</PencilText>
         <Flex wrap gap={4}>
           {visible.map(note => (
             <Card.Root key={note.id} style={{ flex: '1 1 240px', minWidth: 0 }}>
@@ -233,36 +337,134 @@ const addNote = () => {
         </Flex>
       </Stack>
     </Layout.Content>
-  </Layout.Body>
+);
+const footer = (
   <Layout.Footer divided={${divided}}>
     <PencilText>{notes.length} ${zh ? '条笔记' : 'notes'}</PencilText>
   </Layout.Footer>
+);
+const navigationPanel = navigation && (
+  <Resizable.Panel panelRef={navigationRef} defaultSize={${width}} minSize={120} maxSize="40%" collapsible={${collapsible}}
+    onResize={size => setSidebarOpen(size.asPercentage > 0)}>
+    {navigation}
+  </Resizable.Panel>
+);
+const handle = <Resizable.Handle hidden={!sidebarOpen} style={{ display: sidebarOpen ? undefined : 'none' }} disabled={${!resizable}} label="${zh ? '调整侧栏宽度' : 'Resize sidebar'}" />;
+${layout === 'dual' ? `const details = <Layout.Sidebar width="100%" style={{ height: '100%', overflow: 'auto' }}><PencilText>${zh ? '工作区' : 'Workspace'}</PencilText></Layout.Sidebar>;\n` : ''}
+<Layout.Root collapseAt="${collapseAt}" style={{ height: 640, overflow: 'hidden' }}>
+  ${sectionalHeader ? `<Layout.Body style={{ minHeight: 0 }}>
+    <Resizable.Root>
+    ${!rightSidebar ? '{navigationPanel}{navigation && handle}' : ''}
+    <Resizable.Panel minSize="30%" style={{ display: 'flex', flexDirection: 'column' }}>
+    <Layout.Content padding={0} style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+      {header}
+      {content}
+      ${fullHeightSidebar ? '{footer}' : ''}
+    </Layout.Content>
+    </Resizable.Panel>
+    ${rightSidebar ? '{navigation && handle}{navigationPanel}' : ''}
+    </Resizable.Root>
+  </Layout.Body>
+  ${splitHeader ? '{footer}' : ''}` : `{header}
+  <Layout.Body style={{ minHeight: 0 }}>
+    <Resizable.Root>
+      ${!rightSidebar && layout !== 'content' ? '{navigationPanel}{navigation && handle}' : ''}
+      <Resizable.Panel minSize="30%" style={{ display: 'flex', flexDirection: 'column' }}>{content}</Resizable.Panel>
+      ${rightSidebar ? '{navigation && handle}{navigationPanel}' : layout === 'dual' ? `<Resizable.Handle hidden={!detailsOpen} style={{ display: detailsOpen ? undefined : 'none' }} disabled={${!resizable}} label="${zh ? '调整详情宽度' : 'Resize details'}" />
+      <Resizable.Panel panelRef={detailsRef} onResize={size => setDetailsOpen(size.asPercentage > 0)} defaultSize={160} minSize={120} maxSize="40%" collapsible={${collapsible}}>{details}</Resizable.Panel>` : ''}
+    </Resizable.Root>
+  </Layout.Body>
+  {footer}`}
 </Layout.Root>`;
-  const sample = <Layout.Root className="layout-examples__shell layout-notebook" collapseAt={collapseAt}>
-    <Layout.Header divided={divided}>
-      <Flex align="center" justify="between" wrap gap={3}>
-        <Flex align="center" gap={2}><DocsIcon data={notebookIcon} size={28} /><PencilText>{zh ? '笔记空间' : 'Notebook'}</PencilText></Flex>
-        <Button variant="outline" startIcon={<DocsIcon data={plusIcon} />} onClick={addNote}>{zh ? '新建笔记' : 'New note'}</Button>
-      </Flex>
-    </Layout.Header>
-    <Layout.Body>
-      {sidebar && <Layout.Sidebar width={Number(width)} padding={3} divided={divided}>
-        <Stack as="nav" gap={1} aria-label={zh ? '笔记目录' : 'Notes navigation'}>
+  const sample = (previewWidth: number) => {
+    const compact = collapseAt !== 'never' && previewWidth < (collapseAt === 'sm' ? 640 : 768);
+    const hasSidebar = sidebar && layout !== 'content';
+    const open = hasSidebar && (compact ? compactOpen : desktopOpen);
+    const nestedHeader = !compact && sectionalHeader;
+    const toggleLabel = rightSidebar
+      ? (open ? (zh ? '收起右侧栏' : 'Close right sidebar') : (zh ? '展开右侧栏' : 'Open right sidebar'))
+      : (open ? (zh ? '收起侧栏' : 'Close sidebar') : (zh ? '展开侧栏' : 'Open sidebar'));
+    const closeSidebar = () => {
+      motion.prepare();
+      focusAfterCollapse.current = true;
+      if (compact) setCompactOpen(false);
+      else setDesktopOpen(false);
+    };
+    const bottomToggle = open && !nestedHeader;
+    const toggleIcon = <DocsIcon data={rightSidebar ? rightSidebarIcon : sidebarIcon} size={26} />;
+    const toggleSidebar = <Button ref={sidebarToggle} variant="ghost" size={bottomToggle ? 'md' : 'icon'}
+      fullWidth={bottomToggle} align={bottomToggle ? 'start' : undefined} startIcon={bottomToggle ? toggleIcon : undefined}
+      data-sidebar-toggle="" aria-label={toggleLabel} data-tooltip={bottomToggle ? undefined : toggleLabel}
+      aria-controls={sidebarId} aria-expanded={open}
+      onClick={() => {
+        motion.prepare();
+        focusAfterCollapse.current = true;
+        if (compact) setCompactOpen(value => !value);
+        else setDesktopOpen(value => !value);
+      }}>
+      {bottomToggle ? toggleLabel : toggleIcon}
+    </Button>;
+    const headerTitle = <div className="layout-notebook__header-title">
+      <DocsIcon data={notebookIcon} size={26} />
+      <div className="layout-notebook__header-location">
+        <Breadcrumb.Root aria-label={zh ? '当前笔记位置' : 'Current notebook location'}>
+          <Breadcrumb.List>
+            {headerPath === 'simple' ? <Breadcrumb.Item><Breadcrumb.Page>{zh ? '笔记空间' : 'Notebook'}</Breadcrumb.Page></Breadcrumb.Item> : <>
+              <Breadcrumb.Item><Breadcrumb.Link href="#notebook" onClick={event => { event.preventDefault(); setHeaderPath('simple'); }}>{zh ? '笔记空间' : 'Notebook'}</Breadcrumb.Link></Breadcrumb.Item>
+              <Breadcrumb.Separator />
+              {headerPath === 'section' ? <Breadcrumb.Item><Breadcrumb.Page>{zh ? '产品研究与项目归档' : 'Product research and project archive'}</Breadcrumb.Page></Breadcrumb.Item> : <>
+                <Breadcrumb.Item><Breadcrumb.Link href="#research" onClick={event => { event.preventDefault(); setHeaderPath('section'); }}>{zh ? '产品研究与项目归档' : 'Product research and project archive'}</Breadcrumb.Link></Breadcrumb.Item>
+                <Breadcrumb.Separator />
+                <Breadcrumb.Item><Breadcrumb.Page>{zh ? '2026 年跨区域用户研究与产品决策记录' : '2026 cross-regional user research and product decision records'}</Breadcrumb.Page></Breadcrumb.Item>
+              </>}
+            </>}
+          </Breadcrumb.List>
+        </Breadcrumb.Root>
+      </div>
+    </div>;
+    const header = <Layout.Header className="layout-notebook__header" divided={divided}>
+      <div className="layout-notebook__header-grid">
+        <div className="layout-notebook__header-leading">
+          {hasSidebar && !rightSidebar && (collapsible || compact) && !open && toggleSidebar}
+          {headerTitle}
+        </div>
+        <Flex className="layout-notebook__header-actions" align="center" gap={1}>
+          <Button variant="ghost" startIcon={<DocsIcon data={plusIcon} size={26} />} onClick={addNote}>{zh ? '新建笔记' : 'New note'}</Button>
+          {hasSidebar && rightSidebar && (collapsible || compact) && !open && toggleSidebar}
+          {layout === 'dual' && !compact && collapsible && <Button ref={detailsToggle} variant="ghost" size="icon"
+            aria-label={detailsOpen ? (zh ? '收起详情' : 'Close details') : (zh ? '展开详情' : 'Open details')}
+            data-tooltip={zh ? '切换详情' : 'Toggle details'} aria-expanded={detailsOpen} aria-controls={detailsId}
+            onClick={() => { motion.prepare(); setDetailsOpen(value => !value); }}><DocsIcon data={rightSidebarIcon} size={26} /></Button>}
+        </Flex>
+      </div>
+    </Layout.Header>;
+    const navigation = hasSidebar && <Layout.Sidebar id={sidebarId} className="layout-notebook__sidebar" data-sidebar-side={rightSidebar ? 'end' : 'start'}
+      hidden={!open} width={Number(width)} padding={0} divided={compact && divided}>
+      {nestedHeader && <Layout.Header className="layout-notebook__sidebar-heading" divided={divided}>
+        <Flex className="layout-notebook__sidebar-brand" align="center" gap={2}>
+          <DocsIcon data={notebookIcon} size={26} /><PencilText>{zh ? '我的笔记' : 'My notes'}</PencilText>
+        </Flex>
+        {collapsible && open && toggleSidebar}
+      </Layout.Header>}
+      <div className="layout-notebook__navigation">
+        <div className="layout-notebook__sidebar-top">
+        <Stack as="nav" className="layout-notebook__navigation-list" gap={1} aria-label={zh ? '笔记目录' : 'Notes navigation'}>
           {labels.map((label, index) => <Button key={label} variant={active === index ? 'secondary' : 'ghost'}
-            startIcon={<DocsIcon data={icons[index]} />} align="start" fullWidth
-            aria-current={active === index ? 'page' : undefined} onClick={() => setActive(index)}>{label}</Button>)}
+            startIcon={<DocsIcon data={icons[index]} size={26} />} align="start" fullWidth
+            aria-current={active === index ? 'page' : undefined} onClick={() => { setActive(index); if (compact) closeSidebar(); }}>{label}</Button>)}
         </Stack>
+        </div>
+        <div className="layout-notebook__sidebar-bottom">
         <div className="layout-notebook__storage">
           <Progress value={published} max={notes.length} label={zh ? '发布进度' : 'Publishing'} />
           <PencilText>{`${published} / ${notes.length}`}</PencilText>
         </div>
-      </Layout.Sidebar>}
-      <Layout.Content>
+        {!nestedHeader && open && (collapsible || compact) && toggleSidebar}
+        </div>
+      </div>
+    </Layout.Sidebar>;
+    const content = <Layout.Content className="layout-notebook__content" inert={compact && open} aria-hidden={compact && open || undefined}>
         <Stack gap={5}>
-          <Flex align="center" justify="between" wrap>
-            <PencilText as="h3">{labels[active]}</PencilText>
-            <Badge>{visibleNotes.length + (zh ? ' 条' : ' notes')}</Badge>
-          </Flex>
           <div className="layout-notebook__notes">
             {visibleNotes.map(note => <Card.Root key={note.id} className="layout-notebook__note">
               <Card.Content>
@@ -271,7 +473,7 @@ const addNote = () => {
                     <Badge variant={note.published ? 'success' : 'neutral'}>{note.published ? (zh ? '已发布' : 'Published') : (zh ? '草稿' : 'Draft')}</Badge>
                     <Button variant="ghost" size="icon" aria-label={(zh ? '收藏：' : 'Favorite: ') + note.title[zh ? 0 : 1]}
                       aria-pressed={note.favorite} data-tooltip={zh ? '收藏' : 'Favorite'} onClick={() => toggleFavorite(note.id)}>
-                      <DocsIcon data={starIcon} active={note.favorite} />
+                      <DocsIcon data={starIcon} size={26} active={note.favorite} />
                     </Button>
                   </Flex>
                   <PencilText as="h4">{note.title[zh ? 0 : 1]}</PencilText>
@@ -282,22 +484,81 @@ const addNote = () => {
           </div>
           {!visibleNotes.length && <PencilText as="p">{zh ? '还没有收藏的笔记' : 'No favorite notes yet'}</PencilText>}
         </Stack>
-      </Layout.Content>
-    </Layout.Body>
-    <Layout.Footer divided={divided}>
+    </Layout.Content>;
+    const footer = <Layout.Footer divided={divided}>
       <Flex align="center" justify="between" wrap>
         <PencilText as="output" aria-live="polite">{notes.length + (zh ? ' 条笔记' : ' notes')}</PencilText>
         <PencilText>{zh ? '个人工作区' : 'Personal workspace'}</PencilText>
       </Flex>
-    </Layout.Footer>
-  </Layout.Root>;
+    </Layout.Footer>;
+    const secondary = layout === 'dual' && !compact && <Layout.Sidebar id={detailsId} hidden={!detailsOpen} className="layout-notebook__secondary" data-sidebar-side="end" width={160}>
+      <Stack gap={5}>
+        <PencilText as="h3">{zh ? '工作区' : 'Workspace'}</PencilText>
+        <dl>
+          <div><PencilText as="dt">{zh ? '笔记' : 'Notes'}</PencilText><PencilText as="dd">{String(notes.length)}</PencilText></div>
+          <div><PencilText as="dt">{zh ? '收藏' : 'Favorites'}</PencilText><PencilText as="dd">{String(notes.filter(note => note.favorite).length)}</PencilText></div>
+          <div><PencilText as="dt">{zh ? '已发布' : 'Published'}</PencilText><PencilText as="dd">{String(published)}</PencilText></div>
+        </dl>
+      </Stack>
+    </Layout.Sidebar>;
+    const workspace = nestedHeader ? <Layout.Content padding={0} className="layout-notebook__column">
+      {header}{content}{fullHeightSidebar && footer}
+    </Layout.Content> : content;
+    const navigationPanel = hasSidebar && <LayoutSidebarPanel id={`${sidebarId}-panel`} width={Number(width)}
+      open={desktopOpen} onOpenChange={next => {
+        if (!next && desktopOpen) focusAfterCollapse.current = true;
+        setDesktopOpen(next);
+      }} collapsible={collapsible}>{navigation}</LayoutSidebarPanel>;
+    const resizeHandle = <Resizable.Handle disabled={!resizable} hidden={!desktopOpen} className="layout-notebook__resize"
+      data-divided={divided} label={zh ? '调整侧栏宽度' : 'Resize sidebar'} />;
+    const body = <Layout.Body>
+      {compact ? <>
+      {compact && open && <button type="button" className="layout-notebook__dismiss" aria-label={zh ? '收起侧栏' : 'Close sidebar'} tabIndex={-1} onClick={closeSidebar} />}
+      {!rightSidebar && navigation}
+      {workspace}
+      {rightSidebar && navigation}
+      </> : <Resizable.Root key={`${layout}-${sidebar}`} className="layout-notebook__panels">
+        {hasSidebar && !rightSidebar && <>{navigationPanel}{resizeHandle}</>}
+        <Resizable.Panel id={`${sidebarId}-content`} minSize="30%" className="layout-notebook__panel">{workspace}</Resizable.Panel>
+        {hasSidebar && rightSidebar && <>{resizeHandle}{navigationPanel}</>}
+        {secondary && <>
+          <Resizable.Handle disabled={!resizable} hidden={!detailsOpen} className="layout-notebook__resize" data-divided={divided} label={zh ? '调整详情宽度' : 'Resize details'} />
+          <LayoutSidebarPanel id={`${detailsId}-panel`} width={160} open={detailsOpen} onOpenChange={setDetailsOpen} collapsible={collapsible}>{secondary}</LayoutSidebarPanel>
+        </>}
+      </Resizable.Root>}
+    </Layout.Body>;
+    return <Layout.Root ref={motion.root} className="layout-examples__shell layout-notebook" collapseAt={collapseAt} data-compact={compact} data-layout={layout}
+      onKeyDown={event => {
+        if (event.key === 'Escape' && open && (collapsible || compact)) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeSidebar();
+        }
+      }}>
+      {!nestedHeader && header}
+      {body}
+      {(!nestedHeader || splitHeader) && footer}
+    </Layout.Root>;
+  };
   return <div className="layout-examples layout-examples--workspace">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[{ label: '布局', content: <>
-      <Switch label={zh ? '显示侧栏' : 'Show sidebar'} checked={sidebar} onCheckedChange={setSidebar} />
+      <ChoiceGrid className="layout-mode-picker" name={`${sidebarId}-mode`} label={zh ? '布局模式' : 'Layout mode'} columns={2}
+        value={layout} onValueChange={next => { setLayout(next as NotebookLayout); setCompactOpen(false); }}>
+        {notebookLayouts.map(([value, chinese, english]) => <ChoiceGridOption key={value} value={value}
+          label={zh ? chinese : english} icon={<LayoutDiagram layout={value} />} />)}
+      </ChoiceGrid>
+      <DocsSelect label={zh ? '页头路径' : 'Header path'} value={headerPath} onValueChange={next => setHeaderPath(next as HeaderPath)}
+        options={[[ 'simple', zh ? '简单标题' : 'Simple title' ], [ 'section', zh ? '二级页面' : 'Section page' ], [ 'long', zh ? '长路径' : 'Long path' ]]} />
+      <Switch label={zh ? '启用侧栏' : 'Enable sidebar'} checked={sidebar} onCheckedChange={setSidebar} disabled={layout === 'content'} />
+      <Switch label={zh ? '拖拽调宽' : 'Resize panels'} checked={resizable} onCheckedChange={setResizable} disabled={layout === 'content'} />
+      <Switch label={zh ? '允许折叠' : 'Collapsible panels'} checked={collapsible} onCheckedChange={value => {
+        setCollapsible(value);
+        if (!value) { setDesktopOpen(true); setDetailsOpen(true); }
+      }} disabled={layout === 'content'} />
       <Switch label={zh ? '区域分割线' : 'Region dividers'} checked={divided} onCheckedChange={setDivided} />
-      <DocsSelect label={zh ? '侧栏宽度' : 'Sidebar width'} value={width} onValueChange={setWidth} options={['120', '160', '200', '240'].map(value => [value, value + ' px'] as const)} />
-      <DocsSelect label={zh ? '堆叠断点' : 'Stack breakpoint'} value={collapseAt} onValueChange={next => setCollapseAt(next as typeof collapseAt)}
-        options={[[ 'sm', '640 px' ], [ 'md', '768 px' ], [ 'never', zh ? '不自动堆叠' : 'Never' ]]} />
+      <DocsSelect label={zh ? '初始侧栏宽度' : 'Initial sidebar width'} value={width} onValueChange={setWidth} disabled={!sidebar || layout === 'content'} options={['120', '160', '200', '240'].map(value => [value, value + ' px'] as const)} />
+      <DocsSelect label={zh ? '收起断点' : 'Collapse breakpoint'} value={collapseAt} onValueChange={next => setCollapseAt(next as typeof collapseAt)}
+        options={[[ 'sm', '640 px' ], [ 'md', '768 px' ], [ 'never', zh ? '不自动收起' : 'Never' ]]} />
     </> }]} />}><LayoutViewport>{sample}</LayoutViewport></ComponentPlayground>
     <ComponentExample title={zh ? '没有侧栏也可以' : 'Without a sidebar'} code={`<Layout.Root>
   <Layout.Header divided><PencilText>${zh ? '一页笔记' : 'One-page notebook'}</PencilText></Layout.Header>

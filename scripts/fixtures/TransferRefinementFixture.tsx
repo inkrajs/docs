@@ -24,7 +24,9 @@ type Events = {
   batchProposals: string[][];
 };
 
-function Fixture({ events }: { events: Events }) {
+type PendingUpdates = Partial<Record<keyof Events, () => void>>;
+
+function Fixture({ events, pending }: { events: Events; pending: PendingUpdates }) {
   const [delayedKeys, setDelayedKeys] = useState<string[]>([]);
   const [rejectedKeys, setRejectedKeys] = useState<string[]>([]);
   const [movedFocusKeys, setMovedFocusKeys] = useState<string[]>([]);
@@ -51,7 +53,7 @@ function Fixture({ events }: { events: Events }) {
       <Transfer items={items} labels={labels} searchable={false} targetKeys={delayedKeys}
         onTargetKeysChange={next => {
           events.delayedProposals.push(next);
-          setTimeout(() => setDelayedKeys(next), 80);
+          pending.delayedProposals = () => setDelayedKeys(next);
         }} />
     </section>
 
@@ -59,7 +61,7 @@ function Fixture({ events }: { events: Events }) {
       <Transfer items={items} labels={labels} searchable={false} targetKeys={rejectedKeys}
         onTargetKeysChange={next => {
           events.rejectedProposals.push(next);
-          setTimeout(() => setRejectedKeys(['beta']), 80);
+          pending.rejectedProposals = () => setRejectedKeys(['beta']);
         }} />
     </section>
 
@@ -67,7 +69,7 @@ function Fixture({ events }: { events: Events }) {
       <Transfer items={items} labels={labels} searchable={false} targetKeys={movedFocusKeys}
         onTargetKeysChange={next => {
           events.movedFocusProposals.push(next);
-          setTimeout(() => setMovedFocusKeys(next), 80);
+          pending.movedFocusProposals = () => setMovedFocusKeys(next);
         }} />
       <Button data-testid="outside-focus">Outside focus</Button>
     </section>
@@ -76,7 +78,7 @@ function Fixture({ events }: { events: Events }) {
       <Transfer items={items} labels={labels} searchable={false} targetKeys={batchKeys}
         onTargetKeysChange={next => {
           events.batchProposals.push(next);
-          setTimeout(() => setBatchKeys(next), 80);
+          pending.batchProposals = () => setBatchKeys(next);
         }} />
     </section>
   </main>;
@@ -85,6 +87,17 @@ function Fixture({ events }: { events: Events }) {
 export function mount(container: HTMLElement) {
   const root = createRoot(container);
   const events: Events = { delayedProposals: [], rejectedProposals: [], movedFocusProposals: [], batchProposals: [] };
-  root.render(<Fixture events={events} />);
-  return { events, unmount: () => root.unmount() };
+  const pending: PendingUpdates = {};
+  root.render(<Fixture events={events} pending={pending} />);
+  return {
+    events,
+    // Let browser assertions inspect pending focus before the controlled response.
+    resolve(key: keyof Events) {
+      const update = pending[key];
+      if (!update) throw new Error(`No pending Transfer update: ${key}`);
+      delete pending[key];
+      update();
+    },
+    unmount: () => root.unmount(),
+  };
 }
