@@ -6,27 +6,25 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This checkout consumes an unpublished `@inkra/react@0.8.0` candidate from
-`vendor/inkra.tgz` to document shared Layout columns, interactive grids,
-Pagination options and Textarea row-based sizing.
-library-candidate.json pins the exact source revision and archive checksums.
-Build verifies the installed archive without a source alias. The published
-0.6.0 package does not include these Pagination or Textarea additions; the
-existing `react-v0.7.0` tag also predates the Textarea API. This documentation
-change does not publish npm packages or deploy the website.
+This checkout consumes the registry-verified `@inkra/react@0.8.0` release,
+including shared Layout columns, interactive grids, Pagination options and
+Textarea row-based sizing. library-candidate.json pins the released source
+revision and public archive checksums. Build verifies the installed package
+without a source alias. Documentation changes do not publish npm packages or
+deploy the website.
 
 ## Local Development
 
-First prepare the exact candidate using **Prepare An Unpublished Candidate**
-below, then run:
+Install the pinned public release, then build and preview:
 
 ```sh
+npm ci
 npm run build
 npm run dev -- --port 4180
 ```
 
-Fresh checkouts need the prepared vendor archive before `npm ci`; do not
-substitute the public 0.6.0 release for this candidate.
+No sibling source checkout or vendor archive is required. For unpublished
+library changes, use **Prepare An Unpublished Candidate** below.
 
 ## Local Routes And Page Actions
 
