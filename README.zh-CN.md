@@ -10,20 +10,19 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-当前检出从 `vendor/inkra.tgz` 安装未发布的 `@inkra/react@0.8.0` 候选，
-用于记录分页接口，以及 Textarea 从一行增长、按最大正文行数限高的自动高度；
-正式 0.6.0 不含这些新增接口；既有 `react-v0.7.0` 标签也不含 Textarea 自动高度。
-library-candidate.json 固定组件源码的精确提交和归档校验和，构建验证实际安装归档，
-不引用组件源码。本次文档改动不发布 npm 包，也不部署网站。
-全新检出须先按下文准备候选归档，再运行：
+当前检出安装已核验公开归档的 `@inkra/react@0.8.0` 正式版本，包含共享页头与侧栏、
+可交互网格、分页配置，以及 Textarea 按正文行数增长和限高的自动高度。
+library-candidate.json 固定已发布源码的精确提交和公开归档校验和，构建验证实际安装包，
+不引用组件源码。文档改动不会自行发布 npm 包或部署网站。全新检出运行：
 
 ```sh
+npm ci
 npm run build
 npm run dev -- --port 4180
 ```
 
-以下准备脚本也会安装依赖。执行 `npm ci` 前必须先生成精确的 vendor 归档，
-不要用公开 0.6.0 或其他同名包替代本候选。
+正式版本不需要相邻组件源码或 vendor 归档。仅在验证未发布的组件修改时，
+使用以下候选准备流程；准备脚本也会安装依赖。
 
 先在组件仓检出 library-candidate.json 中的精确提交，运行 npm ci、npm run build，
 再用 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 打包。在本仓运行：
