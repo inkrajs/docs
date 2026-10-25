@@ -68,16 +68,18 @@ try {
     await page.locator('.page-heading').waitFor();
     assert.equal(await page.locator('.app-header .header-language').count(), 0, 'docs keeps language selection in the sidebar');
     assert.equal(await group.count(), 1, 'docs also groups header actions');
-    assert.equal(await group.locator(':scope > .inkra-button').count(), 2);
-    assert.equal(await group.locator('.inkra-button-group__divider').evaluateAll(nodes => nodes.filter(node => getComputedStyle(node).display !== 'none').length), 1);
-    const docsBoxes = await group.locator(':scope > .inkra-button').evaluateAll(nodes => nodes.map(node => {
+    const docsActions = group.locator(':scope > .inkra-button:visible');
+    assert.equal(await docsActions.count(), width <= 768 ? 3 : 2, 'mobile adds search before theme and GitHub');
+    assert.equal(await group.locator('.inkra-button-group__divider').count(), 0, 'ghost actions do not use outlined group dividers');
+    assert(await docsActions.evaluateAll(nodes => nodes.every(node => node.dataset.variant === 'ghost')));
+    const docsBoxes = await docsActions.evaluateAll(nodes => nodes.map(node => {
       const box = node.getBoundingClientRect();
       return { x: box.x, y: box.y, width: box.width, height: box.height };
     }));
     assert(Math.abs(docsBoxes[1].x - docsBoxes[0].x - docsBoxes[0].width) < 1, 'docs actions have no gap');
     assert.equal(docsBoxes[0].y, docsBoxes[1].y);
     assert(docsBoxes.every(box => box.width >= 44 && box.height >= 44));
-    assert(await group.locator('.inkra-button__surface > .inkra-pencil-surface__border').evaluateAll(nodes => nodes.length === 2 && nodes.every(node => getComputedStyle(node).display === 'none')));
+    assert(await docsActions.locator('.inkra-button__surface > .inkra-pencil-surface__border').evaluateAll(nodes => nodes.every(node => getComputedStyle(node).display === 'none')));
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({ path: `/tmp/inkra-docs-header-${width}.png` });
     assert.equal(await page.locator('.header-customize').count(), 1);
