@@ -6,11 +6,12 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This checkout consumes an unpublished `@inkra/react@0.7.0` candidate from
-`vendor/inkra.tgz` to document Pagination page-size and layout options.
+This checkout consumes an unpublished `@inkra/react@0.8.0` candidate from
+`vendor/inkra.tgz` to document Pagination options and Textarea row-based sizing.
 library-candidate.json pins the exact source revision and archive checksums.
 Build verifies the installed archive without a source alias. The published
-0.6.0 package does not include these Pagination additions. This documentation
+0.6.0 package does not include these Pagination or Textarea additions; the
+existing `react-v0.7.0` tag also predates the Textarea API. This documentation
 change does not publish npm packages or deploy the website.
 
 ## Local Development
