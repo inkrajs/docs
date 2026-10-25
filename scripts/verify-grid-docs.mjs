@@ -20,15 +20,30 @@ async function verifyShrinkingBoard(page, playground, board) {
   const canvas = board.locator('.inkra-grid-board__canvas');
   const resize = board.locator('[data-grid-item="notes"] .inkra-grid-board__resize');
   const height = () => canvas.evaluate(node => node.offsetHeight);
+  const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await page.waitForFunction(node => node.clientWidth >= 480 && node.dataset.stacked !== 'true', await board.elementHandle());
+  await settle();
   const baseline = await height();
+  await resize.scrollIntoViewIfNeeded();
   await resize.focus();
   for (const [key, direction] of [['ArrowDown', 1], ['ArrowUp', -1]]) {
     for (let step = 0; step < 6; step += 1) {
       const before = await height();
+      assert(await resize.evaluate(node => node === document.activeElement), 'keyboard resize retains handle focus');
       await page.keyboard.press(key);
       await page.waitForFunction(({ canvas, expected }) => canvas.offsetHeight === expected, {
         canvas: await canvas.elementHandle(), expected: before + direction * 52,
+      }).catch(async error => {
+        console.error('Grid keyboard resize state', await board.evaluate((node, probe) => ({
+          ...probe, stacked: node.dataset.stacked, width: node.clientWidth,
+          height: node.querySelector('.inkra-grid-board__canvas').offsetHeight,
+          active: document.activeElement?.outerHTML,
+          item: node.querySelector('[data-grid-item="notes"]').getAttribute('style'),
+        }), { key, step, before, expected: before + direction * 52 }));
+        throw error;
       });
+      await settle();
+      assert.equal(await height(), before + direction * 52, 'controlled layout retains the committed resize');
     }
     await assertNaturalBoardHeight(playground);
   }
@@ -63,6 +78,10 @@ async function verifyShrinkingBoard(page, playground, board) {
 try {
   for (const [width, locale] of [[1543, 'zh-CN'], [390, 'en']]) {
     const page = await browser.newPage({ viewport: { width, height: 954 }, reducedMotion: 'reduce' });
+    if (process.env.GRID_TEST_CPU_RATE) {
+      const session = await page.context().newCDPSession(page);
+      await session.send('Emulation.setCPUThrottlingRate', { rate: Number(process.env.GRID_TEST_CPU_RATE) });
+    }
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.addInitScript(locale => localStorage.setItem('inkra-docs-locale', locale), locale);
