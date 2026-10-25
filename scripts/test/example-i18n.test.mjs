@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
+import { docsMessages, lookupDocsMessage } from '../../src/docsLocales.ts';
 
 const components = new URL('../../src/components/', import.meta.url);
 const source = readFileSync(new URL('../../src/i18n.tsx', import.meta.url), 'utf8');
@@ -23,7 +24,7 @@ assert(dictionary && translator);
 const dictionaryKeys = dictionary.properties.map(property => property.name.text);
 const english = runInNewContext(`(${dictionary.getText(i18n)})`);
 const executable = ts.transpileModule(translator.getText(i18n).replace(/^export /, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
-const translate = runInNewContext(`${executable}; translateMessage`, { english });
+const translate = runInNewContext(`${executable}; translateMessage`, { english, lookupDocsMessage });
 assert(optionDictionary && optionTranslator);
 const optionMessages = runInNewContext(`(${optionDictionary.getText(i18n)})`);
 const optionExecutable = ts.transpileModule(optionTranslator.getText(i18n).replace(/^export /, ''), { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
@@ -49,7 +50,7 @@ test('all literal t() messages in component examples are registered', () => {
     walk(ast, node => {
       if (!ts.isCallExpression(node) || node.expression.getText(ast) !== 't') return;
       const message = node.arguments[0];
-      if (message && ts.isStringLiteral(message) && /\p{Script=Han}/u.test(message.text) && !Object.hasOwn(english, message.text)) missing.push(`${file}: ${message.text}`);
+      if (message && ts.isStringLiteral(message) && /\p{Script=Han}/u.test(message.text) && !Object.hasOwn(english, message.text) && !Object.hasOwn(docsMessages, message.text) && !ts.isStringLiteral(node.arguments[1] ?? node)) missing.push(`${file}: ${message.text}`);
     });
   }
   assert.deepEqual(missing, []);

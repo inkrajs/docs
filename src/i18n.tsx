@@ -1,8 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ComponentProps, type ReactNode } from 'react';
 import { PencilText as BasePencilText } from '@inkra/react';
+import { InkraProvider } from '@inkra/react/i18n';
+import { lookupDocsMessage, resolveDocsLocale, type DocsLocale } from './docsLocales';
 
-type Locale = 'zh-CN' | 'en';
+type Locale = DocsLocale;
 const english: Record<string, string> = {
+  '语言与自定义字典': 'Languages and custom dictionaries',
+  '组件语言': 'Component language',
+  '自定义字典': 'Custom dictionary',
+  'locale 支持中文、英文、日语、韩语和法语，也接受 ja-JP、fr-CA 等地区标记。日期和数字跟随地区格式；业务文案和值由应用管理。': 'locale supports Chinese, English, Japanese, Korean and French, including regional tags such as ja-JP and fr-CA. Dates and numbers follow regional formats; application copy and values remain yours.',
+  'messages 是按 key 覆盖的部分字典。组件显式文案优先于当前 Provider，内层 Provider 继承外层覆盖；未覆盖项使用内置语言，未知语言回退英文。': 'messages is a partial dictionary keyed by message ID. Explicit component copy takes priority, and nested providers inherit outer overrides. Missing entries use the built-in language; unknown languages fall back to English.',
+  '用 InkraDictionary 校验 key，通过 inkraLocales 查看完整字典。保留原有的占位符，如 {page}、{count}；替换只产生文本，不执行 HTML。空字符串是有效覆盖，undefined 不覆盖。': 'Validate keys with InkraDictionary and inspect all messages in inkraLocales. Keep the original placeholders, such as {page} and {count}. Substitution produces text, never executable HTML. Empty strings are valid overrides; undefined is ignored.',
   '色样使用具名原生按钮，Enter 或 Space 选择，选中状态通过轮廓和 aria-pressed 表达；禁用项不进入键盘顺序。': 'Swatches use named native buttons. Enter or Space selects, with an outline and aria-pressed conveying selection. Disabled items are excluded from keyboard navigation.',
   '播放、暂停、进度、音量和倍速均使用有名称的控件；自动播放默认关闭，显式启用仍受浏览器策略限制。加载失败、缓冲与播放被拒绝通过可读状态反馈。': 'Playback, seeking, volume and speed use named controls. Autoplay defaults off and remains subject to browser policy when enabled. Loading failures, buffering and blocked playback have readable feedback.',
   '前后按钮和分页有可访问名称，键盘可移动当前项；自动播放默认关闭，启用时在交互、页面隐藏和减少动态效果时暂停。': 'Navigation and page controls have accessible names and keyboard support. Autoplay defaults off and pauses for interaction, a hidden page and reduced motion.',
@@ -541,6 +549,9 @@ const english: Record<string, string> = {
   '笔记 · 6 条': 'Notes · 6 items', '设计 · 3 张': 'Design · 3 sketches', '评审 · 2 项': 'Review · 2 items', '素材 · 1 项': 'Assets · 1 item',
   '标记完成': 'Mark complete', '完成': 'Done',
   '开始': 'Start', '快速开始': 'Getting started', '组件': 'Components', '基础': 'Foundations',
+  '国际化': 'Internationalization', '主题定制': 'Theme customization',
+  '默认': 'Default',
+  '主题模式、局部变量与笔触': 'Theme modes, scoped tokens and pencil strokes',
   '设计规范': 'Design standards', '组件文档': 'Documentation', '组件文档目录': 'Documentation navigation',
   '安装、样式与基础用法': 'Installation, styles and basic usage',
   '按钮预览、API 与无障碍': 'Button examples, API and accessibility',
@@ -635,7 +646,7 @@ const english: Record<string, string> = {
   '已复制代码': 'Code copied', '复制失败': 'Copy failed', '复制代码': 'Copy code', '隐藏源码': 'Hide source', '查看源码': 'View source',
 };
 
-const LocaleContext = createContext({ locale: 'zh-CN' as Locale, setLocale: (_locale: Locale) => {}, t: (text: string) => text });
+const LocaleContext = createContext({ locale: 'zh-CN' as Locale, setLocale: (_locale: Locale) => {}, t: (text: string, _englishFallback?: string) => text });
 
 // Display-label aliases are scoped to docs selects, never API values or user content.
 const optionLabelMessages: Record<string, string> = {
@@ -653,12 +664,17 @@ const optionLabelMessages: Record<string, string> = {
 };
 
 export function translateOptionLabel(locale: Locale, text: string): string {
-  if (locale === 'zh-CN' && Object.hasOwn(optionLabelMessages, text)) return optionLabelMessages[text];
+  if (locale !== 'en' && Object.hasOwn(optionLabelMessages, text)) return translateMessage(locale, optionLabelMessages[text]);
   return translateMessage(locale, text);
 }
 
-export function translateMessage(locale: Locale, text: string): string {
-  if (locale !== 'en') return text;
+export function translateMessage(locale: Locale, text: string, englishFallback?: string): string {
+  if (locale === 'zh-CN') return text;
+  if (locale === 'en' && englishFallback !== undefined) return englishFallback;
+  if (locale === 'en' && Object.hasOwn(english, text)) return english[text];
+  const localized = lookupDocsMessage(locale, text);
+  if (localized !== undefined) return localized;
+  if (englishFallback !== undefined) return englishFallback;
   if (Object.hasOwn(english, text)) return english[text];
   if (/^已保存 \d+ 次$/.test(text)) return `Saved ${text.match(/\d+/)![0]} times`;
   return text;
@@ -666,14 +682,14 @@ export function translateMessage(locale: Locale, text: string): string {
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(() => {
-    try { return localStorage.getItem('inkra-docs-locale') === 'en' ? 'en' : 'zh-CN'; } catch { return 'zh-CN'; }
+    try { return resolveDocsLocale(localStorage.getItem('inkra-docs-locale')); } catch { return 'zh-CN'; }
   });
   useEffect(() => {
     document.documentElement.lang = locale;
     try { localStorage.setItem('inkra-docs-locale', locale); } catch { /* Storage is optional. */ }
   }, [locale]);
-  const value = useMemo(() => ({ locale, setLocale, t: (text: string) => translateMessage(locale, text) }), [locale]);
-  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
+  const value = useMemo(() => ({ locale, setLocale, t: (text: string, englishFallback?: string) => translateMessage(locale, text, englishFallback) }), [locale]);
+  return <LocaleContext.Provider value={value}><InkraProvider locale={locale}>{children}</InkraProvider></LocaleContext.Provider>;
 }
 
 export const useLocale = () => useContext(LocaleContext);

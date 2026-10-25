@@ -53,7 +53,8 @@ try {
   const triggerFrameAfter = await frame(triggerCase).boundingBox();
   const triggerClearSlotAfter = await clear(triggerCase).locator('..').boundingBox();
   assert.equal(triggerFrameAfter.width, triggerFrameBefore.width, 'trigger frame width remains stable after clear');
-  assert.equal(triggerClearSlotAfter.width, triggerClearSlotBefore.width, 'trigger clear slot remains reserved');
+  assert.equal(triggerClearSlotAfter, null, 'empty trigger clear slot occupies no space');
+  assert(triggerClearSlotBefore.width >= 44, 'selected clear action keeps its hit target');
   assert.equal(await clear(triggerCase).getAttribute('tabindex'), '-1');
 
   const popupCase = page.getByTestId('popup-case');
@@ -80,8 +81,9 @@ try {
   assert.equal((await events()).popupValues.at(-1), null);
   await waitForFocus('Popup search');
   assert.equal((await frame(popupCase).boundingBox()).width, popupFrameBefore.width);
-  assert.equal((await clear(popupCase).locator('..').boundingBox()).width, popupClearSlotBefore.width,
-    'popup clear slot remains reserved');
+  assert.equal(await clear(popupCase).locator('..').boundingBox(), null,
+    'empty popup clear slot occupies no space');
+  assert(popupClearSlotBefore.width >= 44);
   assert.equal(await popupTrigger.locator('button').count(), 0, 'popup trigger does not nest buttons');
 
   const multipleCase = page.getByTestId('multiple-case');
@@ -189,7 +191,7 @@ try {
     await page.screenshot({ path: `/tmp/inkra-search-select-${width}.png`, animations: 'disabled' });
   }
   assert.deepEqual(errors, []);
-  console.log('PASS Searchable Select shared frames, stable clear slots, forms, states, RTL and sizes');
+  console.log('PASS Searchable Select shared frames, collapsible empty clear slots, forms, states, RTL and sizes');
 } finally {
   await page.evaluate(() => {
     window.searchSelectRefinementFixture?.unmount();

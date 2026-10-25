@@ -44,7 +44,7 @@ test('every registered component and navigation group has an explicit pencil ico
     'Button',
     ...foundationComponents.map(route => foundationNames[route]),
     ...componentNavigationGroups.map(group => group.label),
-    '开始', '组件', '设计资源', '快速开始', '使用指南', '设计规范',
+    '开始', '组件', '设计资源', '快速开始', '国际化', '主题定制', '使用指南', '设计规范',
   ];
   const fallback = navigationIcon('__unknown_component__');
   for (const label of labels) {

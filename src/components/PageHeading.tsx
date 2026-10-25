@@ -14,8 +14,8 @@ import { pageMarkdown } from './pageMarkdown';
 import { assistantServices, assistantUrl } from './assistantLinks';
 
 export function PageHeading({ title, description }: { title: string; description?: string }) {
-  const { locale } = useLocale();
-  const en = locale === 'en';
+  const { locale, t } = useLocale();
+  const en = locale !== 'zh-CN';
   const header = useRef<HTMLElement>(null);
   const menu = useRef<HTMLButtonElement>(null);
   const [markdown, setMarkdown] = useState<string | null>(null);
@@ -24,14 +24,14 @@ export function PageHeading({ title, description }: { title: string; description
   const content = () => {
     const article = header.current?.closest('article');
     const view = article?.querySelector('.page-tabs [aria-selected="true"]')?.textContent?.trim();
-    return article ? pageMarkdown(article) + (view ? `\n${en ? 'View' : '当前视图'}: ${view}\n` : '') : '';
+    return article ? pageMarkdown(article) + (view ? `\n${t("当前视图", "View")}: ${view}\n` : '') : '';
   };
   const copy = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
-      setStatus(en ? 'Copied' : '已复制');
+      setStatus(t("已复制", "Copied"));
     } catch {
-      setStatus(en ? 'Copy failed. Select the Markdown text to copy manually.' : '复制失败，可在 Markdown 视图中选择文字复制。');
+      setStatus(t("复制失败，可在 Markdown 视图中选择文字复制。", "Copy failed. Select the Markdown text to copy manually."));
       setMarkdown(value);
     }
   };
@@ -50,7 +50,7 @@ export function PageHeading({ title, description }: { title: string; description
     void Promise.resolve().then(() => navigator.clipboard.writeText(source)).then(() => {
       setStatus(en ? `Documentation copied. Paste it into ${service.name}.` : `文档已复制，请粘贴到 ${service.name}。`);
     }).catch(() => {
-      setStatus(en ? 'Clipboard unavailable. Select the Markdown and copy it manually.' : '剪贴板不可用，请在 Markdown 视图中选择并复制。');
+      setStatus(t("剪贴板不可用，请在 Markdown 视图中选择并复制。", "Clipboard unavailable. Select the Markdown and copy it manually."));
       setMarkdown(source);
     });
   };
@@ -60,18 +60,18 @@ export function PageHeading({ title, description }: { title: string; description
         <DocsIcon data={navigationIcon(title)} size={32} />
         <PencilText as="h1" seed={`${title}-title`}>{title}</PencilText>
       </div>
-      <ButtonGroup className="page-heading__actions" aria-label={en ? 'Page actions' : '页面操作'} variant="outline">
-        <Button startIcon={<DocsIcon data={copyIcon} />} onClick={() => void copy(content())}>{en ? 'Copy page' : '复制页面'}</Button>
+      <ButtonGroup className="page-heading__actions" aria-label={t("页面操作", "Page actions")} variant="outline">
+        <Button startIcon={<DocsIcon data={copyIcon} />} onClick={() => void copy(content())}>{t("复制页面", "Copy page")}</Button>
         <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild><Button ref={menu} size="icon" aria-label={en ? 'More page actions' : '更多页面操作'} title={en ? 'More page actions' : '更多页面操作'}><DocsIcon data={chevronDownIcon} size={26} /></Button></DropdownMenu.Trigger>
+          <DropdownMenu.Trigger asChild><Button ref={menu} size="icon" aria-label={t("更多页面操作", "More page actions")} title={t("更多页面操作", "More page actions")}><DocsIcon data={chevronDownIcon} size={26} /></Button></DropdownMenu.Trigger>
           <DropdownMenu.Portal><DropdownMenu.Content align="end">
-            <DropdownMenu.Item icon={<DocsIcon data={fileTextIcon} />} onSelect={() => setMarkdown(content())}>{en ? 'View as Markdown' : '查看 Markdown'}</DropdownMenu.Item>
+            <DropdownMenu.Item icon={<DocsIcon data={fileTextIcon} />} onSelect={() => setMarkdown(content())}>{t("查看 Markdown", "View as Markdown")}</DropdownMenu.Item>
             {assistantServices.map(service => <DropdownMenu.Item key={service.name} icon={<DocsIcon data={externalLinkIcon} />}
               aria-label={en ? `Open in ${service.name} (opens in a new tab)` : `在 ${service.name} 中打开（新标签页打开）`}
               onSelect={() => openAssistant(service)}>{en ? `Open in ${service.name}` : `在 ${service.name} 中打开`}</DropdownMenu.Item>)}
             <DropdownMenu.Separator />
-            <DropdownMenu.Item icon={<DocsIcon data={downloadIcon} />} onSelect={download}>{en ? 'Download Markdown' : '下载 Markdown'}</DropdownMenu.Item>
-            <DropdownMenu.Item icon={<DocsIcon data={linkIcon} />} onSelect={() => void copy(window.location.href)}>{en ? 'Copy page link' : '复制页面链接'}</DropdownMenu.Item>
+            <DropdownMenu.Item icon={<DocsIcon data={downloadIcon} />} onSelect={download}>{t("下载 Markdown", "Download Markdown")}</DropdownMenu.Item>
+            <DropdownMenu.Item icon={<DocsIcon data={linkIcon} />} onSelect={() => void copy(window.location.href)}>{t("复制页面链接", "Copy page link")}</DropdownMenu.Item>
           </DropdownMenu.Content></DropdownMenu.Portal>
         </DropdownMenu.Root>
       </ButtonGroup>
@@ -82,9 +82,9 @@ export function PageHeading({ title, description }: { title: string; description
     <Overlay.Root open={markdown !== null} onOpenChange={open => { if (!open) setMarkdown(null); }}>
       <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" aria-describedby={undefined}
         onCloseAutoFocus={event => { event.preventDefault(); menu.current?.focus(); }}>
-        <Overlay.Header closeLabel={en ? 'Close' : '关闭'}><Overlay.Title>{`${title} · Markdown`}</Overlay.Title></Overlay.Header>
+        <Overlay.Header closeLabel={t("关闭", "Close")}><Overlay.Title>{`${title} · Markdown`}</Overlay.Title></Overlay.Header>
         <Overlay.Body><pre className="page-markdown">{markdown}</pre></Overlay.Body>
-        <Overlay.Footer><Button startIcon={<DocsIcon data={copyIcon} />} onClick={() => void copy(markdown ?? '')}>{en ? 'Copy' : '复制'}</Button></Overlay.Footer>
+        <Overlay.Footer><Button startIcon={<DocsIcon data={copyIcon} />} onClick={() => void copy(markdown ?? '')}>{t("复制", "Copy")}</Button></Overlay.Footer>
       </Overlay.Content></Overlay.Portal>
     </Overlay.Root>
   </header>;

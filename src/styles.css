@@ -627,6 +627,13 @@ pre {
 .getting-started-content > p,
 .getting-started-content > .code-sample { margin: 0; }
 .getting-started-content > .code-sample { width: 100%; }
+.i18n-examples { display: grid; gap: var(--inkra-space-5); min-width: 0; }
+.content-section.i18n-examples > h2,
+.content-section.i18n-examples > p,
+.i18n-examples > .code-sample { margin: 0; max-width: none; }
+.i18n-examples__preview { display: grid; gap: var(--inkra-space-5); width: 100%; max-width: 40rem; min-width: 0; }
+.i18n-examples__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--inkra-space-5); min-width: 0; }
+.i18n-examples__fields > * { min-width: 0; }
 .content-section.getting-started-content > p { width: 100%; max-width: none; }
 
 .standard-tabs {
@@ -1083,7 +1090,8 @@ table:not(.inkra-table):not(.rdp-month_grid) tbody tr:nth-child(odd) {
   .header-action-divider { display: none; }
   .header-action-group { margin-inline-start: auto; }
   .header-github { margin-inline-start: auto; }
-  .site-navigation { order: 1; flex-basis: 100%; }
+  .site-navigation { order: 1; flex-basis: 100%; min-width: 0; max-width: 100%; overflow-x: auto; }
+  .site-navigation__item { flex: none; }
   .header-search { order: 2; flex-basis: 100%; }
 
   .header-inner > .theme-control,

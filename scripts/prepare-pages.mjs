@@ -5,7 +5,7 @@ import { pageTitle } from '../src/pageTitle.ts';
 
 const dist = new URL('../dist/', import.meta.url);
 const html = await readFile(new URL('index.html', dist), 'utf8');
-const documentation = ['getting-started', 'design-standard', 'usage-guide',
+const documentation = ['getting-started', 'internationalization', 'theming', 'design-standard', 'usage-guide',
   ...['button', ...foundationComponents].map(name => `components/${name}`)];
 const routes = ['blog', 'ecosystem', 'docs', ...documentation,
   ...documentation.map(path => `docs/${path}`)];

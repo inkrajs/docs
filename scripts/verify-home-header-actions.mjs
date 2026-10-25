@@ -51,6 +51,11 @@ try {
     const cancel = drawer.getByRole('button', { name: '取消', exact: true });
     assert.equal(await cancel.getAttribute('data-variant'), 'outline');
     assert.equal(await cancel.locator('.inkra-button__surface.inkra-pencil-surface--clipped').count(), 0);
+    await page.waitForFunction(canvas => {
+      if (!canvas?.width || !canvas.height) return false;
+      return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data
+        .some((value, index) => index % 4 === 3 && value > 0);
+    }, await cancel.locator('.inkra-button__surface > .inkra-pencil-surface__ink').elementHandle());
     assert(await cancel.locator('.inkra-button__surface > .inkra-pencil-surface__ink').evaluate(canvas =>
       canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data.some((value, index) => index % 4 === 3 && value > 0)), 'cancel retains its own painted outline');
     await cancel.click();

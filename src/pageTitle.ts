@@ -4,6 +4,8 @@ const pageNames: Record<string, string> = {
   '/blog': '博客',
   '/ecosystem': '生态',
   '/getting-started': '快速开始',
+  '/internationalization': '国际化',
+  '/theming': '主题定制',
   '/design-standard': '设计规范',
   '/usage-guide': '使用指南',
   '/components/button': 'Button',

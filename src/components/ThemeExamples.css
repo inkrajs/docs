@@ -1,0 +1,29 @@
+.theme-examples { min-width: 0; }
+.theme-examples .content-section { display: grid; gap: 20px; }
+.theme-examples__settings { display: grid; gap: 16px; min-width: 0; }
+.theme-examples__settings > .inkra-button { justify-self: end; }
+.theme-examples__panel:not([hidden]) { display: grid; gap: 20px; padding-block: 20px; }
+.theme-examples__control { display: grid; gap: 8px; min-width: 0; }
+.theme-examples__control > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.theme-examples__control output { font-variant-numeric: tabular-nums; flex: none; }
+.theme-examples__colors { display: flex; flex-wrap: wrap; gap: 4px; }
+.theme-examples__preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 16px;
+  padding: 24px;
+  min-width: 0;
+  width: 100%;
+  max-width: 32rem;
+  background: var(--inkra-paper);
+}
+.theme-examples__preview > * { min-width: 0; }
+.theme-examples__preview > .inkra-button { justify-self: start; }
+.theme-examples__preview > h3 { font-size: 24px; margin: 0; }
+.theme-examples__preview > p { margin: 0; }
+.getting-started-links { display: flex; flex-wrap: wrap; gap: 24px; }
+@media (max-width: 760px) {
+  .theme-examples__preview { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+  .theme-examples__preview > .inkra-button { justify-self: start; }
+}

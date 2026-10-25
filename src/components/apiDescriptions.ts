@@ -633,7 +633,7 @@ const descriptions: Record<string, Copy> = {
 };
 
 export function describeApiProp(component: string, property: string, locale: string): string {
-  const index = locale === 'en' ? 1 : 0;
+  const index = locale === 'zh-CN' ? 0 : 1;
   const exact = descriptions[`${component}:${property}`] ?? descriptions[property] ?? descriptions[property.replace(/^Root\./, '')];
   if (exact) return exact[index];
   const parts = property.split(' / ').map(part => {

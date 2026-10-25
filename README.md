@@ -6,14 +6,16 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This revision consumes the published `@inkra/react@0.4.3` from the public npm
-registry. library-candidate.json pins the released source commit and exact archive
-checksums. Build verifies the public archive and installed dependency without a
-source alias.
+This revision consumes an unpublished `@inkra/react` candidate from
+`vendor/inkra.tgz`. library-candidate.json pins its exact library commit and
+archive checksums. Its package version is still 0.4.3, but its new provider APIs
+are not part of the published npm 0.4.3 release. Build verifies the candidate
+archive and installed dependency without a source alias.
 
 ## Local Development
 
-Install the pinned registry release and run:
+First prepare the pinned library candidate using **Prepare An Unpublished
+Candidate** below. Once the ignored vendor archive exists, run:
 
 ```sh
 npm ci
@@ -21,8 +23,8 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-No sibling library checkout or vendor archive is required. To preview unpublished
-library changes, follow **Prepare An Unpublished Candidate** below.
+Fresh checkouts need the vendor archive before `npm ci`; preparation installs
+the dependency as well. Do not replace it with the registry release.
 
 ## Local Routes And Page Actions
 
@@ -72,6 +74,36 @@ Rebuild the product and prepare again after library edits; there is no implicit
 source link. Review and commit the exact revision, integrity and lockfile together.
 
 ## Checks And Publication
+
+The Start navigation has separate `/docs/internationalization` and `/docs/theming`
+pages. Getting Started stays focused on installation. The language page uses the installed InkraProvider with
+English, Simplified Chinese, Japanese, Korean and French dictionaries. The docs
+language controls expose those same five locales, persist the selected locale,
+and pass it to library defaults. Navigation, shared playground controls and the
+Getting Started, Internationalization and Theming pages have translated copy.
+The rest of the reference catalog is not fully translated: registered messages
+fall back to English, and older bilingual examples retain their existing copy.
+Do not describe these entries as complete five-language reference documentation.
+Developers can override typed message keys globally or in nested providers;
+explicit component copy wins, and application text and submitted values are unchanged.
+`node scripts/verify-i18n.mjs` checks five-language switching, custom messages,
+portals, retained input/selection, regional date and exact-bigint formatting,
+painted text and 1543/1305/390/320px layouts against the installed candidate.
+`node scripts/verify-docs-locales.mjs` checks actual site language menus,
+provider inheritance, persistence, preserved drafts and responsive navigation.
+The new API is a local candidate until a release containing it is published.
+
+The theme page uses the installed `ThemeProvider` from `@inkra/react/theme`.
+It demonstrates local light/dark/system modes, palette variables and icon weight,
+plus the same text, line and fill controls used by the site customizer, and composition
+with the language provider. Both entries share the parameter definitions. `node scripts/verify-theme-provider.mjs`
+checks scoped inheritance, portal updates, retained drafts, system/forced colors,
+navigation and narrow layouts. Both provider demos reuse `ComponentPlayground`:
+preview/code tabs, adjacent properties on wide containers, and a settings toggle
+on narrow containers. No redundant section title repeats the page heading.
+It also checks real pencil-pixel changes for each material group and long
+internationalization paragraphs at Retina resolution. Empty searchable-select
+clear slots collapse without changing the control's outer dimensions.
 
 Primary playgrounds show the component and necessary labels, without demo-only
 debug outputs, helper prose or form actions. Advanced composition and native

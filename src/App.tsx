@@ -1,10 +1,13 @@
 import { Accordion, Button, ButtonGroup, ButtonLink, DropdownMenu, Input, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Switch, Tabs, Tooltip } from '@inkra/react';
 import { ButtonGroupPlayground } from './components/ButtonGroupPlayground';
 import { DocsSelect } from './components/DocsSelect';
+import { InternationalizationExamples } from './components/InternationalizationExamples';
+import { ThemeExamples } from './components/ThemeExamples';
 import { navigationIcon } from './components/iconCatalog';
 import { BrandMark } from './components/BrandMark';
 import { GitHubLink } from './components/GitHubLink';
 import { PencilText, useLocale } from './i18n';
+import { docsLanguages, resolveDocsLocale } from './docsLocales';
 import { __iconData as languagesIcon } from 'lucide-react/dist/esm/icons/languages.mjs';
 import type { ButtonAlign, ButtonLoadingPosition, ButtonSize, ButtonVariant } from '@inkra/react';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
@@ -50,7 +53,7 @@ import { __iconData as chevronDownIcon } from 'lucide-react/dist/esm/icons/chevr
 import { DocsIcon, type LucideIconData } from './components/DocsIcon';
 
 type Theme = 'auto' | 'light' | 'dark';
-type RoutePath = '/' | '/blog' | '/ecosystem' | '/getting-started' | '/components/button' | '/design-standard' | '/usage-guide' | `/components/${FoundationComponent}`;
+type RoutePath = '/' | '/blog' | '/ecosystem' | '/getting-started' | '/internationalization' | '/theming' | '/components/button' | '/design-standard' | '/usage-guide' | `/components/${FoundationComponent}`;
 type ButtonTab = 'preview' | 'api' | 'accessibility';
 type PreviewTab = 'preview' | 'code';
 type ExampleKind = 'appearance' | 'size' | 'icon-size' | 'icons' | 'state' | 'link' | 'group' | 'rtl';
@@ -66,7 +69,11 @@ type NavGroup = { label: string; items: NavItem[]; children?: NavGroup[] };
 const navGroups: NavGroup[] = [
   {
     label: '开始',
-    items: [{ path: '/getting-started', label: '快速开始', description: '安装、样式与基础用法' }],
+    items: [
+      { path: '/getting-started', label: '快速开始', description: '安装、样式与基础用法' },
+      { path: '/internationalization', label: '国际化', description: '语言与自定义字典' },
+      { path: '/theming', label: '主题定制', description: '主题模式、局部变量与笔触' },
+    ],
   },
   { label: '组件', items: [], children: componentNavigationGroups.map(group => ({
     label: group.label,
@@ -105,7 +112,7 @@ function validPath(pathname: string): RoutePath {
   if (pathname === '/' || pathname === '/blog' || pathname === '/ecosystem') return pathname;
   pathname = pathname.replace(/^\/docs(?=\/|$)/, '') || '/getting-started';
   if (foundationComponents.some(name => pathname === `/components/${name}`)) return pathname as RoutePath;
-  if (pathname === '/components/button' || pathname === '/design-standard' || pathname === '/usage-guide') return pathname;
+  if (pathname === '/components/button' || pathname === '/design-standard' || pathname === '/usage-guide' || pathname === '/internationalization' || pathname === '/theming') return pathname;
   return '/getting-started';
 }
 
@@ -116,6 +123,7 @@ function routeHref(path: RoutePath): string {
 function legacyLocation(): { path: RoutePath; tab?: ButtonTab } {
   const hash = window.location.hash.slice(1);
   const path = validPath(window.location.pathname);
+  if (path === '/getting-started' && hash === 'internationalization') return { path: '/internationalization' };
   if (path.startsWith('/components/')) return { path, tab: readButtonTab() };
   if (window.location.pathname !== '/') return { path };
   if (hash === 'api' || hash === 'accessibility') return { path: '/components/button', tab: hash };
@@ -363,7 +371,7 @@ function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
 function LanguageControl() {
   const { locale, setLocale, t } = useLocale();
   return <div className="language-control" title={t('语言')}>
-    <DocsSelect label="语言" hideLabel startIcon={<DocsIcon data={languagesIcon} seed="language-icon" size={28} />} value={locale} onValueChange={value => setLocale(value === 'en' ? 'en' : 'zh-CN')} options={[["zh-CN", "中文"], ["en", "English"]]} />
+    <DocsSelect label="语言" hideLabel startIcon={<DocsIcon data={languagesIcon} seed="language-icon" size={28} />} value={locale} onValueChange={value => setLocale(resolveDocsLocale(value))} options={docsLanguages} />
   </div>;
 }
 
@@ -384,9 +392,8 @@ function HomeLanguageMenu() {
       <Tooltip.Portal><Tooltip.Content side="bottom">{label}</Tooltip.Content></Tooltip.Portal>
     </Tooltip.Root></Tooltip.Provider>
     <DropdownMenu.Portal><DropdownMenu.Content align="end" sideOffset={8} aria-label={label}>
-      <DropdownMenu.RadioGroup value={locale} onValueChange={value => setLocale(value === 'en' ? 'en' : 'zh-CN')}>
-        <DropdownMenu.RadioItem value="zh-CN">中文</DropdownMenu.RadioItem>
-        <DropdownMenu.RadioItem value="en">English</DropdownMenu.RadioItem>
+      <DropdownMenu.RadioGroup value={locale} onValueChange={value => setLocale(resolveDocsLocale(value))}>
+        {docsLanguages.map(([value, label]) => <DropdownMenu.RadioItem key={value} value={value}>{label}</DropdownMenu.RadioItem>)}
       </DropdownMenu.RadioGroup>
     </DropdownMenu.Content></DropdownMenu.Portal>
   </DropdownMenu.Root>;
@@ -664,13 +671,17 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
   const { t } = useLocale();
   return (
     <article className="documentation">
-      <PageHeading title="快速开始" description="在 React 项目中引入 Inkra 的主题与组件，保留原生语义，再让彩铅材质增强界面。" />
+      <PageHeading title="快速开始" description="先放一个按钮，别急着写整个应用。" />
       <section className="content-section getting-started-content">
         <PencilText as="h2" seed="install-heading">安装与样式</PencilText>
         <CodeSample seed="install-command" language="bash" code="npm install @inkra/react" />
         <CodeSample seed="install-code" code={`import '@inkra/react/tokens.css';\nimport '@inkra/react/styles.css';\nimport { Button } from '@inkra/react';`} />
         <PencilText as="p" seed="font-note">文档站使用与参考站相同的 Yozai Light 本地子集。该子集仅含 706 个参考站字符，其余文字按系统手写与楷体顺序回退。</PencilText>
         <Button onClick={() => onNavigate('/components/button')} seed="start-button">{t("查看 Button")}</Button>
+      </section>
+      <section className="content-section getting-started-links">
+        <ButtonLink variant="link" href="/docs/internationalization">{t('国际化')}</ButtonLink>
+        <ButtonLink variant="link" href="/docs/theming">{t('主题定制')}</ButtonLink>
       </section>
     </article>
   );
@@ -883,6 +894,9 @@ export function App() {
     }
     const onPopState = () => {
       const next = legacyLocation();
+      if (next.path === '/internationalization' && validPath(window.location.pathname) === '/getting-started') {
+        window.history.replaceState(null, '', `${routeHref(next.path)}${window.location.search}`);
+      }
       setRoute(next.path);
       setButtonTab(next.tab ?? readButtonTab());
       window.scrollTo({ top: 0, behavior: 'auto' });
@@ -923,7 +937,7 @@ export function App() {
       {isDocs ? <div className="docs-layout">
         <aside className="desktop-sidebar"><SideNavigation currentPath={route} onNavigate={navigate} /><SidebarPreferences theme={theme} onThemeChange={setTheme} /><PencilLine className="sidebar-divider" orientation="vertical" seed="sidebar-divider" /></aside>
         <main id="main-content">
-          {route === '/components/button' ? <ButtonPage activeTab={buttonTab} onTabChange={changeButtonTab} /> : route.startsWith('/components/') ? <FoundationPage key={route} component={route.slice('/components/'.length) as FoundationComponent} activeTab={buttonTab} onTabChange={changeButtonTab} /> : route === '/design-standard' ? <DesignStandardPage theme={theme} /> : route === '/usage-guide' ? <article className="documentation"><PageHeading title="使用指南" /><section className="content-section"><UsageGuide theme={theme} /></section></article> : <GettingStartedPage onNavigate={navigate} />}
+          {route === '/components/button' ? <ButtonPage activeTab={buttonTab} onTabChange={changeButtonTab} /> : route.startsWith('/components/') ? <FoundationPage key={route} component={route.slice('/components/'.length) as FoundationComponent} activeTab={buttonTab} onTabChange={changeButtonTab} /> : route === '/internationalization' ? <article className="documentation"><PageHeading title="国际化" description="换种语言打招呼，别让用户自己翻译。" /><InternationalizationExamples /></article> : route === '/theming' ? <article className="documentation"><PageHeading title="主题定制" description="颜色、笔触都能改，不用和我长得一样。" /><ThemeExamples /></article> : route === '/design-standard' ? <DesignStandardPage theme={theme} /> : route === '/usage-guide' ? <article className="documentation"><PageHeading title="使用指南" /><section className="content-section"><UsageGuide theme={theme} /></section></article> : <GettingStartedPage onNavigate={navigate} />}
         </main>
       </div> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : <main id="main-content" className="site-section" aria-label={t(route === '/blog' ? '博客' : '生态')}>
         <h1 className="visually-hidden">{t(route === '/blog' ? '博客' : '生态')}</h1>

@@ -10,6 +10,7 @@ import { __iconData as leftIcon } from 'lucide-react/dist/esm/icons/text-align-s
 import { __iconData as centerIcon } from 'lucide-react/dist/esm/icons/text-align-center.mjs';
 import { __iconData as rightIcon } from 'lucide-react/dist/esm/icons/text-align-end.mjs';
 import { PencilText, useLocale } from '../i18n';
+import { docsLanguages, resolveDocsLocale } from '../docsLocales';
 import { DocsIcon, type LucideIconData } from './DocsIcon';
 import { DocsSelect } from './DocsSelect';
 import { BrandMark } from './BrandMark';
@@ -72,7 +73,7 @@ function PreferencesSample({ themeControl }: { themeControl: ReactNode }) {
       <Tabs.Content value="appearance" forceMount className="home-stack">
         <PencilText>{text('换个光线，继续创作。', 'A different light. The same good ideas.')}</PencilText>
         {themeControl}
-        <DocsSelect label={text('语言', 'Language')} value={locale} onValueChange={value => setLocale(value as 'zh-CN' | 'en')} options={[["zh-CN", "中文"], ["en", "English"]]} />
+        <DocsSelect label="语言" value={locale} onValueChange={value => setLocale(resolveDocsLocale(value))} options={docsLanguages} />
       </Tabs.Content>
       <Tabs.Content value="notifications" forceMount className="home-stack">
         <Switch label={text('接收更新', 'Product updates')} checked={updates} onCheckedChange={setUpdates} />
