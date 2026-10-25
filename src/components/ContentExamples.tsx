@@ -43,7 +43,7 @@ function MenuExamples() {
         </DropdownMenu.Content></DropdownMenu.Portal></DropdownMenu.Root>
       </div>
     </ComponentPlayground>
-    <ComponentExample title="危险操作" code={`<DropdownMenu.Root>\n  <DropdownMenu.Trigger asChild><Button variant="outline">${t('更多设置')}</Button></DropdownMenu.Trigger>\n  <DropdownMenu.Portal><DropdownMenu.Content>\n    <DropdownMenu.Item destructive onSelect={handleArchive}>${t('归档笔记')}</DropdownMenu.Item>\n  </DropdownMenu.Content></DropdownMenu.Portal>\n</DropdownMenu.Root>`}>
+    <ComponentExample id="content-destructive-action" title="危险操作" code={`<DropdownMenu.Root>\n  <DropdownMenu.Trigger asChild><Button variant="outline">${t('更多设置')}</Button></DropdownMenu.Trigger>\n  <DropdownMenu.Portal><DropdownMenu.Content>\n    <DropdownMenu.Item destructive onSelect={handleArchive}>${t('归档笔记')}</DropdownMenu.Item>\n  </DropdownMenu.Content></DropdownMenu.Portal>\n</DropdownMenu.Root>`}>
       <DropdownMenu.Root><DropdownMenu.Trigger asChild><Button variant="outline">{t('更多设置')}</Button></DropdownMenu.Trigger><DropdownMenu.Portal><DropdownMenu.Content><DropdownMenu.Item destructive onSelect={() => setResult(t('已归档'))}>{t('归档笔记')}</DropdownMenu.Item></DropdownMenu.Content></DropdownMenu.Portal></DropdownMenu.Root>
     </ComponentExample>
   </>;
@@ -83,7 +83,7 @@ function AlertExamples() {
       <Alert.Root className="content-demo-width" open={open} onOpenChange={setOpen} closable={closable} closeLabel={closeLabel} variant={variant} size={size} appearance={appearance} actions={actions ? <Button variant="outline" onClick={() => setAcknowledged(true)}>{t(acknowledged ? '已确认' : '确认')}</Button> : undefined} icon={icon ? <DocsIcon data={infoIcon} size={20} /> : undefined}><Alert.Title>{title}</Alert.Title><Alert.Description>{t('所有笔记已保存到当前工作区。')}</Alert.Description></Alert.Root>
       {!open && <Button variant="outline" onClick={() => setOpen(true)}>{zh ? '重新显示通知' : 'Show notification again'}</Button>}
     </ComponentPlayground>
-    <ComponentExample title="状态" code={`<Alert.Root variant="warning" role="alert">\n  <Alert.Title>${t('尚未保存')}</Alert.Title>\n  <Alert.Description>${t('离开前请保存当前修改。')}</Alert.Description>\n</Alert.Root>`}>
+    <ComponentExample id="content-states" title="状态" code={`<Alert.Root variant="warning" role="alert">\n  <Alert.Title>${t('尚未保存')}</Alert.Title>\n  <Alert.Description>${t('离开前请保存当前修改。')}</Alert.Description>\n</Alert.Root>`}>
       <Alert.Root variant="warning" role="alert"><Alert.Title>{t('尚未保存')}</Alert.Title><Alert.Description>{t('离开前请保存当前修改。')}</Alert.Description></Alert.Root>
     </ComponentExample>
   </>;
@@ -115,7 +115,7 @@ function AvatarExamples() {
     ]} />}>
       <Avatar.Root size={size} radius={radius} bordered={bordered}><Avatar.Image src={src || undefined} alt={name} fit={fit} /><Avatar.Fallback role="img" aria-label={name}>{fallback}</Avatar.Fallback></Avatar.Root>
     </ComponentPlayground>
-    <ComponentExample title="尺寸" code={['sm', 'md', 'lg'].map(size => `<Avatar.Root size="${size}"><Avatar.Fallback role="img" aria-label="Inkra">IK</Avatar.Fallback></Avatar.Root>`).join('\n')}>
+    <ComponentExample id="content-size" title="尺寸" code={['sm', 'md', 'lg'].map(size => `<Avatar.Root size="${size}"><Avatar.Fallback role="img" aria-label="Inkra">IK</Avatar.Fallback></Avatar.Root>`).join('\n')}>
       <div className="content-demo-row">{(['sm', 'md', 'lg'] as const).map(size => <Avatar.Root size={size} key={size}><Avatar.Fallback role="img" aria-label="Inkra">IK</Avatar.Fallback></Avatar.Root>)}</div>
     </ComponentExample>
   </>;

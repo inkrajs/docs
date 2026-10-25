@@ -229,11 +229,11 @@ const [selectedId, setSelectedId] = useState('note-3');
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={copy.external} code={`const viewportRef = useRef<HTMLDivElement>(null);\n\n<PencilSurface>\n  <div ref={viewportRef} className="scroll-viewport">\n    <VirtualList\n      items={items}\n      itemKey={item => item.id}\n      estimateSize={72}\n      measureItems\n      getScrollElement={() => viewportRef.current}\n      renderItem={({ item }) => <NoteRow item={item} />}\n    />\n  </div>\n</PencilSurface>`}>
+    <ComponentExample id="virtual-list-external" title={copy.external} code={`const viewportRef = useRef<HTMLDivElement>(null);\n\n<PencilSurface>\n  <div ref={viewportRef} className="scroll-viewport">\n    <VirtualList\n      items={items}\n      itemKey={item => item.id}\n      estimateSize={72}\n      measureItems\n      getScrollElement={() => viewportRef.current}\n      renderItem={({ item }) => <NoteRow item={item} />}\n    />\n  </div>\n</PencilSurface>`}>
       <ExternalScrollExample items={externalItems} label={copy.external} />
     </ComponentExample>
 
-    <ComponentExample title={copy.emptyTitle} code={`<VirtualList\n  items={[]}\n  itemKey={item => item.id}\n  estimateSize={80}\n  emptyLabel="${copy.empty}"\n  renderItem={({ item }) => <NoteRow item={item} />}\n/>`}>
+    <ComponentExample id="virtual-list-empty-title" title={copy.emptyTitle} code={`<VirtualList\n  items={[]}\n  itemKey={item => item.id}\n  estimateSize={80}\n  emptyLabel="${copy.empty}"\n  renderItem={({ item }) => <NoteRow item={item} />}\n/>`}>
       <div className="virtual-list-examples__empty-frame">
         <VirtualList
           aria-label={copy.emptyList}

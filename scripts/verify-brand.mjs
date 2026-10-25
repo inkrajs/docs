@@ -27,7 +27,7 @@ try {
   for (const route of ['radio-group', 'button']) {
     await page.goto(`http://127.0.0.1:4180/components/${route}#preview`);
     await page.evaluate(() => document.fonts.ready);
-    const spacing = await page.locator('.component-example__header, .comparison-heading').first().evaluate(header => {
+    const spacing = await page.locator('.component-example__header').first().evaluate(header => {
       const box = header.getBoundingClientRect();
       const title = header.querySelector('h2').getBoundingClientRect();
       return { top: title.top - box.top, bottom: box.bottom - title.bottom };

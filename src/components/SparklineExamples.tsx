@@ -25,7 +25,7 @@ export function SparklineExamples() {
     ]} />}>
       <div className="sparkline-examples__preview"><Sparkline data={data} type={type} showArea={showArea} showPoints={showPoints} label={text('销售趋势', 'Sales trend')} /></div>
     </ComponentPlayground>
-    <ComponentExample title={text('负值与缺失值', 'Negative and missing values')} code={`<Sparkline data={[-4, -8, null, 2, 5]} type="bar" label="${text('收益趋势', 'Revenue trend')}" />`}>
+    <ComponentExample id="sparkline-negative-and-missing-values" title={text('负值与缺失值', 'Negative and missing values')} code={`<Sparkline data={[-4, -8, null, 2, 5]} type="bar" label="${text('收益趋势', 'Revenue trend')}" />`}>
       <Sparkline data={[-4, -8, null, 2, 5]} type="bar" label={text('收益趋势', 'Revenue trend')} />
     </ComponentExample>
   </div>;

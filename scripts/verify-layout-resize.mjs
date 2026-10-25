@@ -31,8 +31,11 @@ try {
     };
     await choose('侧栏通高');
     await playground.getByRole('radio', { name: '1024', exact: true }).check();
+    await page.waitForFunction(() => document.querySelector('.layout-viewport__canvas')?.contentDocument
+      ?.querySelector('.layout-notebook')?.dataset.compact === 'false');
     const sidebar = frame.locator('.layout-notebook__sidebar:not(.layout-notebook__motion-copy)');
     const sideHeader = sidebar.locator('header');
+    await sideHeader.locator('.layout-notebook__sidebar-brand > canvas').waitFor({ state: 'attached' });
     assert.equal(await sideHeader.locator('.layout-notebook__sidebar-brand > canvas').count(), 1);
     const positions = await sideHeader.evaluate(node => {
       const brand = node.querySelector('.layout-notebook__sidebar-brand').getBoundingClientRect();
@@ -108,6 +111,7 @@ try {
     await details.waitFor({ state: 'visible' });
 
     await setControls(playground, true);
+    await playground.locator('.property-tabs').getByRole('tab', { name: '交互', exact: true }).click();
     await playground.getByRole('switch', { name: '拖拽调宽', exact: true }).click();
     await playground.getByRole('switch', { name: '允许折叠', exact: true }).click();
     await showPreview(playground);

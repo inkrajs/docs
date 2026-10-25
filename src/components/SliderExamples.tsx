@@ -64,10 +64,10 @@ export function SliderExamples() {
         <Slider value={values} onValueChange={setValues} min={0} max={100} step={step} minStepsBetweenThumbs={minSteps} preserveThumbOrder size={size} variant={variant} orientation={orientation} dir={dir} inverted={inverted} disabled={disabled} thumbLabels={thumbLabels} getValueLabel={number => `${number}%`} />
       </div>
     </ComponentPlayground>
-    <ComponentExample title="内嵌滑块" code={`<Slider variant="inset" size="sm" aria-label="${t('音量')}" defaultValue={[40]} />\n<Slider variant="inset" thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} preserveThumbOrder />\n<Slider variant="inset" size="lg" aria-label="${t('音量')}" defaultValue={[60]} />`}>
+    <ComponentExample id="slider-inset-thumb" title="内嵌滑块" code={`<Slider variant="inset" size="sm" aria-label="${t('音量')}" defaultValue={[40]} />\n<Slider variant="inset" thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} preserveThumbOrder />\n<Slider variant="inset" size="lg" aria-label="${t('音量')}" defaultValue={[60]} />`}>
       <div className="component-demo-form"><Slider variant="inset" size="sm" aria-label={t('音量')} defaultValue={[40]} /><Slider variant="inset" thumbLabels={[t('下限'), t('上限')]} defaultValue={[20, 80]} preserveThumbOrder /><Slider variant="inset" size="lg" aria-label={t('音量')} defaultValue={[60]} /></div>
     </ComponentExample>
-    <ComponentExample title="表单与重置" code={formCode}>
+    <ComponentExample id="slider-form-and-reset" title="表单与重置" code={formCode}>
       <form className="component-demo-form" onSubmit={event => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -79,7 +79,7 @@ export function SliderExamples() {
         <output className="component-demo-status" aria-live="polite">{formResult}</output>
       </form>
     </ComponentExample>
-    <ComponentExample title="禁用" code={`<Slider aria-label="${t('音量')}" defaultValue={[60]} disabled />\n<Slider thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} disabled />`}>
+    <ComponentExample id="slider-disabled" title="禁用" code={`<Slider aria-label="${t('音量')}" defaultValue={[60]} disabled />\n<Slider thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} disabled />`}>
       <div className="component-demo-form"><Slider aria-label={t('音量')} defaultValue={[60]} disabled /><Slider thumbLabels={[t('下限'), t('上限')]} defaultValue={[20, 80]} disabled /></div>
     </ComponentExample>
   </>;

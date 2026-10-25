@@ -93,7 +93,7 @@ export function FlipExamples() {
       />
     </ComponentPlayground>
 
-    <ComponentExample title={zh ? '非受控翻面与独立内容' : 'Uncontrolled flip and independent content'} code={`<Flip
+    <ComponentExample id="flip-uncontrolled-flip-and-independent-content" title={zh ? '非受控翻面与独立内容' : 'Uncontrolled flip and independent content'} code={`<Flip
   defaultFlipped={false}
   front={<ArticleSummary />}
   back={<ArticleActions />}
@@ -107,7 +107,7 @@ export function FlipExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '独立 Tilt' : 'Standalone Tilt'} code={`<Tilt maxAngle={6} axis="both">
+    <ComponentExample id="flip-standalone-tilt" title={zh ? '独立 Tilt' : 'Standalone Tilt'} code={`<Tilt maxAngle={6} axis="both">
   <Card.Root><Card.Content>...</Card.Content></Card.Root>
 </Tilt>`}>
       <div id="flip-standalone-tilt" className="flip-examples__row">

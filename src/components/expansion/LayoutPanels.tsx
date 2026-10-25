@@ -7,11 +7,12 @@ interface SidebarPanelProps {
   children: ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onWidthChange?: (width: number) => void;
   width: number;
   collapsible: boolean;
 }
 
-export function LayoutSidebarPanel({ id, children, open, onOpenChange, width, collapsible }: SidebarPanelProps) {
+export function LayoutSidebarPanel({ id, children, open, onOpenChange, onWidthChange, width, collapsible }: SidebarPanelProps) {
   const panel = useResizablePanelRef();
   const element = useRef<HTMLDivElement>(null);
   const initialWidth = useRef(open ? width : 0);
@@ -56,6 +57,7 @@ export function LayoutSidebarPanel({ id, children, open, onOpenChange, width, co
     minSize={120} maxSize="40%" collapsible={collapsible} collapsedSize={0}
     groupResizeBehavior="preserve-pixel-size" className="layout-notebook__panel"
     onResize={(size, _id, previous) => {
+      onWidthChange?.(size.inPixels);
       if (!previous || !open || syncing.current) return;
       if (size.inPixels > 0) lastWidth.current = element.current?.getBoundingClientRect().width || size.inPixels;
       onOpenChange(size.asPercentage > 0);

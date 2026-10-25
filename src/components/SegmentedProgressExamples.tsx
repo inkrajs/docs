@@ -81,7 +81,7 @@ export function SegmentedProgressExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={zh ? '部分格策略' : 'Partial-cell policies'} code={`<Progress shape="segmented" value={37} segmentCount={8} partialSegment="fractional" aria-label="Fractional" />
+    <ComponentExample id="segmented-progress-partial-cell-policies" title={zh ? '部分格策略' : 'Partial-cell policies'} code={`<Progress shape="segmented" value={37} segmentCount={8} partialSegment="fractional" aria-label="Fractional" />
 <Progress shape="segmented" value={37} segmentCount={8} partialSegment="complete" aria-label="Complete cells" />
 <Progress shape="segmented" value={37} segmentCount={8} partialSegment="next" aria-label="Touched cell" />`}>
       <div className="segmented-progress-examples__stack">
@@ -92,7 +92,7 @@ export function SegmentedProgressExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '阈值与逐格颜色' : 'Threshold and per-cell colors'} code={`<Progress shape="segmented" value={82} segmentCount={10}
+    <ComponentExample id="segmented-progress-threshold-and-per-cell-colors" title={zh ? '阈值与逐格颜色' : 'Threshold and per-cell colors'} code={`<Progress shape="segmented" value={82} segmentCount={10}
   thresholds={thresholds} aria-label="Health" />
 <Progress shape="segmented" value={7} max={12} segmentCount={12}
   segmentColors={['#d59a8f', '#d59a8f', '#d7bd72', '#d7bd72', '#86ad91']}
@@ -103,7 +103,7 @@ export function SegmentedProgressExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={zh ? '边界状态' : 'Boundary states'} code={`<Progress shape="segmented" value={0} segmentCount={6} aria-label="Empty" />
+    <ComponentExample id="segmented-progress-boundary-states" title={zh ? '边界状态' : 'Boundary states'} code={`<Progress shape="segmented" value={0} segmentCount={6} aria-label="Empty" />
 <Progress shape="segmented" value={5} max={5} segmentCount={6} aria-label="Complete" />
 <Progress shape="segmented" value={null} segmentCount={6} aria-label="Loading" />`}>
       <div className="segmented-progress-examples__boundaries">

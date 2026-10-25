@@ -1,0 +1,8 @@
+.grid-examples { display: grid; gap: 24px; min-inline-size: 0; }
+.grid-examples__tracks { height: 320px; width: 100%; min-width: 0; }
+.grid-examples__basic { width: 100%; }
+.grid-examples__cell { box-sizing: border-box; display: grid; place-items: center; min-height: 72px; height: 100%; padding: 12px; overflow-wrap: anywhere; }
+.grid-examples__metric { display: grid; gap: 8px; min-width: 0; }
+.grid-examples__metric > strong { font-size: 24px; }
+.grid-examples__metric .inkra-sparkline { width: 220px; max-width: 100%; }
+.grid-examples__review { display: flex; gap: 8px; flex-wrap: wrap; }

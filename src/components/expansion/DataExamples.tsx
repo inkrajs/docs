@@ -171,7 +171,7 @@ const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>({})
       />
       </div>
     </ComponentPlayground>
-    <ComponentExample title={text.basic} code={basicCode}>
+    <ComponentExample id="data-basic" title={text.basic} code={basicCode}>
       <DataTable className="data-demo-table data-demo-width" data={rows.slice(0, 3)} columns={columns.slice(0, 2)} getRowId={row => row.id} caption={text.caption} sortStatusLabel={sortStatusLabel} />
     </ComponentExample>
   </div>;
@@ -311,7 +311,7 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
         </Tree.Root>
       </div>
     </ComponentPlayground>
-    <ComponentExample title={text.basic} code={basicCode}>
+    <ComponentExample id="data-basic-tree" title={text.basic} code={basicCode}>
       <Tree.Root className="data-demo-tree" aria-label={text.label} defaultExpandedKeys={['workspace']} defaultSelectedKeys={['drafts']}>
         <Tree.Item id="workspace" textValue={text.workspace}>
           {itemContent(text.workspace, text.workspaceDescription, icon(folderIcon, 'basic-workspace'), true)}
@@ -320,7 +320,7 @@ const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(${selectedKeysCo
         </Tree.Item>
       </Tree.Root>
     </ComponentExample>
-    <ComponentExample title={zh ? '按节点状态展示内容' : 'Content from node state'} code={`<Tree.Root aria-label="${text.label}" defaultExpandedKeys={['workspace']}>
+    <ComponentExample id="data-content-from-node-state" title={zh ? '按节点状态展示内容' : 'Content from node state'} code={`<Tree.Root aria-label="${text.label}" defaultExpandedKeys={['workspace']}>
   <Tree.Item id="workspace" textValue="${text.workspace}">
     <Tree.ItemContent>{({ isExpanded, level }) => <>
       <Tree.ItemTitle>${text.workspace}</Tree.ItemTitle>
@@ -377,16 +377,39 @@ export const dataDocs: Record<string, ExpansionDoc> = {
       zh: '文件夹套文件夹，禁止套娃？这里不禁止。',
       en: 'A folder inside a folder inside a folder. Yes, keep going.',
     },
-    api: [
-      ['Tree.Root', 'selectionMode, selectedKeys, expandedKeys, disabledKeys and matching default/onChange props'],
-      ['Tree.Item', 'stable id, required textValue, isDisabled and nested Tree.Item children'],
-      ['Tree.ItemContent', 'disclosure, indentation, optional icon, localized expand/collapse labels'],
-      ['Tree.Root.indent', 'number = 24', '每层缩进像素，可设为 0；负数归零，非有限值回退 24，方向随 RTL。窄容器中的深层缩进会受限，以保留文字和展开按钮空间。', 'Indentation per level in px, including zero. Negative values clamp to zero; nonfinite values use 24. Follows RTL. Deep indentation is capped in narrow containers to preserve text and disclosure space.'],
-      ['Tree.Root.size', 'sm | md | lg = md', '控制行内留白，不缩小字体；所有尺寸保留至少 44px 命中区域。', 'Control row spacing without shrinking text; all sizes retain at least 44px targets.'],
-      ['Tree.ItemContent.children', 'ReactNode | (state: TreeItemContentState) => ReactNode', '按展开、选中、禁用、子项和 level 层级渲染内容；Item.textValue 仍需提供稳定的可搜索文字。', 'Render content from expansion, selection, disabled, child and level state. Keep a stable searchable Item.textValue.'],
-      ['Tree.ItemContent.disclosureIcon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '替换展开图标；根据 isExpanded 显示打开或关闭的文件夹。不传时使用无外框箭头。', 'Replace the disclosure icon; use isExpanded to switch open/closed folders. Defaults to an unframed chevron.'],
-      ['Tree.ItemContent.icon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '可选的行图标，也可读取展开、选择、禁用与子项状态。用文件夹作为展开图标时可以省略，避免重复。', 'Optional row icon, with expansion, selection, disabled and child state. Omit it when the folder already serves as the disclosure icon.'],
-      ['Tree.ItemTitle / Description', 'visible selectable text slots'],
+    apiGroups: [
+      { id: 'root', title: 'Tree.Root', rows: [
+        ['selectionMode', '"none" | "single" | "multiple" = "single"', '选择模式。', 'Selection mode.'],
+        ['selectionBehavior', '"toggle" | "replace" = "toggle"', '点击项目时切换或替换选择。', 'Toggle or replace the selection on activation.'],
+        ['selectedKeys / defaultSelectedKeys', '"all" | Iterable<TreeKey>', '受控或非受控的选中项。', 'Controlled or initial selected items.'],
+        ['onSelectionChange', '(keys: TreeSelection) => void', '选择变化回调。', 'Called when selection changes.'],
+        ['expandedKeys / defaultExpandedKeys', 'Iterable<TreeKey>', '受控或非受控的展开项。', 'Controlled or initial expanded items.'],
+        ['onExpandedChange', '(keys: Set<TreeKey>) => void', '展开变化回调。', 'Called when expansion changes.'],
+        ['disabledKeys', 'Iterable<TreeKey>', '禁用项的标识集合。', 'Keys of disabled items.'],
+        ['indent', 'number = 24', '每层缩进像素，可设为 0；负数归零，非有限值回退 24，方向随 RTL。窄容器中的深层缩进会受限，以保留文字和展开按钮空间。', 'Indentation per level in px, including zero. Negative values clamp to zero; nonfinite values use 24. Follows RTL. Deep indentation is capped in narrow containers to preserve text and disclosure space.'],
+        ['size', 'sm | md | lg = md', '控制行内留白，不缩小字体；所有尺寸保留至少 44px 命中区域。', 'Control row spacing without shrinking text; all sizes retain at least 44px targets.'],
+        ['emptyState', 'ReactNode', '空列表内容，默认来自当前语言字典。', 'Empty content, defaulting to the active locale dictionary.'],
+        ['children / items', 'ReactNode | (item: T) => ReactNode / Iterable<T>', '静态树节点或动态集合；支持其余 React Aria Tree 属性。', 'Static nodes or a dynamic collection; accepts other React Aria Tree props.'],
+      ] },
+      { id: 'item', title: 'Tree.Item', rows: [
+        ['id', 'TreeKey', '稳定的节点标识。', 'Stable item identity.'],
+        ['textValue', 'string', '为键盘搜索提供节点文字。', 'Text used for keyboard typeahead.'],
+        ['isDisabled', 'boolean', '禁用当前节点。', 'Disable this item.'],
+        ['children', 'ReactNode', '节点内容及嵌套 Tree.Item；支持其余 React Aria TreeItem 属性。', 'Item content and nested Tree.Item elements; accepts other React Aria TreeItem props.'],
+      ] },
+      { id: 'item-content', title: 'Tree.ItemContent', rows: [
+        ['children', 'ReactNode | (state: TreeItemContentState) => ReactNode', '按展开、选中、禁用、子项和 level 层级渲染内容；Item.textValue 仍需提供稳定的可搜索文字。', 'Render content from expansion, selection, disabled, child and level state. Keep a stable searchable Item.textValue.'],
+        ['disclosureIcon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '替换展开图标；根据 isExpanded 显示打开或关闭的文件夹。不传时使用无外框箭头。', 'Replace the disclosure icon; use isExpanded to switch open/closed folders. Defaults to an unframed chevron.'],
+        ['icon', 'ReactNode | (state: TreeItemContentState) => ReactNode', '可选的行图标，也可读取展开、选择、禁用与子项状态。用文件夹作为展开图标时可以省略，避免重复。', 'Optional row icon, with expansion, selection, disabled and child state. Omit it when the folder already serves as the disclosure icon.'],
+        ['expandLabel / collapseLabel', 'string', '展开与折叠按钮名称，默认来自当前语言字典。', 'Expand and collapse button labels, defaulting to the active locale dictionary.'],
+        ['className', 'string', '节点内容区域的样式类名。', 'Class name for the item content.'],
+      ] },
+      { id: 'item-title', title: 'Tree.ItemTitle', rows: [
+        ['children', 'ReactNode', '节点主文字；支持原生 span 属性。', 'Item title; accepts native span attributes.'],
+      ] },
+      { id: 'item-description', title: 'Tree.ItemDescription', rows: [
+        ['children', 'ReactNode', '节点补充文字；支持原生 span 属性。', 'Supporting item text; accepts native span attributes.'],
+      ] },
     ],
     a11y: {
       zh: '方向键、Home/End、展开折叠、单选/多选与禁用项由 React Aria 管理；展开按钮是真实按钮。RTL 使用逻辑缩进，强制颜色和减少动态效果保留状态。当前不支持拖放。',

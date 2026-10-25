@@ -1,0 +1,3 @@
+.inventory-grid-examples { min-width: 0; }
+.inventory-grid-examples .inkra-inventory-grid { width: 100%; }
+.inventory-grid-examples .inkra-inventory-grid__container { flex: 0 1 auto; }

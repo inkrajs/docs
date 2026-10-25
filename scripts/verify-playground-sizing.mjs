@@ -7,10 +7,22 @@ const browser = await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
   : undefined);
 const settleLayout = page => page.evaluate(async () => {
   await document.fonts.ready;
-  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  let previous;
+  let stable = 0;
+  const deadline = performance.now() + 10000;
+  while (performance.now() < deadline) {
+    const stage = document.querySelector('.component-playground .preview-stage');
+    const bounds = stage.getBoundingClientRect();
+    const height = bounds.height;
+    stable = !document.querySelector('[data-playground-moving]') && previous !== undefined && Math.abs(previous - height) < 0.1 ? stable + 1 : 0;
+    if (stable >= 3) return;
+    previous = height;
+    await new Promise(resolve => requestAnimationFrame(resolve));
+  }
+  throw new Error('Preview height did not settle');
 });
 try {
-  for (const width of [1305, 390]) {
+  for (const width of [1543, 1305, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -49,9 +61,15 @@ try {
         await frame.evaluate(node => node.style.blockSize = '640px');
         await settleLayout(page);
         assert((await stage.boundingBox()).height >= 640, 'preview grows with its child');
+        // Let the decorative canvas adopt the larger bitmap before shrinking again.
+        await page.waitForTimeout(250);
         await frame.evaluate(node => node.style.removeProperty('block-size'));
         await settleLayout(page);
         assert(Math.abs((await stage.boundingBox()).height - dimensions.height) < 1, 'preview shrinks back with its child');
+        if (await playground.getAttribute('data-controls-layout') === 'wide') {
+          const divider = playground.locator('.preview-controls-divider');
+          assert(Math.abs((await divider.boundingBox()).height - (await stage.boundingBox()).height) < 1, 'divider follows the shrunken row');
+        }
       }
       if (route === 'number-ticker' && width > 1024) {
         const link = page.locator('.desktop-sidebar a.nav-link[href$="/number-ticker"]');

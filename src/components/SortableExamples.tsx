@@ -129,7 +129,7 @@ export function SortableExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={copy.across} code={`<Sortable
+    <ComponentExample id="sortable-across" title={copy.across} code={`<Sortable
   containers={columns}
   getItemId={item => item.id}
   handle

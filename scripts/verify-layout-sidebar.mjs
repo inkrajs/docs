@@ -191,6 +191,7 @@ try {
     }
     await chooseLayout(layouts[0]);
     await setControls(playground, true);
+    await playground.locator('.property-tabs').getByRole('tab', { name: locale === 'zh-CN' ? '交互' : 'Interaction', exact: true }).click();
     await playground.getByRole('switch', { name: locale === 'zh-CN' ? '启用侧栏' : 'Enable sidebar', exact: true }).click();
     await showPreview(playground);
     assert.equal(await toggle.count(), 0);

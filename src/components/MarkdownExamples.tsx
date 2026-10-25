@@ -134,16 +134,16 @@ export function MarkdownExamples() {
     taskUnchecked: '未完成发布检查',
   };
   return <div className="markdown-examples">
-    <ComponentExample title={t('基础排版')} code={`import { Markdown } from '@inkra/react';\n\n<Markdown headingLevelOffset={1}>\n{${JSON.stringify(content.basic)}}\n</Markdown>`}>
+    <ComponentExample id="markdown-basic-typography" title={t('基础排版')} code={`import { Markdown } from '@inkra/react';\n\n<Markdown headingLevelOffset={1}>\n{${JSON.stringify(content.basic)}}\n</Markdown>`}>
       <Markdown headingLevelOffset={1} labels={markdownLabels}>{content.basic}</Markdown>
     </ComponentExample>
-    <ComponentExample title={t('行内排版')} code={`<Markdown headingLevelOffset={1}>\n{${JSON.stringify(content.typography)}}\n</Markdown>`}>
+    <ComponentExample id="markdown-inline-typography" title={t('行内排版')} code={`<Markdown headingLevelOffset={1}>\n{${JSON.stringify(content.typography)}}\n</Markdown>`}>
       <Markdown headingLevelOffset={1} labels={markdownLabels}>{content.typography}</Markdown>
     </ComponentExample>
-    <ComponentExample title={t('任务与表格')} code={`<Markdown headingLevelOffset={1} labels={${JSON.stringify(markdownLabels)}}>\n{${JSON.stringify(content.advanced)}}\n</Markdown>`}>
+    <ComponentExample id="markdown-tasks-and-tables" title={t('任务与表格')} code={`<Markdown headingLevelOffset={1} labels={${JSON.stringify(markdownLabels)}}>\n{${JSON.stringify(content.advanced)}}\n</Markdown>`}>
       <Markdown headingLevelOffset={1} labels={markdownLabels}>{content.advanced}</Markdown>
     </ComponentExample>
-    <ComponentExample title={t('代码与媒体')} code={`<Markdown headingLevelOffset={1}>\n{${JSON.stringify(content.media)}}\n</Markdown>`}>
+    <ComponentExample id="markdown-code-and-media" title={t('代码与媒体')} code={`<Markdown headingLevelOffset={1}>\n{${JSON.stringify(content.media)}}\n</Markdown>`}>
       <Markdown headingLevelOffset={1} labels={markdownLabels}>{content.media}</Markdown>
     </ComponentExample>
   </div>;

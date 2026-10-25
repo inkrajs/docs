@@ -94,7 +94,7 @@ export function ColorPickerExamples() {
         />}
       </div>
     </ComponentPlayground>
-    <ComponentExample title={text('不同展示形式', 'Presentations')} code={`<ColorPicker presentation="compact" labels={localizedLabels} presets={presets} />
+    <ComponentExample id="color-picker-presentations" title={text('不同展示形式', 'Presentations')} code={`<ColorPicker presentation="compact" labels={localizedLabels} presets={presets} />
 <ColorPicker presentation="popover" labels={localizedLabels} presets={presets} />
 <ColorPicker presentation="swatches" labels={localizedLabels} presets={presets} />`}>
       <div className="color-picker-demo__presentations">
@@ -104,7 +104,7 @@ export function ColorPickerExamples() {
       </div>
     </ComponentExample>
     <GradientColorExample />
-    <ComponentExample title="表单与自定义预设" code={`<form onSubmit={readForm}>
+    <ComponentExample id="color-picker-form-and-custom-presets" title="表单与自定义预设" code={`<form onSubmit={readForm}>
   <ColorPicker name="accent" label="${t('强调色')}" defaultValue="#629568bf"
     presets={${JSON.stringify(presets.slice(1, 3))}} labels={localizedLabels} />
   <Button type="submit">${t('读取表单')}</Button>
@@ -146,7 +146,7 @@ function GradientColorExample() {
     extent: text('范围', 'Extent'), closestSide: text('最近边', 'Closest side'), closestCorner: text('最近角', 'Closest corner'),
     farthestSide: text('最远边', 'Farthest side'), farthestCorner: text('最远角', 'Farthest corner'), repeating: text('重复渐变', 'Repeat gradient'),
   };
-  return <ComponentExample title={text('纯色与渐变', 'Solid and gradients')} code={`const [paint, setPaint] = useState(${JSON.stringify(value, null, 2)});
+  return <ComponentExample id="color-picker-solid-and-gradients" title={text('纯色与渐变', 'Solid and gradients')} code={`const [paint, setPaint] = useState(${JSON.stringify(value, null, 2)});
 
 <ColorPicker allowGradient value={paint} onValueChange={setPaint}
   maxStops={8} labels={localizedLabels} gradientLabels={localizedGradientLabels} />

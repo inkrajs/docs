@@ -64,17 +64,17 @@ function PaginationExamples() {
         <Pagination totalPages={totalPages} page={page} onPageChange={setPage} siblingCount={siblings} boundaryCount={boundaries} showFirstLast={firstLast} simple={simple} showPreviousNext={previousNext} hideOnSinglePage={hideSingle} disabled={disabled} size={size} labels={labels} />
       </div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '基本分页' : 'Basic pagination'} code={'<Pagination totalPages={5} defaultPage={1} />'}>
+    <ComponentExample id="navigation-basic-pagination" title={zh ? '基本分页' : 'Basic pagination'} code={'<Pagination totalPages={5} defaultPage={1} />'}>
       <Pagination totalPages={5} defaultPage={1} labels={labels} data-testid="pagination-basic" />
     </ComponentExample>
-    <ComponentExample title={zh ? '自定义页码与摘要' : 'Custom page labels and summary'} code={`<Pagination totalPages={3} renderPage={page => <PencilText>{String(page).padStart(2, '0')}</PencilText>} />
+    <ComponentExample id="navigation-custom-page-labels-and-summary" title={zh ? '自定义页码与摘要' : 'Custom page labels and summary'} code={`<Pagination totalPages={3} renderPage={page => <PencilText>{String(page).padStart(2, '0')}</PencilText>} />
 <Pagination totalPages={12} simple renderSummary={(page, total) => <PencilText>{\`${zh ? '第 ${page} 页，共 ${total} 页' : 'Page ${page} of ${total}'}\`}</PencilText>} />`}>
       <div className="navigation-examples__stage">
         <Pagination totalPages={3} labels={labels} renderPage={page => <PencilText>{String(page).padStart(2, '0')}</PencilText>} />
         <Pagination totalPages={12} simple labels={labels} renderSummary={(page, total) => <PencilText>{zh ? `第 ${page} 页，共 ${total} 页` : `Page ${page} of ${total}`}</PencilText>} />
       </div>
     </ComponentExample>
-    <ComponentExample title={zh ? '空结果与总页数变化' : 'Empty results and changing totals'} code={`const [totalPages, setTotalPages] = useState(12);
+    <ComponentExample id="navigation-empty-results-and-changing-totals" title={zh ? '空结果与总页数变化' : 'Empty results and changing totals'} code={`const [totalPages, setTotalPages] = useState(12);
 <Pagination totalPages={totalPages} defaultPage={9} showFirstLast />
 <Pagination totalPages={0} showFirstLast />`}>
       <div className="navigation-examples__stage" data-testid="pagination-changing-total">
@@ -165,7 +165,7 @@ const [selected, setSelected] = useState('');
         </Overlay.Root>
       </div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '内嵌命令列表' : 'Inline command list'} code={`const [selected, setSelected] = useState('');
+    <ComponentExample id="navigation-inline-command-list" title={zh ? '内嵌命令列表' : 'Inline command list'} code={`const [selected, setSelected] = useState('');
 <Command.Root label="Notes">
   <Command.Input placeholder="Search..." />
   <Command.List><Command.Empty>No matches</Command.Empty>
@@ -184,7 +184,7 @@ const [selected, setSelected] = useState('');
         <output aria-live="polite" data-testid="command-result">{selected || (zh ? '尚未执行' : 'No command executed')}</output>
       </div>
     </ComponentExample>
-    <ComponentExample title={zh ? '与 Overlay 组合' : 'Compose with Overlay'} code={`const [open, setOpen] = useState(false);
+    <ComponentExample id="navigation-compose-with-overlay" title={zh ? '与 Overlay 组合' : 'Compose with Overlay'} code={`const [open, setOpen] = useState(false);
 const [selected, setSelected] = useState('');
 <Overlay.Root open={open} onOpenChange={setOpen}>
   <Overlay.Trigger asChild><Button>Search actions</Button></Overlay.Trigger>
@@ -243,7 +243,46 @@ export const navigationDocs: Record<string, ExpansionDoc> = {
   command: {
     name: 'Command',
     intro: { zh: '菜单藏得再深，也躲不过我打字搜。', en: 'Somewhere in a menu? I will just type it.' },
-    api: [['Command.Root', 'cmdk value/defaultValue/onValueChange, filter, shouldFilter, loop (default true), label'], ['Command.Root.surface', 'boolean = true', '是否绘制独立纸面与描边；嵌入已有弹窗纸面时设为 false，避免重复边框。', 'Draw the standalone paper and outline; set false inside an existing dialog surface to avoid duplicate frames.'], ['Command.Input', 'Search value/onValueChange and native input attributes'], ['Command.List / Group', 'List label; Group heading/value/forceMount'], ['Command.Item', 'Stable value, keywords, disabled, onSelect(value), icon, shortcut'], ['Command.Empty / Separator / Shortcut', 'No-results content; separator alwaysRender; display-only kbd']],
+    apiGroups: [
+      { id: 'root', title: 'Command.Root', rows: [
+        ['value / defaultValue', 'string', '当前选中的命令值；搜索文字由 Input 控制。', 'The selected command value; search text belongs to Input.'],
+        ['onValueChange', '(value: string) => void', '选中命令改变时触发。', 'Called when the selected command changes.'],
+        ['filter', '(value, search, keywords?) => number', '自定义命令匹配得分，0 表示不匹配。', 'Customize command matching scores; zero excludes an item.'],
+        ['shouldFilter', 'boolean', '控制是否由 cmdk 筛选与排序。', 'Enable cmdk filtering and sorting.'],
+        ['loop', 'boolean = true', '方向键焦点循环。', 'Wrap keyboard navigation at the ends.'],
+        ['label', 'string', '命令菜单的无障碍名称。', 'Accessible name for the command menu.'],
+        ['surface', 'boolean = true', '是否绘制独立纸面与描边；嵌入已有弹窗纸面时设为 false，避免重复边框。', 'Draw the standalone paper and outline; set false inside an existing dialog surface to avoid duplicate frames.'],
+      ] },
+      { id: 'input', title: 'Command.Input', rows: [
+        ['value / onValueChange', 'string / (value: string) => void', '搜索文字及变更回调。', 'Search text and its change callback.'],
+        ['placeholder / disabled', 'string / boolean', '输入提示与禁用状态；支持其余原生输入属性。', 'Placeholder and disabled state; other native input attributes are supported.'],
+      ] },
+      { id: 'list', title: 'Command.List', rows: [
+        ['label', 'string', '结果列表的无障碍名称。', 'Accessible name for the results list.'],
+        ['children', 'ReactNode', '放置 Group、Item 与 Empty。', 'Contains Group, Item and Empty.'],
+      ] },
+      { id: 'group', title: 'Command.Group', rows: [
+        ['heading', 'ReactNode', '分组标题。', 'Visible group heading.'],
+        ['value / forceMount', 'string / boolean', '稳定分组标识，以及是否忽略筛选保持挂载。', 'Stable group identity and whether to stay mounted regardless of filtering.'],
+        ['children', 'ReactNode', '分组内的命令项。', 'Commands in this group.'],
+      ] },
+      { id: 'item', title: 'Command.Item', rows: [
+        ['value / keywords', 'string / string[]', '稳定命令值与额外搜索关键词。', 'Stable command value and additional search keywords.'],
+        ['disabled / forceMount', 'boolean', '禁用该项，或保持该项挂载。', 'Disable this item or keep it mounted.'],
+        ['onSelect', '(value: string) => void', '确认选择时触发。', 'Called when the item is activated.'],
+        ['icon / shortcut', 'ReactNode', '前置图标和末尾快捷键提示；提示不会注册按键。', 'Leading icon and trailing shortcut hint; hints do not register keys.'],
+        ['children', 'ReactNode', '命令名称。', 'Command label.'],
+      ] },
+      { id: 'empty', title: 'Command.Empty', rows: [
+        ['children', 'ReactNode', '没有匹配命令时显示的内容；支持原生 div 属性。', 'Content shown when no commands match; accepts native div attributes.'],
+      ] },
+      { id: 'separator', title: 'Command.Separator', rows: [
+        ['alwaysRender', 'boolean', '搜索时仍显示分割线；不接受 children。', 'Keep the separator visible while searching; children are not accepted.'],
+      ] },
+      { id: 'shortcut', title: 'Command.Shortcut', rows: [
+        ['children', 'ReactNode', '快捷键文本，渲染为 kbd；不注册全局按键。', 'Shortcut text rendered as kbd; does not register global keys.'],
+      ] },
+    ],
     a11y: { zh: 'cmdk 负责 combobox/listbox 关联、方向键、Home/End、禁用项跳过与 Enter 选择。IME 组合输入不会提交命令。为 Root 提供本地化 label；Overlay 负责焦点约束、Escape 与返回。快捷键提示不自动注册全局按键。', en: 'cmdk owns combobox/listbox relationships, arrows, Home/End, disabled-item skipping, and Enter selection. IME composition does not submit a command. Provide a localized Root label; Overlay handles focus trapping, Escape, and return. Shortcut hints do not register global keys.' },
     Examples: CommandExamples,
   },

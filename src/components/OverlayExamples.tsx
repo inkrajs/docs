@@ -115,7 +115,7 @@ const [notifications, setNotifications] = useState(false);
       </div>
     </ComponentPlayground>
     <ScrollableOverlayExample />
-    <ComponentExample title="嵌套浮层" code={nestedCode}>
+    <ComponentExample id="overlay-nested-overlays" title="嵌套浮层" code={nestedCode}>
       <Overlay.Root open={nestedOpen} onOpenChange={setNestedOpen}>
         <Overlay.Trigger asChild><Button variant="outline">{t('更多设置')}</Button></Overlay.Trigger>
         <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections">
@@ -163,7 +163,7 @@ function ScrollableOverlayExample() {
     <Overlay.Footer><Overlay.Close asChild><Button>${t('完成')}</Button></Overlay.Close></Overlay.Footer>
   </Overlay.Content></Overlay.Portal>
 </Overlay.Root>`;
-  return <ComponentExample title="长内容与固定操作区" code={code}>
+  return <ComponentExample id="overlay-scrollable-body-with-fixed-actions" title="长内容与固定操作区" code={code}>
     <Overlay.Root>
       <Overlay.Trigger asChild><Button variant="outline">{t('批量编辑')}</Button></Overlay.Trigger>
       <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections">

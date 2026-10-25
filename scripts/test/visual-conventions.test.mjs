@@ -11,8 +11,14 @@ test('global focus fallback does not override component-owned pencil focus', () 
 });
 
 test('navigation labels reuse pencil ellipsis instead of wrapping', () => {
-  assert.match(read('App.tsx'), /<PencilText ellipsis seed=\{`nav-/);
-  assert.doesNotMatch(read('styles.css'), /\.nav-link \.inkra-pencil-text\s*\{[^}]*overflow-wrap:\s*anywhere/);
+  const source = read('App.tsx');
+  const css = read('styles.css');
+  assert.match(source, /<PencilText ellipsis className="side-navigation__label" seed=\{`nav-group-\$\{group.label\}`\}/);
+  assert.match(source, /<PencilText ellipsis className="side-navigation__label" seed=\{`nav-\$\{item.path\}`\}/);
+  assert.match(css, /\.nav-group-label \.inkra-accordion__trigger-label,\s*\.nav-link \.selection-control-content\s*\{[^}]*grid-template-columns:\s*26px minmax\(0, 1fr\)/);
+  assert.match(css, /\.nav-group-label \.inkra-accordion__trigger-icon\s*\{[^}]*flex:\s*0 0 16px/);
+  assert.match(css, /\.side-navigation__label\s*\{[^}]*white-space:\s*nowrap/);
+  assert.doesNotMatch(css, /\.side-navigation__label\s*\{[^}]*overflow-wrap:\s*anywhere/);
 });
 
 test('preview content determines height and stays inert behind code', () => {
@@ -22,6 +28,8 @@ test('preview content determines height and stays inert behind code', () => {
   assert.match(read('components/ComponentPlayground.tsx'), /inert=\{view !== 'preview'\}/);
   assert.match(css, /\.preview-stage\[aria-hidden="true"\]\s*\{[^}]*visibility:\s*hidden/);
   assert.match(css, /\.preview-controls-divider\s*\{[^}]*contain:\s*size/);
+  const playgroundCss = read('components/ComponentExample.css');
+  assert.match(playgroundCss, /\.component-playground\[data-controls-layout\] \.preview-controls-divider\s*\{[^}]*height:\s*0;[^}]*min-height:\s*100%/);
 });
 
 test('playground properties are container-aware, persistent and keyboard dismissible', () => {

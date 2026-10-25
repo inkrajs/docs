@@ -69,17 +69,22 @@ try {
     await clearExample.getByRole('button', { name: '重置', exact: true }).click();
     assert.equal(await clearExample.locator('input[name="uncontrolled"]').inputValue(), 'Notes');
     await clearExample.getByRole('button', { name: '清空非受控输入' }).waitFor();
-    const search = page.locator('#docs-search');
+    if (width <= 768) await page.locator('.mobile-search-trigger').click();
+    const search = page.getByRole('combobox', { name: '搜索文档', exact: true });
     await search.fill('Input');
-    await page.locator('.header-search').getByRole('button', { name: '清空搜索' }).click();
+    const searchForm = page.locator(width <= 768 ? '.search-screen' : '.header-search');
+    await searchForm.getByRole('button', { name: '清空搜索' }).click();
     assert.equal(await search.inputValue(), '');
-    assert.equal(await search.getAttribute('aria-expanded'), 'false');
-    assert.equal(await search.getAttribute('aria-activedescendant'), null);
+    assert.equal(await search.getAttribute('aria-expanded'), width <= 768 ? 'true' : 'false');
+    if (width > 768) assert.equal(await search.getAttribute('aria-activedescendant'), null);
     await search.fill('Button');
     await search.press('ArrowDown');
     await search.press('Escape');
-    assert.equal(await search.inputValue(), '', 'search keeps its existing Escape reset behavior');
-    assert.equal(await search.getAttribute('aria-expanded'), 'false');
+    if (width <= 768) await page.getByRole('dialog', { name: '搜索文档', exact: true }).waitFor({ state: 'hidden' });
+    else {
+      assert.equal(await search.inputValue(), '', 'inline search keeps its existing Escape reset behavior');
+      assert.equal(await search.getAttribute('aria-expanded'), 'false');
+    }
     await actionExample.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `/tmp/inkra-input-action-${width}.png` });
     await page.evaluate(() => document.documentElement.setAttribute('data-inkra-theme', 'dark'));

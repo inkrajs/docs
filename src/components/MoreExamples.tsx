@@ -67,7 +67,7 @@ function TooltipExamples() {
     ]} />}>
       <Tooltip.Provider delayDuration={delay} disableHoverableContent={!hoverable}><Tooltip.Root><Tooltip.Trigger asChild><Button variant="outline">{t('内容')}</Button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content side={side} align={align} sideOffset={offset} avoidCollisions={collisions} surfaceRadius={radius}>{content}</Tooltip.Content></Tooltip.Portal></Tooltip.Root></Tooltip.Provider>
     </ComponentPlayground>
-    <ComponentExample title="方向" code={`<Tooltip.Content side="right" sideOffset={12}>Tooltip</Tooltip.Content>`}>
+    <ComponentExample id="more-placement" title="方向" code={`<Tooltip.Content side="right" sideOffset={12}>Tooltip</Tooltip.Content>`}>
       <div className="more-examples__row">{sides.map(([value, label]) => <Tooltip.Provider key={value}><Tooltip.Root><Tooltip.Trigger asChild><Button size="sm" variant="secondary">{t(label)}</Button></Tooltip.Trigger><Tooltip.Portal><Tooltip.Content side={value} sideOffset={12}>{t(label)}</Tooltip.Content></Tooltip.Portal></Tooltip.Root></Tooltip.Provider>)}</div>
     </ComponentExample>
   </>;
@@ -125,10 +125,10 @@ function AccordionExamples() {
         ? <Accordion.Root type="single" collapsible={collapsible} value={singleValue} onValueChange={setSingleValue} disabled={disabled} dir={dir}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} keepMounted={keepMounted} /></Accordion.Root>
         : <Accordion.Root type="multiple" value={multipleValue} onValueChange={setMultipleValue} disabled={disabled} dir={dir}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} keepMounted={keepMounted} /></Accordion.Root>}
     </ComponentPlayground>
-    <ComponentExample title="多项展开" code={`<Accordion.Root type="multiple" defaultValue={['one', 'two']}>\n${itemCode}\n</Accordion.Root>`}>
+    <ComponentExample id="more-multiple" title="多项展开" code={`<Accordion.Root type="multiple" defaultValue={['one', 'two']}>\n${itemCode}\n</Accordion.Root>`}>
       <Accordion.Root type="multiple" defaultValue={['one', 'two']}><AccordionItems disabledItem={disabledItem} showDivider={showDivider} showIcon={showIcon} keepMounted={keepMounted} /></Accordion.Root>
     </ComponentExample>
-    <ComponentExample title="保留面板内容" code={`<Accordion.Root type="single" defaultValue="draft" collapsible>\n  <Accordion.Item value="draft">\n    <Accordion.Header><Accordion.Trigger>${t('草稿')}</Accordion.Trigger></Accordion.Header>\n    <Accordion.Content forceMount>\n      <Field label="${t('名称')}"><Input defaultValue="Inkra" /></Field>\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion.Root>`}>
+    <ComponentExample id="more-preserved-panel-content" title="保留面板内容" code={`<Accordion.Root type="single" defaultValue="draft" collapsible>\n  <Accordion.Item value="draft">\n    <Accordion.Header><Accordion.Trigger>${t('草稿')}</Accordion.Trigger></Accordion.Header>\n    <Accordion.Content forceMount>\n      <Field label="${t('名称')}"><Input defaultValue="Inkra" /></Field>\n    </Accordion.Content>\n  </Accordion.Item>\n</Accordion.Root>`}>
       <Accordion.Root type="single" defaultValue="draft" collapsible>
         <Accordion.Item value="draft">
           <Accordion.Header><Accordion.Trigger>{t('草稿')}</Accordion.Trigger></Accordion.Header>
@@ -162,7 +162,7 @@ function BadgeExamples() {
     ]} />}>
       <Badge variant={variant} size={size} startIcon={icon === 'start' ? <DocsIcon data={checkIcon} size={16} /> : undefined} endIcon={icon === 'end' ? <DocsIcon data={checkIcon} size={16} /> : undefined}>{content}</Badge>
     </ComponentPlayground>
-    <ComponentExample title="状态" code={badgeVariants.map(([value, label]) => `<Badge variant="${value}">${t(label)}</Badge>`).join('\n')}>
+    <ComponentExample id="more-states" title="状态" code={badgeVariants.map(([value, label]) => `<Badge variant="${value}">${t(label)}</Badge>`).join('\n')}>
       <div className="more-examples__row">{badgeVariants.map(([value, label]) => <Badge key={value} variant={value}>{t(label)}</Badge>)}</div>
     </ComponentExample>
   </>;
@@ -187,7 +187,7 @@ function SeparatorExamples() {
     ]} />}>
       <div className={`more-examples__separator-demo more-examples__separator-demo--${orientation}`}><PencilText>01</PencilText><Separator orientation={orientation} decorative={decorative} weight={weight} /><PencilText>02</PencilText></div>
     </ComponentPlayground>
-    <ComponentExample title="纵向" code={`<Separator orientation="vertical" />`}>
+    <ComponentExample id="more-vertical" title="纵向" code={`<Separator orientation="vertical" />`}>
       <div className="more-examples__separator-pair"><PencilText>01</PencilText><Separator orientation="vertical" /><PencilText>02</PencilText></div>
     </ComponentExample>
   </>;
@@ -215,7 +215,7 @@ function SkeletonExamples() {
     ]} />}>
       <Skeleton radius={radius} width={width} height={height} animation={animation} />
     </ComponentPlayground>
-    <ComponentExample title="内容" code={`<Skeleton style={{ width: 48, height: 48 }} />\n<Skeleton style={{ width: 220, height: 16 }} />`}>
+    <ComponentExample id="more-content" title="内容" code={`<Skeleton style={{ width: 48, height: 48 }} />\n<Skeleton style={{ width: 220, height: 16 }} />`}>
       <div className="more-examples__skeleton-stack"><Skeleton style={{ width: 48, height: 48 }} /><div><Skeleton style={{ width: 220, height: 16 }} /><Skeleton style={{ width: 160, height: 12 }} /></div></div>
     </ComponentExample>
   </>;
@@ -284,17 +284,17 @@ function ProgressExamples() {
       <div className="more-examples__progress-demo"><Progress label={label || undefined} aria-label={label ? undefined : 'Progress'} value={progressValue} max={max} size={size} dir={dir}
         shape={shape} diameter={customDiameter ? diameter : undefined} thickness={thickness} contentPosition={position}>{renderContent}</Progress></div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '环内内容与外部说明' : 'Inside and outside the ring'} code={`<Progress shape="circular" value={72} aria-label="Download">\n  {({ percent }) => <PencilText>{Math.round(percent ?? 0)}%</PencilText>}\n</Progress>\n<Progress shape="circular" value={3} max={5} contentPosition="end" aria-label="Files">\n  <span>3 / 5 files</span>\n</Progress>`}>
+    <ComponentExample id="more-inside-and-outside-the-ring" title={zh ? '环内内容与外部说明' : 'Inside and outside the ring'} code={`<Progress shape="circular" value={72} aria-label="Download">\n  {({ percent }) => <PencilText>{Math.round(percent ?? 0)}%</PencilText>}\n</Progress>\n<Progress shape="circular" value={3} max={5} contentPosition="end" aria-label="Files">\n  <span>3 / 5 files</span>\n</Progress>`}>
       <div className="more-examples__ring-examples">
         <Progress shape="circular" value={72} aria-label={zh ? '下载进度' : 'Download progress'}>{({ percent }) => `${Math.round(percent ?? 0)}%`}</Progress>
         <Progress shape="circular" value={3} max={5} contentPosition="end" aria-label={zh ? '文件进度' : 'File progress'}><span className="more-examples__progress-content"><DocsIcon data={downloadIcon} size={28} /><PencilText>{zh ? '3 / 5 个文件' : '3 / 5 files'}</PencilText></span></Progress>
         <Progress shape="circular" value={100} contentPosition="bottom" aria-label={zh ? '同步完成' : 'Sync complete'}><span className="more-examples__progress-content"><DocsIcon data={checkIcon} size={28} /><PencilText>{zh ? '同步完成' : 'Sync complete'}</PencilText></span></Progress>
       </div>
     </ComponentExample>
-    <ComponentExample title={zh ? '空环、闭合与未知进度' : 'Empty, complete and indeterminate'} code={`<Progress shape="circular" value={0} label="0%">0%</Progress>\n<Progress shape="circular" value={100} label="100%">100%</Progress>\n<Progress shape="circular" value={null} label="Loading">...</Progress>`}>
+    <ComponentExample id="more-empty-complete-and-indeterminate" title={zh ? '空环、闭合与未知进度' : 'Empty, complete and indeterminate'} code={`<Progress shape="circular" value={0} label="0%">0%</Progress>\n<Progress shape="circular" value={100} label="100%">100%</Progress>\n<Progress shape="circular" value={null} label="Loading">...</Progress>`}>
       <div className="more-examples__ring-examples"><Progress shape="circular" value={0} label="0%">0%</Progress><Progress shape="circular" value={100} label="100%">100%</Progress><Progress shape="circular" value={null} label={zh ? '加载中' : 'Loading'}>...</Progress></div>
     </ComponentExample>
-    <ComponentExample title="状态" code={`<Progress aria-label="Progress" value={24} />\n<Progress aria-label="Progress" value={null} />`}>
+    <ComponentExample id="more-states-progress" title="状态" code={`<Progress aria-label="Progress" value={24} />\n<Progress aria-label="Progress" value={null} />`}>
       <div className="more-examples__progress-stack"><Progress aria-label="24" value={24} /><Progress aria-label="72" value={72} /><Progress aria-label="Indeterminate" value={null} /></div>
     </ComponentExample>
   </>;

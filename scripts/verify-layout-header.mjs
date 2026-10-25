@@ -21,6 +21,7 @@ try {
     await header.waitFor();
     const path = async option => {
       await setControls(playground, true);
+      await playground.locator('.property-tabs').getByRole('tab', { name: zh ? '内容' : 'Content', exact: true }).click();
       await playground.getByRole('combobox', { name: zh ? '页头路径' : 'Header path', exact: true }).click();
       await page.getByRole('option', { name: option, exact: true }).click();
       await showPreview(playground);
@@ -85,6 +86,7 @@ try {
 
     await playground.getByRole('radio', { name: '1024', exact: true }).check();
     await setControls(playground, true);
+    await playground.locator('.property-tabs').getByRole('tab', { name: zh ? '布局' : 'Layout', exact: true }).click();
     await playground.getByRole('radio', { name: zh ? '侧栏通高' : 'Full-height sidebar', exact: true }).check();
     await showPreview(playground);
     const sidebar = frame.locator('.layout-notebook__sidebar');

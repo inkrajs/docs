@@ -144,20 +144,20 @@ export function LogExamples() {
       </ExampleFrame>
     </ComponentPlayground>
 
-    <ComponentExample title={t('运行记录')} code={`const [records, setRecords] = useState(initialRecords);\n\n<Button onClick={() => setRecords(current => [...current, nextRecord])}>${t('追加记录')}</Button>\n<Log items={records} levels={levels} labels={localizedLabels} style={{ height: '22rem' }} />`}>
+    <ComponentExample id="log-run-log" title={t('运行记录')} code={`const [records, setRecords] = useState(initialRecords);\n\n<Button onClick={() => setRecords(current => [...current, nextRecord])}>${t('追加记录')}</Button>\n<Log items={records} levels={levels} labels={localizedLabels} style={{ height: '22rem' }} />`}>
       <div className="log-examples__stack">
         <Button size="sm" variant="outline" onClick={appendRecord}>{t('追加记录')}</Button>
         <ExampleFrame bounded><Log items={localizedRecords} labels={labels} levels={localizedLevels} /></ExampleFrame>
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('游戏事件')} code={`<Log\n  items={gameEvents}\n  levels={levels}\n  defaultPaused\n  labels={{ ...localizedLabels, list: '${t('游戏事件')}' }}\n/>`}>
+    <ComponentExample id="log-game-events" title={t('游戏事件')} code={`<Log\n  items={gameEvents}\n  levels={levels}\n  defaultPaused\n  labels={{ ...localizedLabels, list: '${t('游戏事件')}' }}\n/>`}>
       <ExampleFrame>
         <Log items={gameEvents.map(localizeRecord)} levels={localizedLevels} defaultPaused labels={{ ...labels, list: t('游戏事件') }} />
       </ExampleFrame>
     </ComponentExample>
 
-    <ComponentExample title={t('空状态与筛选')} code={`<Log items={[]} labels={localizedLabels} />\n<Log items={records} filteredLevels={[]} levels={levels} labels={localizedLabels} />`}>
+    <ComponentExample id="log-empty-and-filtered" title={t('空状态与筛选')} code={`<Log items={[]} labels={localizedLabels} />\n<Log items={records} filteredLevels={[]} levels={levels} labels={localizedLabels} />`}>
       <div className="log-examples__empty-grid">
         <ExampleFrame><Log items={[]} labels={labels} showLevelFilter={false} showFollowControl={false} /></ExampleFrame>
         <ExampleFrame><Log items={initialRecords.map(localizeRecord)} filteredLevels={[]} levels={localizedLevels} labels={labels} showFollowControl={false} /></ExampleFrame>

@@ -41,7 +41,7 @@ export function BreadcrumbExamples() {
         <Breadcrumb.Item><Breadcrumb.Page startIcon={<DocsIcon data={routeIcon} size={20} />}>Breadcrumb</Breadcrumb.Page></Breadcrumb.Item>
       </Breadcrumb.List></Breadcrumb.Root>
     </ComponentPlayground>
-    <ComponentExample title={en ? 'Path menus' : '路径菜单'} code={`<Breadcrumb.Root aria-label="${en ? 'Project path' : '项目路径'}">
+    <ComponentExample id="breadcrumb-path-menus" title={en ? 'Path menus' : '路径菜单'} code={`<Breadcrumb.Root aria-label="${en ? 'Project path' : '项目路径'}">
   <Breadcrumb.List>
     <Breadcrumb.Item><Breadcrumb.Link href="/">Inkra</Breadcrumb.Link></Breadcrumb.Item>
     <Breadcrumb.Separator />

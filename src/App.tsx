@@ -1,4 +1,4 @@
-import { Accordion, Button, ButtonGroup, ButtonLink, DropdownMenu, Input, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Switch, Tabs, Tooltip } from '@inkra/react';
+import { Accordion, Button, ButtonGroup, ButtonLink, Drawer, DropdownMenu, Input, Layout, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Resizable, Switch, Tabs, Tooltip } from '@inkra/react';
 import { ButtonGroupPlayground } from './components/ButtonGroupPlayground';
 import { DocsSelect } from './components/DocsSelect';
 import { InternationalizationExamples } from './components/InternationalizationExamples';
@@ -40,16 +40,18 @@ import { UsageGuide } from './components/UsageGuide';
 import { FoundationPage, foundationComponents, foundationNames, type FoundationComponent } from './components/FoundationPages';
 import { componentNavigationGroups } from './componentRoutes';
 import { pageTitle } from './pageTitle';
+import { readComponentPageTab, readDocumentAnchor, scrollToDocumentAnchor } from './documentAnchors';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
 import { ComponentPageTabs } from './components/ComponentPageTabs';
 import { buttonAccessibilityGuidance, GuidanceMarkdown } from './components/GuidanceMarkdown';
 import { PageHeading } from './components/PageHeading';
-import { ApiTable } from './components/ApiTable';
+import { ApiGroups } from './components/ApiGroups';
+import { buttonApiGroups } from './components/buttonApiGroups';
 import { CodeBlock } from './components/CodeBlock';
+import { ComponentExample } from './components/ComponentExample';
 import { CodeSample } from './components/CodeSample';
 import { HomePage } from './components/HomePage';
 import { PropertyTabs } from './components/PropertyTabs';
-import { __iconData as chevronDownIcon } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
 import { DocsIcon, type LucideIconData } from './components/DocsIcon';
 
 type Theme = 'auto' | 'light' | 'dark';
@@ -135,8 +137,7 @@ function legacyLocation(): { path: RoutePath; tab?: ButtonTab } {
 }
 
 function readButtonTab(): ButtonTab {
-  const hash = window.location.hash.slice(1);
-  return hash === 'api' || hash === 'accessibility' ? hash : 'preview';
+  return readComponentPageTab(window.location.hash);
 }
 
 function readInitialTheme(): Theme {
@@ -235,7 +236,7 @@ function SideNavigation({
         <Accordion.Item className={`nav-group${depth ? ' nav-group--nested' : ''}`} key={group.label} value={group.label} showDivider={false}>
           <Accordion.Header>
             <Accordion.Trigger className="nav-group-label">
-              <DocsIcon data={navigationIcon(group.label)} size={26} /><PencilText>{group.label}</PencilText>
+              <DocsIcon data={navigationIcon(group.label)} size={26} /><PencilText ellipsis className="side-navigation__label" seed={`nav-group-${group.label}`}>{group.label}</PencilText>
             </Accordion.Trigger>
           </Accordion.Header>
           <Accordion.Content contentClassName="nav-group__content">{group.children ? renderGroups(group.children, depth + 1) : <ul>
@@ -253,7 +254,7 @@ function SideNavigation({
                   }}
                 >
                   {currentPath === item.path ? <PencilSurface aria-hidden="true" className="selection-backdrop" seed={`nav-selection-${item.path}`} variant="selection" /> : null}
-                  <span className="selection-control-content"><DocsIcon data={navigationIcon(item.label)} size={26} /><PencilText ellipsis seed={`nav-${item.path}`}>{item.label}</PencilText></span>
+                  <span className="selection-control-content"><DocsIcon data={navigationIcon(item.label)} size={26} /><PencilText ellipsis className="side-navigation__label" seed={`nav-${item.path}`}>{item.label}</PencilText></span>
                 </a>
               </li>
             ))}
@@ -278,8 +279,10 @@ function SideNavigation({
   );
 }
 
-function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
+function SearchBox({ onNavigate, expanded = false, onClose }: { onNavigate: (path: RoutePath) => void; expanded?: boolean; onClose?: () => void }) {
   const { t } = useLocale();
+  const searchId = useId();
+  const resultsId = `${searchId}-results`;
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -287,9 +290,13 @@ function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
     const keyword = query.trim().toLocaleLowerCase('zh-CN');
     return keyword
       ? allNavItems.filter((item) => `${t(item.label)} ${t(item.description)} ${item.label}`.toLocaleLowerCase().includes(keyword))
-      : [];
-  }, [query, t]);
+      : expanded ? allNavItems : [];
+  }, [query, t, expanded]);
   useEffect(() => setActiveIndex(0), [t]);
+  useEffect(() => {
+    if (focused) document.getElementById(`${searchId}-result-${activeIndex}`)?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex, focused, query, searchId]);
+  const showResults = expanded || (focused && Boolean(query));
 
   const openResult = (item: NavItem) => {
     onNavigate(item.path);
@@ -299,6 +306,7 @@ function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
+      if (expanded) return;
       setQuery('');
       setFocused(false);
     } else if (results.length && event.key === 'ArrowDown') {
@@ -321,18 +329,20 @@ function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
   };
 
   return (
-    <form className="header-search" onSubmit={handleSubmit} role="search">
-      <label className="visually-hidden" htmlFor="docs-search">{t('搜索文档')}</label>
+    <form className={expanded ? 'search-screen' : 'header-search'} onSubmit={handleSubmit} role="search">
+      <div className="search-input-row">
+      {expanded && <Button size="icon" variant="ghost" aria-label={t('关闭')} title={t('关闭')} onClick={onClose}><DocsIcon data={arrowLeftIcon} size={30} /></Button>}
+      <label className="visually-hidden" htmlFor={searchId}>{t('搜索文档')}</label>
       <Input
-        aria-activedescendant={focused && query && results[activeIndex] ? `search-${activeIndex}` : undefined}
+        aria-activedescendant={showResults && results[activeIndex] ? `${searchId}-result-${activeIndex}` : undefined}
         aria-autocomplete="list"
-        aria-controls="docs-search-results"
-        aria-expanded={focused && Boolean(query)}
+        aria-controls={showResults ? resultsId : undefined}
+        aria-expanded={showResults}
         autoComplete="off"
         clearable
         clearButtonLabel={t('清空搜索')}
-        id="docs-search"
-        onBlur={() => window.setTimeout(() => setFocused(false), 100)}
+        id={searchId}
+        onBlur={() => { if (!expanded) window.setTimeout(() => setFocused(false), 100); }}
         onValueChange={(value) => { setQuery(value); setActiveIndex(0); setFocused(true); }}
         onFocus={() => setFocused(true)}
         onKeyDown={handleKeyDown}
@@ -343,21 +353,23 @@ function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
         type="search"
         value={query}
       />
-      {focused && query ? (
-        <PencilSurface className="search-results" id="docs-search-results" role="listbox" seed="search-results" variant="paper">
+      </div>
+      {showResults ? (
+        <PencilSurface className="search-results" id={resultsId} role="listbox" aria-label={t('搜索文档')} seed="search-results" variant={expanded ? 'ghost' : 'paper'}>
           {results.length ? results.map((item, index) => (
             <button
               aria-selected={activeIndex === index}
               className="search-result"
-              id={`search-${index}`}
+              id={`${searchId}-result-${index}`}
               key={item.path}
               onMouseEnter={() => setActiveIndex(index)}
-              onPointerDown={(event) => { event.preventDefault(); openResult(item); }}
+              onMouseDown={event => event.preventDefault()}
+              onClick={() => openResult(item)}
               role="option"
               type="button"
             >
               <PencilText seed={`search-label-${index}`}>{item.label}</PencilText>
-              <PencilText as="small" seed={`search-description-${index}`}>{item.description}</PencilText>
+              {t(item.description) !== t(item.label) && <PencilText as="small" seed={`search-description-${index}`}>{item.description}</PencilText>}
             </button>
           )) : (
             <PencilText as="p" className="search-empty" seed="search-empty">没有匹配的页面</PencilText>
@@ -366,6 +378,35 @@ function SearchBox({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
       ) : null}
     </form>
   );
+}
+
+function MobileSearch({ onNavigate }: { onNavigate: (path: RoutePath) => void }) {
+  const { t } = useLocale();
+  const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const mobile = window.matchMedia('(max-width: 48rem)');
+    const update = () => { if (!mobile.matches) setOpen(false); };
+    mobile.addEventListener('change', update);
+    return () => mobile.removeEventListener('change', update);
+  }, []);
+  return <Drawer.Root open={open} onOpenChange={setOpen}>
+    <Drawer.Trigger asChild><Button className="mobile-search-trigger" size="icon" variant="ghost" aria-label={t('搜索文档')} title={t('搜索文档')}><DocsIcon data={searchIcon} size={30} /></Button></Drawer.Trigger>
+    <Drawer.Portal>
+      <Drawer.Backdrop />
+      <Drawer.Content ref={dialogRef} className="mobile-search-dialog" direction="bottom" size="100dvh" aria-describedby={undefined}
+        onOpenAutoFocus={event => { event.preventDefault(); dialogRef.current?.querySelector('input')?.focus(); }}
+        onCloseAutoFocus={event => {
+          if (!window.matchMedia('(max-width: 48rem)').matches) {
+            event.preventDefault();
+            document.querySelector<HTMLInputElement>('.app-header .header-search input')?.focus();
+          }
+        }}>
+        <Drawer.Title className="visually-hidden">{t('搜索文档')}</Drawer.Title>
+        <SearchBox expanded onClose={() => setOpen(false)} onNavigate={path => { setOpen(false); onNavigate(path); }} />
+      </Drawer.Content>
+    </Drawer.Portal>
+  </Drawer.Root>;
 }
 
 function LanguageControl() {
@@ -417,18 +458,19 @@ function AppHeader({
   const { t } = useLocale();
   const docsActive = currentPath !== '/' && currentPath !== '/blog' && currentPath !== '/ecosystem';
   const home = currentPath === '/';
+  const ActionGroup = docsActive ? 'div' : ButtonGroup;
   const links = [{ path: '/getting-started', label: '文档' }, { path: '/blog', label: '博客' }, { path: '/ecosystem', label: '生态' }] as const;
-  return (
-    <header className="app-header">
-      <div className="header-inner">
-        {docsActive && <button aria-label={t("打开文档目录")} className="icon-button menu-button" data-tooltip={t("打开目录")} onClick={onOpenMenu} ref={menuButtonRef} type="button">
+  const brand = <a className="brand" href="/" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return; event.preventDefault(); onNavigate('/'); }}>
+    <BrandMark />
+    <PencilText className="brand-word" seed="inkra-brand">Inkra</PencilText>
+  </a>;
+  const brandSlot = <div className="header-brand">
+        <button aria-label={t("打开文档目录")} className="icon-button menu-button" data-tooltip={t("打开目录")} onClick={onOpenMenu} ref={menuButtonRef} type="button">
           <DocsIcon data={menuIcon} seed="menu-icon" size={30} />
-        </button>}
-        <a className="brand" href="/" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return; event.preventDefault(); onNavigate('/'); }}>
-          <BrandMark />
-          <PencilText className="brand-word" seed="inkra-brand">Inkra</PencilText>
-        </a>
-        <PencilLine className="header-brand-divider header-action-divider" orientation="vertical" seed="header-brand-divider" />
+        </button>
+        {brand}
+  </div>;
+  const navigation = <>
         <nav className="site-navigation inkra-tabs" data-size="md" aria-label={t('主导航')}>
           {links.map(({ path, label }, index) => <div className="site-navigation__item" key={path}>
             {index > 0 && <PencilLine className="site-navigation__divider" orientation="vertical" seed={`site-divider-${path}`} />}
@@ -443,10 +485,21 @@ function AppHeader({
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-search-divider" />
         <SearchBox onNavigate={onNavigate} />
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-actions-divider" />
-        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} renderTrigger={trigger =>
-          <ButtonGroup className="header-action-group" aria-label={t('页面操作')}>
-            {home && <HomeLanguageMenu />}{trigger}<GitHubLink />
-          </ButtonGroup>} />
+        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} triggerVariant={docsActive ? 'ghost' : 'outline'} renderTrigger={trigger =>
+          <ActionGroup className="header-action-group" role="group" aria-label={t('页面操作')}>
+            {docsActive && <MobileSearch onNavigate={onNavigate} />}
+            {home && <HomeLanguageMenu />}{trigger}<GitHubLink variant={docsActive ? 'ghost' : 'outline'} />
+          </ActionGroup>} />
+  </>;
+  if (docsActive) return <Layout.Header className="app-header app-header--docs" padding={5} sidebar={brandSlot} sidebarDivided divided>
+    <div className="header-inner">{navigation}</div>
+  </Layout.Header>;
+  return (
+    <header className="app-header">
+      <div className="header-inner">
+        {brand}
+        <PencilLine className="header-brand-divider header-action-divider" orientation="vertical" seed="header-brand-divider" />
+        {navigation}
       </div>
       <PencilLine className="header-divider" seed="header-divider" roughness={0.7} />
     </header>
@@ -512,7 +565,11 @@ function MobileDrawer({
       <button aria-label={t("关闭文档目录")} className="drawer-backdrop" onClick={onClose} tabIndex={-1} type="button" />
       <PencilSurface as="aside" aria-label={t("文档目录")} aria-modal="true" className="mobile-drawer" ref={drawerRef} role="dialog" seed="mobile-drawer" variant="full">
         <div className="drawer-header">
-          <span className="drawer-brand"><BrandMark /><PencilText className="brand-word" seed="drawer-brand">Inkra</PencilText></span>
+          <a className="drawer-brand" href="/" onClick={event => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+            event.preventDefault();
+            onNavigate('/');
+          }}><BrandMark /><PencilText className="brand-word" seed="drawer-brand">Inkra</PencilText></a>
           <button aria-label={t("关闭文档目录")} className="icon-button" data-tooltip={t("关闭目录")} onClick={onClose} ref={closeButtonRef} type="button">
             <DocsIcon data={xIcon} seed="close-drawer" size={30} />
           </button>
@@ -612,15 +669,13 @@ function ButtonGroupExample() {
 
 function ComparisonGroup({ kind }: { kind: ExampleKind }) {
   const { t } = useLocale();
-  const [showCode, setShowCode] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const example = comparisonExamples[kind];
   const handleAction = (label: string) => setAnnouncement(`${label}已触发`);
 
   return (
-    <section className="comparison-group" aria-labelledby={`comparison-${kind}`} data-doc-code={example.code}>
-      <PencilSurface className="comparison-card" variant="paper" radius={8} seed={`comparison-card-${kind}`}>
-        <header className="comparison-heading"><PencilText as="h2" id={`comparison-${kind}`} seed={`comparison-${kind}-title`}>{example.title}</PencilText><PencilLine className="comparison-divider" seed={`comparison-${kind}-header`} /></header>
+    <ComponentExample id={`comparison-${kind}`} title={example.title} code={example.code}
+      codeActions={<CopyButton code={example.code} onResult={setAnnouncement} />}>
         <div className={`comparison-row comparison-row--${kind}`}>
           {kind === 'appearance' ? <>
             <div className="comparison-item"><code>primary</code><Button onClick={() => handleAction('Primary')} seed="compare-primary">{t("保存更改")}</Button></div>
@@ -651,19 +706,8 @@ function ComparisonGroup({ kind }: { kind: ExampleKind }) {
             <div className="comparison-item comparison-item--wide" dir="rtl"><code>dir="rtl" · endIcon</code><Button endIcon={<DocsIcon data={arrowLeftIcon} seed="rtl-arrow" size={24} />} onClick={() => handleAction('RTL 继续')} seed="compare-rtl">{t("继续")}</Button></div>
           </>}
         </div>
-        <PencilLine className="tool-divider" seed={`comparison-footer-${kind}`} />
-        <footer className="comparison-footer">
-          <button type="button" aria-label={`${t(showCode ? '隐藏源码' : '查看源码')} · ${t(example.title)}`} aria-expanded={showCode} aria-controls={`comparison-code-${kind}`} onClick={() => setShowCode(value => !value)}>
-            <DocsIcon data={codeIcon} seed={`comparison-code-icon-${kind}`} size={20} />
-            <PencilText>{showCode ? '隐藏源码' : '查看源码'}</PencilText>
-            <span className="comparison-chevron" data-expanded={showCode}><DocsIcon data={chevronDownIcon} seed={`comparison-chevron-${kind}`} size={16} /></span>
-          </button>
-          {showCode && <CopyButton code={example.code} onResult={setAnnouncement} />}
-        </footer>
-        <div className="comparison-code" id={`comparison-code-${kind}`} hidden={!showCode}>{showCode && <CodeBlock code={example.code} />}</div>
-      </PencilSurface>
       <span aria-live="polite" className="visually-hidden">{announcement}</span>
-    </section>
+    </ComponentExample>
   );
 }
 
@@ -806,31 +850,7 @@ function ButtonPage({ activeTab, onTabChange }: { activeTab: ButtonTab; onTabCha
         </section>
       ) : activeTab === 'api' ? (
         <section aria-labelledby="button-tab-api" className="content-section" id="button-panel-api" role="tabpanel">
-          <PencilText as="p" seed="api-intro">Button 透传原生 button 属性；ButtonLink 透传原生 anchor 属性。</PencilText>
-          <PencilText as="h2" seed="button-api-title">Button / ButtonLink</PencilText>
-          <div className="api-table-wrap"><ApiTable label="Button / ButtonLink API" rows={[
-            ['variant', "'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link'", "'primary'", t('视觉与语义层级')],
-            ['size', "'xs' | 'sm' | 'md' | 'lg' | 'icon-xs' | 'icon-sm' | 'icon' | 'icon-lg'", "'md'", t('文字或纯图标尺寸')],
-            ['startIcon', 'ReactNode', t('无'), t('逻辑起始侧图标')],
-            ['endIcon', 'ReactNode', t('无'), t('逻辑结束侧图标')],
-            ['loading', 'boolean', 'false', t('阻止重复触发')],
-            ['fullWidth', 'boolean', 'false', t('撑满宽度')],
-            ['align', "'start' | 'center' | 'end'", "'center'", t('内容对齐')],
-            ['loadingPosition', "'start' | 'center' | 'end'", "'center'", t('两侧加载保留文字和固定槽位；纯图标始终居中。')],
-            ['loadingIndicator', 'ReactNode', t('默认加载图标'), t('仅装饰，不放交互内容')],
-            ['disabled', 'boolean', 'false', t('禁用原生按钮')],
-            ['seed', 'string | number', t('自动生成'), t('稳定材质采样')],
-          ]} /></div>
-          <PencilText as="h2" seed="button-link-api-title">ButtonLink</PencilText>
-          <p><PencilText seed="button-link-api-description">渲染原生锚点；disabled 或 loading 时移除 href、退出 Tab 顺序并阻止激活。</PencilText></p>
-          <PencilText as="h2" seed="button-group-api-title">ButtonGroup</PencilText>
-          <div className="api-table-wrap"><ApiTable label="ButtonGroup API" rows={[
-            ['orientation', "'horizontal' | 'vertical'", "'horizontal'", `${t('设置分组方向；组件渲染')}role="group"`],
-            ['size / variant', 'ButtonSize / ButtonVariant', t('未设置'), t('子按钮可覆盖尺寸和外观')],
-            ['disabled', 'boolean', 'false', t('禁用组内按钮和链接，子项不可解除')],
-            ['fullWidth', 'boolean', 'false', t('撑满宽度')],
-            ['equalWidth', 'boolean', 'false', t('等宽按钮；窄屏保留局部滚动')],
-          ]} /></div>
+          <ApiGroups component="button" groups={buttonApiGroups} />
         </section>
       ) : (
         <section aria-labelledby="button-tab-accessibility" className="content-section" id="button-panel-accessibility" role="tabpanel">
@@ -872,8 +892,11 @@ export function App() {
   const [route, setRoute] = useState<RoutePath>(initial.path);
   const [buttonTab, setButtonTab] = useState<ButtonTab>(initial.tab ?? readButtonTab());
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(240);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const cancelAnchorScroll = useRef<() => void>(() => {});
   const isDocs = route !== '/' && route !== '/blog' && route !== '/ecosystem';
+  const Shell = isDocs ? Layout.Root : 'div';
   const { t } = useLocale();
 
   useEffect(() => {
@@ -887,11 +910,28 @@ export function App() {
   }, [theme]);
 
   useEffect(() => {
+    const header = document.querySelector('.app-header');
+    if (!header) return;
+    const update = () => document.documentElement.style.setProperty('--docs-header-height', `${header.getBoundingClientRect().height}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--docs-header-height');
+    };
+  }, [isDocs]);
+
+  useEffect(() => {
     const initialLocation = legacyLocation();
-    const canonicalHash = initialLocation.path.startsWith('/components/') ? `#${initialLocation.tab ?? 'preview'}` : '';
+    const samePage = validPath(window.location.pathname) === initialLocation.path;
+    const canonicalHash = samePage && readDocumentAnchor(window.location.hash)
+      ? window.location.hash
+      : initialLocation.path.startsWith('/components/') ? `#${initialLocation.tab ?? 'preview'}` : '';
     if (window.location.pathname !== routeHref(initialLocation.path) || window.location.hash !== canonicalHash) {
       window.history.replaceState(null, '', `${routeHref(initialLocation.path)}${window.location.search}${canonicalHash}`);
     }
+    cancelAnchorScroll.current = scrollToDocumentAnchor(window.location.hash);
     const onPopState = () => {
       const next = legacyLocation();
       if (next.path === '/internationalization' && validPath(window.location.pathname) === '/getting-started') {
@@ -899,17 +939,24 @@ export function App() {
       }
       setRoute(next.path);
       setButtonTab(next.tab ?? readButtonTab());
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      cancelAnchorScroll.current();
+      if (readDocumentAnchor(window.location.hash)) {
+        cancelAnchorScroll.current = scrollToDocumentAnchor(window.location.hash);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
     };
     window.addEventListener('popstate', onPopState);
     window.addEventListener('hashchange', onPopState);
     return () => {
       window.removeEventListener('popstate', onPopState);
       window.removeEventListener('hashchange', onPopState);
+      cancelAnchorScroll.current();
     };
   }, []);
 
   const navigate = (path: RoutePath, tab?: ButtonTab) => {
+    cancelAnchorScroll.current();
     const nextTab = path.startsWith('/components/') ? tab ?? 'preview' : undefined;
     window.history.pushState(null, '', `${routeHref(path)}${nextTab ? `#${nextTab}` : ''}`);
     setRoute(path);
@@ -920,6 +967,7 @@ export function App() {
 
   const changeButtonTab = (tab: ButtonTab) => {
     if (window.location.hash === `#${tab}`) return;
+    cancelAnchorScroll.current();
     window.history.pushState(null, '', `${routeHref(route)}#${tab}`);
     setButtonTab(tab);
   };
@@ -932,16 +980,27 @@ export function App() {
   return (
     <div className="app-shell">
       <PencilSurface aria-hidden="true" className="page-paper" seed="docs-viewport-paper" variant="full" />
+      <Shell className={isDocs ? 'docs-shell' : undefined} {...(isDocs ? { collapseAt: 'never' as const, sidebarWidth } : {})}>
       <AppHeader currentPath={route} menuButtonRef={menuButtonRef} onNavigate={navigate} onOpenMenu={() => setDrawerOpen(true)} theme={theme} onThemeChange={setTheme} />
-      {isDocs && <MobileDrawer currentPath={route} onClose={closeDrawer} onNavigate={navigate} onThemeChange={setTheme} open={drawerOpen} theme={theme} />}
-      {isDocs ? <div className="docs-layout">
-        <aside className="desktop-sidebar"><SideNavigation currentPath={route} onNavigate={navigate} /><SidebarPreferences theme={theme} onThemeChange={setTheme} /><PencilLine className="sidebar-divider" orientation="vertical" seed="sidebar-divider" /></aside>
-        <main id="main-content">
+      {isDocs ? <Layout.Body className="docs-layout">
+        <Resizable.Root className="docs-resizable" style={{ overflow: 'visible' }}>
+        <Resizable.Panel id="docs-navigation" className="docs-sidebar-panel" defaultSize={240} minSize={200} maxSize={360} groupResizeBehavior="preserve-pixel-size" style={{ overflow: 'visible' }} onResize={size => {
+          if (window.matchMedia('(min-width: 769px)').matches) setSidebarWidth(size.inPixels);
+        }}>
+        <Layout.Sidebar className="desktop-sidebar" width="100%" padding={0} divided><SideNavigation currentPath={route} onNavigate={navigate} /><SidebarPreferences theme={theme} onThemeChange={setTheme} /></Layout.Sidebar>
+        </Resizable.Panel>
+        <Resizable.Handle className="docs-sidebar-resize" />
+        <Resizable.Panel id="docs-content" className="docs-content-panel" minSize="40%" style={{ overflow: 'visible' }}>
+        <Layout.Content as="main" id="main-content" padding={0}>
           {route === '/components/button' ? <ButtonPage activeTab={buttonTab} onTabChange={changeButtonTab} /> : route.startsWith('/components/') ? <FoundationPage key={route} component={route.slice('/components/'.length) as FoundationComponent} activeTab={buttonTab} onTabChange={changeButtonTab} /> : route === '/internationalization' ? <article className="documentation"><PageHeading title="国际化" description="换种语言打招呼，别让用户自己翻译。" /><InternationalizationExamples /></article> : route === '/theming' ? <article className="documentation"><PageHeading title="主题定制" description="颜色、笔触都能改，不用和我长得一样。" /><ThemeExamples /></article> : route === '/design-standard' ? <DesignStandardPage theme={theme} /> : route === '/usage-guide' ? <article className="documentation"><PageHeading title="使用指南" /><section className="content-section"><UsageGuide theme={theme} /></section></article> : <GettingStartedPage onNavigate={navigate} />}
-        </main>
-      </div> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : <main id="main-content" className="site-section" aria-label={t(route === '/blog' ? '博客' : '生态')}>
+        </Layout.Content>
+        </Resizable.Panel>
+        </Resizable.Root>
+      </Layout.Body> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : <main id="main-content" className="site-section" aria-label={t(route === '/blog' ? '博客' : '生态')}>
         <h1 className="visually-hidden">{t(route === '/blog' ? '博客' : '生态')}</h1>
       </main>}
+      </Shell>
+      {isDocs && <MobileDrawer currentPath={route} onClose={closeDrawer} onNavigate={navigate} onThemeChange={setTheme} open={drawerOpen} theme={theme} />}
     </div>
   );
 }

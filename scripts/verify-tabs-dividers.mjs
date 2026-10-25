@@ -40,12 +40,14 @@ try {
   const headerSpacing = await page.locator('.site-navigation').evaluate(nav => {
     const items = Array.from(nav.querySelectorAll('a'));
     return items.map((item, index) => {
-      const before = index ? nav.querySelectorAll('.site-navigation__divider')[index - 1] : document.querySelector('.header-brand-divider');
+      const before = index ? nav.querySelectorAll('.site-navigation__divider')[index - 1] : document.querySelector('.app-header--docs .inkra-layout__header-sidebar-divider');
       const after = nav.querySelectorAll('.site-navigation__divider')[index] ?? nav.nextElementSibling;
+      if (!before || !after) throw new Error('The real header dividers must bound every navigation item');
       const a = item.getBoundingClientRect(), b = before.getBoundingClientRect(), c = after.getBoundingClientRect();
       return [a.left - b.right, c.left - a.right];
     });
   });
+  assert.equal(headerSpacing.length, 3, 'Checks all three primary navigation items');
   for (const gaps of headerSpacing) for (const gap of gaps) assert.equal(gap, 8);
   console.log('PASS optional dividers, equal gaps, horizontal/vertical, RTL and keyboard navigation');
 } finally { await browser.close(); }

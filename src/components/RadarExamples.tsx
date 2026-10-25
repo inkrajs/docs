@@ -53,7 +53,7 @@ export function RadarExamples() {
     ]} />}>
       <Radar {...labels} axes={axes} series={series} label={text('能力画像', 'Capability profile')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
     </ComponentPlayground>
-    <ComponentExample title={text('缺失值与负值', 'Missing and negative values')} code={'<Radar {...labels} axes={axes} series={[{ id: "beta", label: "Beta", data: [{ axisId: "speed", value: -4 }, { axisId: "clarity", value: null }] }]} label="Boundary values" />'}>
+    <ComponentExample id="radar-missing-and-negative-values" title={text('缺失值与负值', 'Missing and negative values')} code={'<Radar {...labels} axes={axes} series={[{ id: "beta", label: "Beta", data: [{ axisId: "speed", value: -4 }, { axisId: "clarity", value: null }] }]} label="Boundary values" />'}>
       <Radar {...labels} axes={axes.slice(0, 3)} series={[{ id: 'boundary', label: text('边界样本', 'Boundary sample'), data: [{ axisId: 'speed', value: -4 }, { axisId: 'quality', value: 0 }, { axisId: 'clarity', value: null }] }]} label={text('边界样本', 'Boundary sample')} description={text('0 是有效数值，空值显示为缺失。', 'Zero is measured; null is missing.')} showLegend={false} />
     </ComponentExample>
   </div>;

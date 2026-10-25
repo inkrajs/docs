@@ -88,7 +88,7 @@ export function OverflowListExamples() {
       </div>
     }</ComponentPlayground>
 
-    <ComponentExample title={text('标签与文本按钮', 'Tags and text buttons')} code={`<OverflowList
+    <ComponentExample id="overflow-list-tags-and-text-buttons" title={text('标签与文本按钮', 'Tags and text buttons')} code={`<OverflowList
   items={tags}
   strategy="priority"
   renderItem={(item) => <Badge>{item.label}</Badge>}

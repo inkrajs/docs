@@ -117,7 +117,7 @@ export function KeypadExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={t('密码面板')} code={`<Input type="password" inputMode="numeric" value={password} onValueChange={setPassword} />
+    <ComponentExample id="keypad-password-keypad" title={t('密码面板')} code={`<Input type="password" inputMode="numeric" value={password} onValueChange={setPassword} />
 <Keypad layout={passwordLayout} value={password} onValueChange={setPassword} maxLength={6}
   onConfirm={value => verifyPin(value)} />`}>
       <div className="keypad-example__stack" data-testid="keypad-password">
@@ -129,7 +129,7 @@ export function KeypadExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('操作面板')} code={`<Keypad layout={operations} onKeyPress={({ key }) => runAction(key.id)} />`}>
+    <ComponentExample id="keypad-operation-panel" title={t('操作面板')} code={`<Keypad layout={operations} onKeyPress={({ key }) => runAction(key.id)} />`}>
       <div className="keypad-example__stack" data-testid="keypad-operations">
         <Keypad label={t('编辑操作')} layout={operations} onKeyPress={({ key }) => setOperation(key.id)} />
         <div className="keypad-example__operation-row">

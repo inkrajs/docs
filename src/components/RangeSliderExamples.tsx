@@ -87,14 +87,14 @@ export function RangeSliderExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={copy.endpointRules} code={`<RangeSlider defaultValue={[20, 80]} minDistance={20} />\n<RangeSlider defaultValue={[20, 80]} allowCross thumbLabels={${JSON.stringify(copy.crossingLabels)}} />`}>
+    <ComponentExample id="range-slider-endpoint-rules" title={copy.endpointRules} code={`<RangeSlider defaultValue={[20, 80]} minDistance={20} />\n<RangeSlider defaultValue={[20, 80]} allowCross thumbLabels={${JSON.stringify(copy.crossingLabels)}} />`}>
       <div className="range-slider-examples__stack">
         <RangeSlider defaultValue={[20, 80]} minDistance={20} thumbLabels={copy.valueLabels} />
         <RangeSlider defaultValue={[20, 80]} allowCross thumbLabels={copy.crossingLabels} />
       </div>
     </ComponentExample>
 
-    <ComponentExample title={t('表单与重置')} code={`const [result, setResult] = useState('');
+    <ComponentExample id="range-slider-form-and-reset" title={t('表单与重置')} code={`const [result, setResult] = useState('');
 
 <form onSubmit={event => {
   event.preventDefault();
@@ -120,7 +120,7 @@ export function RangeSliderExamples() {
       </form>
     </ComponentExample>
 
-    <ComponentExample title={copy.rtlDisabled} code={`<RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={${JSON.stringify(copy.valueLabels)}} />\n<RangeSlider defaultValue={[30, 70]} disabled thumbLabels={${JSON.stringify(copy.valueLabels)}} />`}>
+    <ComponentExample id="range-slider-rtl-disabled" title={copy.rtlDisabled} code={`<RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={${JSON.stringify(copy.valueLabels)}} />\n<RangeSlider defaultValue={[30, 70]} disabled thumbLabels={${JSON.stringify(copy.valueLabels)}} />`}>
       <div className="range-slider-examples__stack">
         <RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={copy.valueLabels} />
         <RangeSlider defaultValue={[30, 70]} disabled thumbLabels={copy.valueLabels} />

@@ -171,7 +171,7 @@ export function HeatmapExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text.custom} code={`<Heatmap
+    <ComponentExample id="heatmap-custom" title={text.custom} code={`<Heatmap
   label="${text.customTitle}"
   rows={compactRows}
   columns={compactColumns}

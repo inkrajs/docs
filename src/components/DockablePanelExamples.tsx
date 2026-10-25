@@ -86,7 +86,7 @@ export function DockablePanelExamples() {
       </DockablePanelWorkspace>
     </ComponentPlayground>
 
-    <ComponentExample title={t('受控位置')} code={`const [position, setPosition] = useState({ x: 164, y: 72 });
+    <ComponentExample id="dockable-panel-controlled-position" title={t('受控位置')} code={`const [position, setPosition] = useState({ x: 164, y: 72 });
 
 <DockablePanelWorkspace activeId="tools">
   <DockablePanel

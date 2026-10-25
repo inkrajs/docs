@@ -139,7 +139,7 @@ export function ImageViewerExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('图片与视频', 'Images and video')} code={`<MediaViewer.Root items={[
+    <ComponentExample id="image-viewer-images-and-video" title={text('图片与视频', 'Images and video')} code={`<MediaViewer.Root items={[
   { id: 'artwork', src: artwork, alt: '${text('彩铅图案', 'Pencil artwork')}' },
   { id: 'motion', type: 'video', src: '/media/inkra-artwork.webm', poster: artwork, alt: '${text('彩铅图案短片', 'Pencil artwork clip')}' },
 ]}>
@@ -179,7 +179,7 @@ export function ImageViewerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample title={text('加载失败与恢复', 'Load failure and recovery')} code={`<Button onClick={() => setRecovered(value => !value)}>${text('切换图片源', 'Switch image source')}</Button>
+    <ComponentExample id="image-viewer-load-failure-and-recovery" title={text('加载失败与恢复', 'Load failure and recovery')} code={`<Button onClick={() => setRecovered(value => !value)}>${text('切换图片源', 'Switch image source')}</Button>
 <ImageViewer.Root items={[{ id: 'preview', src: recovered ? previewLight : '/missing-image.png', alt: '${text('预览图片', 'Preview image')}' }]}>
   <ImageViewer.Trigger asChild><Button>${text('查看恢复状态', 'View recovery state')}</Button></ImageViewer.Trigger>
   <ImageViewer.Content labels={localizedLabels} />

@@ -34,10 +34,11 @@ function readSettings(): Settings {
   } catch { return defaults; }
 }
 
-export function ThemeCustomizer({ theme, onThemeChange, renderTrigger }: {
+export function ThemeCustomizer({ theme, onThemeChange, renderTrigger, triggerVariant = 'outline' }: {
   theme: 'auto' | 'light' | 'dark';
   onThemeChange: (theme: 'auto' | 'light' | 'dark') => void;
   renderTrigger?: (trigger: ReactNode) => ReactNode;
+  triggerVariant?: 'outline' | 'ghost';
 }) {
   const { t } = useLocale();
   const label = t("主题定制", "Customize theme");
@@ -108,7 +109,7 @@ export function ThemeCustomizer({ theme, onThemeChange, renderTrigger }: {
 
   const trigger = <Tooltip.Provider><Tooltip.Root>
       <Tooltip.Trigger asChild><Drawer.Trigger asChild>
-        <Button className="header-customize" size="icon" variant="outline" aria-label={label}>
+        <Button className="header-customize" size="icon" variant={triggerVariant} aria-label={label}>
           <DocsIcon data={paletteIcon} size={30} />
         </Button>
       </Drawer.Trigger></Tooltip.Trigger>

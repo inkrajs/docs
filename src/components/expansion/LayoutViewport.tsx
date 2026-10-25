@@ -1,22 +1,22 @@
 import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { Button, RadioGroup, RadioGroupItem } from '@inkra/react';
+import { RadioGroup, RadioGroupItem } from '@inkra/react';
 import { __iconData as phoneIcon } from 'lucide-react/dist/esm/icons/smartphone.mjs';
 import { __iconData as tabletIcon } from 'lucide-react/dist/esm/icons/tablet.mjs';
 import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.mjs';
-import { __iconData as expandIcon } from 'lucide-react/dist/esm/icons/expand.mjs';
-import { __iconData as shrinkIcon } from 'lucide-react/dist/esm/icons/shrink.mjs';
 import { DocsIcon } from '../DocsIcon';
-import { PencilText, useLocale } from '../../i18n';
+import { useLocale } from '../../i18n';
 import { waitForPreviewReadiness } from './layoutPreviewReadiness';
 import { collectPreviewStyleSources, isPreviewStyleSource, reconcilePreviewStyleOrder, type PreviewStyleSource } from './layoutStyleMirror';
 
-export function LayoutViewport({ children }: { children: ReactNode | ((width: number) => ReactNode) }) {
+export function LayoutViewport({ children, width, onWidthChange }: {
+  children: ReactNode | ((width: number) => ReactNode);
+  width: string;
+  onWidthChange: (width: string) => void;
+}) {
   const { locale } = useLocale();
   const zh = locale === 'zh-CN';
   const name = useId();
-  const [width, setWidth] = useState(() => window.innerWidth <= 480 ? '390' : '1024');
-  const [fit, setFit] = useState(true);
   const [size, setSize] = useState({ available: 0, height: 0 });
   const viewport = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -221,22 +221,17 @@ export function LayoutViewport({ children }: { children: ReactNode | ((width: nu
       resizeFrame.current = 0;
     };
   }, [mount]);
-  const scale = fit && size.available && size.height ? Math.min(1, size.available / Number(width), size.height / 640) : 1;
-  const height = fit && size.height ? size.height / scale : 640;
-  const zoomLabel = fit ? (zh ? '原尺寸查看' : 'Actual size') : (zh ? '适应窗口' : 'Fit to preview');
+  const scale = size.available && size.height ? Math.min(1, size.available / Number(width), size.height / 640) : 1;
+  const height = size.height ? size.height / scale : 640;
   return <div className="layout-viewport">
     <div className="layout-viewport__toolbar">
       <RadioGroup name={name} className="layout-viewport__sizes" aria-label={zh ? '预览容器宽度' : 'Preview container width'}
-        variant="segmented" orientation="horizontal" value={width} onValueChange={setWidth}>
+        variant="segmented" orientation="horizontal" value={width} onValueChange={onWidthChange}>
         <RadioGroupItem value="390" label="390" icon={<DocsIcon data={phoneIcon} size={20} />} />
         <RadioGroupItem value="768" label="768" icon={<DocsIcon data={tabletIcon} size={20} />} />
         <RadioGroupItem value="1024" label="1024" icon={<DocsIcon data={monitorIcon} size={20} />} />
         <RadioGroupItem value="1920" label="1920" icon={<DocsIcon data={monitorIcon} size={20} />} />
       </RadioGroup>
-      <Button variant="ghost" size="icon" aria-label={zoomLabel} data-tooltip={zoomLabel} aria-pressed={!fit} onClick={() => setFit(value => !value)}>
-        <DocsIcon data={fit ? expandIcon : shrinkIcon} />
-      </Button>
-      <PencilText as="output" className="layout-viewport__dimensions" aria-live="polite">{`${width} px · ${Math.round(scale * 100)}%`}</PencilText>
     </div>
     <div ref={viewport} className="layout-viewport__scroll" tabIndex={0} role="region" aria-label={zh ? '布局预览' : 'Layout preview'}>
       <div className="layout-viewport__extent" style={{ width: Number(width) * scale, height: height * scale }}>

@@ -1,4 +1,4 @@
-export const expansionComponents = ['toast', 'alert-dialog', 'drawer', 'date-picker', 'time-picker', 'pagination', 'empty', 'toggle-group', 'command', 'upload', 'data-table', 'tree', 'steps', 'timeline', 'stack', 'flex', 'grid', 'container', 'layout'] as const;
+export const expansionComponents = ['toast', 'alert-dialog', 'drawer', 'date-picker', 'time-picker', 'pagination', 'empty', 'toggle-group', 'command', 'upload', 'data-table', 'tree', 'steps', 'timeline', 'stack', 'flex', 'grid', 'container', 'layout', 'inventory-grid'] as const;
 export type ExpansionComponent = typeof expansionComponents[number];
 
 export const foundationComponents = ['icon', 'slot', 'markdown', 'popover', 'overlay', 'tooltip', 'dropdown-menu', 'context-menu', 'hover-card', 'field', 'input', 'input-number', 'hotkey', 'textarea', 'select', 'color-swatch', 'color-picker', 'tag-input', 'tree-select', 'editable', 'slider', 'range-slider', 'checkbox', 'radio-group', 'switch', 'choice-grid', 'rating', 'keypad', 'tabs', 'breadcrumb', 'accordion', 'badge', 'number-ticker', 'log', 'audio-player', 'typewriter', 'separator', 'skeleton', 'progress', 'sparkline', 'radar', 'heatmap', 'overflow-list', 'virtual-list', 'transfer', 'sortable', 'node-graph', 'carousel', 'image-viewer', 'image-cropper', 'pan-zoom', 'resizable', 'dockable-panel', 'flip', 'scroll-area', 'alert', 'avatar', 'card', 'table', 'calendar', 'day-agenda', 'journey-map', ...expansionComponents] as const;
@@ -22,6 +22,7 @@ export const foundationNames: Record<typeof foundationComponents[number], string
   'time-picker': 'TimePicker', pagination: 'Pagination', empty: 'Empty', 'toggle-group': 'ToggleGroup',
   command: 'Command', upload: 'Upload', 'data-table': 'DataTable', tree: 'Tree', steps: 'Steps', timeline: 'Timeline',
   stack: 'Stack', flex: 'Flex', grid: 'Grid', container: 'Container', layout: 'Layout',
+  'inventory-grid': 'InventoryGrid',
 };
 
 // Ordered for discovery by purpose, independently of route registration order.
@@ -33,7 +34,7 @@ export const componentNavigationGroups = [
   { label: '数据展示', components: ['markdown', 'card', 'table', 'data-table', 'badge', 'number-ticker', 'log', 'audio-player', 'typewriter', 'sparkline', 'radar', 'heatmap', 'overflow-list', 'virtual-list', 'transfer', 'sortable', 'node-graph', 'carousel', 'avatar', 'accordion', 'tree', 'timeline', 'calendar', 'day-agenda', 'journey-map'] },
   { label: '反馈状态', components: ['alert', 'toast', 'progress', 'skeleton', 'empty'] },
   { label: '弹层', components: ['overlay', 'drawer', 'popover', 'hover-card', 'tooltip', 'image-viewer', 'image-cropper', 'alert-dialog'] },
-  { label: '视觉交互', components: ['pan-zoom', 'flip'] },
+  { label: '视觉交互', components: ['pan-zoom', 'flip', 'inventory-grid'] },
 ] satisfies Array<{ label: string; components: ComponentRoute[] }>;
 
 export function isExpansionComponent(value: string): value is ExpansionComponent {

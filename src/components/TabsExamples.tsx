@@ -62,7 +62,7 @@ export function TabsExamples() {
         {extraTabs.map(([key, label]) => <Tabs.Content key={key} value={key} forceMount={keepMounted || undefined}>{label}</Tabs.Content>)}
       </Tabs.Root>
     </ComponentPlayground>
-    {(['menu', 'buttons'] as const).map(mode => <ComponentExample key={mode} title={mode === 'menu' ? text('更多菜单', 'More menu') : text('两侧滚动按钮', 'Scroll buttons')} code={`<Tabs.Root defaultValue="favorites">\n  <Tabs.List overflow="${mode}" aria-label="${t('笔记分类')}" moreLabel="${labels.moreLabel}" scrollPreviousLabel="${labels.scrollPreviousLabel}" scrollNextLabel="${labels.scrollNextLabel}">\n${extraTabs.map(([key, label]) => `    <Tabs.Trigger value="${key}">${label}</Tabs.Trigger>`).join('\n')}\n  </Tabs.List>\n${extraTabs.map(([key, label]) => `  <Tabs.Content value="${key}">${label}</Tabs.Content>`).join('\n')}\n</Tabs.Root>`}>
+    {(['menu', 'buttons'] as const).map(mode => <ComponentExample id={`tabs-overflow-${mode}`} key={mode} title={mode === 'menu' ? text('更多菜单', 'More menu') : text('两侧滚动按钮', 'Scroll buttons')} code={`<Tabs.Root defaultValue="favorites">\n  <Tabs.List overflow="${mode}" aria-label="${t('笔记分类')}" moreLabel="${labels.moreLabel}" scrollPreviousLabel="${labels.scrollPreviousLabel}" scrollNextLabel="${labels.scrollNextLabel}">\n${extraTabs.map(([key, label]) => `    <Tabs.Trigger value="${key}">${label}</Tabs.Trigger>`).join('\n')}\n  </Tabs.List>\n${extraTabs.map(([key, label]) => `  <Tabs.Content value="${key}">${label}</Tabs.Content>`).join('\n')}\n</Tabs.Root>`}>
       <Tabs.Root className="tabs-demo" defaultValue="favorites" style={{ width: 240, maxWidth: '100%' }}>
         <Tabs.List overflow={mode} {...labels} aria-label={t('笔记分类')}>
           {extraTabs.map(([key, label]) => <Tabs.Trigger key={key} value={key}>{label}</Tabs.Trigger>)}
@@ -70,14 +70,14 @@ export function TabsExamples() {
         {extraTabs.map(([key, label]) => <Tabs.Content key={key} value={key}>{label}</Tabs.Content>)}
       </Tabs.Root>
     </ComponentExample>)}
-    <ComponentExample title="分割线" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List divided aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes">${t('笔记内容')}</Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
+    <ComponentExample id="tabs-dividers" title="分割线" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List divided aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes">${t('笔记内容')}</Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
       <Tabs.Root defaultValue="notes" className="tabs-demo">
         <Tabs.List divided aria-label={t('分割线')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
         <Tabs.Content value="notes">{t('笔记内容')}</Tabs.Content>
         <Tabs.Content value="drafts">{t('草稿内容')}</Tabs.Content>
       </Tabs.Root>
     </ComponentExample>
-    <ComponentExample title="保留面板内容" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes" forceMount><Input /></Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
+    <ComponentExample id="tabs-preserved-panel-content" title="保留面板内容" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes" forceMount><Input /></Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
       <Tabs.Root defaultValue="notes" className="tabs-demo">
         <Tabs.List aria-label={t('保留面板内容')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
         <Tabs.Content value="notes" forceMount><Field label={t('名称')}><Input defaultValue="Inkra" /></Field></Tabs.Content>

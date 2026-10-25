@@ -90,7 +90,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
         <Calendar appearance={calendarAppearance} displayRange={calendarAppearance === 'itinerary' ? { from: new Date(2026, 9, 18), to: new Date(2026, 9, 29) } : undefined} startMonth={calendarAppearance === 'itinerary' ? initialDate : undefined} endMonth={calendarAppearance === 'itinerary' ? initialDate : undefined} {...(mode === 'single' ? { mode: 'single' as const, selected: date, onSelect: setDate } : { mode: 'range' as const, selected: range, onSelect: setRange, excludeDisabled: true })} onEventSelect={event => { setDate(event.date); setSelected(event.label); }} defaultMonth={initialDate} fixedWeeks numberOfMonths={Number(months)} showWeekNumber={weekNumbers} showOutsideDays={outsideDays} eventIndicator={indicator} events={calendarEvents} locale={locale === 'en' ? enUS : zhCN} weekStartsOn={Number(weekStart) as 0 | 1} disabled={disabled ? { dayOfWeek: [0, 6] } : undefined} />
       </ComponentPlayground>
       <div role="status">{selected}</div>
-      <ComponentExample title="按日查看" code={`<Calendar mode="single" selected={date} onSelect={setDate} />\n<DayAgenda date={dateKey(date)} events={eventsByDate[dateKey(date)] ?? []} />`}>
+      <ComponentExample id="travel-daily-agenda" title="按日查看" code={`<Calendar mode="single" selected={date} onSelect={setDate} />\n<DayAgenda date={dateKey(date)} events={eventsByDate[dateKey(date)] ?? []} />`}>
         <DayAgenda date={dateKey(date ?? initialDate)} events={date?.getDate() === 21 && date.getMonth() === 9 && date.getFullYear() === 2026 ? events : []} locale={locale} emptyLabel={t('暂无安排')} untimedLabel={t('时间待定')} />
       </ComponentExample>
     </> : kind === 'day-agenda' ? <>

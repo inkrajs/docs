@@ -117,7 +117,7 @@ function simulateLocalUpload(_file: File, { signal, reportProgress }: UploadRequ
           : (zh ? '仅选择文件 · 未配置传输' : 'Selection only · no transport configured')}</div>
       </div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '只选择文件' : 'File selection only'} code={'<Upload accept="image/*,.pdf" maxFiles={3} />'}>
+    <ComponentExample id="flows-file-selection-only" title={zh ? '只选择文件' : 'File selection only'} code={'<Upload accept="image/*,.pdf" maxFiles={3} />'}>
       <Upload accept="image/*,.pdf" maxFiles={3} maxSize={2 * 1024 * 1024} labels={labels} />
     </ComponentExample>
   </div>;
@@ -157,7 +157,7 @@ const steps: StepItem[] = ${JSON.stringify(codeItems, null, 2)};
     ]} />}>
       <Steps orientation={orientation} current={current} items={items} onStepChange={index => setCurrent(index)} aria-label={zh ? '设置进度' : 'Setup progress'} />
     </ComponentPlayground>
-    <ComponentExample title={zh ? '有序进度' : 'Ordered progress'} code={'<Steps current={1} items={steps} />'}>
+    <ComponentExample id="flows-ordered-progress" title={zh ? '有序进度' : 'Ordered progress'} code={'<Steps current={1} items={steps} />'}>
       <Steps current={1} items={items.slice(0, 3)} aria-label={zh ? '示例进度' : 'Example progress'} />
     </ComponentExample>
   </div>;
@@ -210,7 +210,7 @@ const timelineItems = events.map(event => ({
           : (zh ? '尚未选择记录' : 'No entry selected')}</div>
       </div>
     </ComponentPlayground>
-    <ComponentExample title={zh ? '基础时间线' : 'Basic timeline'} code={'<Timeline items={events} />'}>
+    <ComponentExample id="flows-basic-timeline" title={zh ? '基础时间线' : 'Basic timeline'} code={'<Timeline items={events} />'}>
       <Timeline items={items} aria-label={zh ? '项目历史' : 'Project history'} />
     </ComponentExample>
   </div>;

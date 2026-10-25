@@ -90,7 +90,7 @@ export function AudioPlayerExamples() {
       </div>
     </ComponentPlayground>
 
-    <ComponentExample title={text('受控音量与倍速', 'Controlled volume and speed')} code={`<AudioPlayer
+    <ComponentExample id="audio-player-controlled-volume-and-speed" title={text('受控音量与倍速', 'Controlled volume and speed')} code={`<AudioPlayer
   src={sampleAudio}
   volume={volume}
   muted={muted}

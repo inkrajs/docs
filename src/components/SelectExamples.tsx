@@ -19,12 +19,12 @@ const checkPaths = iconPaths(checkIcon);
 function TriggerExamples() {
   const { t } = useLocale();
   const variants = [
-    { title: '前置图标', props: {}, code: '' },
-    { title: '隐藏下拉箭头', props: { hideIndicator: true }, code: ' hideIndicator' },
-    { title: '隐藏选中值', props: { hideValue: true, fullWidth: false }, code: ' hideValue fullWidth={false}' },
-    { title: '纯图标触发器', props: { iconOnly: true }, code: ' iconOnly' },
+    { id: 'select-leading-icon', title: '前置图标', props: {}, code: '' },
+    { id: 'select-hidden-indicator', title: '隐藏下拉箭头', props: { hideIndicator: true }, code: ' hideIndicator' },
+    { id: 'select-hidden-value', title: '隐藏选中值', props: { hideValue: true, fullWidth: false }, code: ' hideValue fullWidth={false}' },
+    { id: 'select-icon-only', title: '纯图标触发器', props: { iconOnly: true }, code: ' iconOnly' },
   ];
-  return <>{variants.map(({ title, props, code }) => <ComponentExample key={title} title={title} code={`const languagePaths = ${JSON.stringify(languagePaths)};
+  return <>{variants.map(({ id, title, props, code }) => <ComponentExample id={id} key={id} title={title} code={`const languagePaths = ${JSON.stringify(languagePaths)};
 
 <Select.Root defaultValue="zh-CN">
   <Tooltip.Provider><Tooltip.Root${props.hideValue || props.iconOnly ? '' : ' open={false}'}>
@@ -255,7 +255,7 @@ ${itemCode}
       </div>
     </ComponentPlayground>
     <TriggerExamples />
-    <ComponentExample title="多选" code={`const [result, setResult] = useState('');
+    <ComponentExample id="select-multiple-selection" title="多选" code={`const [result, setResult] = useState('');
 
 <form onSubmit={event => {
   event.preventDefault();
@@ -294,7 +294,7 @@ ${archiveOptions.map(([value, label]) => `          <Select.Item value="${value}
         <output className="component-demo-status" aria-live="polite">{multipleStatus}</output>
       </form>
     </ComponentExample>
-    <ComponentExample title="默认值与表单重置" code={defaultCode}>
+    <ComponentExample id="select-default-value-and-form-reset" title="默认值与表单重置" code={defaultCode}>
       <form className="component-demo-form">
         <Field label={t('可见范围')}><Select.Root name="visibility" defaultValue="team"><Select.Trigger><Select.Value /></Select.Trigger>
           <Select.Portal><Select.Content position="popper" sideOffset={8}><Select.ScrollUpButton /><Select.Viewport><VisibilityItems /></Select.Viewport><Select.ScrollDownButton /></Select.Content></Select.Portal>
@@ -302,7 +302,7 @@ ${archiveOptions.map(([value, label]) => `          <Select.Item value="${value}
         <div><Button type="reset" variant="secondary">{t('重置')}</Button></div>
       </form>
     </ComponentExample>
-    <ComponentExample title="分组与滚动选项" code={groupedCode}>
+    <ComponentExample id="select-grouped-and-scrollable-options" title="分组与滚动选项" code={groupedCode}>
       <div className="component-demo-form"><Field label={t('笔记分类')}><Select.Root defaultValue="notes">
         <Select.Trigger><Select.Value /></Select.Trigger>
         <Select.Portal><Select.Content position="popper" sideOffset={8}>
