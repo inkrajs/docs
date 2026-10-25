@@ -6,10 +6,11 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This checkout currently consumes an unpublished local candidate of
-`@inkra/react@0.6.0` from `vendor/inkra.tgz`. library-candidate.json records the
-source revision and archive checksums. Build verifies the installed archive
-without a source alias; these refinements are not a published release.
+This checkout consumes the published `@inkra/react@0.6.0` release from the public
+npm registry, including Breadcrumb navigation and Select.Stepper refinements.
+library-candidate.json records the exact released source revision and archive
+checksums. Build verifies the public archive and installed package without a
+source alias. Release run 40194921258 verified the archive with React 18 and 19.
 
 ## Local Development
 
