@@ -69,8 +69,9 @@ try {
     assert.equal(await page.getByRole('cell', { name: 'searchable / clearable', exact: true }).count(), 0);
     assert(await page.getByRole('cell', { name: 'selectionPropagation', exact: true }).isVisible());
     await page.goto(`${base}/docs/components/select#api`);
-    await page.getByRole('cell', { name: 'Searchable.searchPlacement', exact: true }).waitFor();
-    assert(await page.getByRole('cell', { name: 'Searchable.clearable / clearLabel / openLabel', exact: true }).isVisible());
+    const searchableApi = page.getByRole('region', { name: 'Select.Searchable API', exact: true });
+    await searchableApi.getByRole('cell', { name: 'searchPlacement', exact: true }).waitFor();
+    assert(await searchableApi.getByRole('cell', { name: 'clearable / clearLabel / openLabel', exact: true }).isVisible());
     assert.deepEqual(errors, []);
     console.log(`PASS selection docs live sizing/state/RTL/source/reset and actual APIs: ${width}px ${locale} ${theme}`);
     await page.close();

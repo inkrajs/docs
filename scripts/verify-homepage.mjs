@@ -138,7 +138,7 @@ try {
         assert.equal(await breadcrumb.getAttribute('dir'), 'rtl');
         assert.equal(await breadcrumb.locator('a').nth(1).getAttribute('href'), null);
         await page.getByRole('tab', { name: 'API', exact: true }).click();
-        await page.getByRole('cell', { name: 'Separator.children', exact: true }).waitFor();
+        await page.getByRole('region', { name: 'Breadcrumb.Separator API', exact: true }).getByRole('cell', { name: 'children', exact: true }).waitFor();
       }
       assert.deepEqual(errors, []);
       await page.close();

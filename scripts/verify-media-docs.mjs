@@ -181,10 +181,12 @@ try {
     for (const [component, expected, obsolete] of [
       ['audio-player', 'onTimeChange', 'playing / defaultPlaying'],
       ['carousel', 'currentIndex / defaultIndex / onCurrentIndexChange', 'index / onIndexChange'],
-      ['image-viewer', 'Root.activeId / defaultActiveId', 'index / defaultIndex / onIndexChange'],
+      ['image-viewer', 'activeId / defaultActiveId', 'index / defaultIndex / onIndexChange'],
     ]) {
       await page.goto(`${base}/docs/components/${component}#api`);
-      const api = page.locator('.component-api');
+      const api = component === 'image-viewer'
+        ? page.getByRole('region', { name: 'ImageViewer.Root API', exact: true })
+        : page.locator('.component-api');
       await api.waitFor();
       assert((await api.textContent()).includes(expected));
       assert(!(await api.textContent()).includes(obsolete));

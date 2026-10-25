@@ -188,7 +188,9 @@ try {
     }
     await page.goto(`${base}/docs/components/breadcrumb#api`);
     for (const property of ['Link', 'MenuTrigger', 'ContextLink', 'Page']) {
-      await page.getByRole('cell', { name: property, exact: true }).waitFor();
+      const group = page.getByRole('region', { name: `Breadcrumb.${property} API`, exact: true });
+      await group.waitFor();
+      assert(await group.getByRole('row').count() > 1, 'each breadcrumb part documents its own properties');
     }
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   }
