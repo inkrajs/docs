@@ -23,6 +23,7 @@ try {
     const secondLink = breadcrumb.locator('.inkra-breadcrumb__link').nth(1);
     const currentPage = breadcrumb.locator('.inkra-breadcrumb__page');
     await breadcrumb.waitFor();
+    await page.evaluate(() => document.fonts.ready);
 
     assert.equal(await firstLink.getAttribute('data-variant'), 'link');
     assert.equal(await firstLink.getAttribute('href'), '/');
@@ -104,15 +105,20 @@ try {
     }
 
     const stationary = async locator => {
-      const before = await locator.locator('.inkra-button__surface').boundingBox();
+      const position = () => locator.evaluate(node => {
+        const surface = node.querySelector('.inkra-button__surface').getBoundingClientRect();
+        const item = node.closest('.inkra-breadcrumb__item').getBoundingClientRect();
+        return { x: surface.x - item.x, y: surface.y - item.y, width: surface.width, height: surface.height };
+      });
+      await locator.scrollIntoViewIfNeeded();
+      const before = await position();
       await locator.hover();
       await page.waitForTimeout(50);
-      const hover = await locator.locator('.inkra-button__surface').boundingBox();
-      await locator.press('Space').catch(() => {});
-      const after = await locator.locator('.inkra-button__surface').boundingBox();
-      assert(before && hover && after);
-      assert.equal(hover.y, before.y);
-      assert.equal(after.y, before.y);
+      const hover = await position();
+      await locator.press('Space');
+      const after = await position();
+      assert.deepEqual(hover, before, 'hover keeps the surface aligned within its breadcrumb item');
+      assert.deepEqual(after, before, 'native Space scrolling does not change breadcrumb geometry');
     };
     await stationary(firstLink);
 

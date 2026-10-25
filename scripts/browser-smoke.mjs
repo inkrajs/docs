@@ -2,6 +2,7 @@ import { runBrowserChecks } from './browser-check-runner.mjs';
 
 await runBrowserChecks([
   'verify-grid-docs',
+  'verify-breadcrumb',
   'verify-i18n',
   'verify-docs-locales',
   'verify-theme-provider',
@@ -18,7 +19,6 @@ await runBrowserChecks([
   'verify-layout-header',
   'verify-layout-mobile',
   'verify-inventory-grid',
-  'verify-breadcrumb',
   'verify-layout-scroll-refinements',
   'verify-layout-stability',
   'verify-layout-resilience',
@@ -98,4 +98,4 @@ await runBrowserChecks([
   'verify-example-i18n',
   'verify-sortable',
   'verify-virtual-list',
-], { workers: process.env.CI === 'true' ? 2 : 1 });
+], { workers: process.env.CI === 'true' ? 2 : 1, failFast: false });

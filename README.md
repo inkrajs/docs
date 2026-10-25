@@ -367,8 +367,8 @@ Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
 Local smoke checks run sequentially. CI runs at most two independent checks
-against the same server; it does not start a server for each check. A failure
-stops new checks and waits for active checks to close their browsers. The full
+against the same server; it does not start a server for each check. The smoke
+suite completes every check, closes its browsers and reports all failures together. The full
 catalog scan follows actual sidebar links while reusing the application shell.
 
 Public hosting is owned by inkrajs/inkrajs.github.io. Its release.json pins this

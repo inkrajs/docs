@@ -14,21 +14,22 @@ function runScript(script) {
   });
 }
 
-export async function runBrowserChecks(scripts, { workers = 1, run = runScript } = {}) {
+export async function runBrowserChecks(scripts, { workers = 1, run = runScript, failFast = true } = {}) {
   assert(Number.isInteger(workers) && workers >= 1 && workers <= 2, 'Browser workers must be 1 or 2');
   let next = 0;
-  let failure;
+  const failures = [];
   async function worker() {
-    while (!failure && next < scripts.length) {
+    while ((!failFast || failures.length === 0) && next < scripts.length) {
       const script = scripts[next++];
       try {
         await run(script);
       } catch (error) {
-        failure ??= error;
+        failures.push(error);
       }
     }
   }
   // Let in-flight checks close their own browsers before reporting a failure.
   await Promise.all(Array.from({ length: workers }, worker));
-  if (failure) throw failure;
+  if (failures.length === 1) throw failures[0];
+  if (failures.length) throw new AggregateError(failures, `${failures.length} browser checks failed`);
 }
