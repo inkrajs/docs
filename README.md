@@ -6,24 +6,25 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This checkout consumes the published `@inkra/react@0.6.0` release from the public
-npm registry, including Breadcrumb navigation and Select.Stepper refinements.
-library-candidate.json records the exact released source revision and archive
-checksums. Build verifies the public archive and installed package without a
-source alias. Release run 40194921258 verified the archive with React 18 and 19.
+This checkout consumes an unpublished `@inkra/react@0.7.0` candidate from
+`vendor/inkra.tgz` to document Pagination page-size and layout options.
+library-candidate.json pins the exact source revision and archive checksums.
+Build verifies the installed archive without a source alias. The published
+0.6.0 package does not include these Pagination additions. This documentation
+change does not publish npm packages or deploy the website.
 
 ## Local Development
 
-Install the pinned registry release and run:
+First prepare the exact candidate using **Prepare An Unpublished Candidate**
+below, then run:
 
 ```sh
-npm ci
 npm run build
 npm run dev -- --port 4180
 ```
 
-Fresh checkouts do not need a vendor archive. To test unpublished library
-changes, use **Prepare An Unpublished Candidate** below instead.
+Fresh checkouts need the prepared vendor archive before `npm ci`; do not
+substitute the public 0.6.0 release for this candidate.
 
 ## Local Routes And Page Actions
 
