@@ -78,6 +78,8 @@ await runBrowserChecks([
   'verify-header-github',
   'verify-home-header-actions',
   'verify-docs-shell',
+  'verify-docs-layout',
+  'verify-mobile-search',
   'verify-page-titles',
   'verify-docs-actions',
   'verify-tabs-dividers',

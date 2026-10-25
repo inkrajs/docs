@@ -6,23 +6,26 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This checkout currently consumes an unpublished local candidate of
-`@inkra/react@0.6.0` from `vendor/inkra.tgz`. library-candidate.json records the
-source revision and archive checksums. Build verifies the installed archive
-without a source alias; these refinements are not a published release.
+This checkout consumes an unpublished `@inkra/react@0.7.0` candidate from
+`vendor/inkra.tgz` to document shared Layout columns, interactive grids and
+Pagination page-size and layout options.
+library-candidate.json pins the exact source revision and archive checksums.
+Build verifies the installed archive without a source alias. The published
+0.6.0 package does not include these Pagination additions. This documentation
+change does not publish npm packages or deploy the website.
 
 ## Local Development
 
-Install the pinned registry release and run:
+First prepare the exact candidate using **Prepare An Unpublished Candidate**
+below, then run:
 
 ```sh
-npm ci
 npm run build
 npm run dev -- --port 4180
 ```
 
-Fresh checkouts do not need a vendor archive. To test unpublished library
-changes, use **Prepare An Unpublished Candidate** below instead.
+Fresh checkouts need the prepared vendor archive before `npm ci`; do not
+substitute the public 0.6.0 release for this candidate.
 
 ## Local Routes And Page Actions
 
@@ -331,6 +334,9 @@ background, preserving viewport positioning and focus return. Header actions
 use ghost buttons, while homepage controls retain their existing appearance.
 `verify-docs-layout.mjs` checks shared geometry, sticky scrolling, width changes,
 search and drawers from 320px to 1543px.
+The sidebar uses Resizable with a shared 200-360px header boundary. On mobile,
+navigation tabs replace the brand row and a search icon opens a full-screen
+search interface; `verify-mobile-search.mjs` covers focus, results and dismissal.
 Textarea supports near-limit or always-visible
 remaining/fraction/progress indicators and an optional pencil resize handle.
 Selection stays native without hiding editable text or doubling painted glyphs.
