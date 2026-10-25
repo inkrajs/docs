@@ -1,6 +1,7 @@
 import { runBrowserChecks } from './browser-check-runner.mjs';
 
 await runBrowserChecks([
+  'verify-textarea-sizing',
   'verify-i18n',
   'verify-docs-locales',
   'verify-theme-provider',
