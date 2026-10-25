@@ -70,7 +70,9 @@ try {
       const [controlledValue, setControlledValue] = R.useState('short');
       const [acceptEdits, setAcceptEdits] = R.useState(false);
       const [automatic, setAutomatic] = R.useState(true);
-      Object.assign(setters, { setControlledValue, setAcceptEdits, setAutomatic });
+      const [manualRows, setManualRows] = R.useState(1);
+      const [manualLineHeight, setManualLineHeight] = R.useState(20);
+      Object.assign(setters, { setControlledValue, setAcceptEdits, setAutomatic, setManualRows, setManualLineHeight });
       return h(R.Fragment, null,
         ...['sm', 'md', 'lg'].flatMap(size => [
           field(`legacy-${size}`, { size, style }),
@@ -92,7 +94,7 @@ try {
           style: { ...style, fontFamily: 'inherit', fontSize: 'inherit', lineHeight: 'inherit' },
         }, { fontFamily: 'monospace', fontSize: '16px', lineHeight: '20px' }),
         field('counted', { autoSize: { minRows: 1, maxRows: 3 }, maxLength: 200, countMode: 'fraction', countDisplay: 'always', style }),
-        field('content-box', { rows: 1, resize: 'vertical', style: { ...style, boxSizing: 'content-box', border: '1px solid transparent', width: '300px' } }),
+        field('content-box', { rows: manualRows, resize: 'vertical', style: { ...style, lineHeight: `${manualLineHeight}px`, boxSizing: 'content-box', border: '1px solid transparent', width: '300px' } }),
         field('normal-one', { rows: 1, style: normalStyle }),
         field('normal-three', { rows: 3, style: normalStyle }),
         field('normal-auto', { autoSize: { minRows: 1, maxRows: 3 }, style: normalStyle }),
@@ -105,6 +107,8 @@ try {
       setControlled: value => ReactDOM.flushSync(() => setters.setControlledValue(value)),
       setAcceptEdits: value => ReactDOM.flushSync(() => setters.setAcceptEdits(value)),
       setAutomatic: value => ReactDOM.flushSync(() => setters.setAutomatic(value)),
+      setManualRows: value => ReactDOM.flushSync(() => setters.setManualRows(value)),
+      setManualLineHeight: value => ReactDOM.flushSync(() => setters.setManualLineHeight(value)),
       read(id) {
         const control = document.getElementById(`sizing-${id}`);
         if (!control) return null;
@@ -240,6 +244,21 @@ try {
   await handle.press('Home');
   await waitForSize('content-box', { height: manualInitial.height });
   console.log('PASS Textarea content-box manual resize uses visible-pixel keyboard, pointer and ARIA values');
+
+  const waitForManualMinimum = async height => page.waitForFunction(({ height }) => {
+    const handle = document.querySelector('[data-sizing-case="content-box"] [role="slider"]');
+    return Math.abs(Number(handle?.getAttribute('aria-valuemin')) - height) <= 1
+      && Math.abs(Number(handle?.getAttribute('aria-valuenow')) - height) <= 1;
+  }, { height });
+  await page.evaluate(() => window.textareaSizingFixture.setManualRows(5));
+  const moreRows = await waitForSize('content-box', { rows: 5 });
+  assert.equal(moreRows.lineHeight, 20);
+  await waitForManualMinimum(moreRows.height);
+  await page.evaluate(() => window.textareaSizingFixture.setManualLineHeight(30));
+  const tallerFont = await waitForSize('content-box', { rows: 5 });
+  assert.equal(tallerFont.lineHeight, 30);
+  await waitForManualMinimum(tallerFont.height);
+  console.log('PASS Textarea manual height grows to updated rows and line-height minima with matching ARIA values');
 
   await page.evaluate(() => window.textareaSizingFixture.setAutomatic(false));
   const toggledHandle = automaticCase.getByRole('slider', { name: 'Resize text area', exact: true });
