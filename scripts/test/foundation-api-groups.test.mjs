@@ -15,6 +15,7 @@ function moduleUrl(path, imports = {}) {
 const { getFoundationApiGroups, foundationApiDefinitions } = await import(moduleUrl('src/components/foundationApiGroups.ts', {
   './apiDescriptions.ts': moduleUrl('src/components/apiDescriptions.ts', {
     './numberTickerRollCopy': moduleUrl('src/components/numberTickerRollCopy.ts'),
+    './iconFillCopy': moduleUrl('src/components/iconFillCopy.ts'),
   }),
 }));
 const { buttonApiGroups } = await import(moduleUrl('src/components/buttonApiGroups.ts'));

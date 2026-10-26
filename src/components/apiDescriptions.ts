@@ -1,4 +1,5 @@
 import { numberTickerRollCopy } from './numberTickerRollCopy';
+import { iconFillCopy } from './iconFillCopy';
 
 type Copy = readonly [string, string];
 const descriptions: Record<string, Copy> = {
@@ -642,6 +643,19 @@ const descriptions: Record<string, Copy> = {
 };
 
 export function describeApiProp(component: string, property: string, locale: string): string {
+  if (component === 'icon') {
+    const copy = iconFillCopy(locale);
+    const fillDescriptions: Record<string, string> = {
+      variant: copy.apiVariant,
+      fillColor: copy.apiFillColor,
+      filledPaths: copy.apiFilledPaths,
+      'paths[].mode': copy.apiMode,
+      'paths[].color': copy.apiPathColor,
+      'paths[].fillRule': copy.apiFillRule,
+      'badge.variant / badge.fillColor / badge.filledPaths': copy.apiBadge,
+    };
+    if (fillDescriptions[property]) return fillDescriptions[property];
+  }
   if (component === 'number-ticker' && property === 'animation') return numberTickerRollCopy(locale).api;
   if (component === 'number-ticker' && property === 'rollDirection') return numberTickerRollCopy(locale).directionApi;
   const index = locale === 'zh-CN' ? 0 : 1;

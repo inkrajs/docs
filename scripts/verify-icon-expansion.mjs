@@ -48,7 +48,10 @@ try {
           const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
           return data.some((alpha, index) => index % 4 === 3 && alpha > 0);
         }, await canvas.elementHandle());
-        if (locale === 'en') assert(!/[\u3400-\u9fff]/.test(await button.innerText()), 'English labels are translated');
+        const accessibleName = await button.getAttribute('aria-label');
+        assert(accessibleName?.trim(), 'every icon keeps a nonempty accessible name');
+        assert.equal((await button.innerText()).trim(), '', 'compact tiles do not render visible names');
+        if (locale === 'en') assert(!/[\u3400-\u9fff]/.test(accessibleName), 'English accessible names are translated');
       }
       console.log('PASS painted category: ' + locale + ' / ' + key);
     }

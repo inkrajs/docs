@@ -21,8 +21,12 @@ function loadSource(path, dependencies = {}) {
   return module.exports;
 }
 
-const docsIcon = loadSource('../../src/components/DocsIcon.tsx');
+const filled = loadSource('../../src/components/iconFilledPaths.ts');
+const colorful = loadSource('../../src/components/iconColorPaths.ts', { './iconFilledPaths': filled });
+const iconDependencies = { './iconFilledPaths': filled, './iconColorPaths': colorful };
+const docsIcon = loadSource('../../src/components/DocsIcon.tsx', iconDependencies);
 const { docsIconCatalog, navigationIcon } = loadSource('../../src/components/iconCatalog.ts', {
+  ...iconDependencies,
   './DocsIcon': docsIcon,
 });
 const { foundationComponents, foundationNames, componentNavigationGroups } = loadSource('../../src/componentRoutes.ts');

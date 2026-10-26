@@ -108,7 +108,7 @@ try {
   async function sample(props = {}, tokens = {}) {
     await page.evaluate(({ props, tokens }) => window.fixture.configure(props, tokens), { props, tokens });
     await page.waitForTimeout(60);
-    return page.locator('[data-testid]').evaluateAll(canvases => Object.fromEntries(canvases.map(canvas => {
+    return page.locator('canvas[data-testid]').evaluateAll(canvases => Object.fromEntries(canvases.map(canvas => {
       const pixels = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
       let alpha = 0;
       let hash = 2166136261;

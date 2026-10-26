@@ -1,5 +1,7 @@
 import { PencilIcon } from '@inkra/react';
 import type { PencilIconPath } from '@inkra/react';
+import { iconFilledPaths } from './iconFilledPaths';
+import { iconColorPaths } from './iconColorPaths';
 
 export type LucideIconData = {
   name: string;
@@ -65,18 +67,27 @@ export function DocsIcon({
   seed,
   size = 22,
   active = false,
+  variant = 'outline',
+  fillColor,
+  colorful = false,
 }: {
   data: LucideIconData;
   seed?: string | number;
   size?: number;
   active?: boolean;
+  variant?: 'outline' | 'filled';
+  fillColor?: string;
+  colorful?: boolean;
 }) {
   const paths = iconPaths(data);
   return (
     <PencilIcon
       active={active}
+      variant={colorful ? 'filled' : variant}
+      fillColor={fillColor}
       className="docs-pencil-icon"
       paths={paths}
+      filledPaths={(colorful ? iconColorPaths(data) : undefined) ?? iconFilledPaths(data)}
       seed={seed ?? data.name}
       size={size}
       sourceSize={data.size}

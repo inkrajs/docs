@@ -32,8 +32,8 @@ test('Overlay expansion documentation is bilingual, interactive and public-packa
 test('Browser verification accepts BASE_URL and covers focus, pending and responsive drawer directions', () => {
   assert.match(browser, /process\.env\.BASE_URL/);
   assert.match(browser, /getByRole\('alertdialog'/);
-  assert.match(browser, /getByRole\('combobox'/);
-  assert.match(browser, /getByRole\('option'/);
+  assert.match(browser, /import \{ chooseDocsOption \} from '.\/playground-test-helpers.mjs'/);
+  assert.match(browser, /await chooseDocsOption\(scope, label, option/);
   assert.match(browser, /getByRole\('tab'/);
   assert.doesNotMatch(browser, /selectOption\(/);
   assert.match(browser, /document\.activeElement/);

@@ -12,7 +12,9 @@ try {
     const icon = playground.locator('.icon-examples__stage > canvas').first();
     await icon.waitFor();
     await page.waitForTimeout(300);
-    assert.equal(await page.locator('.icon-examples__grid button').count(), 91);
+    const catalogCount = await page.evaluate(async () => (await import('/src/components/iconCatalog.ts')).docsIconCatalog.length);
+    assert(catalogCount > 0, 'the icon catalog is nonempty');
+    assert.equal(await page.locator('.icon-examples__grid button').count(), catalogCount);
     assert.equal(await icon.getAttribute('aria-hidden'), 'true');
     const before = await icon.evaluate(canvas => { canvas.dataset.sameCanvas = 'yes'; return canvas.toDataURL(); });
     await playground.getByRole('button', { name: '危险', exact: true }).click();

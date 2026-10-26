@@ -13,6 +13,7 @@ function moduleUrl(path, imports = {}) {
 const { localizeApiRows } = await import(moduleUrl('../../src/components/apiGroupRows.ts', {
   './apiDescriptions.ts': moduleUrl('../../src/components/apiDescriptions.ts', {
     './numberTickerRollCopy': moduleUrl('../../src/components/numberTickerRollCopy.ts'),
+    './iconFillCopy': moduleUrl('../../src/components/iconFillCopy.ts'),
   }),
 }));
 const { layoutApiGroups } = await import(moduleUrl('../../src/components/expansion/layoutApi.ts'));

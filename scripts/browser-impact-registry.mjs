@@ -1,4 +1,6 @@
 export const registeredBrowserChecks = [
+  'verify-icon-fill', 'verify-icon-fill-docs', 'verify-icon-color-paths',
+  'verify-icon-color-docs', 'verify-icon-fill-edges', 'verify-icon-scroll',
   'verify-grid-docs', 'verify-breadcrumb', 'verify-textarea-sizing', 'verify-i18n',
   'verify-docs-locales', 'verify-theme-provider', 'verify-text-first-paint', 'verify-docs-code',
   'verify-code-samples', 'verify-textarea-selection', 'verify-editable-composition', 'verify-time-picker-contract',
@@ -28,6 +30,12 @@ export const registeredBrowserChecks = [
 ];
 
 export const browserCheckComponentOverrides = {
+  'verify-icon-fill': ['icon'],
+  'verify-icon-fill-docs': ['icon'],
+  'verify-icon-color-paths': ['icon'],
+  'verify-icon-color-docs': ['icon'],
+  'verify-icon-fill-edges': ['icon'],
+  'verify-icon-scroll': ['icon'],
   'verify-infinite-scroll': ['loading', 'masonry'],
   'verify-disclosure-docs': ['tabs', 'accordion'],
   'verify-expansion-dates': ['date-picker', 'time-picker'],
@@ -54,6 +62,10 @@ export const browserCheckModuleOverrides = {
 };
 
 export const sourceOwnerOverrides = {
+  'src/components/iconColorPaths.ts': ['icon'],
+  'src/components/iconFilledPaths.ts': ['icon'],
+  'src/components/iconFillCopy.ts': ['icon'],
+  'src/components/IconCatalogGrid.tsx': ['icon'],
   'src/components/InputExamples.tsx': ['field', 'input', 'textarea'],
   'src/components/ContentExamples.tsx': ['dropdown-menu', 'alert', 'avatar', 'card', 'table'],
   'src/components/MoreExamples.tsx': ['tooltip', 'accordion', 'badge', 'separator', 'skeleton', 'progress'],
