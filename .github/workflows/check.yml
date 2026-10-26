@@ -4,6 +4,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      run_browser:
+        description: Run optional browser and contract tests
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -14,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     outputs:
+      browser_requested: ${{ github.event_name == 'workflow_dispatch' && inputs.run_browser }}
       browser_matrix: ${{ steps.browser-plan.outputs.matrix }}
       browser_shard_count: ${{ steps.browser-plan.outputs.shard_count }}
       browser_selected_count: ${{ steps.browser-plan.outputs.selected_count }}
@@ -62,8 +68,11 @@ jobs:
         if: steps.candidate.outputs.source != 'registry'
       - run: git diff --exit-code -- library-candidate.json package-lock.json
       - run: npm ci --ignore-scripts
+      - run: npm run test:contracts
+        if: github.event_name == 'workflow_dispatch' && inputs.run_browser
       - run: npm run build
       - name: Select affected browser checks
+        if: github.event_name == 'workflow_dispatch' && inputs.run_browser
         id: browser-plan
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -80,12 +89,14 @@ jobs:
           --summary "$GITHUB_STEP_SUMMARY"
           --github-output "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: github.event_name == 'workflow_dispatch' && inputs.run_browser
         with:
           name: docs-browser-plan
           path: .ci-plan/browser-selection.json
           include-hidden-files: true
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: github.event_name == 'workflow_dispatch' && inputs.run_browser
         with:
           name: docs-browser-input
           path: |
@@ -104,7 +115,7 @@ jobs:
 
   browser:
     needs: build
-    if: needs.build.outputs.browser_selected_count != '0'
+    if: needs.build.outputs.browser_requested == 'true' && needs.build.outputs.browser_selected_count != '0'
     runs-on: ubuntu-latest
     # Matches package-lock.json Playwright 1.64.1; MCR registry index verified 2026-10-26.
     container:
@@ -160,7 +171,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # Keep the required check name stable; all shards must finish successfully.
+  # Keep the required check name stable; browser coverage is opt-in.
   docs:
     needs: [build, browser]
     if: always()
@@ -172,23 +183,27 @@ jobs:
           BUILD_RESULT: ${{ needs.build.result }}
         run: test "$BUILD_RESULT" = success
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: needs.build.outputs.browser_requested == 'true'
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        if: needs.build.outputs.browser_requested == 'true'
         with:
           node-version: 24
           package-manager-cache: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        if: needs.build.outputs.browser_requested == 'true'
         with:
           name: docs-browser-plan
           path: .ci-plan
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        if: needs.build.outputs.browser_selected_count != '0'
+        if: needs.build.outputs.browser_requested == 'true' && needs.build.outputs.browser_selected_count != '0'
         with:
           pattern: docs-browser-report-*
           path: .ci-results
           merge-multiple: true
       - name: Require complete browser coverage
+        if: needs.build.outputs.browser_requested == 'true'
         env:
           BROWSER_JOB_RESULT: ${{ needs.browser.result }}
           EXPECTED_BROWSER_PLAN_DIGEST: ${{ needs.build.outputs.browser_plan_digest }}

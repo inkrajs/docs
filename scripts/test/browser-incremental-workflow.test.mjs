@@ -11,9 +11,24 @@ import { browserPlan } from '../browser-report.mjs';
 
 const workflow = await readFile(new URL('../../.github/workflows/check.yml', import.meta.url), 'utf8');
 const lockfile = JSON.parse(await readFile(new URL('../../package-lock.json', import.meta.url), 'utf8'));
+const packageJson = JSON.parse(await readFile(new URL('../../package.json', import.meta.url), 'utf8'));
 const playwrightImageDigest = '47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea';
 
-test('workflow creates one trusted plan from the exact checked-out PR tree', () => {
+test('ordinary CI only builds; optional tests require explicit manual selection', () => {
+  assert.match(workflow, /run_browser:\n\s+description:.*\n\s+type: boolean\n\s+default: false/);
+  assert.match(workflow, /browser_requested: \$\{\{ github.event_name == 'workflow_dispatch' && inputs.run_browser \}\}/);
+  for (const step of ['- run: npm run test:contracts', '- name: Select affected browser checks']) {
+    assert(workflow.includes(`${step}\n        if: github.event_name == 'workflow_dispatch' && inputs.run_browser`));
+  }
+  const finalGate = workflow.slice(workflow.indexOf('\n  docs:'));
+  assert.match(finalGate, /if: always\(\)/);
+  assert.match(finalGate, /run: test "\$BUILD_RESULT" = success/);
+  assert.match(finalGate, /name: Require complete browser coverage\n\s+if: needs.build.outputs.browser_requested == 'true'/);
+  assert.doesNotMatch(packageJson.scripts.build, /test:contracts|test:browser/);
+  assert.match(packageJson.scripts.build, /tsc --noEmit && vite build/);
+});
+
+test('optional browser validation creates one trusted plan from the exact checkout', () => {
   assert.match(workflow, /fetch-depth: 0/);
   assert.match(workflow, /node scripts\/select-browser-checks\.mjs/);
   assert.match(workflow, /--tested \"\$TESTED_SHA\"/);
@@ -22,7 +37,7 @@ test('workflow creates one trusted plan from the exact checked-out PR tree', () 
 });
 
 test('workflow uses a dynamic matrix and starts no browser job for a trusted empty plan', () => {
-  assert.match(workflow, /if: needs\.build\.outputs\.browser_selected_count != '0'/);
+  assert.match(workflow, /if: needs\.build\.outputs\.browser_requested == 'true' && needs\.build\.outputs\.browser_selected_count != '0'/);
   assert.match(workflow, /shard: \$\{\{ fromJSON\(needs\.build\.outputs\.browser_matrix\) \}\}/);
   assert.doesNotMatch(workflow, /shard:\s*\[1, 2, 3, 4\]/);
   assert.match(workflow, /BROWSER_SHARD: \$\{\{ matrix\.shard \}\}\/\$\{\{ needs\.build\.outputs\.browser_shard_count \}\}/);

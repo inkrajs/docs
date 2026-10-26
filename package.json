@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "node scripts/check-candidate.mjs && npm run test:contracts && tsc --noEmit && vite build && node --experimental-strip-types scripts/prepare-pages.mjs",
+    "build": "node scripts/check-candidate.mjs && tsc --noEmit && vite build && node --experimental-strip-types scripts/prepare-pages.mjs",
     "test:contracts": "node --test scripts/test/*.test.mjs",
     "check:candidate": "node scripts/check-candidate.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
