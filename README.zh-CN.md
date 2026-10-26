@@ -10,8 +10,8 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-当前检出安装已核验公开归档的 `@inkra/react@0.8.0` 正式版本，包含共享页头与侧栏、
-可交互网格、分页配置，以及 Textarea 按正文行数增长和限高的自动高度。
+当前检出安装已核验公开归档的 `@inkra/react@0.9.0` 正式版本，新增 Guide、Loading、
+四向 InfiniteScroll、Masonry、数字滚动，以及支持自定义配色的填充与彩色图标。
 library-candidate.json 固定已发布源码的精确提交和公开归档校验和，构建验证实际安装包，
 不引用组件源码。文档改动不会自行发布 npm 包或部署网站。全新检出运行：
 
