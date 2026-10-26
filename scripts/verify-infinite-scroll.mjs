@@ -32,6 +32,56 @@ async function pullAtEdge(page, locator, direction, distance = 104) {
   await client.detach();
 }
 
+async function readSettledMasonry(masonry) {
+  await masonry.locator('.inkra-masonry[data-layout="ready"]').waitFor();
+  await masonry.page().waitForFunction(() => {
+    const items = [...document.querySelectorAll('[data-testid="infinite-scroll-masonry"] .inkra-masonry__item')];
+    return items.length > 0 && items.every(item => item.hasAttribute('data-positioned'));
+  });
+  return masonry.evaluate(async element => {
+    const grid = element.querySelector('.inkra-masonry');
+    if (!(grid instanceof HTMLElement)) throw new Error('Masonry grid is missing');
+    await document.fonts?.ready;
+    const frame = () => new Promise(resolve => requestAnimationFrame(resolve));
+    const snapshot = () => [...grid.querySelectorAll('.inkra-masonry__item')].map(item => {
+      const rect = item.getBoundingClientRect();
+      return {
+        index: Number(item.getAttribute('data-index')),
+        column: Number(item.getAttribute('data-column')),
+        transform: getComputedStyle(item).transform,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+      };
+    });
+    const same = (left, right) => left.length === right.length && left.every((item, index) => {
+      const next = right[index];
+      return item.index === next.index
+        && item.column === next.column
+        && Math.abs(item.left - next.left) < 0.25
+        && Math.abs(item.right - next.right) < 0.25
+        && Math.abs(item.top - next.top) < 0.25
+        && Math.abs(item.bottom - next.bottom) < 0.25;
+    });
+
+    let previous = [];
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const items = [...grid.querySelectorAll('.inkra-masonry__item')];
+      await Promise.all(items.flatMap(item => item.getAnimations()).map(animation => animation.finished.catch(() => undefined)));
+      await frame();
+      await frame();
+      const current = snapshot();
+      if (grid.getAttribute('data-layout') === 'ready'
+        && current.length > 0
+        && items.every(item => item.hasAttribute('data-positioned'))
+        && same(previous, current)) return current;
+      previous = current;
+    }
+    throw new Error(`Masonry layout did not settle: ${JSON.stringify(previous)}`);
+  });
+}
+
 try {
   for (const width of widths) {
     const context = await browser.newContext({
@@ -160,16 +210,15 @@ try {
       } else {
         await masonry.getByText(/All content loaded|已加载全部内容|すべて読み込み済み|모두 불러옴|Tout est chargé/i).waitFor({ state: 'attached' });
       }
-      const boxes = await masonryItems.evaluateAll(nodes => nodes.map(node => {
-        const rect = node.getBoundingClientRect();
-        return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
-      }));
-      for (let first = 0; first < boxes.length; first += 1) for (let second = first + 1; second < boxes.length; second += 1) {
-        const a = boxes[first]; const b = boxes[second];
-        const overlaps = Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1
+      const settledItems = await readSettledMasonry(masonry);
+      const overlapPairs = [];
+      for (let first = 0; first < settledItems.length; first += 1) for (let second = first + 1; second < settledItems.length; second += 1) {
+        const a = settledItems[first]; const b = settledItems[second];
+        const doesOverlap = Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1
           && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
-        assert.equal(overlaps, false, `Masonry items ${first} and ${second} do not overlap`);
+        if (doesOverlap) overlapPairs.push({ first: a, second: b });
       }
+      assert.deepEqual(overlapPairs, [], `Masonry settled layout overlaps: ${JSON.stringify(overlapPairs)}`);
 
       await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
       await board.evaluate(element => { element.scrollLeft = element.scrollWidth; });
