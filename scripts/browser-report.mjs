@@ -31,13 +31,21 @@ export function checkBrowserReports(reports, selection, suite) {
     assert.deepEqual(reports, [], 'Empty browser plans must not have shard reports');
     return;
   }
-  const count = selection.shardCount;
+  checkReportCoverage(reports, selection.selectedScripts, selection.shardCount, selection);
+}
+
+export function checkFullBrowserReports(reports, suite, count) {
+  assert(Number.isSafeInteger(count) && count > 0 && count <= suite.length, 'Invalid full-suite shard count');
+  checkReportCoverage(reports, suite, count);
+}
+
+function checkReportCoverage(reports, scripts, count, selection) {
   assert.equal(reports.length, count, 'Missing or extra browser shard reports');
   const indexes = new Set();
   for (const report of reports) {
     assert(!indexes.has(report.index), 'Duplicate browser shard report');
     indexes.add(report.index);
-    const plan = browserPlan(selection.selectedScripts, `${report.index}/${count}`, selection);
+    const plan = browserPlan(scripts, `${report.index}/${count}`, selection);
     for (const key of ['schemaVersion', 'fullSuiteDigest', 'selectionDigest', 'planDigest', 'testedRevision', 'fullSuiteCount', 'selectedCount', 'index', 'count', 'scripts']) {
       assert.deepEqual(report[key], plan[key], `Browser report ${key} mismatch`);
     }
@@ -50,7 +58,7 @@ export function checkBrowserReports(reports, selection, suite) {
   }
   assert.deepEqual(
     reports.flatMap(report => report.results.map(result => result.script)).sort(),
-    [...selection.selectedScripts].sort(),
+    [...scripts].sort(),
     'Selected browser checks were not covered exactly once',
   );
 }

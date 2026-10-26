@@ -119,4 +119,23 @@ test('final gate runs without node_modules and rejects a mismatched trusted dige
     env: { ...env, EXPECTED_BROWSER_PLAN_DIGEST: 'd'.repeat(64) },
     stdio: 'pipe',
   }));
+
+  await rm(join(root, '.ci-results'), { recursive: true });
+  await mkdir(join(root, '.ci-results'));
+  for (let index = 1; index <= 4; index++) {
+    const full = browserPlan(suite, `${index}/4`);
+    await writeFile(join(root, `.ci-results/browser-${index}-of-4.json`), JSON.stringify({
+      ...full, results: full.scripts.map(script => ({ script, status: 'passed', durationMs: 1 })),
+    }));
+  }
+  const releaseArgs = ['scripts/check-browser-reports.mjs', '.ci-results', '4'];
+  const releaseEnv = {
+    ...env, EXPECTED_TESTED_REVISION: undefined, EXPECTED_BROWSER_PLAN_DIGEST: undefined, DOCS_REF: revision,
+  };
+  assert.match(execFileSync(process.execPath, releaseArgs, { cwd: root, env: releaseEnv, encoding: 'utf8' }), /full-suite browser checks passed exactly once across 4 shards/);
+  assert.throws(() => execFileSync(process.execPath, releaseArgs, {
+    cwd: root, env: { ...releaseEnv, DOCS_REF: 'd'.repeat(40) }, stdio: 'pipe',
+  }));
+  await rm(join(root, '.ci-results/browser-4-of-4.json'));
+  assert.throws(() => execFileSync(process.execPath, releaseArgs, { cwd: root, env: releaseEnv, stdio: 'pipe' }));
 });
