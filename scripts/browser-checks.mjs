@@ -1,5 +1,11 @@
 export const browserChecks = [
   'verify-grid-docs',
+  'verify-icon-fill',
+  'verify-icon-fill-docs',
+  'verify-icon-color-paths',
+  'verify-icon-color-docs',
+  'verify-icon-fill-edges',
+  'verify-icon-scroll',
   'verify-breadcrumb',
   'verify-textarea-sizing',
   'verify-i18n',

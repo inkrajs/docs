@@ -10,6 +10,12 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('http://127.0.0.1:4180/components/icon#preview');
     await page.locator('.icon-examples__grid').waitFor();
+    const catalogMetadata = await page.evaluate(async () => {
+      const { docsIconCatalog, iconCategories } = await import('/src/components/iconCatalog.ts');
+      return { count: docsIconCatalog.length, categoryCount: iconCategories.length,
+        monitorMatches: docsIconCatalog.filter(icon => `${icon.key} ${icon.label}`.toLowerCase().includes('monitor')).length };
+    });
+    assert(catalogMetadata.count > 0 && catalogMetadata.categoryCount > 0, 'catalog and categories are nonempty');
     await page.evaluate(() => document.fonts.ready);
     const titleIcon = page.locator('.page-heading__title > canvas');
     await titleIcon.evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
@@ -20,7 +26,7 @@ try {
     assert.equal(await titleIcon.getAttribute('aria-hidden'), 'true');
     assert.equal(await page.locator('.page-tabs .inkra-tabs__icon canvas').count(), 3);
     const categories = page.getByRole('tablist', { name: '图标分类' });
-    assert.equal(await categories.locator('.inkra-tabs__icon canvas').count(), 6);
+    assert.equal(await categories.locator('.inkra-tabs__icon canvas').count(), catalogMetadata.categoryCount);
     await categories.evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
     await page.waitForFunction(() => [...document.querySelectorAll('.icon-examples__catalog .inkra-tabs__icon canvas')].every(canvas =>
       [...canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data].some((v, i) => i % 4 === 3 && v)));
@@ -66,13 +72,13 @@ try {
     await categories.getByRole('tab', { name: '全部', exact: true }).click();
     const search = catalog.getByRole('searchbox', { name: '搜索图标', exact: true });
     await search.fill('monitor');
-    assert.equal(await grid.getByRole('button').count(), 1);
+    assert.equal(await grid.getByRole('button').count(), catalogMetadata.monitorMatches);
     await grid.getByRole('button', { name: '跟随系统', exact: true }).click();
-    assert.equal(await grid.getByRole('button').getAttribute('aria-pressed'), 'true');
+    assert.equal(await grid.getByRole('button', { name: '跟随系统', exact: true }).getAttribute('aria-pressed'), 'true');
     await search.fill('no-such-icon');
     assert.equal(await grid.getByRole('status').textContent(), '没有匹配的图标');
     await catalog.getByRole('button', { name: '清空搜索', exact: true }).click();
-    assert.equal(await grid.getByRole('button').count(), 91);
+    assert.equal(await grid.getByRole('button').count(), catalogMetadata.count);
     await grid.focus();
     await page.keyboard.press('PageDown');
     await page.waitForFunction(() => document.querySelector('.icon-examples__grid').scrollTop > 0);

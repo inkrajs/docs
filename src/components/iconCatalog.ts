@@ -90,6 +90,8 @@ import { __iconData as extraIcon34 } from 'lucide-react/dist/esm/icons/funnel.mj
 import { __iconData as extraIcon35 } from 'lucide-react/dist/esm/icons/zoom-in.mjs';
 import { __iconData as extraIcon36 } from 'lucide-react/dist/esm/icons/zoom-out.mjs';
 import { iconPaths } from './DocsIcon';
+import { iconFilledPaths } from './iconFilledPaths';
+import { iconColorPaths } from './iconColorPaths';
 import { __iconData as toastIcon } from 'lucide-react/dist/esm/icons/bell-ring.mjs';
 import { __iconData as alertDialogIcon } from 'lucide-react/dist/esm/icons/triangle-alert.mjs';
 import { __iconData as drawerIcon } from 'lucide-react/dist/esm/icons/panel-right.mjs';
@@ -608,7 +610,7 @@ export const docsIconCatalog = [
   { key: 'dices', label: '多枚骰子', category: 'games', data: moreIcon93 },
   { key: 'joystick', label: '摇杆', category: 'games', data: moreIcon94 },
   { key: 'backpack', label: '背包', category: 'games', data: moreIcon95 },
-].map(icon => ({ ...icon, paths: iconPaths(icon.data) }));
+].map(icon => ({ ...icon, paths: iconPaths(icon.data), filledPaths: iconFilledPaths(icon.data), colorPaths: iconColorPaths(icon.data) }));
 
 export function navigationIcon(label: string) {
   const aliases: Record<string, string> = {

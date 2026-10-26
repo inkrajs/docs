@@ -154,10 +154,11 @@ compares actual regular/bold/italic/combined glyph pixels and cache invalidation
 PanZoom defaults to a gentle wheel step of 0.001; wheelStep configures sensitivity
 without changing touch pinch or keyboard zoom. verify-pan-zoom-speed.mjs checks
 actual wheel deltas, modifiers, boundaries and controlled reconciliation.
-The icon catalog has 286 pencil-rendered icons, including editing, devices,
+The icon catalog has 290 pencil-rendered icons, including editing, devices,
 tools, weather, file states, media, navigation and game rewards.
-Catalog paint is mounted only for visible or focused items using one shared
-intersection observer; offscreen buttons retain labels and SVG fallbacks.
+Catalog paint is mounted only for the visible scroll window, its two-row buffer
+and focused items. Offscreen buttons retain accessible names and fixed-size
+empty icon slots; scrolling never swaps pencil glyphs for plain SVGs.
 `verify-icon-performance.mjs` guards canvas bounds, stable native focus/clicks,
 scrolling, search and preview-only edits. `measure-icon-page.mjs` reports three
 fresh-context runs; timings are local development measurements, not production SLAs.
@@ -171,6 +172,20 @@ The nine-icon preview uses a 16-128px size slider. Pressure and gap strength are
 independent; breakCount is a maximum limited by displayed stroke length, so
 larger icons may have more gaps while short strokes stay readable. DPR does not
 change the count. The short-stroke check measures actual width and gap pixels.
+The local icon candidate also provides outline/filled variants, independent
+fill colors and authored multi-region silhouettes. The icon page displays both
+variants and editable folder colors; the catalog has its own appearance switch.
+`node scripts/verify-icon-fill.mjs` checks every catalog entry in both variants,
+transparent holes, overlapping shapes, colors, cached round trips and RTL badges.
+New catalog geometry must satisfy this dual-variant contract. This is a local
+unpublished candidate; its archive identity is recorded in library-candidate.json.
+The catalog includes 47 authored multicolor presets, primarily two semantic
+regions with restrained pencil texture. Region colors inherit the theme and
+can be overridden independently; unsupported icons keep their monochrome fill.
+`verify-icon-color-paths.mjs` checks all presets at small/large sizes, light/dark
+themes, custom colors and reset. `verify-icon-color-docs.mjs` checks the actual
+gallery controls and localized labels; `verify-icon-scroll.mjs` checks visible
+paint continuity during scrolling.
 verify-palette-softness.mjs checks all four palettes in both themes, sampled
 foreground contrast over the rendered pencil backgrounds and narrow layouts.
 
@@ -383,7 +398,7 @@ Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
 Local smoke checks run sequentially. Optional browser CI prepares the candidate and build once,
-then distributes all 102 checks across four independent runners, with at most two
+then distributes the browser suite across four independent runners, with at most two
 checks per runner. Each runner shares one server. Set `BROWSER_SHARD=1/4` to run
 one shard, or use `node scripts/browser-smoke.mjs --list` to inspect its plan.
 Release validation adds the homepage with `BROWSER_INCLUDE_HOMEPAGE=true`.

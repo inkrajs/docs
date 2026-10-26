@@ -27,6 +27,17 @@ const dependencies = {
   },
 };
 const iconModule = {};
+for (const name of ['iconFilledPaths', 'iconColorPaths']) {
+  const exports = {};
+  const code = ts.transpileModule(readFileSync(new URL(`../../src/components/${name}.ts`, import.meta.url), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  new Function('require', 'exports', code)(name => {
+    assert(name in dependencies, `Unexpected icon dependency ${name}`);
+    return dependencies[name];
+  }, exports);
+  dependencies[`./${name}`] = exports;
+}
 const iconSource = ts.transpileModule(readFileSync(new URL('../../src/components/DocsIcon.tsx', import.meta.url), 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 },
 }).outputText;
