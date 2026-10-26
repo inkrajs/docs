@@ -365,8 +365,14 @@ they do not automate the operating system menu itself.
 Build checks the candidate, TypeScript, Vite and static route entrypoints.
 Push, PR and manual CI install a pinned registry release directly. For a local
 candidate they rebuild the exact product commit in library-candidate.json and
-reject archive or lockfile drift. Both paths run installed-package browser smoke
-checks. This workflow does not publish npm or deploy the website.
+reject archive or lockfile drift. Ordinary PR and main-push CI only validate the
+package identity and production build; they do not run contract or browser tests.
+`npm run build` does not run tests implicitly. Run `npm run test:contracts`
+separately when needed. This workflow does not publish npm or deploy the website.
+
+For browser validation, manually run the workflow with `run_browser` enabled
+(off by default). That run also executes contract tests and the full browser suite.
+A passing ordinary build is not browser-interaction acceptance.
 
 With the local dev server running on port 4180, run `npx playwright install
 chromium` and `npm run test:browser`. This covers selected sidebar, Select, Input
@@ -376,7 +382,7 @@ historical regressions and may need updates as the docs evolve.
 Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
-Local smoke checks run sequentially. CI prepares the candidate and build once,
+Local smoke checks run sequentially. Optional browser CI prepares the candidate and build once,
 then distributes all 102 checks across four independent runners, with at most two
 checks per runner. Each runner shares one server. Set `BROWSER_SHARD=1/4` to run
 one shard, or use `node scripts/browser-smoke.mjs --list` to inspect its plan.
@@ -386,22 +392,22 @@ has a ten-minute deadline with child-process cleanup. Per-check timings, errors
 and logs are saved in .ci-results and CI step summaries. Failed runs also retain
 available screenshots and the Vite log for 14 days.
 
-The required `docs` job rejects failed/skipped jobs, missing or duplicate shard
-reports, a mismatched suite digest and any incomplete/failed check. Rerun failed
+The required `docs` job requires a successful build. Only when browser validation
+is explicitly requested does it also reject failed/skipped browser jobs, missing
+or duplicate shard reports, a mismatched suite digest and incomplete/failed checks. Rerun failed
 jobs to replace failed shard reports while retaining successful shards and the
 prepared input artifact. An artifact from the build job alone is not browser
 acceptance. Superseded PR runs are cancelled; main runs are not.
 The full catalog scan follows actual sidebar links while reusing the application shell.
 
-Pull requests create a component-aware browser plan from the exact checked-out
-merge tree and base commit. Component pages, cross-component examples and reverse
-transitive script/helper/fixture dependencies select their owning checks. Candidate,
-lockfile, compiler, workflow, shared shell/style/theme/i18n, unknown or unresolved
-changes conservatively select the full suite with a recorded reason. Pushes to main,
-manual runs and release validation also remain full. A selection starts only
+The component-aware selection tooling remains available for targeted checks,
+but ordinary PR/main CI does not create a browser plan or launch browser runners.
+Explicit manual browser runs use a full plan. When selection tooling is used,
+component/helper dependencies select their owning checks; shared or unknown changes
+conservatively select the full suite. A selection starts only
 `min(4, selected checks)` browser runners; a trusted zero-check plan starts none.
 
-The build uploads the JSON plan as the single source of truth. Every shard report
+For optional browser runs, the build uploads the JSON plan as the single source of truth. Every shard report
 records its plan digest, tested revision, full-suite digest and selected-suite
 digest. The final `docs` gate reloads that plan against its own checkout and current
 suite, then rejects stale identities, missing or duplicate shards/checks, unplanned
