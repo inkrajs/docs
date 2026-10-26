@@ -69,7 +69,7 @@ test('final gate runs without node_modules and rejects a mismatched trusted dige
   const root = await mkdtemp(join(tmpdir(), 'inkra-browser-gate-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   await mkdir(join(root, 'scripts'), { recursive: true });
-  for (const file of ['browser-checks.mjs', 'browser-plan.mjs', 'browser-report.mjs', 'check-browser-reports.mjs']) {
+  for (const file of ['browser-checks.mjs', 'browser-plan.mjs', 'browser-report.mjs', 'browser-shards.mjs', 'browser-timings.mjs', 'check-browser-reports.mjs']) {
     await copyFile(new URL(`../${file}`, import.meta.url), join(root, 'scripts', file));
   }
   execFileSync('git', ['init', '-q'], { cwd: root });

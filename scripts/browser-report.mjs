@@ -4,6 +4,7 @@ import { appendFile, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { digest, validateBrowserSelectionPlan } from './browser-plan.mjs';
+import { balancedBrowserShards } from './browser-shards.mjs';
 
 export function browserPlan(scripts, shard, selection) {
   assert(scripts.length > 0 && new Set(scripts).size === scripts.length, 'Browser suite must be nonempty and unique');
@@ -21,7 +22,7 @@ export function browserPlan(scripts, shard, selection) {
     selectedCount: scripts.length,
     index,
     count,
-    scripts: scripts.filter((_, position) => position % count === index - 1),
+    scripts: count === 1 ? [...scripts] : balancedBrowserShards(scripts, count)[index - 1],
   };
 }
 
