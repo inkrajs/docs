@@ -13,9 +13,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    outputs:
+      browser_matrix: ${{ steps.browser-plan.outputs.matrix }}
+      browser_shard_count: ${{ steps.browser-plan.outputs.shard_count }}
+      browser_selected_count: ${{ steps.browser-plan.outputs.selected_count }}
+      browser_plan_digest: ${{ steps.browser-plan.outputs.plan_digest }}
+      tested_revision: ${{ steps.browser-plan.outputs.tested_revision }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Read pinned product revision
         id: candidate
@@ -56,6 +63,28 @@ jobs:
       - run: git diff --exit-code -- library-candidate.json package-lock.json
       - run: npm ci --ignore-scripts
       - run: npm run build
+      - name: Select affected browser checks
+        id: browser-plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TESTED_SHA: ${{ github.sha }}
+        run: >-
+          node scripts/select-browser-checks.mjs
+          --event "$EVENT_NAME"
+          --base "$BASE_SHA"
+          --tested "$TESTED_SHA"
+          --pr-head "$PR_HEAD_SHA"
+          --output .ci-plan/browser-selection.json
+          --summary "$GITHUB_STEP_SUMMARY"
+          --github-output "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: docs-browser-plan
+          path: .ci-plan/browser-selection.json
+          include-hidden-files: true
+          if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: docs-browser-input
@@ -75,12 +104,17 @@ jobs:
 
   browser:
     needs: build
+    if: needs.build.outputs.browser_selected_count != '0'
     runs-on: ubuntu-latest
+    # Matches package-lock.json Playwright 1.64.1; MCR registry index verified 2026-10-26.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
+      options: --ipc=host
     timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: ${{ fromJSON(needs.build.outputs.browser_matrix) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -88,17 +122,34 @@ jobs:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: docs-browser-input
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: docs-browser-plan
+          path: .ci-plan
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           cache: npm
           cache-dependency-path: package-lock.json
-      - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
+      - name: Install npm dependencies and verify image Chromium
+        shell: bash
+        run: |
+          started=$SECONDS
+          npm ci --ignore-scripts
+          node --input-type=module -e "
+            import { chromium } from 'playwright';
+            const browser = await chromium.launch({ headless: true });
+            console.log('Launched preinstalled Chromium ' + browser.version());
+            await browser.close();
+          "
+          printf 'Browser shard setup: %ss (npm ci plus preinstalled Chromium launch).\n' "$((SECONDS - started))" >> "$GITHUB_STEP_SUMMARY"
       - name: Installed-package browser smoke
         run: bash scripts/run-browser-ci.sh
         env:
-          BROWSER_SHARD: ${{ matrix.shard }}/4
+          BROWSER_SELECTION_PLAN: .ci-plan/browser-selection.json
+          BROWSER_SHARD: ${{ matrix.shard }}/${{ needs.build.outputs.browser_shard_count }}
+          EXPECTED_BROWSER_PLAN_DIGEST: ${{ needs.build.outputs.browser_plan_digest }}
+          EXPECTED_TESTED_REVISION: ${{ needs.build.outputs.tested_revision }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
@@ -119,8 +170,7 @@ jobs:
       - name: Require every prerequisite
         env:
           BUILD_RESULT: ${{ needs.build.result }}
-          BROWSER_RESULT: ${{ needs.browser.result }}
-        run: test "$BUILD_RESULT" = success && test "$BROWSER_RESULT" = success
+        run: test "$BUILD_RESULT" = success
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
@@ -130,8 +180,17 @@ jobs:
           package-manager-cache: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
+          name: docs-browser-plan
+          path: .ci-plan
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        if: needs.build.outputs.browser_selected_count != '0'
+        with:
           pattern: docs-browser-report-*
           path: .ci-results
           merge-multiple: true
       - name: Require complete browser coverage
-        run: node scripts/check-browser-reports.mjs .ci-results 4
+        env:
+          BROWSER_JOB_RESULT: ${{ needs.browser.result }}
+          EXPECTED_BROWSER_PLAN_DIGEST: ${{ needs.build.outputs.browser_plan_digest }}
+          EXPECTED_TESTED_REVISION: ${{ needs.build.outputs.tested_revision }}
+        run: node scripts/check-browser-reports.mjs .ci-results .ci-plan/browser-selection.json

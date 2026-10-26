@@ -393,6 +393,22 @@ prepared input artifact. An artifact from the build job alone is not browser
 acceptance. Superseded PR runs are cancelled; main runs are not.
 The full catalog scan follows actual sidebar links while reusing the application shell.
 
+Pull requests create a component-aware browser plan from the exact checked-out
+merge tree and base commit. Component pages, cross-component examples and reverse
+transitive script/helper/fixture dependencies select their owning checks. Candidate,
+lockfile, compiler, workflow, shared shell/style/theme/i18n, unknown or unresolved
+changes conservatively select the full suite with a recorded reason. Pushes to main,
+manual runs and release validation also remain full. A selection starts only
+`min(4, selected checks)` browser runners; a trusted zero-check plan starts none.
+
+The build uploads the JSON plan as the single source of truth. Every shard report
+records its plan digest, tested revision, full-suite digest and selected-suite
+digest. The final `docs` gate reloads that plan against its own checkout and current
+suite, then rejects stale identities, missing or duplicate shards/checks, unplanned
+results, incomplete checks and any failure. Skipped checks are listed as skipped;
+they are never reported as passing. `npm run test:browser` without a plan remains a
+full local suite.
+
 Public hosting is owned by inkrajs/inkrajs.github.io. Its release.json pins this
 repository's exact commit; its Pages workflow builds this application once at
 the host root. The homepage is / and documentation is /docs. Build emits real
