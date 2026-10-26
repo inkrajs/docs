@@ -6,7 +6,7 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The current unpublished local candidate adds Guide (including a distinct skip
+The published 0.9.0 package adds Guide (including a distinct skip
 action), Loading (six presets, fullscreen slots and rotating tips), four-way
 InfiniteScroll with mobile pull-and-release, responsive Masonry, and NumberTicker
 digit rolling. Their routes include interactive examples and API documentation;
@@ -15,24 +15,23 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout consumes an unpublished `@inkra/react` source candidate based on
-0.8.0. library-candidate.json pins its exact source revision and archive
+This checkout consumes the published `@inkra/react@0.9.0` registry package.
+library-candidate.json pins its exact source revision and archive
 checksums. Build verifies the installed package without a source alias.
 Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
-Prepare the pinned unpublished candidate using the instructions below, then
-build and preview:
+Install the pinned registry release, then build and preview:
 
 ```sh
+npm ci
 npm run build
 npm run dev -- --port 4180
 ```
 
-A fresh checkout needs the verified vendor archive before `npm ci` can run.
-Use **Prepare An Unpublished Candidate** below; CI prepares the same archive
-from the pinned source revision automatically.
+A fresh checkout does not need a sibling library checkout or vendor archive.
+Use **Prepare An Unpublished Candidate** below only when testing unreleased changes.
 
 ## Local Routes And Page Actions
 
@@ -172,13 +171,13 @@ The nine-icon preview uses a 16-128px size slider. Pressure and gap strength are
 independent; breakCount is a maximum limited by displayed stroke length, so
 larger icons may have more gaps while short strokes stay readable. DPR does not
 change the count. The short-stroke check measures actual width and gap pixels.
-The local icon candidate also provides outline/filled variants, independent
+The published icon component also provides outline/filled variants, independent
 fill colors and authored multi-region silhouettes. The icon page displays both
 variants and editable folder colors; the catalog has its own appearance switch.
 `node scripts/verify-icon-fill.mjs` checks every catalog entry in both variants,
 transparent holes, overlapping shapes, colors, cached round trips and RTL badges.
-New catalog geometry must satisfy this dual-variant contract. This is a local
-unpublished candidate; its archive identity is recorded in library-candidate.json.
+New catalog geometry must satisfy this dual-variant contract. The published
+archive identity is recorded in library-candidate.json.
 The catalog includes 47 authored multicolor presets, primarily two semantic
 regions with restrained pencil texture. Region colors inherit the theme and
 can be overridden independently; unsupported icons keep their monochrome fill.
