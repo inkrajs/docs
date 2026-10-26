@@ -25,6 +25,14 @@ try {
   await page.waitForFunction(node => node.getAttribute('aria-selected') === 'true', await tabs.getByRole('tab').nth(1).elementHandle());
   await chooseDocsOption(playground, '排列', '纵向', { exact: true, optionExact: true });
   assert.equal(await line.getAttribute('data-orientation'), 'horizontal');
+  // The preview animates its height when orientation changes; measure settled geometry.
+  await page.waitForFunction(node => {
+    const separator = node.querySelector('.inkra-tabs__trigger:nth-child(2) > .inkra-tabs__divider');
+    const trigger = separator?.parentElement;
+    if (!separator || !trigger) return false;
+    const a = separator.getBoundingClientRect(), b = trigger.getBoundingClientRect();
+    return Math.abs(a.width - b.width + 16) < 1 && a.height === 8;
+  }, await tabs.elementHandle());
   const verticalLine = await line.boundingBox();
   const verticalTab = await tabs.getByRole('tab').nth(1).boundingBox();
   assert(Math.abs(verticalLine.width - verticalTab.width + 16) < 1 && verticalLine.height === 8);
