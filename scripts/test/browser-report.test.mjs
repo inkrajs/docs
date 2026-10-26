@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { browserSuite } from '../browser-checks.mjs';
 import { digest } from '../browser-plan.mjs';
-import { browserPlan, checkBrowserReports, writeBrowserReport } from '../browser-report.mjs';
+import { browserPlan, checkBrowserReports, checkFullBrowserReports, writeBrowserReport } from '../browser-report.mjs';
 
 function selectionFor(suite, selectedScripts = suite) {
   const selected = suite.filter(script => selectedScripts.includes(script));
@@ -37,6 +37,31 @@ function reportsFor(selection) {
     return { ...plan, results: plan.scripts.map(script => ({ script, status: 'passed', durationMs: 1 })) };
   });
 }
+
+test('legacy release reports require the full suite without weakening selected-plan checks', () => {
+  const suite = browserSuite(true);
+  const reports = Array.from({ length: 4 }, (_, index) => {
+    const plan = browserPlan(suite, `${index + 1}/4`);
+    return { ...plan, results: plan.scripts.map(script => ({ script, status: 'passed', durationMs: 1 })) };
+  });
+  checkFullBrowserReports(reports, suite, 4);
+  for (const mutate of [
+    values => values.pop(),
+    values => { values[1] = values[0]; },
+    values => { values[0].results.pop(); },
+    values => { values[0].results[0].status = 'failed'; },
+    values => { values[0].results[0].status = 'skipped'; },
+    values => { values[0].fullSuiteDigest = 'stale'; },
+    values => { values[0].planDigest = 'untrusted'; },
+  ]) {
+    const changed = structuredClone(reports);
+    mutate(changed);
+    assert.throws(() => checkFullBrowserReports(changed, suite, 4));
+  }
+  assert.throws(() => checkFullBrowserReports(reports, browserSuite(false), 4));
+  assert.throws(() => checkFullBrowserReports(reportsFor(selectionFor(suite, suite.slice(0, 4))), suite, 4));
+  assert.throws(() => checkBrowserReports(reports, selectionFor(suite), suite));
+});
 
 for (const homepage of [false, true]) {
   test(`dynamic shards cover a selected suite once (homepage=${homepage})`, () => {
