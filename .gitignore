@@ -8,3 +8,4 @@ vendor/*.tgz
 .DS_Store
 .library/
 HANDOFF.md
+.ci-results/
