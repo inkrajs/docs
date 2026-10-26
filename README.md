@@ -67,6 +67,9 @@ Preparation verifies the product manifest SHA-256, copies the ignored archive
 to vendor/inkra.tgz, records library-candidate.json and installs it. Review
 candidate metadata and lockfile changes together. npm ci needs that archive
 first; never substitute an unverified registry package with the same name.
+CI can pass `--lockfile-only` after the checkout path, then run `npm ci` once.
+This option prepares the archive and lockfile without installing node_modules;
+the default local preparation still installs the candidate.
 
 For a reproducible candidate, run the product package check with
 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package`.
@@ -365,10 +368,22 @@ historical regressions and may need updates as the docs evolve.
 Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
-Local smoke checks run sequentially. CI runs at most two independent checks
-against the same server; it does not start a server for each check. The smoke
-suite completes every check, closes its browsers and reports all failures together. The full
-catalog scan follows actual sidebar links while reusing the application shell.
+Local smoke checks run sequentially. CI prepares the candidate and build once,
+then distributes all 98 checks across four independent runners, with at most two
+checks per runner. Each runner shares one server. Set `BROWSER_SHARD=1/4` to run
+one shard, or use `node scripts/browser-smoke.mjs --list` to inspect its plan.
+Release validation adds the homepage with `BROWSER_INCLUDE_HOMEPAGE=true`.
+The suite completes every check and reports failures together; a stuck check
+has a ten-minute deadline with child-process cleanup. Per-check timings, errors
+and logs are saved in .ci-results and CI step summaries. Failed runs also retain
+available screenshots and the Vite log for 14 days.
+
+The required `docs` job rejects failed/skipped jobs, missing or duplicate shard
+reports, a mismatched suite digest and any incomplete/failed check. Rerun failed
+jobs to replace failed shard reports while retaining successful shards and the
+prepared input artifact. An artifact from the build job alone is not browser
+acceptance. Superseded PR runs are cancelled; main runs are not.
+The full catalog scan follows actual sidebar links while reusing the application shell.
 
 Public hosting is owned by inkrajs/inkrajs.github.io. Its release.json pins this
 repository's exact commit; its Pages workflow builds this application once at
