@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
+import { gunzipSync } from 'node:zlib';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const base = process.env.DOCS_URL || 'http://127.0.0.1:4180';
-const baselinePath = process.env.ICON_EDGE_BASELINE || '/tmp/inkra-icon-fill-edge-baseline.json';
 const capture = process.env.ICON_EDGE_CAPTURE === '1';
-const baseline = capture ? {} : JSON.parse(readFileSync(baselinePath, 'utf8'));
+const baselinePath = process.env.ICON_EDGE_BASELINE || (capture
+  ? '/tmp/inkra-icon-fill-edge-baseline.json'
+  : new URL('./fixtures/icon-fill-edge-baseline.json.gz', import.meta.url));
+const baseline = capture ? {} : JSON.parse(String(String(baselinePath).endsWith('.gz')
+  ? gunzipSync(readFileSync(baselinePath)) : readFileSync(baselinePath)));
 const browser = await chromium.launch();
 const errors = [];
 const results = [];
