@@ -5,6 +5,7 @@ import { PencilText, useLocale } from '../i18n';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 import { DocsSelect, controlSizes } from './DocsSelect';
+import { choiceVisuals } from './docsChoiceVisuals';
 import { DocsSlider } from './DocsSlider';
 import { DocsIcon } from './DocsIcon';
 import { __iconData as infoIcon } from 'lucide-react/dist/esm/icons/info.mjs';
@@ -25,7 +26,7 @@ function MenuExamples() {
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '布局', content: <>
         <DocsSelect label="方向" value={side} onValueChange={value => setSide(value as typeof side)} options={[["top", "上"], ["right", "右"], ["bottom", "下"], ["left", "左"]]} />
-        <DocsSelect label="对齐" value={align} onValueChange={value => setAlign(value as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
+        <DocsSelect label="对齐" visuals={side === 'left' || side === 'right' ? choiceVisuals.verticalAlignment : choiceVisuals.horizontalAlignment} value={align} onValueChange={value => setAlign(value as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
       </> },
       { label: '状态', content: <>
         <Switch label={t('禁用复制')} checked={disabled} onCheckedChange={setDisabled} />
@@ -156,11 +157,11 @@ function CardExamples() {
       </> },
       { label: '布局', content: <>
         <DocsSelect label="头部内边距" value={headerPadding} onValueChange={value => setHeaderPadding(value as CardPadding)} options={paddingOptions} />
-        <DocsSelect label="头部垂直对齐" value={headerAlign} onValueChange={value => setHeaderAlign(value as typeof headerAlign)} options={[["start", "上"], ["center", "Center"], ["end", "下"]]} />
+        <DocsSelect label="头部垂直对齐" visuals={choiceVisuals.verticalAlignment} value={headerAlign} onValueChange={value => setHeaderAlign(value as typeof headerAlign)} options={[["start", "上"], ["center", "Center"], ["end", "下"]]} />
         <DocsSelect label="内容内边距" value={padding} onValueChange={value => setPadding(value as CardPadding)} options={paddingOptions} />
         <DocsSelect label="页脚内边距" value={footerPadding} onValueChange={value => setFooterPadding(value as CardPadding)} options={paddingOptions} />
         <DocsSelect label="页脚排列" value={orientation} onValueChange={value => setOrientation(value as typeof orientation)} options={[["horizontal", "横向"], ["vertical", "纵向"]]} />
-        <DocsSelect label="页脚对齐" value={justify} onValueChange={value => setJustify(value as typeof justify)} options={[["start", "Start"], ["center", "Center"], ["end", "End"], ["between", "两端对齐"]]} />
+        <DocsSelect label="页脚对齐" visuals={orientation === 'horizontal' ? choiceVisuals.horizontalAlignment : choiceVisuals.verticalAlignment} value={justify} onValueChange={value => setJustify(value as typeof justify)} options={[["start", "Start"], ["center", "Center"], ["end", "End"], ["between", "两端对齐"]]} />
       </> },
     ]} />}>
       <Card.Root className="content-demo-width" variant={variant} radius={radius} size={size} divided={divided}><Card.Header padding={headerPadding} align={headerAlign} action={action ? <Button variant="ghost" onClick={() => setSaved(true)}>{t('保存更改')}</Button> : undefined}><Card.Title as={heading}>{t('灵感笔记')}</Card.Title>{description && <Card.Description>{t('今天的创作记录')}</Card.Description>}</Card.Header><Card.Content padding={padding}><PencilText>记录一个值得继续探索的想法。</PencilText>{!footer && <span role="status">{saved ? t('已保存') : ''}</span>}</Card.Content>{footer && <Card.Footer padding={footerPadding} orientation={orientation} justify={justify}><Button onClick={() => setSaved(true)}>{t('保存更改')}</Button><span role="status">{saved ? t('已保存') : ''}</span></Card.Footer>}</Card.Root>

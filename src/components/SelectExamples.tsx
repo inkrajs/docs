@@ -9,6 +9,7 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { PropertyTabs } from './PropertyTabs';
 import { ComponentExample } from './ComponentExample';
 import { DocsSelect, controlSizes } from './DocsSelect';
+import { choiceVisuals } from './docsChoiceVisuals';
 
 const visibilityOptions = [['private', '仅自己'], ['team', '团队'], ['public', '公开']] as const;
 const archiveOptions = [['drafts', '草稿'], ['notes', '笔记'], ['archive', '归档笔记']] as const;
@@ -209,7 +210,7 @@ ${itemCode}
       <DocsSelect label="阅读方向" value={dir} onValueChange={next => setDir(next as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
       {!stepper && <>
         <DocsSelect label="方向" value={side} onValueChange={next => setSide(next as typeof side)} options={[["top", "上"], ["right", "右"], ["bottom", "下"], ["left", "左"]]} />
-        <DocsSelect label="对齐" value={align} onValueChange={next => setAlign(next as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
+        <DocsSelect label="对齐" visuals={side === 'left' || side === 'right' ? choiceVisuals.verticalAlignment : choiceVisuals.horizontalAlignment} value={align} onValueChange={next => setAlign(next as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
         <div><PencilText>偏移</PencilText><Slider aria-label={t('偏移')} min={0} max={32} step={4} value={[offset]} onValueChange={next => setOffset(next[0])} getValueLabel={number => `${number}px`} /><output>{offset}px</output></div>
         <div><PencilText>边缘留白</PencilText><Slider aria-label={t('边缘留白')} min={0} max={32} step={4} value={[collisionPadding]} onValueChange={next => setCollisionPadding(next[0])} getValueLabel={number => `${number}px`} /><output>{collisionPadding}px</output></div>
       </>}

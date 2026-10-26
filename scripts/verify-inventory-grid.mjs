@@ -33,6 +33,17 @@ try {
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no page overflow');
     assert(await root.locator('.inkra-inventory-grid__cell').evaluateAll(cells => cells.every(cell => cell.getBoundingClientRect().width >= 44)), '44px item cells');
     assert.equal(await root.locator('[data-inventory-item="tool"] .inkra-inventory-grid__cell').count(), 3, 'L shape uses only its actual occupied cells');
+    const tool = root.locator('[data-inventory-item="tool"]');
+    assert.equal(await tool.locator('.inkra-inventory-grid__shape-fill').count(), 1, 'one continuous paper surface per item');
+    assert.equal(await tool.locator('.inkra-inventory-grid__shape-edge').count(), 6, 'L shape has six exterior edges with no interior dividers');
+    assert.equal(await tool.locator('.inkra-inventory-grid__cell .inkra-pencil-surface').count(), 0, 'occupied cells do not have separate frames');
+    const outlinePath = await tool.locator('.inkra-inventory-grid__shape-fallback path').getAttribute('d');
+    assert.equal((outlinePath.match(/M/g) ?? []).length, 1, 'connected shape has one outline');
+    assert(await tool.locator('.inkra-inventory-grid__shape-fill').evaluate(node => getComputedStyle(node).clipPath.startsWith('path(')), 'paper is clipped to occupied geometry');
+    await tool.focus();
+    await page.keyboard.press('r');
+    assert.equal(await tool.getAttribute('data-rotation'), '90', 'rotation updates the connected outline');
+    assert.equal(await tool.locator('.inkra-inventory-grid__shape-edge').count(), 6);
     assert(!/[\u3400-\u9fff]/.test(await root.innerText()), 'English playground has no untranslated copy');
     await page.locator('.component-playground .preview-stage').screenshot({ path: `/tmp/inkra-docs-inventory-grid-${width}.png`, animations: 'disabled' });
     const playground = page.locator('.component-playground');

@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -22,16 +23,13 @@ try {
   await tabs.getByRole('tab').first().focus();
   await page.keyboard.press('ArrowRight');
   await page.waitForFunction(node => node.getAttribute('aria-selected') === 'true', await tabs.getByRole('tab').nth(1).elementHandle());
-  await playground.getByRole('combobox', { name: '排列', exact: true }).click();
-  await page.getByRole('option', { name: '纵向', exact: true }).click();
+  await chooseDocsOption(playground, '排列', '纵向', { exact: true, optionExact: true });
   assert.equal(await line.getAttribute('data-orientation'), 'horizontal');
   const verticalLine = await line.boundingBox();
   const verticalTab = await tabs.getByRole('tab').nth(1).boundingBox();
   assert(Math.abs(verticalLine.width - verticalTab.width + 16) < 1 && verticalLine.height === 8);
-  await playground.getByRole('combobox', { name: '阅读方向', exact: true }).click();
-  await page.getByRole('option', { name: '从右到左', exact: true }).click();
-  await playground.getByRole('combobox', { name: '排列', exact: true }).click();
-  await page.getByRole('option', { name: '横向', exact: true }).click();
+  await chooseDocsOption(playground, '阅读方向', '从右到左', { exact: true, optionExact: true });
+  await chooseDocsOption(playground, '排列', '横向', { exact: true, optionExact: true });
   const rtlFirst = await tabs.getByRole('tab').first().boundingBox();
   const rtlLine = await line.boundingBox();
   assert(Math.abs(rtlFirst.x - rtlLine.x - rtlLine.width - 8) < 1);

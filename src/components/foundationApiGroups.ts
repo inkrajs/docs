@@ -93,6 +93,8 @@ export const foundationApiDefinitions: Readonly<Record<string, Definition>> = {
       row('onStepChange', '(step, { reason, previousStep, stepId }) => void', '上一步或下一步请求；受控父组件可接受或拒绝。', 'Previous/next requests; a controlled parent may accept or reject them.'),
       row('onFinish / onSkip', '() => void', '完成仅在最后一步触发；跳过只触发 onSkip，绝不触发 onFinish。', 'Finish runs only on the final step; skip calls only onSkip and never onFinish.'),
       row('showSkip / showClose', 'boolean', '默认都显示；showSkip=false 隐藏独立跳过操作。', 'Both default to visible; showSkip=false hides the dedicated skip action.'),
+      row('skipPlacement', "'panel' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end'", '默认 top-end；将跳过操作放在逻辑屏幕角落，若与面板相交会换角或回退到面板内。', 'Defaults to top-end; places Skip in a logical screen corner and switches corner or falls back into the panel if it would overlap the panel.'),
+      row('skipAppearance', "'icon' | 'text'", '默认 icon；图标模式使用本地化可访问名称和提示，text 显示完整跳过文案。', 'Defaults to icon; icon mode keeps the localized accessible name and tooltip, while text shows the full skip label.'),
       row('closeOnEscape', 'boolean', '默认 true；false 时 Escape 不关闭。关闭与 Escape 都不会触发完成或跳过。', 'Defaults to true; false keeps Escape from closing. Close and Escape never finish or skip.'),
       row('scrollIntoView', 'boolean | ScrollIntoViewOptions', '默认自动居中目标；false 保留当前滚动位置。减少动态效果时使用即时滚动。', 'Centers the target by default; false preserves scroll. Reduced motion uses instant scrolling.'),
       row('restoreFocus', 'boolean', '默认 true；关闭后返回触发器、打开前焦点或当前目标。', 'Defaults to true; restores the trigger, prior focus, or current target.'),

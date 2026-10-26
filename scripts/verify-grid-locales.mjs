@@ -62,11 +62,11 @@ async function propertyTab(playground, locale, source) {
 
 async function chooseMode(page, playground, locale, source) {
   await propertyTab(playground, locale, '布局');
-  await playground.getByRole('combobox', { name: t(locale, '模式'), exact: true }).click();
+  const group = playground.getByRole('radiogroup', { name: t(locale, '模式'), exact: true });
   for (const name of ['拖拽看板', '行列调整', '基础网格']) {
-    assert(await page.getByRole('option', { name: t(locale, name), exact: true }).isVisible());
+    assert(await group.getByRole('radio', { name: t(locale, name), exact: true }).isVisible());
   }
-  await page.getByRole('option', { name: t(locale, source), exact: true }).click();
+  await group.getByRole('radio', { name: t(locale, source), exact: true }).check();
 }
 
 try {

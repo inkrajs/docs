@@ -8,6 +8,7 @@ import { DocsIcon } from './DocsIcon';
 import { CodeBlock } from './CodeBlock';
 import { PencilText, useLocale } from '../i18n';
 import { usePlaygroundMotion } from './usePlaygroundMotion';
+import { DocsControlContext } from './DocsControlContext';
 import './ComponentExample.css';
 
 export function ComponentPlayground({ code, controls, children }: { code: string; controls: ReactNode; children: ReactNode }) {
@@ -87,7 +88,7 @@ export function ComponentPlayground({ code, controls, children }: { code: string
       <PencilLine className="preview-controls-divider" orientation="vertical" />
       <div ref={controlsRef} className="preview-controls" role="group" id={`${id}-properties`} aria-label={t('属性')} hidden={!controlsPresent} inert={!controlsOpen} aria-hidden={!controlsOpen || undefined}>
         <PencilSurface className="preview-controls__paper" variant="full" aria-hidden="true" />
-        {controlsMounted ? controls : null}
+        <DocsControlContext.Provider value={true}>{controlsMounted ? controls : null}</DocsControlContext.Provider>
       </div>
     </div>
     <span role="status" className="visually-hidden">{announcement}</span>

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-import { setPlaygroundControls as controls } from './playground-test-helpers.mjs';
+import { chooseDocsOption, setPlaygroundControls as controls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
@@ -36,8 +36,7 @@ try {
     await page.goto(`${base}/docs/components/transfer#preview`);
     const playground = page.locator('.component-playground').first();
     await controls(playground, true);
-    await playground.getByRole('combobox', { name: text('阅读方向', 'Direction'), exact: true }).click();
-    await page.getByRole('option', { name: text('从右到左', 'RTL'), exact: true }).click();
+    await chooseDocsOption(playground, text('阅读方向', 'Direction'), text('从右到左', 'RTL'), { exact: true, optionExact: true });
     await playground.getByRole('tab', { name: text('代码', 'Code'), exact: true }).click();
     const code = await playground.locator('.code-panel code').textContent();
     assert(code.includes('dir="rtl"'));
@@ -68,8 +67,7 @@ try {
     assert(geometry.scrollWidth <= geometry.width, JSON.stringify(geometry));
 
     await controls(playground, true);
-    await playground.getByRole('combobox', { name: text('阅读方向', 'Direction'), exact: true }).click();
-    await page.getByRole('option', { name: text('从左到右', 'LTR'), exact: true }).click();
+    await chooseDocsOption(playground, text('阅读方向', 'Direction'), text('从左到右', 'LTR'), { exact: true, optionExact: true });
     await controls(playground, false);
     await page.waitForFunction(root => [...root.querySelectorAll('.inkra-editable-text')].every(node =>
       getComputedStyle(node).display === 'block'), await playground.elementHandle());

@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -135,9 +136,7 @@ try {
     const propertiesToggle = componentPlayground.locator('.playground-config-toggle');
     if (await propertiesToggle.getAttribute('aria-expanded') === 'false') await propertiesToggle.click();
     await componentPlayground.getByRole('tab', { name: 'Behavior', exact: true }).click();
-    const direction = componentPlayground.getByRole('combobox', { name: 'Direction', exact: true });
-    await direction.click();
-    await page.getByRole('option', { name: 'RTL', exact: true }).click();
+    await chooseDocsOption(componentPlayground, 'Direction', 'RTL', { exact: true, optionExact: true });
     await waitForLayout(root, page, 7, 'added-1');
     assert.equal(await root.getAttribute('dir'), 'rtl');
 

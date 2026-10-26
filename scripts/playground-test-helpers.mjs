@@ -1,3 +1,16 @@
+export async function chooseDocsOption(scope, label, option, { exact = true, optionExact = true } = {}) {
+  const group = scope.getByRole('radiogroup', { name: label, exact });
+  const select = scope.getByRole('combobox', { name: label, exact });
+  await group.or(select).first().waitFor();
+  if (await group.count()) {
+    await group.getByRole('radio', { name: option, exact: optionExact }).check();
+    return;
+  }
+  await select.click();
+  const page = typeof scope.page === 'function' ? scope.page() : scope;
+  await page.getByRole('option', { name: option, exact: optionExact }).click();
+}
+
 export async function setPlaygroundControls(playground, open) {
   const toggle = playground.locator('.playground-config-toggle');
   if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();

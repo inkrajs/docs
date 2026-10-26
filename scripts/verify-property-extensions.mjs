@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setPlaygroundControls } from './playground-controls.mjs';
@@ -129,8 +130,7 @@ try {
         const controls = playground.locator('.preview-controls');
         let expectedCode;
         const choose = async (name, option) => {
-          await controls.getByRole('combobox', { name, exact: true }).click();
-          await page.getByRole('option', { name: option, exact: true }).click();
+          await chooseDocsOption(controls, name, option, { exact: true, optionExact: true });
         };
         if (component === 'tree') {
           await controls.getByRole('tab', { name: /布局|Layout/, exact: true }).click();

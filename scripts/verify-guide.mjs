@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { chooseDocsOption, setPlaygroundControls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -46,14 +47,67 @@ try {
     assert(await dialog.evaluate(node => document.activeElement === node), 'opening focuses the guide panel');
     assert.equal(await page.locator('.inkra-guide__spotlight').count(), 1);
     await expectInsideViewport(dialog, page);
+    let cornerSkip = page.locator('.inkra-guide__skip');
+    await cornerSkip.waitFor();
+    assert.equal(await cornerSkip.getAttribute('data-placement'), 'top-end');
+    assert.equal(await cornerSkip.getAttribute('data-appearance'), 'icon');
+    assert.equal(await cornerSkip.getAttribute('aria-label'), '跳过引导');
+    assert.equal(await cornerSkip.getAttribute('title'), '跳过引导');
+    await expectInsideViewport(cornerSkip, page);
+    const [dialogBox, skipBox] = await Promise.all([dialog.boundingBox(), cornerSkip.boundingBox()]);
+    assert(dialogBox && skipBox);
+    assert(skipBox.x + skipBox.width <= dialogBox.x || skipBox.x >= dialogBox.x + dialogBox.width
+      || skipBox.y + skipBox.height <= dialogBox.y || skipBox.y >= dialogBox.y + dialogBox.height,
+    JSON.stringify({ dialogBox, skipBox }));
+    await dialog.getByRole('button', { name: '关闭引导', exact: true }).focus();
+    await page.keyboard.press('Shift+Tab');
+    assert(await cornerSkip.evaluate(node => document.activeElement === node), 'Shift+Tab reaches corner skip without leaving Guide');
+    await page.keyboard.press('Shift+Tab');
+    assert(await dialog.getByRole('button', { name: '下一步', exact: true }).evaluate(node => document.activeElement === node), 'corner skip loops back into dialog');
 
     await clickInsideViewport(dialog.getByRole('button', { name: '下一步', exact: true }), page);
     await page.getByRole('heading', { name: '整理看板', exact: true }).waitFor();
     assert.equal(await playground.getAttribute('data-guide-event'), null);
-    await clickInsideViewport(page.getByRole('dialog').getByRole('button', { name: '跳过引导', exact: true }), page);
+    await clickInsideViewport(cornerSkip, page);
     await dialog.waitFor({ state: 'hidden' });
     assert.equal(await playground.locator('.guide-demo').getAttribute('data-guide-event'), 'skip');
     await page.waitForFunction(node => document.activeElement === node, await trigger.elementHandle());
+
+    const properties = playground.locator('.preview-controls');
+    const choose = async (label, option) => {
+      await setPlaygroundControls(playground, true);
+      const behaviorTab = properties.getByRole('tab').nth(1);
+      if (await behaviorTab.getAttribute('aria-selected') !== 'true') await behaviorTab.click();
+      await chooseDocsOption(properties, label, option, { exact: true, optionExact: true });
+      await setPlaygroundControls(playground, false);
+    };
+    for (const [placement, label] of [['top-start', '左上角'], ['bottom-start', '左下角'], ['bottom-end', '右下角'], ['top-end', '右上角']]) {
+      await choose('跳过位置', label);
+      await trigger.click();
+      cornerSkip = page.locator('.inkra-guide__skip');
+      await cornerSkip.waitFor();
+      const actualPlacement = await cornerSkip.getAttribute('data-placement');
+      assert(['top-start', 'top-end', 'bottom-start', 'bottom-end'].includes(actualPlacement));
+      if (viewport.width > 480) assert.equal(actualPlacement, placement);
+      const [configuredDialogBox, configuredSkipBox] = await Promise.all([page.getByRole('dialog').boundingBox(), cornerSkip.boundingBox()]);
+      assert(configuredDialogBox && configuredSkipBox);
+      assert(configuredSkipBox.x + configuredSkipBox.width <= configuredDialogBox.x || configuredSkipBox.x >= configuredDialogBox.x + configuredDialogBox.width
+        || configuredSkipBox.y + configuredSkipBox.height <= configuredDialogBox.y || configuredSkipBox.y >= configuredDialogBox.y + configuredDialogBox.height,
+      JSON.stringify({ placement, actualPlacement, configuredDialogBox, configuredSkipBox }));
+      await page.keyboard.press('Escape');
+      await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    }
+    await choose('跳过外观', 'Text');
+    await trigger.click();
+    cornerSkip = page.locator('.inkra-guide__skip');
+    await cornerSkip.waitFor();
+    assert.equal(await cornerSkip.getAttribute('data-appearance'), 'text');
+    assert.equal((await cornerSkip.textContent()).trim(), '跳过引导');
+    await clickInsideViewport(cornerSkip, page);
+    await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    assert.equal(await playground.locator('.guide-demo').getAttribute('data-guide-event'), 'skip');
+    await page.waitForFunction(node => document.activeElement === node, await trigger.elementHandle());
+    await choose('跳过外观', 'Icon');
 
     await trigger.click();
     dialog = page.getByRole('dialog');
@@ -67,6 +121,7 @@ try {
     const callbackStart = callbackExample.getByRole('button', { name: 'Start', exact: true });
     await callbackStart.click();
     dialog = page.getByRole('dialog');
+    assert.equal(await page.locator('.inkra-guide__skip').count(), 0, 'panel placement removes the screen-corner action');
     await clickInsideViewport(dialog.getByRole('button', { name: 'Skip tour', exact: true }), page);
     await dialog.waitFor({ state: 'hidden' });
     assert.equal(await callbackExample.locator('[data-guide-result]').getAttribute('data-guide-result'), 'skip');

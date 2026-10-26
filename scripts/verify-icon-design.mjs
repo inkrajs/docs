@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -15,8 +16,7 @@ try {
     await section.getByRole('button', { name: '下载', exact: true }).click();
     assert.equal(await section.getByRole('button', { name: '下载', exact: true }).getAttribute('aria-pressed'), 'true');
     assert.match(await section.locator('.icon-design__detail').textContent(), /保存文件到设备/);
-    await section.getByRole('combobox', { name: '图标尺寸' }).click();
-    await page.getByRole('option', { name: '14px', exact: true }).click();
+    await chooseDocsOption(section, '图标尺寸', '14px', { exact: false, optionExact: true });
     assert.equal(await section.locator('.icon-design__sample canvas').first().evaluate(el => el.getBoundingClientRect().width), 14);
     await section.getByRole('button', { name: '查看源码' }).click();
     assert.match(await section.locator('pre').textContent(), /sourceSize=\{24\}/);

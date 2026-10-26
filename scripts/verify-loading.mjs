@@ -20,6 +20,49 @@ function rectanglesOverlap(a, b) {
   return inlineOverlap > 1 && blockOverlap > 1;
 }
 
+async function verifyPencilAnimation(preview, page, animationName) {
+  const animation = preview.locator('.inkra-loading__animation');
+  await preview.evaluate(node => {
+    const box = node.getBoundingClientRect();
+    window.scrollTo({
+      behavior: 'instant',
+      top: window.scrollY + box.top - (window.innerHeight - box.height) / 2,
+    });
+  });
+  await page.waitForTimeout(80);
+  await insideViewport(animation, page);
+  const box = await animation.boundingBox();
+  assert(box && box.width >= 24 && box.height >= 24, `${animationName} has no visible geometry`);
+
+  const handle = await animation.elementHandle();
+  assert(handle, `${animationName} animation element is missing`);
+  await page.waitForFunction(node => {
+    const canvases = [...node.querySelectorAll('canvas')];
+    return canvases.length > 0 && canvases.some(canvas => {
+      if (!canvas.width || !canvas.height) return false;
+      const context = canvas.getContext('2d');
+      if (!context) return false;
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      for (let index = 3; index < pixels.length; index += 4) if (pixels[index] > 0) return true;
+      return false;
+    });
+  }, handle, { timeout: 5000 });
+
+  const snapshot = () => animation.evaluate(node => [node, ...node.querySelectorAll('.inkra-loading__animation-mark')]
+    .map(element => {
+      const style = getComputedStyle(element);
+      return `${style.transform}/${style.opacity}`;
+    }).join('|'));
+  const initial = await snapshot();
+  let moved = false;
+  for (let attempt = 0; attempt < 10 && !moved; attempt += 1) {
+    await page.waitForTimeout(80);
+    moved = await snapshot() !== initial;
+  }
+  assert(moved, `${animationName} did not animate transform or opacity`);
+  await handle.dispose();
+}
+
 async function verifySixSlotLayout({ direction, viewport }) {
   const page = await browser.newPage({ viewport });
   const errors = [];
@@ -30,7 +73,7 @@ async function verifySixSlotLayout({ direction, viewport }) {
   });
   await page.goto(`${base}/docs/components/loading`);
   const sceneExample = page.locator('[data-scene-example]');
-  await sceneExample.locator('[data-loading-preset="scene-bottom"]').click();
+  await sceneExample.locator('[data-open-loading-preset="scene-bottom"]').click();
   const fullscreen = page.locator('.inkra-loading[data-mode="fullscreen"]');
   await fullscreen.waitFor();
   await fullscreen.evaluate((root, dir) => {
@@ -127,23 +170,38 @@ try {
     const region = playground.locator('.inkra-loading[data-mode="region"]');
     await region.waitFor();
     assert.equal(await region.getAttribute('data-status'), 'loading');
-    assert.equal(await region.getByRole('progressbar').getAttribute('aria-valuenow'), '48');
+    assert.equal(await region.getByRole('progressbar').getAttribute('aria-valuenow'), null);
+    assert.equal(await region.locator('.inkra-loading__title').textContent(), 'Loading');
+    assert.equal(await region.locator('.inkra-loading__logo, .inkra-loading__background, .inkra-loading__description, .inkra-loading__tips').count(), 0);
+    assert.equal(await region.getByRole('button').count(), 0);
     await region.scrollIntoViewIfNeeded();
     await insideViewport(region, page);
 
     const sceneExample = page.locator('[data-scene-example]');
-    const sceneTrigger = sceneExample.locator('[data-loading-preset="scene-bottom"]');
+    assert.equal(await sceneExample.locator('.inkra-loading[data-mode="region"]').count(), 6);
+    for (const animation of ['progress', 'orbit', 'dots', 'pulse', 'trail']) {
+      assert(await sceneExample.locator(`.inkra-loading[data-animation="${animation}"]`).count() > 0, `${animation} preview is missing`);
+    }
+    if (viewport.width === 1305) {
+      for (const animation of ['orbit', 'dots', 'pulse', 'trail']) {
+        await verifyPencilAnimation(sceneExample.locator(`.inkra-loading[data-animation="${animation}"]`).first(), page, animation);
+      }
+    }
+    const sceneTrigger = sceneExample.locator('[data-open-loading-preset="scene-bottom"]');
     await sceneTrigger.click();
     let fullscreen = page.locator('.inkra-loading[data-mode="fullscreen"]');
     await fullscreen.waitFor();
     assert.equal(await fullscreen.getAttribute('role'), 'dialog');
     assert.equal(await fullscreen.getAttribute('aria-modal'), 'true');
+    assert.equal(await fullscreen.locator('.inkra-progress').count(), 0);
+    assert.equal(await fullscreen.locator('.inkra-loading__animation').getAttribute('role'), 'progressbar');
+    assert.equal(await fullscreen.locator('.inkra-loading__animation').getAttribute('aria-label'), 'Loading');
     assert(await fullscreen.evaluate(node => node.contains(document.activeElement)), 'blocking loading owns focus');
     await insideViewport(fullscreen, page);
 
-    const beforeCharacter = await fullscreen.locator('.loading-scene').getAttribute('data-character');
+    const beforeCharacter = await fullscreen.locator('[data-character]').getAttribute('data-character');
     await fullscreen.getByRole('button', { name: 'Switch character' }).click();
-    assert.notEqual(await fullscreen.locator('.loading-scene').getAttribute('data-character'), beforeCharacter);
+    assert.notEqual(await fullscreen.locator('[data-character]').getAttribute('data-character'), beforeCharacter);
     const tip = fullscreen.locator('.inkra-loading__tip');
     const beforeTip = await tip.textContent();
     await fullscreen.getByRole('button', { name: 'Next tip' }).click();
@@ -152,7 +210,7 @@ try {
     await fullscreen.waitFor({ state: 'hidden' });
     assert(await sceneTrigger.evaluate(node => document.activeElement === node), 'focus returns to scene trigger');
 
-    const edgeTrigger = sceneExample.locator('[data-loading-preset="edge"]');
+    const edgeTrigger = sceneExample.locator('[data-open-loading-preset="edge"]');
     await edgeTrigger.click();
     fullscreen = page.locator('.inkra-loading[data-mode="fullscreen"]');
     await fullscreen.waitFor();
@@ -179,13 +237,28 @@ try {
   const reduced = await browser.newPage({ viewport: { width: 390, height: 720 }, reducedMotion: 'reduce' });
   await reduced.addInitScript(() => localStorage.setItem('inkra-docs-locale', 'en'));
   await reduced.goto(`${base}/docs/components/loading`);
-  await reduced.locator('[data-scene-example] [data-loading-preset="brand-center"]').click();
-  const tip = reduced.getByRole('dialog').locator('.inkra-loading__tip');
+  await reduced.locator('[data-scene-example] [data-open-loading-preset="scene-bottom"]').click();
+  const reducedDialog = reduced.getByRole('dialog');
+  const tip = reducedDialog.locator('.inkra-loading__tip');
   await tip.waitFor();
   assert.equal(await tip.evaluate(node => getComputedStyle(node).animationName), 'none');
+  const animation = reducedDialog.locator('.inkra-loading__animation');
+  await animation.waitFor();
+  assert.equal(await animation.evaluate(node => getComputedStyle(node).animationName), 'none');
   await reduced.getByTestId('close-loading-scene').click();
   await reduced.close();
   console.log('PASS Loading reduced-motion fallback');
+
+  const chinese = await browser.newPage({ viewport: { width: 1305, height: 900 } });
+  await chinese.addInitScript(() => {
+    localStorage.setItem('inkra-docs-locale', 'zh-CN');
+    localStorage.setItem('inkra-docs-theme', 'light');
+  });
+  await chinese.goto(`${base}/docs/components/loading`);
+  const chineseTitles = await chinese.locator('[data-scene-example] .loading-preset-preview .inkra-loading__title').allTextContents();
+  assert.deepEqual(chineseTitles, ['品牌居中', '场景底部', '信息面板', '分阶段', '边缘', '骨架']);
+  await chinese.close();
+  console.log('PASS Loading Chinese preset labels');
 
   await verifySixSlotLayout({ direction: 'ltr', viewport: { width: 1305, height: 900 } });
   await verifySixSlotLayout({ direction: 'rtl', viewport: { width: 390, height: 480 } });

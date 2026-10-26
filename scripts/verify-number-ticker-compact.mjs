@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -25,8 +26,7 @@ try {
     const toggle = page.locator('.playground-config-toggle');
     if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
     const select = async (label, option) => {
-      await properties.getByRole('combobox', { name: label, exact: true }).click();
-      await page.getByRole('option', { name: option, exact: true }).click();
+      await chooseDocsOption(properties, label, option, { exact: true, optionExact: true });
     };
     for (const [option, expected] of [
       ['K / M / B / T', '12.8 K'], ['千 / 万 / 亿 / 兆', '1.3 万'],

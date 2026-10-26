@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -94,8 +95,7 @@ try {
     const textarea = page.locator('.preview-stage textarea');
     await textarea.waitFor();
     const choose = async (name, option) => {
-      await page.locator('.preview-controls').getByRole('combobox', { name, exact: true }).click();
-      await page.getByRole('option', { name: option, exact: true }).click();
+      await chooseDocsOption(page.locator('.preview-controls'), name, option, { exact: true, optionExact: true });
     };
     await choose('行数', '5');
     await choose('最大长度', '40');

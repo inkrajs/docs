@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 
@@ -62,8 +63,7 @@ try {
   await stepsPlayground.getByRole('switch', { name: '确认步骤错误' }).check();
   assert.equal(await stepsPlayground.locator('.inkra-steps__item[data-status="error"]').count(), 1);
   await selectPropertyTab(page, stepsPlayground, '布局');
-  await stepsPlayground.getByRole('combobox', { name: '方向' }).click();
-  await page.getByRole('option', { name: '纵向', exact: true }).click();
+  await chooseDocsOption(stepsPlayground, '方向', '纵向', { exact: false, optionExact: true });
   assert.equal(await stepsPlayground.locator('.inkra-steps').getAttribute('data-orientation'), 'vertical');
   await stepsPlayground.getByRole('tab', { name: '代码', exact: true }).click();
   const stepsCode = await stepsPlayground.locator('.code-panel code').textContent();
@@ -81,8 +81,7 @@ try {
   await timelinePlayground.getByRole('switch', { name: '显示描述' }).uncheck();
   assert.equal(await timelinePlayground.locator('.inkra-timeline__description').count(), 0);
   await selectPropertyTab(page, timelinePlayground, '布局');
-  await timelinePlayground.getByRole('combobox', { name: '方向' }).click();
-  await page.getByRole('option', { name: '横向', exact: true }).click();
+  await chooseDocsOption(timelinePlayground, '方向', '横向', { exact: false, optionExact: true });
   assert.equal(await timelinePlayground.locator('.inkra-timeline').getAttribute('data-orientation'), 'horizontal');
   await timelinePlayground.getByRole('tab', { name: '代码', exact: true }).click();
   const timelineCode = await timelinePlayground.locator('.code-panel code').textContent();

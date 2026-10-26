@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -11,8 +12,7 @@ async function expectFocused(locator) {
 }
 
 async function chooseOption(scope, label, option) {
-  await scope.getByRole('combobox', { name: label }).click();
-  await scope.page().getByRole('option', { name: option, exact: true }).click();
+  await chooseDocsOption(scope, label, option, { exact: false, optionExact: true });
 }
 
 try {

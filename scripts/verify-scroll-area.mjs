@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -18,8 +19,7 @@ try {
 
     const controls = page.locator('.component-playground').getByRole('group', { name: '属性', exact: true });
     await controls.getByRole('tab', { name: '交互', exact: true }).click();
-    await controls.getByRole('combobox', { name: '滚动条策略' }).click();
-    await page.getByRole('option', { name: '常显' }).click();
+    await chooseDocsOption(controls, '滚动条策略', '常显', { exact: false, optionExact: false });
     assert.equal(await root.getAttribute('data-type'), 'always');
     await controls.getByRole('button', { name: '增加内容' }).click();
     await viewportEl.locator('[data-expanded="true"]').waitFor();

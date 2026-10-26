@@ -116,13 +116,13 @@ try {
   assert.equal(await viewer.locator('.inkra-overlay__header').count(), 0, 'fullscreen viewer has no visible header');
   assert.equal(await viewer.locator('.inkra-image-viewer__accessible-label').count(), 2, 'dialog keeps hidden title and description');
   assert(geometry.stageHeight >= 44 && geometry.stageBottom <= geometry.bottomTop + 1, JSON.stringify(geometry));
-  assert(geometry.toolsTop >= geometry.bottomTop - 1 && geometry.toolsBottom <= geometry.viewer.bottom + 1, JSON.stringify(geometry));
+  assert(geometry.toolsTop >= geometry.viewer.top && geometry.toolsBottom <= geometry.stageBottom, JSON.stringify(geometry));
   const shellInk = viewer.locator(':scope > .inkra-overlay__surface > .inkra-pencil-surface__ink');
   assert.equal(await shellInk.evaluate(node => getComputedStyle(node).display), 'none');
   assert(await shellInk.evaluate(node => node.width * node.height <= 300 * 150), 'fullscreen shell never allocates a viewport-sized decorative bitmap');
   await assertNotClipped(close, viewer, 'corner close remains inside the fullscreen viewer');
   await assertPanZoomFitsStage(stage, 'initial image');
-  await assertNotClipped(tools, bottom, 'all viewer tools remain inside bottom chrome');
+  await assertNotClipped(tools, viewer.locator('.inkra-image-viewer__body'), 'viewer tools float inside the image area');
   const thumbnailGeometry = await viewer.locator('.inkra-image-viewer__thumbnails').evaluate(node => {
     const items = [...node.querySelectorAll('.inkra-image-viewer__thumbnail')].map(item => item.getBoundingClientRect());
     const rect = node.getBoundingClientRect();
@@ -207,7 +207,7 @@ try {
     && document.querySelectorAll('.inkra-image-viewer__navigation > .inkra-button').length === 2);
   const restoredStage = viewer.locator('.inkra-image-viewer__stage');
   await assertPanZoomFitsStage(restoredStage, 'restored image');
-  await assertNotClipped(viewer.locator('.inkra-image-viewer__tools'), viewer.locator('.inkra-image-viewer__bottom'), 'restored tools remain visible');
+  await assertNotClipped(viewer.locator('.inkra-image-viewer__tools'), viewer.locator('.inkra-image-viewer__body'), 'restored tools remain visible');
   for (const control of await viewer.locator('.inkra-image-viewer__navigation > .inkra-button').all()) {
     await assertNotClipped(control, restoredStage, 'restored navigation remains visible');
   }

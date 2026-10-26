@@ -36,6 +36,14 @@ const gallery: readonly ImageViewerItem[] = [
   },
 ];
 
+const viewerControlCopy = {
+  'zh-CN': { counter: '显示图片计数', position: '工具栏位置', top: '图片上沿', bottom: '图片下沿' },
+  en: { counter: 'Show image count', position: 'Toolbar position', top: 'Image top', bottom: 'Image bottom' },
+  ja: { counter: '画像数を表示', position: 'ツールバーの位置', top: '画像の上部', bottom: '画像の下部' },
+  ko: { counter: '이미지 수 표시', position: '도구 모음 위치', top: '이미지 위쪽', bottom: '이미지 아래쪽' },
+  fr: { counter: "Afficher le nombre d'images", position: 'Position des outils', top: "En haut de l'image", bottom: "En bas de l'image" },
+};
+
 export function ImageViewerExamples() {
   const { locale, t } = useLocale();
   const english = locale === 'en';
@@ -43,6 +51,9 @@ export function ImageViewerExamples() {
   const [items, setItems] = useState<readonly ImageViewerItem[]>(gallery);
   const [activeId, setActiveId] = useState<string | null>(gallery[0].id);
   const [showThumbnails, setShowThumbnails] = useState(true);
+  const [showCounter, setShowCounter] = useState(false);
+  const [toolbarPosition, setToolbarPosition] = useState<'top' | 'bottom'>('top');
+  const controlsCopy = viewerControlCopy[locale];
   const [loop, setLoop] = useState(true);
   const [zoomable, setZoomable] = useState(true);
   const [rotatable, setRotatable] = useState(true);
@@ -62,11 +73,13 @@ export function ImageViewerExamples() {
   <ImageViewer.Content
     dir="${direction}"
     showThumbnails={${showThumbnails}}
+    showCounter={${showCounter}}
+    toolbarPosition="${toolbarPosition}"
     zoomable={${zoomable}}
     rotatable={${rotatable}}
     labels={localizedLabels}
   />
-</ImageViewer.Root>`, [direction, english, loop, rotatable, showThumbnails, zoomable]);
+</ImageViewer.Root>`, [direction, english, loop, rotatable, showThumbnails, showCounter, toolbarPosition, zoomable]);
 
   const labels = {
     title: text('图片查看器', 'Image viewer'),
@@ -108,6 +121,9 @@ export function ImageViewerExamples() {
         ]} />
         <Switch label={text('循环浏览', 'Loop navigation')} checked={loop} onCheckedChange={setLoop} />
         <Switch label={text('显示缩略图', 'Show thumbnails')} checked={showThumbnails} onCheckedChange={setShowThumbnails} />
+        <Switch label={controlsCopy.counter} checked={showCounter} onCheckedChange={setShowCounter} />
+        <DocsSelect label={controlsCopy.position} value={toolbarPosition} onValueChange={value => setToolbarPosition(value as 'top' | 'bottom')}
+          options={[[ 'top', controlsCopy.top ], [ 'bottom', controlsCopy.bottom ]]} />
         <Switch label={text('启用缩放', 'Enable zoom')} checked={zoomable} onCheckedChange={setZoomable} />
         <Switch label={text('显示旋转', 'Show rotation')} checked={rotatable} onCheckedChange={setRotatable} />
       </> },
@@ -133,7 +149,8 @@ export function ImageViewerExamples() {
           <ImageViewer.Trigger asChild>
             <Button>{text('打开图片查看器', 'Open image viewer')}</Button>
           </ImageViewer.Trigger>
-          <ImageViewer.Content dir={direction} labels={labels} rotatable={rotatable} showThumbnails={showThumbnails} zoomable={zoomable} />
+          <ImageViewer.Content dir={direction} labels={labels} rotatable={rotatable} showThumbnails={showThumbnails}
+            showCounter={showCounter} toolbarPosition={toolbarPosition} zoomable={zoomable} />
         </ImageViewer.Root>
         <PencilText as="span" aria-live="polite" className="image-viewer-examples__status">{lastChange ? `${text('当前', 'Current')}: ${t(gallery.find(item => item.id === lastChange)?.alt ?? '无')}` : ''}</PencilText>
       </div>

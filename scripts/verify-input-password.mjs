@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -26,8 +27,7 @@ try {
     const playground = page.locator('.component-playground').first();
     await playground.waitFor();
     await configure(page, playground, true);
-    await playground.getByRole('combobox', { name: zh ? '输入类型' : 'Input type', exact: true }).click();
-    await page.getByRole('option', { name: zh ? '密码' : 'Password', exact: true }).click();
+    await chooseDocsOption(playground, zh ? '输入类型' : 'Input type', zh ? '密码' : 'Password', { exact: true, optionExact: true });
     await configure(page, playground, false);
     const primary = playground.locator('input[name="title"]');
     const secret = 'fixture-only-4820!';

@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
@@ -39,8 +40,7 @@ try {
     assert.equal(await currentItem(carousel).getAttribute('aria-label'), '第 1 项，共 5 项', 'interactive slide content owns arrow keys');
 
     const controls = playground.getByRole('group', { name: '属性', exact: true });
-    await controls.getByRole('combobox', { name: '阅读方向' }).click();
-    await page.getByRole('option', { name: 'RTL' }).click();
+    await chooseDocsOption(controls, '阅读方向', 'RTL', { exact: false, optionExact: false });
     await carousel.focus();
     await page.keyboard.press('ArrowLeft');
     assert.equal(await currentItem(carousel).getAttribute('aria-label'), '第 2 项，共 5 项', 'RTL reverses spatial arrows');

@@ -63,10 +63,18 @@ try {
   await page.screenshot({ path: '/tmp/inkra-sidebar-controls-1302.png' });
   for (const route of ['button', 'popover', 'input', 'textarea', 'field', 'radio-group', 'select']) {
     await page.goto(`http://127.0.0.1:4180/components/${route}#preview`);
-    const controls = page.locator('.preview-controls .docs-select .inkra-select__trigger');
+    const controls = page.locator('.preview-controls .docs-select:visible');
     assert(await controls.count() > 0, route);
     for (let index = 0; index < await controls.count(); index++) {
-      const trigger = controls.nth(index);
+      const field = controls.nth(index);
+      if (await field.getAttribute('data-presentation') === 'radio') {
+        const original = await field.getByRole('radio', { checked: true }).inputValue();
+        const target = field.getByRole('radio', { checked: false }).first();
+        await target.check();
+        assert.notEqual(await field.getByRole('radio', { checked: true }).inputValue(), original, route);
+        continue;
+      }
+      const trigger = field.getByRole('combobox');
       const original = await trigger.innerText();
       await trigger.click();
       const choices = page.getByRole('option');

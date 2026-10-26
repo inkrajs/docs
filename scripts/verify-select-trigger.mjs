@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { setPlaygroundControls } from './playground-controls.mjs';
 
@@ -23,8 +24,7 @@ try {
     };
     await setPlaygroundControls(playground, true);
     for (const [label, size, height] of [['小', 24, 36], ['中', 28, 44], ['大', 32, 48]]) {
-      await controls.getByRole('combobox', { name: '尺寸', exact: true }).click();
-      await page.getByRole('option', { name: label, exact: true }).click();
+      await chooseDocsOption(controls, '尺寸', label, { exact: true, optionExact: true });
       const glyph = await trigger.locator('.inkra-select__trigger-glyph').boundingBox();
       const slot = await trigger.locator('.inkra-select__trigger-icon').boundingBox();
       const surface = await trigger.locator('.inkra-select__trigger-surface').boundingBox();
@@ -33,8 +33,7 @@ try {
       assert.equal(slot.width, size, `${label} arrow slot`);
       assert.equal(surface.height, height, `${label} control height unchanged`);
     }
-    await controls.getByRole('combobox', { name: '尺寸', exact: true }).click();
-    await page.getByRole('option', { name: '中', exact: true }).click();
+    await chooseDocsOption(controls, '尺寸', '中', { exact: true, optionExact: true });
     await page.getByRole('listbox').waitFor({ state: 'hidden' });
     await page.waitForTimeout(250);
     await page.screenshot({ path: `/tmp/inkra-select-chevron-${width}.png` });
@@ -102,8 +101,7 @@ try {
     await category('内容').click();
     await toggle('纯图标触发器');
     await category('布局').click();
-    await controls.getByRole('combobox', { name: '阅读方向', exact: true }).click();
-    await page.getByRole('option', { name: '从右到左', exact: true }).click();
+    await chooseDocsOption(controls, '阅读方向', '从右到左', { exact: true, optionExact: true });
     const slots = await trigger.locator('.inkra-select__trigger-slot').all();
     assert((await slots[0].boundingBox()).x > (await slots[1].boundingBox()).x, 'logical icon slots follow RTL');
     await category('内容').click();

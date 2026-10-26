@@ -60,7 +60,7 @@ export function IconDesign() {
         <div className="icon-design__samples">
           {(['light', 'dark'] as const).map(theme => <div key={theme} data-inkra-theme={theme} className="icon-design__sample"><DocsIcon data={item.data} size={Number(size)} /><PencilText>{theme === 'light' ? '浅色' : '深色'}</PencilText></div>)}
         </div>
-        <DocsSelect label="图标尺寸" value={size} onValueChange={setSize} options={['14', '16', '20', '24'].map(value => [value, `${value}px`] as const)} />
+        <DocsSelect label="图标尺寸" presentation="radio" value={size} onValueChange={setSize} options={['14', '16', '20', '24'].map(value => [value, `${value}px`] as const)} />
         <div aria-live="polite"><PencilText as="h3">{item.label}</PencilText><code>{item.data.name}</code><PencilText as="p">{item.use}</PencilText></div>
       </div>
     </div>

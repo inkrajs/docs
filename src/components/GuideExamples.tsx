@@ -4,8 +4,10 @@ import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { PropertyTabs } from './PropertyTabs';
-import { useLocale } from '../i18n';
 import './GuideExamples.css';
+
+type SkipPlacement = 'panel' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+type SkipAppearance = 'icon' | 'text';
 
 const guideCopy: Record<InkraLocale, {
   start: string;
@@ -15,6 +17,18 @@ const guideCopy: Record<InkraLocale, {
   secondDescription: string;
   thirdTitle: string;
   thirdDescription: string;
+  language: string;
+  content: string;
+  currentStep: string;
+  behavior: string;
+  open: string;
+  showSkip: string;
+  escape: string;
+  autoScroll: string;
+  skipPlacement: string;
+  skipAppearance: string;
+  placements: Record<SkipPlacement, string>;
+  appearances: Record<SkipAppearance, string>;
 }> = {
   en: {
     start: 'Start guide',
@@ -24,6 +38,10 @@ const guideCopy: Record<InkraLocale, {
     secondDescription: 'Move related notes together as the board grows.',
     thirdTitle: 'Share the result',
     thirdDescription: 'Invite the team after the outline is ready.',
+    language: 'Language', content: 'Content', currentStep: 'Current step', behavior: 'Behavior', open: 'Open', showSkip: 'Show skip',
+    escape: 'Escape closes', autoScroll: 'Auto scroll', skipPlacement: 'Skip placement', skipAppearance: 'Skip appearance',
+    placements: { panel: 'Inside panel', 'top-start': 'Top start', 'top-end': 'Top end', 'bottom-start': 'Bottom start', 'bottom-end': 'Bottom end' },
+    appearances: { icon: 'Icon', text: 'Text' },
   },
   'zh-CN': {
     start: '开始引导',
@@ -33,6 +51,10 @@ const guideCopy: Record<InkraLocale, {
     secondDescription: '内容变多后，把相关笔记放在一起。',
     thirdTitle: '分享结果',
     thirdDescription: '大纲准备好后，再邀请团队一起查看。',
+    language: '语言', content: '内容', currentStep: '当前步骤', behavior: '行为', open: '展开', showSkip: '显示跳过',
+    escape: 'Escape 关闭', autoScroll: '自动定位', skipPlacement: '跳过位置', skipAppearance: '跳过外观',
+    placements: { panel: '面板内', 'top-start': '左上角', 'top-end': '右上角', 'bottom-start': '左下角', 'bottom-end': '右下角' },
+    appearances: { icon: '图标', text: '文字' },
   },
   ja: {
     start: 'ガイドを開始',
@@ -42,6 +64,10 @@ const guideCopy: Record<InkraLocale, {
     secondDescription: 'ノートが増えたら、関連する内容をまとめます。',
     thirdTitle: '結果を共有',
     thirdDescription: '概要が整ったら、チームを招待します。',
+    language: '言語', content: '内容', currentStep: '現在のステップ', behavior: '動作', open: '開く', showSkip: 'スキップを表示',
+    escape: 'Escape で閉じる', autoScroll: '自動スクロール', skipPlacement: 'スキップ位置', skipAppearance: 'スキップ表示',
+    placements: { panel: 'パネル内', 'top-start': '左上', 'top-end': '右上', 'bottom-start': '左下', 'bottom-end': '右下' },
+    appearances: { icon: 'アイコン', text: 'テキスト' },
   },
   ko: {
     start: '가이드 시작',
@@ -51,6 +77,10 @@ const guideCopy: Record<InkraLocale, {
     secondDescription: '노트가 늘어나면 관련 내용을 함께 모으세요.',
     thirdTitle: '결과 공유',
     thirdDescription: '개요가 준비되면 팀을 초대하세요.',
+    language: '언어', content: '내용', currentStep: '현재 단계', behavior: '동작', open: '열기', showSkip: '건너뛰기 표시',
+    escape: 'Escape로 닫기', autoScroll: '자동 스크롤', skipPlacement: '건너뛰기 위치', skipAppearance: '건너뛰기 모양',
+    placements: { panel: '패널 안', 'top-start': '왼쪽 위', 'top-end': '오른쪽 위', 'bottom-start': '왼쪽 아래', 'bottom-end': '오른쪽 아래' },
+    appearances: { icon: '아이콘', text: '텍스트' },
   },
   fr: {
     start: 'Démarrer le guide',
@@ -60,6 +90,10 @@ const guideCopy: Record<InkraLocale, {
     secondDescription: 'Regroupez les notes liées à mesure que le tableau grandit.',
     thirdTitle: 'Partager le résultat',
     thirdDescription: 'Invitez l’équipe lorsque le plan est prêt.',
+    language: 'Langue', content: 'Contenu', currentStep: 'Étape actuelle', behavior: 'Comportement', open: 'Ouvrir', showSkip: 'Afficher Ignorer',
+    escape: 'Fermer avec Échap', autoScroll: 'Défilement auto', skipPlacement: 'Position d’Ignorer', skipAppearance: 'Apparence d’Ignorer',
+    placements: { panel: 'Dans le panneau', 'top-start': 'En haut au début', 'top-end': 'En haut à la fin', 'bottom-start': 'En bas au début', 'bottom-end': 'En bas à la fin' },
+    appearances: { icon: 'Icône', text: 'Texte' },
   },
 };
 
@@ -72,11 +106,12 @@ const localeOptions: Array<[InkraLocale, string]> = [
 ];
 
 export function GuideExamples() {
-  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [guideLocale, setGuideLocale] = useState<InkraLocale>('zh-CN');
   const [showSkip, setShowSkip] = useState(true);
+  const [skipPlacement, setSkipPlacement] = useState<SkipPlacement>('top-end');
+  const [skipAppearance, setSkipAppearance] = useState<SkipAppearance>('icon');
   const [closeOnEscape, setCloseOnEscape] = useState(true);
   const [autoScroll, setAutoScroll] = useState(true);
   const [lastEvent, setLastEvent] = useState('none');
@@ -89,6 +124,8 @@ export function GuideExamples() {
   onSkip={() => record('skip')}
   onFinish={() => record('finish')}
   showSkip={${showSkip}}
+  skipPlacement="${skipPlacement}"
+  skipAppearance="${skipAppearance}"
   closeOnEscape={${closeOnEscape}}
   scrollIntoView={${autoScroll}}
   locale="${guideLocale}"
@@ -101,15 +138,17 @@ export function GuideExamples() {
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
-      { label: '内容', content: <>
-        <DocsSelect label="语言" value={guideLocale} onValueChange={value => setGuideLocale(value as InkraLocale)} options={localeOptions} />
-        <DocsSelect label="当前步骤" value={String(step)} onValueChange={value => setStep(Number(value))} options={[["0", "1"], ["1", "2"], ["2", "3"]]} />
+      { label: copy.content, content: <>
+        <DocsSelect label={copy.language} value={guideLocale} onValueChange={value => setGuideLocale(value as InkraLocale)} options={localeOptions} />
+        <DocsSelect label={copy.currentStep} value={String(step)} onValueChange={value => setStep(Number(value))} options={[["0", "1"], ["1", "2"], ["2", "3"]]} />
       </> },
-      { label: '行为', content: <>
-        <Switch label={t('展开')} checked={open} onCheckedChange={setOpen} />
-        <Switch label="显示跳过" checked={showSkip} onCheckedChange={setShowSkip} />
-        <Switch label="Escape 关闭" checked={closeOnEscape} onCheckedChange={setCloseOnEscape} />
-        <Switch label="自动定位" checked={autoScroll} onCheckedChange={setAutoScroll} />
+      { label: copy.behavior, content: <>
+        <Switch label={copy.open} checked={open} onCheckedChange={setOpen} />
+        <Switch label={copy.showSkip} checked={showSkip} onCheckedChange={setShowSkip} />
+        <DocsSelect label={copy.skipPlacement} value={skipPlacement} onValueChange={value => setSkipPlacement(value as SkipPlacement)} options={Object.entries(copy.placements) as Array<[SkipPlacement, string]>} />
+        <DocsSelect label={copy.skipAppearance} value={skipAppearance} onValueChange={value => setSkipAppearance(value as SkipAppearance)} options={Object.entries(copy.appearances) as Array<[SkipAppearance, string]>} />
+        <Switch label={copy.escape} checked={closeOnEscape} onCheckedChange={setCloseOnEscape} />
+        <Switch label={copy.autoScroll} checked={autoScroll} onCheckedChange={setAutoScroll} />
       </> },
     ]} />}>
       <div className="guide-demo" data-guide-event={lastEvent}>
@@ -126,6 +165,8 @@ export function GuideExamples() {
           onSkip={() => setLastEvent('skip')}
           onFinish={() => setLastEvent('finish')}
           showSkip={showSkip}
+          skipPlacement={skipPlacement}
+          skipAppearance={skipAppearance}
           closeOnEscape={closeOnEscape}
           scrollIntoView={autoScroll}
           locale={guideLocale}
@@ -148,6 +189,8 @@ function CallbackExample() {
   const [showSkip, setShowSkip] = useState(true);
   return <ComponentExample id="guide-skip-and-finish" title="跳过、完成与隐藏跳过" code={`<Guide.Root
   showSkip={showSkip}
+  skipPlacement="panel"
+  skipAppearance="text"
   onSkip={() => setResult('skip')}
   onFinish={() => setResult('finish')}
 >
@@ -158,7 +201,7 @@ function CallbackExample() {
     <div className="guide-demo guide-demo--supplemental">
       <div className="guide-demo__targets"><Button id="guide-callback-target" variant="outline">Target</Button></div>
       <Switch label="显示跳过" checked={showSkip} onCheckedChange={setShowSkip} />
-      <Guide.Root showSkip={showSkip} onSkip={() => setResult('skip')} onFinish={() => setResult('finish')}>
+      <Guide.Root showSkip={showSkip} skipPlacement="panel" skipAppearance="text" onSkip={() => setResult('skip')} onFinish={() => setResult('finish')}>
         <Guide.Trigger asChild><Button>Start</Button></Guide.Trigger>
         <Guide.Step target="#guide-callback-target" title="First step" description="Skip ends the guide without finishing." />
         <Guide.Step target="#guide-callback-target" title="Final step" description="Finish runs only from the last step." />

@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -7,8 +8,7 @@ page.on('pageerror', error => errors.push(error.message));
 const base = process.env.INKRA_URL || 'http://127.0.0.1:4180';
 const controls = page.getByRole('group', { name: '属性', exact: true });
 async function choose(label, option) {
-  await controls.getByRole('combobox', { name: label, exact: true }).click();
-  await page.getByRole('option', { name: option, exact: true }).click();
+  await chooseDocsOption(controls, label, option, { exact: true, optionExact: true });
 }
 async function toggle(name) { await controls.getByRole('switch', { name, exact: true }).click(); }
 async function range(name, value) {
