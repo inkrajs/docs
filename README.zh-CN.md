@@ -48,6 +48,17 @@ vendor 中的 tarball 不提交。组件仓使用
 Push、PR 和手动 CI 对正式版本直接安装 npm 包；本地候选模式才按精确组件提交号
 重建并核对归档与锁文件无漂移，两种模式都执行浏览器检查。
 
+PR 会基于实际检出的 merge tree 与 base commit 生成组件感知的浏览器计划。组件页面、
+跨组件组合示例，以及脚本、helper、fixture 的反向传递依赖只选择受影响检查；候选包、
+lockfile、编译与 workflow 配置、公共 shell/style/theme/i18n、未知路径或无法解析的依赖
+会记录原因并保守执行全量。main push、手动与 release 验证始终全量。本计划仅启动
+`min(4, 选中检查数)` 个浏览器 runner；可信的零检查计划不会启动浏览器 job。
+
+build 上传的 JSON 计划是唯一可信来源。每个分片报告都绑定计划摘要、实际测试提交、
+完整 suite 摘要和选中 suite 摘要；最终 `docs` gate 会在自己的 checkout 上重新核对当前
+suite，拒绝过期身份、漏测、重复、计划外结果、不完整或失败的检查。未选中的检查只会
+列为 skipped，不会计为通过。未提供计划时，`npm run test:browser` 本地仍默认运行全量。
+
 公开网站由 inkrajs/inkrajs.github.io 的 release.json 固定本仓精确提交后构建发布。
 首页位于 /，文档位于 /docs；构建生成每条文档路径及旧地址的 HTML 入口，
 支持 GitHub Pages 直达与刷新，不依赖 404 跳转。网站部署与 npm 发布是独立流程。
