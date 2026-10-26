@@ -1,10 +1,14 @@
 // Keep the Chinese source as the lookup key, including for expansion pages.
 export const componentIntroductionMessages: Record<string, readonly [string, string, string, string]> = {
+  '下一幕还在准备，等待也有自己的画面。': ['The next scene is getting ready. Give the wait a place of its own.', '次の場面は準備中。待つ時間にも、そのための画面を。', '다음 장면을 준비 중이에요. 기다림에도 어울리는 화면이 있어요.', 'La suite se prépare. Donnez aussi sa place à l’attente.'],
+  '滑到边上，后面的内容接着来。': ['Reach the edge, and the next part comes into view.', '端までスクロールすると、続きが届きます。', '끝까지 스크롤하면, 다음 내용이 이어져요.', 'Au bord de la liste, la suite arrive.'],
+  '高矮不一也没关系，总能排得下。': ['Different heights, all finding their place.', '高さが違っても、それぞれの居場所があります。', '높이가 달라도, 저마다 자리를 찾아요.', 'Des hauteurs différentes, chacune à sa place.'],
   '来都来了，点一下再走。': ['You came all this way. Might as well click something.', 'せっかく来たなら、ひと押ししていきませんか。', '여기까지 왔으니, 한 번 누르고 가요.', 'Puisque vous êtes là, autant cliquer un peu.'],
   '一个垃圾桶，省掉五个字的「删除此项目」。': ['A trash can saves you from writing "Delete this item" everywhere.', 'ごみ箱ひとつで、「この項目を削除」の説明いらず。', '휴지통 하나면 「이 항목 삭제」라는 말이 필요 없죠.', 'Une corbeille, et plus besoin d’écrire « Supprimer cet élément » partout.'],
   '先占个位，放工具、资源，或者一点别的。': ['A steady place for a tool, a resource, or something unexpected.', 'まずは場所を確保。道具でも資料でも、ちょっと別のものでも。', '일단 자리를 마련해요. 도구든 자료든, 조금 다른 무언가든.', 'Une place pour un outil, une ressource, ou une petite surprise.'],
   '补充两句，真就两句，不另开一页。': ['A quick aside. Not a whole new page.', 'ちょっとひと言。本当にひと言、別ページは開きません。', '잠깐 덧붙일게요. 정말 잠깐, 새 페이지는 필요 없어요.', 'Une petite précision. Pas une nouvelle page.'],
   '打断一下，这事得单开一窗。': ['We interrupt this page for a brief conversation.', '少しだけ失礼。この話は、別の窓で。', '잠깐만요. 이 얘기는 창 하나 따로 열게요.', 'Petite interruption : cette conversation mérite sa fenêtre.'],
+  '第一次来？一步一步走，不用自己猜。': ['New here? One step at a time, with no guessing.', '初めてですか。ひとつずつ進めば、迷いません。', '처음인가요? 한 단계씩 따라오면 헤맬 필요 없어요.', 'Première visite ? Avançons étape par étape, sans deviner.'],
   '图标负责高冷，我负责解释。': ['For icons that refuse to explain themselves.', 'アイコンは無口。説明は、こちらにお任せ。', '아이콘은 말이 없죠. 설명은 제가 할게요.', 'L’icône garde son mystère. Je m’occupe des explications.'],
   '三个点，藏着半个工具栏。': ['Three dots. Half a toolbar in hiding.', '点が三つ。その奥に、ツールバーが半分。', '점 세 개 뒤에 도구 모음 반이 숨어 있어요.', 'Trois points. Une demi-barre d’outils bien cachée.'],
   '填什么、怎么填、哪儿填错了，别让用户做阅读理解。': ['What goes here? Why is it wrong? A form should not be a guessing game.', '何を書く？どう書く？どこが違う？入力を謎解きにしないで。', '뭘 쓰고, 어떻게 쓰고, 뭐가 틀렸는지. 입력을 독해 시험으로 만들지 마세요.', 'Quoi saisir, comment, et où est l’erreur ? Épargnons le jeu de devinettes.'],

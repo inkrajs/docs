@@ -9,6 +9,8 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { iconPaths } from './DocsIcon';
 import { PropertyTabs } from './PropertyTabs';
+import { NumberTickerRollExamples } from './NumberTickerRollExamples';
+import { numberTickerRollCopy } from './numberTickerRollCopy';
 import './NumberTickerExamples.css';
 
 const quote = (value: string) => JSON.stringify(value);
@@ -75,6 +77,9 @@ export function NumberTickerExamples() {
   const [showDelta, setShowDelta] = useState(true);
   const [animate, setAnimate] = useState(true);
   const [duration, setDuration] = useState(420);
+  const [animation, setAnimation] = useState<'count' | 'roll'>('count');
+  const [rollDirection, setRollDirection] = useState<'auto' | 'up' | 'down'>('auto');
+  const rollLabels = numberTickerRollCopy(locale);
   const compact = format === 'compact' ? true : format === 'compact-en' || format === 'binary' ? 'en' : format === 'compact-zh' ? 'zh' : false;
   const units = format === 'binary' ? binaryUnits : numberTickerUnits[compact === 'zh' || (compact === true && zh) ? 'zh' : 'en'];
   const minimum = units.find(unit => unit.label === minUnit);
@@ -103,10 +108,12 @@ export function NumberTickerExamples() {
 
 <NumberTicker
   value={value}
-  locale=${quote(locale === 'en' ? 'en-US' : 'zh-CN')}
+  locale=${quote(locale)}
   compact={${JSON.stringify(compact)}}
   ${compactOptions ? `compactOptions={${JSON.stringify(compactOptions)}}\n  ` : ''}formatOptions={${JSON.stringify(formatOptions)}}
   animate={${animate}}
+  animation="${animation}"
+  rollDirection="${rollDirection}"
   duration={${duration}}
   showDelta={${showDelta}}${prefixMode !== 'none' ? `
   prefix=${affixCode(prefixMode, text('积分', 'Points'), 'coinPaths')}` : ''}${suffixMode !== 'none' ? `
@@ -166,6 +173,12 @@ export function NumberTickerExamples() {
         </>}
       </> },
       { label: '交互', content: <>
+        <DocsSelect label={rollLabels.animation} value={animation} onValueChange={next => setAnimation(next as typeof animation)} options={[
+          ['count', rollLabels.count], ['roll', rollLabels.roll],
+        ]} />
+        <DocsSelect label={rollLabels.direction} value={rollDirection} disabled={animation !== 'roll'} onValueChange={next => setRollDirection(next as typeof rollDirection)} options={[
+          ['auto', rollLabels.auto], ['up', rollLabels.up], ['down', rollLabels.down],
+        ]} />
         <DocsSelect label={text('动画时长', 'Duration')} value={String(duration)} onValueChange={next => setDuration(Number(next))} options={[
           ['180', '180 ms'], ['420', '420 ms'], ['800', '800 ms'],
         ]} />
@@ -181,11 +194,13 @@ export function NumberTickerExamples() {
       <div className="number-ticker-examples__hero">
         <NumberTicker
           value={value}
-          locale={locale === 'en' ? 'en-US' : 'zh-CN'}
+          locale={locale}
           compact={compact}
           compactOptions={compactOptions}
           formatOptions={formatOptions}
           animate={animate}
+          animation={animation}
+          rollDirection={rollDirection}
           duration={duration}
           showDelta={showDelta}
           prefix={prefix}
@@ -195,6 +210,7 @@ export function NumberTickerExamples() {
       </div>
     </ComponentPlayground>
 
+    <NumberTickerRollExamples />
     <ExactNumberExamples />
 
     <ComponentExample id="number-ticker-automatic-compact-units" title={text('自动单位换算', 'Automatic compact units')} code={`<NumberTicker value={12840} compact="en" />

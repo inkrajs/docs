@@ -20,6 +20,14 @@ import { SliderExamples } from './SliderExamples';
 import { IconExamples } from './IconExamples';
 import { PopoverExamples } from './PopoverExamples';
 import { OverlayExamples } from './OverlayExamples';
+import { GuideExamples } from './GuideExamples';
+import { LoadingExamples } from './LoadingExamples';
+import { InfiniteScrollExamples } from './InfiniteScrollExamples';
+import { MasonryExamples } from './MasonryExamples';
+import { getLoadingApiGroups } from './loadingApi';
+import { getInfiniteScrollApiGroups } from './infiniteScrollApi';
+import { getMasonryApiGroups } from './masonryApi';
+import { asyncLayoutGuidance } from './asyncLayoutGuidance';
 import { TabsExamples } from './TabsExamples';
 import { MoreExamples } from './MoreExamples';
 import { ContentExamples } from './ContentExamples';
@@ -85,6 +93,10 @@ const independentExamples: Partial<Record<FoundationComponent, ComponentType>> =
   'hover-card': HoverCardExamples,
   'image-cropper': ImageCropperExamples,
   'image-viewer': ImageViewerExamples,
+  guide: GuideExamples,
+  loading: LoadingExamples,
+  'infinite-scroll': InfiniteScrollExamples,
+  masonry: MasonryExamples,
   markdown: MarkdownExamples,
   keypad: KeypadExamples,
   'node-graph': NodeGraphExamples,
@@ -173,6 +185,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
 
 
 const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, [string, string][]>> = {
+  guide: [],
   markdown: [
     ['children', 'string'],
     ['headingLevelOffset', 'number (default 0; clamped to h1-h6)'],
@@ -248,6 +261,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   accordion: [['Root.type', 'single | multiple'], ['Root.value / defaultValue', 'string (single) | string[] (multiple)'], ['Root.onValueChange', '(value: string | string[]) => void (by type)'], ['Root.collapsible', 'boolean (single only)'], ['Root.orientation / dir', 'horizontal | vertical / ltr | rtl'], ['Root.disabled / Item.disabled', 'boolean'], ['Item.value / showDivider', 'string / boolean'], ['Trigger.icon', 'ReactNode'], ['Content.forceMount', 'true']],
   badge: [['variant', 'neutral | accent | success | warning | danger | info'], ['size', 'sm | md (default) | lg'], ['startIcon / endIcon / children', 'ReactNode'], ['seed', 'string | number']],
   'number-ticker': [
+    ['animation', 'count (default) | roll'], ['rollDirection', 'auto (default) | up | down'],
     ['value', 'number | bigint | string'], ['compact', 'boolean | en | zh (default false)'],
     ['locale / formatOptions', 'NumberTickerLocale / NumberTickerFormatOptions'],
     ['formatOptions.notation', 'standard | scientific | engineering | compact'],
@@ -516,6 +530,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
   'hover-card': '触发器聚焦或悬停显示补充信息；交互内容可进入并操作，Escape 关闭并返回触发器。触摸设备不依赖悬停。',
   'image-cropper': '拖动和缩放均有键盘替代控件；裁剪坐标与原图像素关系明确。加载、CORS 和导出错误以可读文字反馈。',
   'image-viewer': '全屏查看器保留隐藏标题、焦点管理、Escape 关闭和焦点返回，不显示顶部标题栏。图片提供替代文本；视频控制与缩略图有名称，切换资源或关闭时停止播放。加载失败与空列表保留关闭入口。',
+  guide: '打开后焦点进入引导面板；Tab 遍历操作，左右方向键切换步骤，Escape 按配置关闭。关闭、跳过与完成后焦点返回触发器或打开前的焦点；目标缺失时面板仍可操作且不绘制错误高亮。',
   keypad: '每个按键都是原生按钮并有稳定名称；输入、删除与确认提供可读反馈。列跨度仅影响布局，不改变按键顺序。',
   'node-graph': '节点与边保留可读名称和键盘可达操作；画布手势不是唯一入口。缩放、适配与连接状态通过有名称控件提供。',
   'overflow-list': '被收纳项目仍通过菜单可达；测量副本对读屏和焦点隐藏。当前焦点项目被收纳时，焦点转移到更多菜单。',
@@ -538,7 +553,12 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
   const { locale, t } = useLocale();
   if (isExpansionComponent(component)) return <Suspense fallback={<span role="status">{t('加载中')}</span>}><ExpansionPage component={component} activeTab={activeTab} onTabChange={onTabChange} /></Suspense>;
   const IndependentExamples = independentExamples[component];
-  const groups = activeTab === 'api' ? getFoundationApiGroups(component, apiRows[component] ?? []) : undefined;
+  const asyncGuidance = asyncLayoutGuidance(component, locale);
+  const groups = activeTab !== 'api' ? undefined
+    : component === 'loading' ? getLoadingApiGroups(locale)
+    : component === 'infinite-scroll' ? getInfiniteScrollApiGroups(locale)
+    : component === 'masonry' ? getMasonryApiGroups(locale)
+    : getFoundationApiGroups(component, apiRows[component] ?? []);
   return <article className="documentation">
     <PageHeading title={foundationNames[component]} />
     <ComponentPageTabs name={foundationNames[component]} id={component} value={activeTab} onChange={onTabChange} />
@@ -546,7 +566,7 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>
       {activeTab === 'preview' && (component === 'breadcrumb' ? <BreadcrumbExamples /> : IndependentExamples ? <IndependentExamples /> : component === 'progress' ? <><MoreExamples kind="progress" /><SegmentedProgressExamples /></> : component === 'slot' ? <SlotExamples /> : component === 'log' ? <LogExamples /> : component === 'hotkey' ? <HotkeyExamples /> : component === 'number-ticker' ? <NumberTickerExamples /> : component === 'icon' ? <IconExamples /> : component === 'input-number' ? <InputNumberExamples /> : component === 'slider' ? <SliderExamples /> : component === 'calendar' || component === 'day-agenda' || component === 'journey-map' ? <TravelExamples key={component} kind={component} /> : component === 'dropdown-menu' || component === 'alert' || component === 'avatar' || component === 'card' || component === 'table' ? <ContentExamples kind={component} /> : component === 'tooltip' || component === 'accordion' || component === 'badge' || component === 'separator' || component === 'skeleton' ? <MoreExamples kind={component} /> : component === 'tabs' ? <TabsExamples /> : component === 'select' ? <SelectExamples /> : component === 'popover' ? <PopoverExamples /> : component === 'overlay' ? <OverlayExamples /> : component === 'field' || component === 'input' || component === 'textarea' ? <FormInputExamples key={component} kind={component} /> : component === 'checkbox' || component === 'radio-group' || component === 'switch' ? <SelectionExamples key={component} kind={component} /> : null)}
     {activeTab === 'api' && <section className="component-api">{groups ? <ApiGroups component={component} groups={groups} /> : <ApiTable rows={apiRows[component] ?? [['component', foundationNames[component]]]} component={component} label={`${foundationNames[component]} API`} />}</section>}
-      {activeTab === 'accessibility' && <section className="component-api"><GuidanceMarkdown source={component === 'markdown'
+      {activeTab === 'accessibility' && <section className="component-api"><GuidanceMarkdown source={asyncGuidance ? asyncGuidance : component === 'markdown'
         ? markdownAccessibility[locale === 'en' ? 'en' : 'zh']
         : t(additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。'))} /></section>}
     </section>

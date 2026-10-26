@@ -1,0 +1,37 @@
+.infinite-scroll-examples__board-frame,
+.infinite-scroll-examples__board,
+.infinite-scroll-examples__history,
+.infinite-scroll-examples__pull,
+.infinite-scroll-examples__failure { min-width: 0; width: 100%; }
+
+.infinite-scroll-examples__board-frame { max-width: 44rem; height: 22rem; overflow: hidden; }
+.infinite-scroll-examples__board { height: 100%; }
+.infinite-scroll-examples__grid { display: grid; grid-auto-rows: 76px; gap: 8px; width: max-content; min-width: 100%; min-height: 100%; padding: 8px; }
+.infinite-scroll-examples__cell { display: grid; align-content: center; gap: 4px; min-width: 0; padding: 8px; text-align: center; }
+.infinite-scroll-examples__cell small { color: var(--inkra-ink-muted); }
+
+.infinite-scroll-examples__example-stack { display: grid; gap: 12px; width: min(100%, 42rem); }
+.infinite-scroll-examples__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.infinite-scroll-examples__history,
+.infinite-scroll-examples__pull { height: 18rem; }
+.infinite-scroll-examples__failure { height: 17rem; }
+.infinite-scroll-examples__masonry-scroll { height: 24rem; width: min(100%, 42rem); }
+.infinite-scroll-examples__history-list { display: grid; gap: 8px; padding: 8px; }
+.infinite-scroll-examples__history-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 12px; background: var(--inkra-surface-muted); border-radius: 6px; }
+.infinite-scroll-examples__history-row small { color: var(--inkra-ink-muted); }
+.infinite-scroll-examples__masonry { padding: 8px; }
+.infinite-scroll-examples__masonry-card { display: grid; place-items: center; min-width: 0; padding: 12px; text-align: center; }
+.infinite-scroll-examples__lifecycle-stack { display: grid; gap: 12px; width: min(100%, 42rem); }
+.infinite-scroll-examples__lifecycle-outer { height: 19rem; overflow: auto; padding: 8px; }
+.infinite-scroll-examples__lifecycle-inner { height: 15rem; overflow: auto; }
+.infinite-scroll-examples__lifecycle-scroll { min-height: 22rem; }
+.infinite-scroll-examples__controlled { height: 14rem; }
+
+@media (max-width: 520px) {
+  .infinite-scroll-examples__board-frame { height: 20rem; }
+  .infinite-scroll-examples__grid { grid-auto-rows: 68px; }
+}
+
+@media (forced-colors: active) {
+  .infinite-scroll-examples__history-row { outline: 1px solid CanvasText; }
+}

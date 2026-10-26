@@ -132,6 +132,10 @@ import { __iconData as audioPlayerIcon } from 'lucide-react/dist/esm/icons/audio
 import { __iconData as sparklineIcon } from 'lucide-react/dist/esm/icons/chart-no-axes-combined.mjs';
 import { __iconData as radarIcon } from 'lucide-react/dist/esm/icons/radar.mjs';
 import { __iconData as heatmapIcon } from 'lucide-react/dist/esm/icons/grid-3x3.mjs';
+import { __iconData as guideIcon } from 'lucide-react/dist/esm/icons/route.mjs';
+import { __iconData as loadingIcon } from 'lucide-react/dist/esm/icons/hourglass.mjs';
+import { __iconData as infiniteScrollIcon } from 'lucide-react/dist/esm/icons/move-vertical.mjs';
+import { __iconData as masonryIcon } from 'lucide-react/dist/esm/icons/panels-left-bottom.mjs';
 
 import { __iconData as catalogIcon0 } from 'lucide-react/dist/esm/icons/file-text.mjs';
 import { __iconData as catalogIcon1 } from 'lucide-react/dist/esm/icons/file-code.mjs';
@@ -349,6 +353,10 @@ export const docsIconCatalog = [
   { key: 'shapes', label: 'Icon', category: 'components', data: icon31 },
   { key: 'message-square', label: 'Popover', category: 'components', data: icon32 },
   { key: 'panel-top', label: 'Overlay', category: 'components', data: icon33 },
+  { key: 'route', label: 'Guide', category: 'components', data: guideIcon },
+  { key: 'loading-hourglass', label: 'Loading', category: 'components', data: loadingIcon },
+  { key: 'infinite-scroll', label: 'InfiniteScroll', category: 'components', data: infiniteScrollIcon },
+  { key: 'masonry', label: 'Masonry', category: 'components', data: masonryIcon },
   { key: 'message-circle', label: 'Tooltip', category: 'components', data: icon34 },
   { key: 'ellipsis', label: 'DropdownMenu', category: 'components', data: icon35 },
   { key: 'form-input', label: 'Field', category: 'components', data: icon36 },

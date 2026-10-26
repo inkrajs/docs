@@ -5,7 +5,9 @@ import ts from 'typescript';
 
 const root = new URL('../../', import.meta.url);
 const source = readFileSync(new URL('src/components/apiDescriptions.ts', root), 'utf8');
-const module = ts.transpile(source, { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext });
+const rollCopy = ts.transpile(readFileSync(new URL('src/components/numberTickerRollCopy.ts', root), 'utf8'), { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext });
+const module = ts.transpile(source, { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext })
+  .replace('./numberTickerRollCopy', 'data:text/javascript;base64,' + Buffer.from(rollCopy).toString('base64'));
 const { describeApiProp } = await import('data:text/javascript;base64,' + Buffer.from(module).toString('base64'));
 
 test('disclosure mounting descriptions keep visibility and focus ownership explicit', () => {
