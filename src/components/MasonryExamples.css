@@ -1,0 +1,92 @@
+.masonry-examples {
+  display: grid;
+  gap: var(--inkra-space-6);
+  min-inline-size: 0;
+}
+
+.masonry-examples .preview-stage {
+  align-items: flex-start;
+  justify-content: stretch;
+}
+
+.masonry-examples__playground {
+  display: grid;
+  gap: var(--inkra-space-4);
+  inline-size: min(100%, 72rem);
+  min-inline-size: 0;
+}
+
+.masonry-examples__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--inkra-space-2);
+  min-inline-size: 0;
+}
+
+.masonry-examples__grid {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.masonry-examples__grid--compact {
+  inline-size: min(100%, 58rem);
+}
+
+.masonry-examples__card {
+  box-sizing: border-box;
+  color: var(--inkra-ink);
+  display: grid;
+  gap: var(--inkra-space-3);
+  inline-size: 100%;
+  overflow: hidden;
+  padding: var(--inkra-space-4);
+}
+
+.masonry-examples__card[data-card-size="short"] { min-block-size: 9rem; }
+.masonry-examples__card[data-card-size="medium"] { min-block-size: 13rem; }
+.masonry-examples__card[data-card-size="tall"] { min-block-size: 18rem; }
+
+.masonry-examples__card img {
+  background: var(--inkra-paper-soft, var(--inkra-paper));
+  block-size: auto;
+  inline-size: 100%;
+  max-block-size: 15rem;
+  object-fit: contain;
+}
+
+.masonry-examples__card-copy {
+  align-content: start;
+  display: grid;
+  gap: var(--inkra-space-2);
+  min-inline-size: 0;
+}
+
+.masonry-examples__card h3,
+.masonry-examples__card p {
+  margin: 0;
+}
+
+.masonry-examples__card h3 {
+  font-size: var(--inkra-text-lg);
+}
+
+.masonry-examples__card p {
+  color: var(--inkra-ink-muted);
+  font-size: var(--inkra-text-sm);
+  line-height: 1.55;
+}
+
+@media (max-width: 390px) {
+  .masonry-examples { gap: var(--inkra-space-4); }
+  .masonry-examples__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .masonry-examples__actions .inkra-button { inline-size: 100%; }
+  .masonry-examples__card { padding: var(--inkra-space-3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masonry-examples__card { scroll-behavior: auto; }
+}
+
+@media (forced-colors: active) {
+  .masonry-examples__card img { border: 1px solid CanvasText; }
+}

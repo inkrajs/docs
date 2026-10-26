@@ -11,7 +11,9 @@ function moduleUrl(path, imports = {}) {
   return `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;
 }
 const { localizeApiRows } = await import(moduleUrl('../../src/components/apiGroupRows.ts', {
-  './apiDescriptions.ts': moduleUrl('../../src/components/apiDescriptions.ts'),
+  './apiDescriptions.ts': moduleUrl('../../src/components/apiDescriptions.ts', {
+    './numberTickerRollCopy': moduleUrl('../../src/components/numberTickerRollCopy.ts'),
+  }),
 }));
 const { layoutApiGroups } = await import(moduleUrl('../../src/components/expansion/layoutApi.ts'));
 const { readComponentPageTab } = await import(moduleUrl('../../src/documentAnchors.ts'));

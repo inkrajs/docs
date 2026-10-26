@@ -13,7 +13,9 @@ function moduleUrl(path, imports = {}) {
   return `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;
 }
 const { getFoundationApiGroups, foundationApiDefinitions } = await import(moduleUrl('src/components/foundationApiGroups.ts', {
-  './apiDescriptions.ts': moduleUrl('src/components/apiDescriptions.ts'),
+  './apiDescriptions.ts': moduleUrl('src/components/apiDescriptions.ts', {
+    './numberTickerRollCopy': moduleUrl('src/components/numberTickerRollCopy.ts'),
+  }),
 }));
 const { buttonApiGroups } = await import(moduleUrl('src/components/buttonApiGroups.ts'));
 const source = readFileSync(new URL('src/components/FoundationPages.tsx', root), 'utf8');

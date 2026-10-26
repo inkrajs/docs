@@ -95,3 +95,13 @@
   }
 }
 .number-ticker-examples__exact-value { max-width: 100%; min-width: 0; overflow-x: auto; padding-block: 8px; }
+.number-ticker-examples__rolling {
+  display: grid;
+  justify-items: start;
+  gap: var(--inkra-space-4, 16px);
+  min-width: 0;
+}
+
+.number-ticker-examples__rolling > .inkra-number-ticker {
+  font-size: var(--inkra-text-3xl, 28px);
+}

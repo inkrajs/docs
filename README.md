@@ -6,25 +6,33 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-This checkout consumes the registry-verified `@inkra/react@0.8.0` release,
-including shared Layout columns, interactive grids, Pagination options and
-Textarea row-based sizing. library-candidate.json pins the released source
-revision and public archive checksums. Build verifies the installed package
-without a source alias. Documentation changes do not publish npm packages or
-deploy the website.
+The current unpublished local candidate adds Guide (including a distinct skip
+action), Loading (six presets, fullscreen slots and rotating tips), four-way
+InfiniteScroll with mobile pull-and-release, responsive Masonry, and NumberTicker
+digit rolling. Their routes include interactive examples and API documentation;
+Loading, InfiniteScroll and Masonry also have five-language accessibility notes.
+The InfiniteScroll examples compose actual Loading and Masonry components.
+Each new component has an installed-package browser check registered in the
+shared suite. Mobile gesture checks use Chromium touch input, not real devices.
+
+This checkout consumes an unpublished `@inkra/react` source candidate based on
+0.8.0. library-candidate.json pins its exact source revision and archive
+checksums. Build verifies the installed package without a source alias.
+Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
-Install the pinned public release, then build and preview:
+Prepare the pinned unpublished candidate using the instructions below, then
+build and preview:
 
 ```sh
-npm ci
 npm run build
 npm run dev -- --port 4180
 ```
 
-No sibling source checkout or vendor archive is required. For unpublished
-library changes, use **Prepare An Unpublished Candidate** below.
+A fresh checkout needs the verified vendor archive before `npm ci` can run.
+Use **Prepare An Unpublished Candidate** below; CI prepares the same archive
+from the pinned source revision automatically.
 
 ## Local Routes And Page Actions
 
@@ -369,7 +377,7 @@ Set INKRA_DOCS_URL to run the browser smoke suite against another local port
 without interrupting an existing documentation server.
 
 Local smoke checks run sequentially. CI prepares the candidate and build once,
-then distributes all 98 checks across four independent runners, with at most two
+then distributes all 102 checks across four independent runners, with at most two
 checks per runner. Each runner shares one server. Set `BROWSER_SHARD=1/4` to run
 one shard, or use `node scripts/browser-smoke.mjs --list` to inspect its plan.
 Release validation adds the homepage with `BROWSER_INCLUDE_HOMEPAGE=true`.

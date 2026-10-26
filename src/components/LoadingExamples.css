@@ -1,0 +1,111 @@
+.loading-playground-preview,
+.loading-scene-example,
+.loading-simulation,
+.loading-carriers {
+  display: grid;
+  gap: var(--inkra-space-4);
+  inline-size: min(100%, 48rem);
+}
+
+.loading-playground-preview > .inkra-loading[data-mode="region"] {
+  block-size: 26rem;
+}
+
+.loading-demo-logo {
+  align-items: center;
+  block-size: 64px;
+  display: flex;
+  font-size: var(--inkra-text-xl);
+  inline-size: 112px;
+  justify-content: center;
+}
+
+.loading-scene {
+  background: var(--inkra-paper);
+  block-size: 100%;
+  inline-size: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-scene__sun {
+  background: color-mix(in srgb, var(--inkra-warning-pigment) 68%, var(--inkra-paper));
+  border-radius: 50%;
+  block-size: 18vmin;
+  inline-size: 18vmin;
+  inset-block-start: 12%;
+  inset-inline-end: 14%;
+  position: absolute;
+}
+
+.loading-scene__ridge {
+  border-radius: 50% 50% 0 0;
+  inset-inline: -12%;
+  position: absolute;
+  transform: rotate(-2deg);
+}
+
+.loading-scene__ridge--far {
+  background: color-mix(in srgb, var(--inkra-info-pigment) 38%, var(--inkra-paper));
+  block-size: 48%;
+  inset-block-end: 18%;
+}
+
+.loading-scene__ridge--near {
+  background: color-mix(in srgb, var(--inkra-success-pigment) 52%, var(--inkra-paper));
+  block-size: 38%;
+  inset-block-end: -8%;
+  inset-inline: -18%;
+  transform: rotate(3deg);
+}
+
+.loading-scene__path {
+  background: color-mix(in srgb, var(--inkra-warning-pigment) 42%, var(--inkra-paper));
+  block-size: 62%;
+  clip-path: polygon(46% 100%, 55% 100%, 68% 0, 58% 0);
+  inline-size: 38%;
+  inset-block-end: 0;
+  inset-inline-start: 34%;
+  position: absolute;
+}
+
+.loading-scene__traveler {
+  align-items: center;
+  background: var(--inkra-ink);
+  border-radius: 50%;
+  color: var(--inkra-paper);
+  display: flex;
+  font-family: var(--inkra-font-mono);
+  block-size: 44px;
+  inline-size: 44px;
+  inset-block-end: 18%;
+  inset-inline-start: 48%;
+  justify-content: center;
+  position: absolute;
+}
+
+.loading-scene[data-character="1"] .loading-scene__traveler { background: var(--inkra-danger-foreground); }
+.loading-scene[data-character="2"] .loading-scene__traveler { background: var(--inkra-info-foreground); }
+
+.loading-scene-example__buttons {
+  display: grid;
+  gap: var(--inkra-space-2);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.loading-scene-example__buttons .inkra-button { inline-size: 100%; }
+.loading-demo-skeleton-note { max-inline-size: 28rem; }
+
+.loading-simulation__region { min-block-size: 15rem; }
+.loading-carriers > .inkra-loading[data-mode="region"] { min-block-size: 18rem; }
+
+@media (max-width: 40rem) {
+  .loading-playground-preview > .inkra-loading[data-mode="region"] { block-size: auto; min-block-size: 24rem; }
+  .loading-scene-example__buttons { grid-template-columns: 1fr 1fr; }
+}
+
+@media (forced-colors: active) {
+  .loading-scene__sun,
+  .loading-scene__ridge,
+  .loading-scene__path { border: 1px solid CanvasText; }
+}

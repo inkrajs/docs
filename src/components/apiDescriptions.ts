@@ -1,3 +1,5 @@
+import { numberTickerRollCopy } from './numberTickerRollCopy';
+
 type Copy = readonly [string, string];
 const descriptions: Record<string, Copy> = {
   'markdown:children': ['要解析的 Markdown 原文。输出保留语义 DOM 和可选择文字。', 'Markdown source to parse into semantic DOM with selectable text.'],
@@ -638,6 +640,8 @@ const descriptions: Record<string, Copy> = {
 };
 
 export function describeApiProp(component: string, property: string, locale: string): string {
+  if (component === 'number-ticker' && property === 'animation') return numberTickerRollCopy(locale).api;
+  if (component === 'number-ticker' && property === 'rollDirection') return numberTickerRollCopy(locale).directionApi;
   const index = locale === 'zh-CN' ? 0 : 1;
   const exact = descriptions[`${component}:${property}`] ?? descriptions[property] ?? descriptions[property.replace(/^Root\./, '')];
   if (exact) return exact[index];

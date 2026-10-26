@@ -16,7 +16,7 @@ function reportsFor(suite) {
 for (const homepage of [false, true]) {
   test(`four shards cover the entire suite once (homepage=${homepage})`, () => {
     const suite = browserSuite(homepage);
-    assert.equal(suite.length, homepage ? 99 : 98);
+    assert.equal(suite.length, homepage ? 103 : 102);
     const reports = reportsFor(suite);
     assert.deepEqual(reports.flatMap(report => report.scripts).sort(), [...suite].sort());
     assert(Math.max(...reports.map(report => report.scripts.length)) <= Math.ceil(suite.length / 4));

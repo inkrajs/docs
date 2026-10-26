@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { verifyRollingTicker } from './number-ticker-rolling-check.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -58,6 +59,7 @@ try {
     console.log(`PASS exact bigint, decimal strings, rapid updates, invalid input and reduced motion: ${width}px ${locale}`);
     await page.close();
   }
+  await verifyRollingTicker(browser, base);
 } finally {
   await browser.close();
 }

@@ -80,7 +80,8 @@ test('all component accessibility panels use the shared Markdown guidance render
   const expansion = read('components/expansion/ExpansionPage.tsx');
   const guidance = read('components/GuidanceMarkdown.tsx');
   assert.match(app, /<GuidanceMarkdown source=\{buttonAccessibilityGuidance/);
-  assert.match(foundation, /<GuidanceMarkdown source=\{component === 'markdown'/);
+  assert.match(foundation, /<GuidanceMarkdown source=\{asyncGuidance \? asyncGuidance : component === 'markdown'/);
+  assert.match(foundation, /asyncLayoutGuidance\(component, locale\)/);
   assert.match(expansion, /<GuidanceMarkdown source=\{doc\.a11y\[language\]\}/);
   assert.match(guidance, /<Markdown/);
   assert.match(guidance, /code: 'Guidance code block'/);
