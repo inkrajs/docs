@@ -2,6 +2,13 @@
 
 [中文](README.zh-CN.md)
 
+Browser shards are balanced using recorded timings in `scripts/browser-timings.mjs`
+(release run 40398411054). The longest checks start first, with the existing two
+workers per shard. Timings affect scheduling only: new checks receive a default
+weight, and the report gate still requires every selected check exactly once.
+Regenerate timing hints only from retained successful CI reports; a historical
+scheduling replay is not a measurement of the next cloud run.
+
 Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
