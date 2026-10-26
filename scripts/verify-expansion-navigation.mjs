@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -65,8 +66,7 @@ try {
 
     const playground = page.getByTestId('command-playground');
     await page.getByRole('tab', { name: /^(状态|State)$/ }).click();
-    await page.getByRole('combobox', { name: /预览主题|Preview theme/ }).click();
-    await page.getByRole('option', { name: /^(深色|Dark)$/ }).click();
+    await chooseDocsOption(page, /预览主题|Preview theme/, /^(深色|Dark)$/, { exact: false, optionExact: false });
     await page.getByRole('tab', { name: /^(布局|Layout)$/ }).click();
     await page.getByRole('switch', { name: 'RTL', exact: true }).click();
     const trigger = playground.getByRole('button', { name: /打开命令面板|Open command palette/ });

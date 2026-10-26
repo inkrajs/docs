@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -86,8 +87,7 @@ try {
     await page.goto(`${base}/docs/components/rating#preview`);
     const ratingPlayground = page.locator('.component-playground').first();
     await controls(ratingPlayground, true);
-    await ratingPlayground.getByRole('combobox', { name: text('步进', 'Step'), exact: true }).click();
-    await page.getByRole('option', { name: '1.5', exact: true }).click();
+    await chooseDocsOption(ratingPlayground, text('步进', 'Step'), '1.5', { exact: true, optionExact: true });
     await controls(ratingPlayground, false);
     const rating = ratingPlayground.getByRole('slider');
     await rating.focus();

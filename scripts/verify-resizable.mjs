@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -33,8 +34,7 @@ try {
       assert(Number(await separator.getAttribute('aria-valuenow')) > 0);
 
       await controls.getByRole('tab', { name: /Layout|布局/ }).click();
-      await page.getByRole('combobox', { name: /Direction|方向/ }).click();
-      await page.getByRole('option', { name: /Vertical|纵向/ }).click();
+      await chooseDocsOption(page, /Direction|方向/, /Vertical|纵向/, { exact: false, optionExact: false });
       assert.equal(await separator.getAttribute('aria-orientation'), 'horizontal');
 
       const box = await separator.boundingBox();

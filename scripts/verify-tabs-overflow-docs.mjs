@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setPlaygroundControls } from './playground-controls.mjs';
@@ -25,10 +26,8 @@ try {
         await setPlaygroundControls(playground, true);
         const controls = playground.locator('.preview-controls');
         await controls.getByRole('tab', { name: zh ? '交互' : 'Interaction', exact: true }).click();
-        await controls.getByRole('combobox', { name: zh ? '溢出交互' : 'Overflow', exact: true }).click();
-        await page.getByRole('option', { name: option, exact: true }).click();
-        await controls.getByRole('combobox', { name: zh ? '容器宽度' : 'Container width', exact: true }).click();
-        await page.getByRole('option', { name: '240 px', exact: true }).click();
+        await chooseDocsOption(controls, zh ? '溢出交互' : 'Overflow', option, { exact: true, optionExact: true });
+        await chooseDocsOption(controls, zh ? '容器宽度' : 'Container width', '240 px', { exact: true, optionExact: true });
         await setPlaygroundControls(playground, false);
       };
       await chooseMode(zh ? '更多菜单' : 'More menu');

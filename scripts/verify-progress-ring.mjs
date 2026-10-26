@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setPlaygroundControls } from './playground-controls.mjs';
@@ -15,14 +16,11 @@ try {
     await playgroundProgress.locator('.inkra-progress__ring-ink[data-ready="true"]').waitFor();
     const controls = playground.getByRole('group', { name: '属性', exact: true });
     await setPlaygroundControls(playground, true);
-    await controls.getByRole('combobox', { name: '展示形式', exact: true }).click();
-    await page.getByRole('option', { name: '条形', exact: true }).click();
+    await chooseDocsOption(controls, '展示形式', '条形', { exact: true, optionExact: true });
     assert.equal(await playgroundProgress.getAttribute('data-shape'), 'linear');
-    await controls.getByRole('combobox', { name: '展示形式', exact: true }).click();
-    await page.getByRole('option', { name: '环状', exact: true }).click();
+    await chooseDocsOption(controls, '展示形式', '环状', { exact: true, optionExact: true });
     await controls.getByRole('tab', { name: '布局', exact: true }).click();
-    await controls.getByRole('combobox', { name: '内容位置', exact: true }).click();
-    await page.getByRole('option', { name: '下方', exact: true }).click();
+    await chooseDocsOption(controls, '内容位置', '下方', { exact: true, optionExact: true });
     assert.equal(await playgroundProgress.locator('.inkra-progress__body').getAttribute('data-content-position'), 'bottom');
     await playground.locator('.playground-toolbar').getByRole('tab', { name: '代码', exact: true }).click();
     assert((await playground.locator('code').textContent()).includes('contentPosition="bottom"'));

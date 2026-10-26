@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
+import { __iconData as userIcon } from 'lucide-react/dist/esm/icons/user-round.mjs';
+import { __iconData as shieldIcon } from 'lucide-react/dist/esm/icons/shield.mjs';
+import { __iconData as swordIcon } from 'lucide-react/dist/esm/icons/swords.mjs';
+import { __iconData as maximizeIcon } from 'lucide-react/dist/esm/icons/maximize-2.mjs';
 import {
   Button,
   Loading,
   PencilSurface,
   PencilText,
   Switch,
+  type LoadingAnimation,
   type LoadingMode,
   type LoadingPreset,
   type LoadingStatus,
@@ -15,23 +20,19 @@ import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { DocsSlider } from './DocsSlider';
+import { DocsIcon } from './DocsIcon';
 import { PropertyTabs } from './PropertyTabs';
 import { loadingDocsCopy } from './loadingCopy';
 import './LoadingExamples.css';
 
-const modeOptions = [['inline', 'Inline'], ['region', 'Region'], ['fullscreen', 'Fullscreen']] as const;
-const presetOptions = [
-  ['brand-center', 'Brand center'], ['scene-bottom', 'Scene bottom'], ['intel', 'Intel'],
-  ['staged', 'Staged'], ['edge', 'Edge'], ['skeleton', 'Skeleton'],
-] as const;
+const characterIcons = [userIcon, shieldIcon, swordIcon];
 
-function DecorativeScene({ character = 0 }: { character?: number }) {
-  return <div className="loading-scene" data-character={character} aria-hidden="true">
+function DecorativeScene() {
+  return <div className="loading-scene" aria-hidden="true">
     <span className="loading-scene__sun" />
     <span className="loading-scene__ridge loading-scene__ridge--far" />
     <span className="loading-scene__ridge loading-scene__ridge--near" />
     <span className="loading-scene__path" />
-    <span className="loading-scene__traveler">{character === 0 ? 'A' : character === 1 ? 'B' : 'C'}</span>
   </div>;
 }
 
@@ -42,49 +43,66 @@ function DemoLogo() {
 export function LoadingExamples() {
   const { locale } = useLocale();
   const copy = loadingDocsCopy(locale);
+  const modeOptions = [['inline', copy.modeInline], ['region', copy.modeRegion], ['fullscreen', copy.modeFullscreen]] as const;
+  const presetOptions = [
+    ['brand-center', copy.presetBrandCenter], ['scene-bottom', copy.presetSceneBottom], ['intel', copy.presetIntel],
+    ['staged', copy.presetStaged], ['edge', copy.presetEdge], ['skeleton', copy.presetSkeleton],
+  ] as const;
+  const animationOptions = [
+    ['progress', copy.animationProgress], ['orbit', copy.animationOrbit], ['dots', copy.animationDots],
+    ['pulse', copy.animationPulse], ['trail', copy.animationTrail],
+  ] as const;
   const [mode, setMode] = useState<LoadingMode>('region');
   const [preset, setPreset] = useState<LoadingPreset>('brand-center');
+  const [animation, setAnimation] = useState<LoadingAnimation>('progress');
   const [status, setStatus] = useState<LoadingStatus>('loading');
-  const [progressMode, setProgressMode] = useState<'determinate' | 'indeterminate' | 'none'>('determinate');
+  const [progressMode, setProgressMode] = useState<'determinate' | 'indeterminate' | 'none'>('indeterminate');
   const [progress, setProgress] = useState(48);
   const [blocking, setBlocking] = useState(true);
   const [lockScroll, setLockScroll] = useState(true);
-  const [showTips, setShowTips] = useState(true);
+  const [showLogo, setShowLogo] = useState(false);
+  const [showBackground, setShowBackground] = useState(false);
+  const [showTips, setShowTips] = useState(false);
+  const [showTipControls, setShowTipControls] = useState(false);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const progressValue = progressMode === 'none' ? undefined : progressMode === 'indeterminate' ? null : progress;
-  const title = status === 'error' ? copy.errorTitle : status === 'complete' ? copy.completeTitle : copy.loadingTitle;
+  const title = status === 'error' ? copy.errorOption : status === 'complete' ? copy.completeOption : copy.loadingOption;
   const stages = useMemo(() => [
     { id: 'session', label: copy.stageSession, state: 'complete' as const },
     { id: 'assets', label: copy.stageAssets },
     { id: 'world', label: copy.stageWorld },
   ], [copy]);
-  const code = `<Loading
-  mode="${mode}" preset="${preset}" status="${status}"
-  progress={${progressValue === undefined ? 'undefined' : progressValue === null ? 'null' : progressValue}}
-  blocking={${blocking}} lockScroll={${lockScroll}}
-  title="${title}"
-  tips={[/* localized ReactNode tips */]}
-  showTipControls={${showTips}}
-  onCancel={() => setOpen(false)}
-/>`;
+  const code = [
+    '<Loading',
+    `  mode="${mode}" preset="${preset}" animation="${animation}" status="${status}"`,
+    `  progress={${progressValue === undefined ? 'undefined' : progressValue === null ? 'null' : progressValue}}`,
+    `  title=${JSON.stringify(title)}`,
+    ...(mode === 'fullscreen' ? [`  blocking={${blocking}} lockScroll={${lockScroll}}`, '  onCancel={() => setOpen(false)}'] : []),
+    ...(showLogo ? ['  logo={<DemoLogo />}'] : []),
+    ...(showBackground ? ['  background={<DecorativeScene />}'] : []),
+    ...(preset === 'staged' ? [`  stages={${JSON.stringify(stages)}} activeStage="assets"`] : []),
+    ...(showTips ? [`  tips={${JSON.stringify([copy.tipOne, copy.tipTwo, copy.tipThree])}}`, `  showTipControls={${showTipControls}}`] : []),
+    ...(status === 'error' ? ['  onRetry={() => setStatus("loading")}'] : []),
+    ...(status === 'complete' ? ['  onContinue={() => setStatus("loading")}'] : []),
+    '/>',
+  ].join('\n');
 
   const preview = <Loading
     aria-label={copy.regionLabel}
     mode={mode}
     preset={preset}
+    animation={animation}
     status={status}
     blocking={blocking}
     lockScroll={lockScroll}
     title={title}
-    description={copy.loadingDescription}
-    logo={<DemoLogo />}
-    background={<DecorativeScene />}
+    logo={showLogo ? <DemoLogo /> : undefined}
+    background={showBackground ? <DecorativeScene /> : undefined}
     progress={progressValue}
-    progressLabel={copy.progress}
     stages={preset === 'staged' ? stages : undefined}
     activeStage="assets"
-    tips={[copy.tipOne, copy.tipTwo, copy.tipThree]}
-    showTipControls={showTips}
+    tips={showTips ? [copy.tipOne, copy.tipTwo, copy.tipThree] : undefined}
+    showTipControls={showTips && showTipControls}
     onCancel={mode === 'fullscreen' ? () => setFullscreenOpen(false) : undefined}
     onRetry={status === 'error' ? () => setStatus('loading') : undefined}
     onContinue={status === 'complete' ? () => setStatus('loading') : undefined}
@@ -95,6 +113,12 @@ export function LoadingExamples() {
       { label: '布局', content: <>
         <DocsSelect label={copy.mode} value={mode} onValueChange={value => { setMode(value as LoadingMode); setFullscreenOpen(false); }} options={modeOptions} />
         <DocsSelect label={copy.preset} value={preset} onValueChange={value => setPreset(value as LoadingPreset)} options={presetOptions} />
+        <DocsSelect label={copy.animation} value={animation} onValueChange={value => setAnimation(value as LoadingAnimation)} options={animationOptions} />
+      </> },
+      { label: '内容', content: <>
+        <Switch label={copy.showLogo} checked={showLogo} onCheckedChange={setShowLogo} />
+        <Switch label={copy.showBackground} checked={showBackground} onCheckedChange={setShowBackground} />
+        <Switch label={copy.showTips} checked={showTips} onCheckedChange={setShowTips} />
       </> },
       { label: '状态', content: <>
         <DocsSelect label={copy.status} value={status} onValueChange={value => setStatus(value as LoadingStatus)} options={[['loading', copy.loadingOption], ['error', copy.errorOption], ['complete', copy.completeOption]]} />
@@ -104,7 +128,7 @@ export function LoadingExamples() {
       { label: '交互', content: <>
         <Switch label={copy.blocking} checked={blocking} onCheckedChange={setBlocking} />
         <Switch label={copy.lockScroll} checked={lockScroll} onCheckedChange={setLockScroll} />
-        <Switch label={copy.tips} checked={showTips} onCheckedChange={setShowTips} />
+        <Switch label={copy.tips} checked={showTipControls} disabled={!showTips} onCheckedChange={setShowTipControls} />
       </> },
     ]} />}>
       <div className="loading-playground-preview" data-loading-playground>
@@ -125,38 +149,81 @@ function ScenePresetExample() {
   const copy = loadingDocsCopy(locale);
   const [preset, setPreset] = useState<LoadingPreset | null>(null);
   const [character, setCharacter] = useState(0);
-  const presets: LoadingPreset[] = ['brand-center', 'scene-bottom', 'intel', 'staged', 'edge', 'skeleton'];
-  return <ComponentExample id="loading-fullscreen-scenes" title={copy.sceneTitle} code={`const [preset, setPreset] = useState<LoadingPreset | null>(null);
+  const presets: Array<{
+    animation: LoadingAnimation;
+    label: string;
+    preset: LoadingPreset;
+    progress?: number | null;
+  }> = [
+    { preset: 'brand-center', label: copy.presetBrandCenter, animation: 'progress', progress: null },
+    { preset: 'scene-bottom', label: copy.presetSceneBottom, animation: 'orbit' },
+    { preset: 'intel', label: copy.presetIntel, animation: 'dots' },
+    { preset: 'staged', label: copy.presetStaged, animation: 'pulse' },
+    { preset: 'edge', label: copy.presetEdge, animation: 'trail', progress: null },
+    { preset: 'skeleton', label: copy.presetSkeleton, animation: 'dots' },
+  ];
+  const activePreset = presets.find(item => item.preset === preset);
+  const stages = [
+    { id: 'session', label: copy.stageSession, state: 'complete' as const },
+    { id: 'assets', label: copy.stageAssets, state: 'active' as const },
+    { id: 'world', label: copy.stageWorld },
+  ];
+  return <ComponentExample id="loading-fullscreen-scenes" title={copy.sceneTitle} code={`const previews = [
+  { preset: 'brand-center', animation: 'progress' },
+  { preset: 'scene-bottom', animation: 'orbit' },
+  { preset: 'intel', animation: 'dots' },
+  { preset: 'staged', animation: 'pulse' },
+  { preset: 'edge', animation: 'trail', progress: null },
+  { preset: 'skeleton', animation: 'dots' },
+];
 
-<Loading mode="fullscreen" preset={preset ?? 'brand-center'} active={preset !== null}
-  background={<CustomScene />} progress={null}
-  slots={{ 'top-end': <CharacterSwitcher />, 'bottom-end': <Cancel /> }} />`}>
+{previews.map(item => <Loading mode="region" {...item} />)}`}>
     <div className="loading-scene-example" data-scene-example>
       <PencilText>{copy.sceneDescription}</PencilText>
-      <div className="loading-scene-example__buttons">
-        {presets.map(value => <Button key={value} variant="outline" data-loading-preset={value} onClick={() => setPreset(value)}>{value}</Button>)}
+      <div className="loading-preset-grid">
+        {presets.map(item => <Loading
+          aria-label={`${copy.regionLabel}: ${item.label}`}
+          animation={item.animation}
+          className="loading-preset-preview"
+          data-loading-preset={item.preset}
+          key={item.preset}
+          mode="region"
+          preset={item.preset}
+          title={item.label}
+          background={item.preset === 'scene-bottom' ? <DecorativeScene /> : undefined}
+          logo={item.preset === 'brand-center' ? <DemoLogo /> : undefined}
+          progress={item.progress}
+          stages={item.preset === 'staged' ? stages : undefined}
+          activeStage="assets"
+          slots={{
+            'top-end': <Button
+              aria-label={`${copy.fullscreenPreview}: ${item.label}`}
+              data-open-loading-preset={item.preset}
+              size="icon-sm"
+              title={`${copy.fullscreenPreview}: ${item.label}`}
+              variant="ghost"
+              onClick={() => setPreset(item.preset)}
+            ><DocsIcon data={maximizeIcon} /></Button>,
+          }}
+        />)}
       </div>
-      {preset ? <Loading
+      {preset && activePreset ? <Loading
+        animation={activePreset.animation}
         mode="fullscreen"
         preset={preset}
         blocking={preset !== 'edge'}
         lockScroll={preset !== 'edge'}
-        background={<DecorativeScene character={character} />}
+        background={<DecorativeScene />}
         logo={<DemoLogo />}
         title={copy.loadingTitle}
         description={copy.loadingDescription}
-        progress={preset === 'staged' ? undefined : null}
-        stages={preset === 'staged' ? [
-          { id: 'session', label: copy.stageSession, state: 'complete' },
-          { id: 'assets', label: copy.stageAssets, state: 'active' },
-          { id: 'world', label: copy.stageWorld },
-        ] : undefined}
+        progress={activePreset.progress}
+        stages={preset === 'staged' ? stages : undefined}
         activeStage="assets"
         tips={[copy.tipOne, copy.tipTwo, copy.tipThree]}
         showTipControls
-        skeleton={preset === 'skeleton' ? <div className="loading-demo-skeleton-note"><PencilText>{copy.tipTwo}</PencilText></div> : undefined}
         slots={{
-          'top-end': <Button variant="secondary" onClick={() => setCharacter(value => (value + 1) % 3)}>{copy.character}</Button>,
+          'bottom-start': <Button variant="ghost" data-character={character} startIcon={<DocsIcon data={characterIcons[character]} />} onClick={() => setCharacter(value => (value + 1) % characterIcons.length)}>{copy.character}</Button>,
           'bottom-end': <Button data-testid="close-loading-scene" variant="ghost" onClick={() => setPreset(null)}>{copy.close}</Button>,
         }}
       /> : null}

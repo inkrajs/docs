@@ -28,7 +28,7 @@ function Fixture({ events }: { events: Events }) {
       onOpenChange={next => { events.open.push(next); setOpen(next); }}
       onActiveIdChange={(id, details) => { events.active.push({ id, reason: details.reason }); if (!rejectChanges) setActiveId(id); }}>
       <MediaViewer.Trigger asChild><Button variant="outline">Open refined image viewer</Button></MediaViewer.Trigger>
-      <MediaViewer.Content rotatable labels={{
+      <MediaViewer.Content rotatable showCounter labels={{
         title: 'An intentionally very long image viewer heading that must remain readable without hiding the stage or tools in a short viewport',
         description: 'Use keyboard and visible controls.',
         close: 'Close refined image viewer',

@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setPlaygroundControls } from './playground-controls.mjs';
@@ -20,8 +21,7 @@ try {
       const names = locale === 'en' ? ['Full panel', 'Compact layout', 'Popover', 'Swatches only'] : ['完整面板', '紧凑布局', '弹出面板', '仅色样'];
       for (const [index, mode] of ['inline', 'compact', 'popover', 'swatches'].entries()) {
         await setPlaygroundControls(playground, true);
-        await playground.getByRole('combobox', { name: locale === 'en' ? 'Presentation' : '展示形式', exact: true }).click();
-        await page.getByRole('option', { name: names[index], exact: true }).click();
+        await chooseDocsOption(playground, locale === 'en' ? 'Presentation' : '展示形式', names[index], { exact: true, optionExact: true });
         await setPlaygroundControls(playground, false);
         assert.equal(await picker.getAttribute('data-presentation'), mode);
         if (mode === 'popover') {

@@ -13,6 +13,7 @@ import { useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
+import { choiceVisuals } from './docsChoiceVisuals';
 import { infiniteScrollCopy } from './infiniteScrollCopy';
 import { PropertyTabs } from './PropertyTabs';
 import './InfiniteScrollExamples.css';
@@ -30,7 +31,7 @@ type Direction = 'top' | 'bottom' | 'left' | 'right';
 type LoadContext = { direction: Direction; signal: AbortSignal };
 type GalleryItem = { id: number; height: number };
 type IndicatorContext = { status: 'idle' | 'pulling' | 'ready' | 'loading' | 'error' | 'end'; label: string; retry: () => void; load: () => void };
-const initialRange: Range = { minX: -2, maxX: 2, minY: -2, maxY: 2 };
+const initialRange: Range = { minX: -3, maxX: 3, minY: -3, maxY: 3 };
 
 function FourWayBoard() {
   const { locale } = useLocale();
@@ -65,10 +66,10 @@ function FourWayBoard() {
   async function load({ direction, signal }: LoadContext) {
     await wait(360, signal);
     setCounts(current => ({ ...current, [direction]: current[direction] + 1 }));
-    setRange(current => direction === 'top' ? { ...current, minY: current.minY - 1 }
-      : direction === 'bottom' ? { ...current, maxY: current.maxY + 1 }
-        : direction === 'left' ? { ...current, minX: current.minX - 1 }
-          : { ...current, maxX: current.maxX + 1 });
+    setRange(current => direction === 'top' ? { ...current, minY: current.minY - 3 }
+      : direction === 'bottom' ? { ...current, maxY: current.maxY + 3 }
+        : direction === 'left' ? { ...current, minX: current.minX - 3 }
+          : { ...current, maxX: current.maxX + 3 });
   }
 
   const code = `<InfiniteScroll
@@ -87,10 +88,10 @@ function FourWayBoard() {
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
-        <DocsSelect label={text.directions} value={directionMode} onValueChange={value => setDirectionMode(value as typeof directionMode)} options={[
+        <DocsSelect label={text.directions} visuals={choiceVisuals.loadDirection} value={directionMode} onValueChange={value => setDirectionMode(value as typeof directionMode)} options={[
           ['bottom', text.bottom], ['vertical', text.vertical], ['all', text.all],
         ]} />
-        <DocsSelect label={text.interaction} value={mode} onValueChange={value => setMode(value as typeof mode)} options={[
+        <DocsSelect label={text.interaction} visuals={choiceVisuals.loadInteraction} value={mode} onValueChange={value => setMode(value as typeof mode)} options={[
           ['automatic', text.automatic], ['release', text.release], ['both', text.both],
         ]} />
       </> },
@@ -143,16 +144,13 @@ function HistoryExample() {
   const [items, setItems] = useState(() => Array.from({ length: 16 }, (_, index) => index + 20));
   const [topLoads, setTopLoads] = useState(0);
   useLayoutEffect(() => { if (rootRef.current) rootRef.current.scrollTop = 180; }, []);
-  return <ComponentExample id="infinite-scroll-history" title={text.history} code={`<InfiniteScroll directions={['top', 'bottom']} automatic={false} onLoad={loadHistory}>
+  return <ComponentExample id="infinite-scroll-history" title={text.history} code={`<InfiniteScroll directions={['top', 'bottom']} automatic triggerDistance={0} hasMore={hasMore} onLoad={loadHistory}>
   {items.map(item => <HistoryRow data-infinite-scroll-anchor={item.id} />)}
 </InfiniteScroll>`}>
     <div className="infinite-scroll-examples__example-stack">
-      <div className="infinite-scroll-examples__actions">
-        <Button size="sm" variant="outline" onClick={() => rootRef.current?.scrollTo({ top: 0 })}>{text.scrollTop}</Button>
-      </div>
       <InfiniteScroll
         aria-label={text.history}
-        automatic={false}
+        automatic
         className="infinite-scroll-examples__history"
         data-testid="infinite-scroll-history"
         directions={['top', 'bottom']}
@@ -166,6 +164,7 @@ function HistoryExample() {
           } else setItems(current => current.concat(Array.from({ length: 8 }, (_, index) => current.at(-1)! + index + 1)));
         }}
         ref={rootRef}
+        triggerDistance={0}
       >
         <div className="infinite-scroll-examples__history-list">
           {items.map(item => <div className="infinite-scroll-examples__history-row" data-infinite-scroll-anchor={`history-${item}`} key={item}>
@@ -248,20 +247,20 @@ function LoadingMasonryExample() {
     height: 72 + index % 4 * 24,
   })));
   const hasMore = items.length < 20;
-  return <ComponentExample id="infinite-scroll-loading-masonry" title="Loading + InfiniteScroll + Masonry" code={`<InfiniteScroll
+  return <ComponentExample id="infinite-scroll-loading-masonry" title={text.masonry} code={`<InfiniteScroll
   hasMore={items.length < 20}
   onLoad={loadNextPage}
-  renderIndicator={({ status, label, retry, load }) =>
+  renderIndicator={({ status, label, retry }) =>
     status === 'loading'
       ? <Loading mode="inline" title={label} progress={null} />
       : status === 'error'
         ? <Loading mode="inline" status="error" title={label} onRetry={retry} />
-        : <Button onClick={load}>{label}</Button>}
+        : status === 'idle' ? null : <PencilText>{label}</PencilText>}
 >
   <Masonry items={items} getItemKey={item => item.id} renderItem={({ item }) => <GalleryCard item={item} />} />
 </InfiniteScroll>`}>
     <InfiniteScroll
-      aria-label="Loading InfiniteScroll Masonry"
+      aria-label={text.masonry}
       className="infinite-scroll-examples__masonry-scroll"
       data-testid="infinite-scroll-masonry"
       directions="bottom"
@@ -273,17 +272,17 @@ function LoadingMasonryExample() {
           return { id, height: 72 + id % 5 * 20 };
         })));
       }}
-      renderIndicator={({ status, label, retry, load }: IndicatorContext) => status === 'loading'
+      renderIndicator={({ status, label, retry }: IndicatorContext) => status === 'loading'
         ? <Loading mode="inline" title={label} progress={null} />
         : status === 'error'
           ? <Loading mode="inline" status="error" title={label} onRetry={retry} />
           : status === 'end'
             ? <PencilText>{text.complete}</PencilText>
-            : <Button size="sm" variant="ghost" onClick={load}>{label}</Button>}
+            : status === 'idle' ? null : <PencilText>{label}</PencilText>}
       triggerDistance={64}
     >
       <Masonry
-        aria-label="Infinite masonry notes"
+        aria-label={text.masonryNotes}
         className="infinite-scroll-examples__masonry"
         columnGap={12}
         getItemKey={(item: GalleryItem) => item.id}
@@ -324,7 +323,7 @@ function LifecycleExample() {
       reject(new DOMException('Aborted', 'AbortError'));
     }, { once: true });
   });
-  return <ComponentExample id="infinite-scroll-lifecycle" title="Request lifecycle" code={`<InfiniteScroll
+  return <ComponentExample id="infinite-scroll-lifecycle" title={text.lifecycle} code={`<InfiniteScroll
   scrollContainer={() => useOuter ? outerRef.current : innerRef.current}
   disabled={disabled}
   directions={directionEnabled ? 'bottom' : []}
@@ -342,11 +341,11 @@ function LifecycleExample() {
         data-completed={events.completed}
         data-started={events.started}
         data-testid="infinite-scroll-lifecycle-events"
-      >{`started ${events.started}; aborted ${events.aborted}; completed ${events.completed}`}</output>
+      ><PencilText>{`${text.started} ${events.started}; ${text.aborted} ${events.aborted}; ${text.completed} ${events.completed}`}</PencilText></output>
       <div className="infinite-scroll-examples__lifecycle-outer" ref={outerRef}>
         <div className="infinite-scroll-examples__lifecycle-inner" ref={innerRef}>
           <InfiniteScroll
-            aria-label="InfiniteScroll lifecycle"
+            aria-label={text.lifecycle}
             automatic={false}
             className="infinite-scroll-examples__lifecycle-scroll"
             data-testid="infinite-scroll-lifecycle"
@@ -357,14 +356,14 @@ function LifecycleExample() {
             scrollContainer={() => useOuter ? outerRef.current : innerRef.current}
           >
             <div className="infinite-scroll-examples__history-list">
-              {Array.from({ length: 8 }, (_, index) => <div className="infinite-scroll-examples__history-row" key={index}><PencilText>{`Lifecycle ${index + 1}`}</PencilText></div>)}
+              {Array.from({ length: 8 }, (_, index) => <div className="infinite-scroll-examples__history-row" key={index}><PencilText>{`${text.lifecycleItem} ${index + 1}`}</PencilText></div>)}
             </div>
           </InfiniteScroll>
         </div>
       </div>
-      <output data-testid="infinite-scroll-controlled-count">{events.unexpected}</output>
+      <output aria-label={text.unexpected} data-testid="infinite-scroll-controlled-count">{events.unexpected}</output>
       <InfiniteScroll
-        aria-label="Controlled loading gesture"
+        aria-label={text.controlled}
         automatic={false}
         className="infinite-scroll-examples__controlled"
         data-testid="infinite-scroll-controlled"
@@ -374,7 +373,7 @@ function LifecycleExample() {
         state={controlledState}
       >
         <div className="infinite-scroll-examples__history-list">
-          {Array.from({ length: 8 }, (_, index) => <div className="infinite-scroll-examples__history-row" key={index}><PencilText>{`Controlled ${index + 1}`}</PencilText></div>)}
+          {Array.from({ length: 8 }, (_, index) => <div className="infinite-scroll-examples__history-row" key={index}><PencilText>{`${text.controlledItem} ${index + 1}`}</PencilText></div>)}
         </div>
       </InfiniteScroll>
     </div>

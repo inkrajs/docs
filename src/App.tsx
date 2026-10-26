@@ -1,6 +1,7 @@
 import { Accordion, Button, ButtonGroup, ButtonLink, Drawer, DropdownMenu, Input, Layout, PencilLine, PencilSurface, RadioGroup, RadioGroupItem, Resizable, Switch, Tabs, Tooltip } from '@inkra/react';
 import { ButtonGroupPlayground } from './components/ButtonGroupPlayground';
 import { DocsSelect } from './components/DocsSelect';
+import { choiceVisuals } from './components/docsChoiceVisuals';
 import { InternationalizationExamples } from './components/InternationalizationExamples';
 import { ThemeExamples } from './components/ThemeExamples';
 import { navigationIcon } from './components/iconCatalog';
@@ -811,7 +812,7 @@ function ButtonPlayground() {
               <DocsSelect label="文字方向" value={dir} onValueChange={value => setDir(value as typeof dir)} options={[["ltr", "LTR"], ["rtl", "RTL"]]} />
               </> }, { label: '内容', content: <>
               <Switch label={t('首尾图标')} checked={icons} onCheckedChange={setIcons} disabled={iconOnly} />
-              <DocsSelect label="加载位置" value={loadingPosition} onValueChange={value => setLoadingPosition(value as ButtonLoadingPosition)} options={[["start", "起始"], ["center", "居中"], ["end", "末尾"]]} />
+              <DocsSelect label="加载位置" visuals={choiceVisuals.horizontalAlignment} value={loadingPosition} onValueChange={value => setLoadingPosition(value as ButtonLoadingPosition)} options={[["start", "起始"], ["center", "居中"], ["end", "末尾"]]} />
               <Switch label={t('自定义加载图标')} checked={customIndicator} onCheckedChange={setCustomIndicator} />
               </> }, { label: '状态', content: <>
               <Switch label={t('加载中')} checked={loading} onCheckedChange={setLoading} />

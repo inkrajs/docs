@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -13,8 +14,7 @@ async function valueIs(locator, value) {
 }
 
 async function choose(page, scope, name, value) {
-  await scope.getByRole('combobox', { name, exact: true }).click();
-  await page.getByRole('option', { name: value, exact: true }).click();
+  await chooseDocsOption(scope, name, value, { exact: true, optionExact: true });
 }
 
 async function toggle(scope, name) {

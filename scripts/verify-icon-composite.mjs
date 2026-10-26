@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -12,8 +13,7 @@ try {
     const icon = playground.locator('.icon-examples__stage > canvas').first();
     const pixels = () => icon.evaluate(canvas => Array.from(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data));
     const select = async (label, option) => {
-      await playground.getByRole('combobox', { name: label, exact: true }).click();
-      await page.getByRole('option', { name: option, exact: true }).click();
+      await chooseDocsOption(playground, label, option, { exact: true, optionExact: true });
       await page.waitForTimeout(80);
     };
     await icon.waitFor();

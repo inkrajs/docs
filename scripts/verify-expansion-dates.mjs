@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { setPlaygroundControls as setControls } from './playground-test-helpers.mjs';
+import { chooseDocsOption, setPlaygroundControls as setControls } from './playground-test-helpers.mjs';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -87,11 +87,9 @@ try {
       'readOnly={false}',
     ], ['onValueChange={setDate}']);
     await datePlayground.locator('.preview-controls').getByRole('tab', { name: /基础|Basic/ }).click();
-    await datePlayground.getByRole('combobox', { name: /尺寸|Size/ }).click();
-    await datePage.getByRole('option', { name: /大|Large/, exact: true }).click();
+    await chooseDocsOption(datePlayground, /尺寸|Size/, /大|Large/, { exact: false, optionExact: true });
     await verifyCurrentCodeCopy(datePage, datePlayground, ['size="lg"']);
-    await datePlayground.getByRole('combobox', { name: /选择模式|Selection mode/ }).click();
-    await datePage.getByRole('option', { name: /日期范围|Date range/ }).click();
+    await chooseDocsOption(datePlayground, /选择模式|Selection mode/, /日期范围|Date range/, { exact: false, optionExact: false });
     await verifyCurrentCodeCopy(datePage, datePlayground, [
       'const [range, setRange] = useState<DatePickerRange | undefined>',
       'mode="range"',
@@ -193,11 +191,9 @@ try {
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /状态|States?/ }).click();
     await timePlayground.getByRole('switch', { name: /禁用|Disabled/ }).click();
     await timePlayground.locator('.preview-controls').getByRole('tab', { name: /基础|Basic/ }).click();
-    await timePlayground.getByRole('combobox', { name: /尺寸|Size/ }).click();
-    await timePage.getByRole('option', { name: /小|Small/, exact: true }).click();
+    await chooseDocsOption(timePlayground, /尺寸|Size/, /小|Small/, { exact: false, optionExact: true });
     await timePlayground.getByRole('switch', { name: /显示秒|Show seconds/ }).click();
-    await timePlayground.getByRole('combobox', { name: /小时制|Hour cycle/ }).click();
-    await timePage.getByRole('option', { name: /12 小时|12 hour/, exact: true }).click();
+    await chooseDocsOption(timePlayground, /小时制|Hour cycle/, /12 小时|12 hour/, { exact: false, optionExact: true });
     await verifyCurrentCodeCopy(timePage, timePlayground, ['size="sm"', 'hourCycle="h12"', 'showSeconds={true}']);
     await setControls(timePlayground, false);
     await timeTrigger.click();

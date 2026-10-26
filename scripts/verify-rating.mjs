@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
@@ -7,8 +8,7 @@ const outputDir = process.env.INKRA_RATING_OUTPUT_DIR || '/tmp';
 await mkdir(outputDir, { recursive: true });
 
 async function choose(page, scope, label, value) {
-  await scope.getByRole('combobox', { name: label, exact: true }).click();
-  await page.getByRole('option', { name: value, exact: true }).click();
+  await chooseDocsOption(scope, label, value, { exact: true, optionExact: true });
 }
 
 async function toggle(scope, label) {

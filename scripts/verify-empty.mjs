@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setPlaygroundControls } from './playground-controls.mjs';
@@ -57,8 +58,7 @@ try {
       }
       await setPlaygroundControls(playground, true);
       const controls = playground.locator('.preview-controls');
-      await controls.getByRole('combobox', { name: locale === 'zh-CN' ? '插画' : 'Illustration', exact: true }).click();
-      await page.getByRole('option', { name: locale === 'zh-CN' ? '无搜索结果' : 'No results', exact: true }).click();
+      await chooseDocsOption(controls, locale === 'zh-CN' ? '插画' : 'Illustration', locale === 'zh-CN' ? '无搜索结果' : 'No results', { exact: true, optionExact: true });
       await setPlaygroundControls(playground, false);
       assert.equal(await illustration.getAttribute('data-illustration'), 'search');
       await playground.getByRole('tab', { name: locale === 'zh-CN' ? '代码' : 'Code', exact: true }).click();

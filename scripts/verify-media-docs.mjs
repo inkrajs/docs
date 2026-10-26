@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -8,9 +9,7 @@ async function configure(page, open) {
   if ((await toggle.getAttribute('aria-expanded') === 'true') !== open) await toggle.click();
 }
 async function choose(page, name, option) {
-  await page.getByRole('combobox', { name, exact: true }).click();
-  const portalRoot = typeof page.page === 'function' ? page.page() : page;
-  await portalRoot.getByRole('option', { name: option, exact: true }).click();
+  await chooseDocsOption(page, name, option);
 }
 async function loadedImage(page) {
   await page.waitForFunction(() => {
@@ -104,6 +103,7 @@ try {
     await gallery.waitFor();
     await configure(page, true);
     await choose(page, zh ? '阅读方向' : 'Reading direction', zh ? '从右到左' : 'RTL');
+    await page.getByRole('switch', { name: zh ? '显示图片计数' : 'Show image count', exact: true }).click();
     await configure(page, false);
     const open = gallery.getByRole('button', { name: zh ? '打开图片查看器' : 'Open image viewer', exact: true });
     await open.click();
@@ -127,9 +127,9 @@ try {
       const frame = node.getBoundingClientRect();
       const stage = node.querySelector('.inkra-image-viewer__stage').getBoundingClientRect();
       const tools = node.querySelector('.inkra-image-viewer__tools').getBoundingClientRect();
-      return { inside: tools.left >= frame.left && tools.right <= frame.right && tools.bottom <= frame.bottom, below: tools.top >= stage.bottom - 1 };
+      return { inside: tools.left >= frame.left && tools.right <= frame.right && tools.bottom <= frame.bottom, overImage: tools.top >= stage.top && tools.bottom <= stage.bottom };
     });
-    assert(toolbarBounds.inside && toolbarBounds.below, `RTL bottom toolbar: ${JSON.stringify(toolbarBounds)}`);
+    assert(toolbarBounds.inside && toolbarBounds.overImage, `RTL floating toolbar: ${JSON.stringify(toolbarBounds)}`);
     await capture(page, viewer, `viewer-${width}`);
     await page.keyboard.press('Escape');
     await page.waitForFunction(node => node === document.activeElement, await open.elementHandle());

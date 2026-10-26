@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
@@ -5,8 +6,7 @@ const page = await browser.newPage();
 const errors = [];
 page.on('pageerror', error => errors.push(error.message));
 const choose = async (label, option) => {
-  await page.getByRole('combobox', { name: label, exact: true }).click();
-  await page.getByRole('option', { name: option, exact: true }).click();
+  await chooseDocsOption(page, label, option, { exact: true, optionExact: true });
   await page.getByRole('listbox').waitFor({ state: 'hidden' });
 };
 const toggle = name => page.getByRole('switch', { name, exact: true }).click();

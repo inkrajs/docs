@@ -5,6 +5,7 @@ import { PencilText, useLocale } from '../i18n';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 import { DocsSelect } from './DocsSelect';
+import { choiceVisuals } from './docsChoiceVisuals';
 
 export function PopoverExamples() {
   const { t } = useLocale();
@@ -57,7 +58,7 @@ const [onlyPending, setOnlyPending] = useState(${onlyPending});
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label="方向" value={side} onValueChange={next => setSide(next as typeof side)} options={[["top", "上"], ["right", "右"], ["bottom", "下"], ["left", "左"]]} />
-        <DocsSelect label="对齐" value={align} onValueChange={next => setAlign(next as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
+        <DocsSelect label="对齐" visuals={side === 'left' || side === 'right' ? choiceVisuals.verticalAlignment : choiceVisuals.horizontalAlignment} value={align} onValueChange={next => setAlign(next as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
         <Switch label={t('显示箭头')} checked={arrow} onCheckedChange={setArrow} />
       </> },
       { label: '布局', content: <>

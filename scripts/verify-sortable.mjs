@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setPlaygroundControls } from './playground-controls.mjs';
@@ -129,11 +130,9 @@ try {
 
       await controls(page, true);
       await page.getByRole('tab', { name: /Layout|布局/ }).click();
-      await page.getByRole('combobox', { name: /Arrangement|排列/ }).click();
-      await page.getByRole('option', { name: /Grid|网格/ }).click();
+      await chooseDocsOption(page, /Arrangement|排列/, /Grid|网格/, { exact: false, optionExact: false });
       assert.equal(await root.locator('.inkra-sortable__container').getAttribute('data-layout'), 'grid');
-      await page.getByRole('combobox', { name: /Arrangement|排列/ }).click();
-      await page.getByRole('option', { name: /List|列表/ }).click();
+      await chooseDocsOption(page, /Arrangement|排列/, /List|列表/, { exact: false, optionExact: false });
       await page.waitForFunction(() => document.querySelector('[data-testid="sortable-playground"] .inkra-sortable__container')?.getAttribute('data-layout') === 'list');
       await controls(page, false);
 

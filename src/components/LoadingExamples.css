@@ -1,10 +1,15 @@
 .loading-playground-preview,
-.loading-scene-example,
 .loading-simulation,
 .loading-carriers {
   display: grid;
   gap: var(--inkra-space-4);
   inline-size: min(100%, 48rem);
+}
+
+.loading-scene-example {
+  display: grid;
+  gap: var(--inkra-space-4);
+  inline-size: min(100%, 72rem);
 }
 
 .loading-playground-preview > .inkra-loading[data-mode="region"] {
@@ -69,39 +74,22 @@
   position: absolute;
 }
 
-.loading-scene__traveler {
-  align-items: center;
-  background: var(--inkra-ink);
-  border-radius: 50%;
-  color: var(--inkra-paper);
-  display: flex;
-  font-family: var(--inkra-font-mono);
-  block-size: 44px;
-  inline-size: 44px;
-  inset-block-end: 18%;
-  inset-inline-start: 48%;
-  justify-content: center;
-  position: absolute;
-}
-
-.loading-scene[data-character="1"] .loading-scene__traveler { background: var(--inkra-danger-foreground); }
-.loading-scene[data-character="2"] .loading-scene__traveler { background: var(--inkra-info-foreground); }
-
-.loading-scene-example__buttons {
+.loading-preset-grid {
   display: grid;
-  gap: var(--inkra-space-2);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--inkra-space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.loading-scene-example__buttons .inkra-button { inline-size: 100%; }
-.loading-demo-skeleton-note { max-inline-size: 28rem; }
-
+.loading-preset-grid > .inkra-loading.loading-preset-preview[data-mode="region"] {
+  min-block-size: 22rem;
+}
+.loading-preset-grid > .inkra-loading.loading-preset-preview[data-mode="region"][data-preset="edge"] { min-block-size: 12rem; }
 .loading-simulation__region { min-block-size: 15rem; }
 .loading-carriers > .inkra-loading[data-mode="region"] { min-block-size: 18rem; }
 
 @media (max-width: 40rem) {
   .loading-playground-preview > .inkra-loading[data-mode="region"] { block-size: auto; min-block-size: 24rem; }
-  .loading-scene-example__buttons { grid-template-columns: 1fr 1fr; }
+  .loading-preset-grid { grid-template-columns: 1fr; }
 }
 
 @media (forced-colors: active) {

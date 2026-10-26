@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setControls, showPreview, readCode } from './playground-helpers.mjs';
@@ -117,8 +118,7 @@ try {
     await page.mouse.move(0, 0);
     await playground.screenshot({ path: `/tmp/inkra-docs-grid-${width}.png` });
     await setControls(playground, true);
-    await playground.getByRole('combobox', { name: locale === 'en' ? 'Mode' : '模式', exact: true }).click();
-    await page.getByRole('option', { name: locale === 'en' ? 'Resizable tracks' : '行列调整', exact: true }).click();
+    await chooseDocsOption(playground, locale === 'en' ? 'Mode' : '模式', locale === 'en' ? 'Resizable tracks' : '行列调整', { exact: true, optionExact: true });
     await showPreview(playground);
     const tracks = playground.locator('.inkra-grid-resizable');
     const cells = tracks.locator('.grid-examples__cell');
@@ -135,11 +135,9 @@ try {
     assert((await readCode(playground)).includes('Grid.Resizable'));
     if (width > 1000) {
       await setControls(playground, true);
-      await playground.getByRole('combobox', { name: '模式', exact: true }).click();
-      await page.getByRole('option', { name: '基础网格', exact: true }).click();
+      await chooseDocsOption(playground, '模式', '基础网格', { exact: true, optionExact: true });
       await page.waitForFunction(() => document.querySelector('.component-playground .preview-stage')?.clientHeight === 340);
-      await playground.getByRole('combobox', { name: '模式', exact: true }).click();
-      await page.getByRole('option', { name: '拖拽看板', exact: true }).click();
+      await chooseDocsOption(playground, '模式', '拖拽看板', { exact: true, optionExact: true });
       await assertNaturalBoardHeight(playground);
     }
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));

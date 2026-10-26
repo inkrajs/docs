@@ -18,6 +18,7 @@ import { PencilText, useLocale } from '../i18n';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
+import { choiceVisuals } from './docsChoiceVisuals';
 import { DocsSlider } from './DocsSlider';
 import './MoreExamples.css';
 import { DocsIcon, iconPaths } from './DocsIcon';
@@ -56,7 +57,7 @@ function TooltipExamples() {
       </> },
       { label: '布局', content: <>
         <DocsSelect label="方向" value={side} onValueChange={value => setSide(value as typeof side)} options={sides} />
-        <DocsSelect label="对齐" value={align} onValueChange={value => setAlign(value as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
+        <DocsSelect label="对齐" visuals={side === 'left' || side === 'right' ? choiceVisuals.verticalAlignment : choiceVisuals.horizontalAlignment} value={align} onValueChange={value => setAlign(value as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
         <DocsSlider label="偏移" min={0} max={24} step={4} value={offset} onValueChange={setOffset} unit="px" />
         <Switch label={t('边缘避让')} checked={collisions} onCheckedChange={setCollisions} />
       </> },

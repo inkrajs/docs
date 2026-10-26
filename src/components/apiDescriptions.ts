@@ -38,6 +38,8 @@ const descriptions: Record<string, Copy> = {
   'image-viewer:Root.open / defaultOpen / onOpenChange': ['控制弹窗状态、初始状态和开关请求；关闭后由 Overlay 恢复触发器焦点。', 'Control dialog state, initial state and open requests; Overlay returns focus to the trigger on close.'],
   'image-viewer:Root.loop': ['默认允许从最后一张回到第一张；关闭后在列表边界禁用对应操作。', 'Wrap from the last image to the first by default; when disabled, boundary actions become unavailable.'],
   'image-viewer:Content.showThumbnails / zoomable / rotatable': ['分别控制缩略图、平移缩放和旋转操作；默认启用前两项，关闭旋转。', 'Control thumbnails, pan/zoom and rotation. The first two default on; rotation defaults off.'],
+  'image-viewer:Content.showCounter': ['是否展示当前图片位置与总数，默认隐藏；不影响图片导航与替代文本。', 'Show the current image position and total, hidden by default. Navigation and alternative text remain available.'],
+  'image-viewer:Content.toolbarPosition': ['图片工具栏浮在图片上沿或下沿，默认上沿居中；缩略图仍在底部。', 'Float image tools at the top or bottom of the image, centered at the top by default. Thumbnails remain below.'],
   'image-viewer:Content.minScale / maxScale / wheel': ['设置缩放边界及滚轮策略，默认 0.5、6 和 modifier；沿用 PanZoom 交互。', 'Set zoom limits and wheel behavior, defaulting to 0.5, 6 and modifier, using PanZoom interactions.'],
   'image-viewer:Content.labels': ['本地化标题、动作、图片位置、缩略图、加载失败和空列表文案。', 'Localize titles, actions, image positions, thumbnails, load failures and empty states.'],
   'image-viewer:Content.videoLabels': ['本地化视频播放、暂停、进度、静音、音量、倍速与播放失败反馈。视频切换或关闭时停止播放。', 'Localize video playback, pause, seeking, mute, volume, speed and playback failures. Switching resources or closing stops playback.'],

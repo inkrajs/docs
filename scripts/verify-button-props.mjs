@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const browser = await chromium.launch();
 const page = await browser.newPage();
@@ -12,10 +13,7 @@ try {
     const playground = page.locator('.playground').first();
     const button = page.locator('#button-demo-panel-preview > .inkra-button');
     const select = async (scope, label, value) => {
-      const trigger = scope.getByRole('combobox', { name: label, exact: true });
-      await trigger.click();
-      await page.getByRole('option', { name: value, exact: true }).click();
-      await page.waitForFunction(({ element, value }) => element.textContent.includes(value), { element: await trigger.elementHandle(), value });
+      await chooseDocsOption(scope, label, value);
     };
     const toggle = async (scope, name) => {
       const control = scope.getByRole('switch', { name, exact: true });

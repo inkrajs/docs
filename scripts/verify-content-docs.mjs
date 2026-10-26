@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import { chromium } from 'playwright';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
@@ -107,10 +108,8 @@ try {
     const paging = changing.locator('.inkra-pagination').first();
     await paging.waitFor();
     assert.equal(await paging.locator('[aria-current="page"]').textContent(), '9');
-    const select = changing.getByRole('combobox', { name: zh ? '结果页数' : 'Result pages', exact: true });
     for (const [total, current] of [['3', '3'], ['12', '3'], ['0', null], ['12', '1']]) {
-      await select.click();
-      await page.getByRole('option', { name: total, exact: true }).click();
+      await chooseDocsOption(changing, zh ? '结果页数' : 'Result pages', total);
       if (current === null) {
         assert.equal(await paging.locator('[aria-current="page"]').count(), 0);
         assert(await paging.getByRole('button').evaluateAll(nodes => nodes.every(node => node.disabled)));

@@ -21,7 +21,7 @@ const definitions: readonly Definition[] = [
   { name: 'gestureThreshold', type: 'number | Partial<Record<Direction, number>>', defaultValue: '72', description: 'apiDistances' },
   { name: 'systemGestureInset', type: 'number', defaultValue: '24', description: 'apiGesture' },
   { name: 'getAnchor', type: '(context: InfiniteScrollAnchorContext) => HTMLElement | null', defaultValue: 'first visible stable item', description: 'apiAnchor' },
-  { name: 'renderIndicator', type: '(props: InfiniteScrollIndicatorRenderProps) => ReactNode', defaultValue: 'localized Progress/Button indicator', description: 'apiRender' },
+  { name: 'renderIndicator', type: '(props: InfiniteScrollIndicatorRenderProps) => ReactNode', defaultValue: 'compact spinner + text; idle Button only without automatic/gesture', description: 'apiRender' },
   { name: 'labels', type: 'Partial<Record<InfiniteScrollLabelKey, string>>', defaultValue: 'localized', description: 'apiLabels' },
 ];
 

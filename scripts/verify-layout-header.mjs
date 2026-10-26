@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { setControls, showPreview } from './playground-helpers.mjs';
@@ -22,8 +23,7 @@ try {
     const path = async option => {
       await setControls(playground, true);
       await playground.locator('.property-tabs').getByRole('tab', { name: zh ? '内容' : 'Content', exact: true }).click();
-      await playground.getByRole('combobox', { name: zh ? '页头路径' : 'Header path', exact: true }).click();
-      await page.getByRole('option', { name: option, exact: true }).click();
+      await chooseDocsOption(playground, zh ? '页头路径' : 'Header path', option, { exact: true, optionExact: true });
       await showPreview(playground);
     };
     const metrics = () => header.evaluate(node => {

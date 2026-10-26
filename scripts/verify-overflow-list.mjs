@@ -1,3 +1,4 @@
+import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
@@ -18,8 +19,7 @@ try {
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no page overflow');
 
       const before = await root.locator('[data-overflow-list-item]').count();
-      await page.getByRole('combobox', { name: /Retention strategy|收纳策略/ }).click();
-      await page.getByRole('option', { name: /Keep priority|按优先级/ }).click();
+      await chooseDocsOption(page, /Retention strategy|收纳策略/, /Keep priority|按优先级/, { exact: false, optionExact: false });
       assert.equal(await root.locator('[data-overflow-list-item]').count(), before, 'strategy changes preserve stable row rendering');
 
       const more = root.getByRole('button', { name: /More actions|更多操作/ });

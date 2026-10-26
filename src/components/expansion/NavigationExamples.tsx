@@ -103,7 +103,7 @@ const [pageSize, setPageSize] = useState(20);
 <Pagination totalPages={totalPages} defaultPage={9} showFirstLast />
 <Pagination totalPages={0} showFirstLast />`}>
       <div className="navigation-examples__stage" data-testid="pagination-changing-total">
-      <DocsSelect label={zh ? '结果页数' : 'Result pages'} value={String(changingTotal)} onValueChange={value => setChangingTotal(Number(value))} options={[["12", "12"], ["3", "3"], ["0", "0"]]} />
+      <DocsSelect label={zh ? '结果页数' : 'Result pages'} presentation="radio" value={String(changingTotal)} onValueChange={value => setChangingTotal(Number(value))} options={[["12", "12"], ["3", "3"], ["0", "0"]]} />
       <Pagination totalPages={changingTotal} defaultPage={9} showFirstLast labels={labels} />
       <Pagination totalPages={0} showFirstLast labels={{ ...labels, nav: zh ? '空结果分页' : 'Empty results pagination' }} data-testid="pagination-empty" />
       </div>

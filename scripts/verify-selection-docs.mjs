@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-import { setPlaygroundControls as controls } from './playground-test-helpers.mjs';
+import { chooseDocsOption, setPlaygroundControls as controls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -20,10 +20,8 @@ try {
     const tree = playground.locator('.inkra-tree-select');
     await tree.waitFor();
     await controls(playground, true);
-    await playground.getByRole('combobox', { name: copy('尺寸', 'Size'), exact: true }).click();
-    await page.getByRole('option', { name: copy('大', 'Large'), exact: true }).click();
-    await playground.getByRole('combobox', { name: copy('阅读方向', 'Direction'), exact: true }).click();
-    await page.getByRole('option', { name: copy('从右到左', 'RTL'), exact: true }).click();
+    await chooseDocsOption(playground, copy('尺寸', 'Size'), copy('大', 'Large'), { exact: true, optionExact: true });
+    await chooseDocsOption(playground, copy('阅读方向', 'Direction'), copy('从右到左', 'RTL'), { exact: true, optionExact: true });
     await playground.locator('.preview-controls').getByRole('tab', { name: copy('状态', 'State'), exact: true }).click();
     await playground.getByRole('switch', { name: copy('只读', 'Read only'), exact: true }).click();
     await playground.getByRole('switch', { name: copy('错误状态', 'Invalid'), exact: true }).click();
