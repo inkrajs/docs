@@ -195,7 +195,11 @@ export function ThemeCustomizer({ theme, onThemeChange, renderTrigger, triggerVa
       <Drawer.Backdrop />
       <Drawer.Content className="theme-customizer" size="md" aria-describedby={undefined}>
         <Drawer.Header closeLabel={t("关闭", "Close")} action={<Tooltip.Provider><Tooltip.Root>
-          <Tooltip.Trigger asChild><Button size="icon" variant="ghost" aria-label={t("恢复默认", "Reset")} onClick={() => {
+          <Tooltip.Trigger asChild><Button size="icon" variant="ghost" aria-label={t("恢复默认", "Reset")} onFocus={event => {
+            const dialog = event.currentTarget.closest('[role="dialog"]');
+            // Match DrawerCloseButton: initial drawer focus must not open a tooltip that consumes Escape.
+            if (dialog && (!event.relatedTarget || !dialog.contains(event.relatedTarget))) event.preventDefault();
+          }} onClick={() => {
             fontRequest.current += 1; setFontBusy(false); setFontError(false); setDraft({ ...defaults, customColors: settings.customColors }); setPreviewRender(defaults.render); setDraftTheme('light');
           }}><DocsIcon data={resetIcon} size={22} /></Button></Tooltip.Trigger>
           <Tooltip.Portal><Tooltip.Content side="bottom">{t("恢复默认", "Reset")}</Tooltip.Content></Tooltip.Portal>
