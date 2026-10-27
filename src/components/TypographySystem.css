@@ -1,6 +1,4 @@
 .typography-system { display: grid; gap: var(--inkra-space-8); min-width: 0; }
-.typography-system__index { display: flex; flex-wrap: wrap; gap: 8px 24px; }
-.typography-system__index a { min-height: 44px; display: inline-flex; align-items: center; }
 .typography-system h2 { scroll-margin-top: 140px; }
 .typography-system__families,
 .typography-system__color-examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }

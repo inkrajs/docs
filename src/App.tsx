@@ -36,7 +36,7 @@ import {
 } from 'react';
 import { ColorSystem } from './components/ColorSystem';
 import { GeometrySystem } from './components/GeometrySystem';
-import { TypographySystem } from './components/TypographySystem';
+import { IconSystem, TypographySystem } from './components/TypographySystem';
 import { UsageGuide } from './components/UsageGuide';
 import { FoundationPage, foundationComponents, foundationNames, type FoundationComponent } from './components/FoundationPages';
 import { componentNavigationGroups } from './componentRoutes';
@@ -854,7 +854,7 @@ function ButtonPage({ activeTab, onTabChange }: { activeTab: ButtonTab; onTabCha
 function DesignStandardPage({ theme }: { theme: Theme }) {
   const { t } = useLocale();
   const [section, setSection] = useState('colors');
-  const sections = [{ id: 'colors', label: '色彩' }, { id: 'geometry', label: '尺寸与间距' }, { id: 'materials', label: '排版与材质' }];
+  const sections = [{ id: 'colors', label: '色彩' }, { id: 'geometry', label: '尺寸与间距' }, { id: 'typography', label: '字体' }, { id: 'icons', label: '图标' }, { id: 'materials', label: '材质' }];
   return (
     <article className="documentation documentation--standard">
       <PageHeading title="设计规范" />
@@ -865,11 +865,14 @@ function DesignStandardPage({ theme }: { theme: Theme }) {
       <PencilLine className="section-divider standard-tabs-divider" seed="standard-tabs-divider" />
       <Tabs.Content value="colors" className="content-section design-standard"><ColorSystem theme={theme} /></Tabs.Content>
       <Tabs.Content value="geometry" className="content-section design-standard"><GeometrySystem /></Tabs.Content>
-      <Tabs.Content value="materials" className="content-section design-standard">
+      <Tabs.Content value="typography" className="content-section design-standard">
         <TypographySystem />
+        <PencilText as="p" className="standard-note" seed="standard-note">本地字体是 Yozai Light 的 706 字符子集；未覆盖字形由 HanziPen SC、Hannotate SC、Kaiti SC、STKaiti 等平台字体回退。</PencilText>
+      </Tabs.Content>
+      <Tabs.Content value="icons" className="content-section design-standard"><IconSystem /></Tabs.Content>
+      <Tabs.Content value="materials" className="content-section design-standard">
         <PencilText as="h2" seed="material-title">铅笔材质</PencilText>
         <div className="material-specimens"><PencilSurface className="material-sample" seed="paper-material" variant="paper"><PencilText seed="paper-label">纸面与压力描边</PencilText></PencilSurface><PencilSurface className="material-sample" seed="selection-material" variant="selection"><PencilText seed="selection-label">选中项连续彩铅铺色</PencilText></PencilSurface></div>
-        <PencilText as="p" className="standard-note" seed="standard-note">本地字体是 Yozai Light 的 706 字符子集；未覆盖字形由 HanziPen SC、Hannotate SC、Kaiti SC、STKaiti 等平台字体回退。</PencilText>
       </Tabs.Content>
       </Tabs.Root>
     </article>

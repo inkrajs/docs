@@ -117,7 +117,7 @@ function Scale({ label, values }: { label: string; values: ReadonlyArray<readonl
           </button>
         ))}
       </div>
-      <span className="color-system__copy-feedback" role="status">{feedback ? `${t(feedback.ok ? '已复制' : '复制失败')} ${feedback.hex}` : ''}</span>
+      <span className="sr-only" role="status">{feedback ? `${t(feedback.ok ? '已复制' : '复制失败')} ${feedback.hex}` : ''}</span>
     </div>
   );
 }

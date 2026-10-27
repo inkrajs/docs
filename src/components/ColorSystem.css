@@ -12,7 +12,6 @@
 .color-system__swatches { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 4px; }
 .color-system__swatch { display: grid; place-items: center; min-width: 0; min-height: 56px; padding: 0; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
 .color-system__pigment { width: 36px; height: 28px; transform: rotate(-35deg); }
-.color-system__copy-feedback { display: block; min-height: 20px; text-align: end; color: var(--inkra-ink-muted); font-size: var(--inkra-text-xs); }
 .color-palette__applications, .color-demo__themes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .color-palette__application { min-width: 0; padding: 16px; display: grid; gap: 12px; color: var(--inkra-ink); }
 .color-palette__application h3, .color-demo__column h3 { font-size: var(--inkra-text-lg); }

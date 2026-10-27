@@ -12,8 +12,12 @@ import { __iconData as sun } from 'lucide-react/dist/esm/icons/sun.mjs';
 import { __iconData as moon } from 'lucide-react/dist/esm/icons/moon.mjs';
 import { __iconData as monitor } from 'lucide-react/dist/esm/icons/monitor.mjs';
 import { __iconData as info } from 'lucide-react/dist/esm/icons/info.mjs';
+import { __iconData as folder } from 'lucide-react/dist/esm/icons/folder.mjs';
+import { __iconData as fileText } from 'lucide-react/dist/esm/icons/file-text.mjs';
+import { __iconData as camera } from 'lucide-react/dist/esm/icons/camera.mjs';
 import { PencilText, useLocale } from '../i18n';
 import { DocsIcon } from './DocsIcon';
+import { iconFillCopy } from './iconFillCopy';
 import { DocsSelect } from './DocsSelect';
 import { ComponentExample } from './ComponentExample';
 import './IconDesign.css';
@@ -33,18 +37,34 @@ const icons = [
   { data: info, label: '信息', use: '补充说明，不能成为必要信息的唯一入口。' },
 ];
 
+const principles = [
+  ['轮廓与双版本', '所有现有和新增图标都提供 outline 与 filled 两版，保持相同语义、熟悉轮廓和占位尺寸；不能简单把线框路径全部填实。'],
+  ['柔和填充', '主体连续填色，孔洞保持透明，开放箭头和加号不强行闭合。外缘与孔洞边缘向内柔和渐淡，不画锋利硬边，也不整体模糊。'],
+  ['可配置颜色', 'fillColor 与描边颜色独立，可使用主题变量或自定义颜色，例如不同颜色的文件夹。多色区域可分别覆盖，恢复默认后继续跟随主题。'],
+  ['克制的多色', '只为适合分区的图标提供多色，其他图标保留单色填充。优先主体轮廓与一处识别特征，通常两块颜色；不为了第三种颜色添加细节。'],
+  ['统一彩铅材质', '彩色版沿用项目的主题颜料、纸齿铺色和轻微手绘边缘。减少重复缝线、装饰亮点和细碎分区；排线不能抢过图形，也不用普通 SVG 的硬描边代替。'],
+  ['稳定笔触', '默认笔宽 1.5、浓度 1，支持独立配置笔宽、浓度、断笔和笔压。同一 seed 的笔迹稳定，切换外观或颜色不改变图标盒，不在悬停时随机抖动。'],
+] as const;
+
 export function IconDesign() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const appearance = iconFillCopy(locale);
   const [selected, setSelected] = useState(0);
   const [size, setSize] = useState('24');
   const item = icons[selected];
   return <section className="icon-design" aria-labelledby="icon-design-title">
     <PencilText as="h2" id="icon-design-title">图标设计</PencilText>
     <PencilText as="p">保留熟悉的轮廓，用彩铅表达笔压、颗粒和轻微断笔。简约来自减少细节，不来自牺牲辨识度。</PencilText>
+    <div className="icon-design__variants">
+      {(['outline', 'filled', 'colorful'] as const).map(mode => <figure key={mode} className="icon-design__variant">
+        <PencilText as="figcaption">{appearance[mode]}</PencilText>
+        <div className="icon-design__variant-icons">
+          {[folder, fileText, camera].map(data => <DocsIcon key={data.name} data={data} size={36} variant={mode === 'outline' ? 'outline' : 'filled'} colorful={mode === 'colorful'} />)}
+        </div>
+      </figure>)}
+    </div>
     <div className="icon-design__principles">
-      <div><PencilText as="h3">轮廓优先</PencilText><PencilText as="p">沿用 Lucide 图形几何，不混用实心和线性图标；同一含义保持同一图形。</PencilText></div>
-      <div><PencilText as="h3">稳定笔触</PencilText><PencilText as="p">重复描边保留露纸与自然提笔。同一 seed 的笔迹稳定，不在悬停时随机抖动。</PencilText></div>
-      <div><PencilText as="h3">状态归属控件</PencilText><PencilText as="p">选中铺色与焦点由按钮、Tabs 或 RadioGroup 承载；图标不靠换色独自表达状态。</PencilText></div>
+      {principles.map(([title, description]) => <div key={title}><PencilText as="h3">{title}</PencilText><PencilText as="p">{description}</PencilText></div>)}
     </div>
     <PencilLine />
     <PencilText as="h3">常用图标</PencilText>

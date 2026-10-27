@@ -25,9 +25,6 @@ const iconRules = [
 export function TypographySystem() {
   const { t } = useLocale();
   return <div className="typography-system">
-    <nav className="typography-system__index" aria-label={t('排版目录')}>
-      {[['font-family-title', '字体'], ['typography-title', '字号'], ['line-height-title', '行高'], ['font-weight-title', '字重'], ['font-color-title', '字体色'], ['icon-design-title', '图标设计'], ['icon-size-title', '图标尺寸']].map(([id, label]) => <a key={id} href={`#${id}`} onClick={event => { event.preventDefault(); document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }}><PencilText>{label}</PencilText></a>)}
-    </nav>
     <section aria-labelledby="font-family-title">
       <PencilText as="h2" id="font-family-title">字体</PencilText>
       <div className="typography-system__families">
@@ -75,6 +72,12 @@ export function TypographySystem() {
         </PencilSurface>)}
       </div>
     </section>
+  </div>;
+}
+
+export function IconSystem() {
+  const { t } = useLocale();
+  return <div className="typography-system">
     <IconDesign />
     <section aria-labelledby="icon-size-title">
       <PencilText as="h2" id="icon-size-title">图标尺寸与搭配</PencilText>
