@@ -22,10 +22,11 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout consumes the published `@inkra/react@0.9.0` registry package.
-library-candidate.json pins its exact source revision and archive
-checksums. Build verifies the installed package without a source alias.
-Documentation changes do not publish npm packages or deploy the website.
+This checkout consumes an unpublished `@inkra/react` candidate built from the
+exact library source commit and archive checksums pinned in
+`library-candidate.json`. The public npm version remains `0.9.0`.
+Build verifies the installed candidate without a source alias. Documentation
+changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
@@ -236,8 +237,28 @@ the installed candidate, then captures both locales at desktop and narrow sizes.
 
 `verify-text-first-paint.mjs` checks first-frame pencil lettering on desktop and
 mobile, delayed fonts, runtime Latin glyph reuse, parameter invalidation,
-offscreen deferral and readable canvas-failure fallback. The font is preloaded;
-there is no pre-rendered alphabet asset or page-wide text loading gate.
+offscreen deferral and readable canvas-failure fallback. Font faces load when
+used; Xiaolai's common and extended characters are separate resources.
+There is no pre-rendered alphabet asset or page-wide text loading gate.
+
+The design standard's font gallery searches the shared 29-font catalog and
+loads specimens only as they become visible in its horizontal list. Each font
+uses its own lettering preset and inherits the plain/pencil text setting.
+Successful loads are reused by the gallery and theme customizer; failed loads
+can be retried. Optional fonts currently download one complete WOFF2 per font.
+`node scripts/verify-font-gallery.mjs` checks loading, search, retries, cache
+reuse and desktop/mobile layout.
+
+The gallery and customizer prioritize fonts for the current interface language,
+without changing the saved font. Search accepts font names and language names.
+Caveat, Patrick Hand, Kalam and Handlee offer distinct English/French handwriting;
+Japanese choices include Yomogi, Klee One, Yuji Syuku, Yuji Mai and Hachi Maru Pop.
+Korean choices include Gaegu, Nanum Pen Script, Nanum Brush Script, Hi Melody
+and Single Day. Specimens use verified native
+glyphs and carry their language tag. French accents and ligatures are checked
+against the font cmap; unsupported characters in application text still use the
+fallback stack. Each optional font retains its OFL license and pinned source in
+public/fonts/theme. Xiaolai's extended face loads when the specimen needs it.
 
 API documentation shares the installed Inkra Table and PencilText components.
 Code examples share a Prism-tokenized pencil CodeBlock, with theme-aware syntax

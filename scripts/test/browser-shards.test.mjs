@@ -31,7 +31,10 @@ test('unknown and invalid timings fall back to stable equal scheduling', () => {
 });
 
 test('recorded release replay lowers the longest two-worker shard without extra workers', () => {
-  const suite = browserSuite(true);
+  // Replay only measurements that existed in this release; new checks still
+  // run through the coverage/default-weight tests above, without invented timings.
+  const suite = browserSuite(true).filter(script => Object.hasOwn(browserTimings, script));
+  assert(suite.length > 100, 'replay retains the recorded release suite');
   const before = Array.from({ length: 4 }, (_, shard) => suite.filter((_, index) => index % 4 === shard));
   const after = balancedBrowserShards(suite, 4);
   const oldMaximum = Math.max(...before.map(makespan));

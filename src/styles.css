@@ -1,11 +1,3 @@
-@font-face {
-  font-family: "Trip Map Hand";
-  src: url("/fonts/ui-hand-yozai.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
 /* Docs use Xuanmo; package defaults and semantic status colors stay unchanged. */
 @media (forced-colors: none) {
   :root,
@@ -70,7 +62,7 @@ body {
   min-width: 320px;
   background: var(--inkra-paper);
   color: var(--inkra-ink);
-  font-family: "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "Trip Map Hand", cursive;
+  font-family: var(--inkra-font-body);
   font-size: var(--inkra-text-md);
   font-weight: 400;
   line-height: var(--inkra-line-body);

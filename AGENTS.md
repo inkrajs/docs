@@ -12,4 +12,4 @@ prepared local candidate. Never alias to a sibling source directory.
 - Build with npm run build; check:candidate verifies archive identity.
 - A successful build is not visual or real-device acceptance.
 - Do not commit, push, deploy or publish without explicit authorization.
-- Do not create subagents or new chats unless the user requests them.
+- The user requests parallel work for separable implementation, documentation and verification tasks. Delegate bounded subtasks with explicit file ownership; the main chat must monitor progress, resolve blockers and verify the integrated result. Keep dependent edits sequential and avoid concurrent writes to the same files. Create user-owned Codex chats only when explicitly requested.

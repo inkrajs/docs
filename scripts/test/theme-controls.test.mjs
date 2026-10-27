@@ -28,7 +28,7 @@ test('provider sample serializes lengths, angles and unitless material settings 
   assert.equal(tokens['--inkra-stroke-amplitude'], '1.5px');
   assert.equal(tokens['--inkra-wash-spacing'], '2px');
   assert.equal(tokens['--inkra-wash-angle'], '-45deg');
-  assert.equal(tokens['--inkra-letter-outline'], '0.9');
+  assert.deepEqual(['variation', 'breaks', 'outline', 'fill', 'grain'].map(key => tokens['--inkra-letter-' + key]), ['0.1', '0.31', '0.44', '0.85', '0.4']);
   assert.equal(themeRenderTokens({ ...defaultThemeRender, washStrength: 0 })['--inkra-wash-strength'], '0');
 });
 

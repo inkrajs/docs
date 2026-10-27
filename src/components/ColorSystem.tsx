@@ -12,37 +12,8 @@ import './ColorSystem.css';
 type ThemeName = 'light' | 'dark';
 type TokenStyle = CSSProperties & Record<`--inkra-${string}`, string>;
 
-const oceanScale = [
-  ['50', '#c4e7f0'],
-  ['100', '#b4dfe9'],
-  ['200', '#a2d3df'],
-  ['300', '#93c7d0'],
-  ['400', '#78a9b3'],
-  ['500', '#5ca0b0'],
-  ['600', '#4b96aa'],
-  ['700', '#3e7b8c'],
-  ['800', '#305e6b'],
-  ['900', '#294c56'],
-  ['950', '#172f36'],
-] as const;
-
-const inkScale = ['#f5f6f5', '#e6e9e7', '#ced4d0', '#acb7b0', '#85958c', '#64766b', '#4d5e54', '#3b4b41', '#293d33', '#202d25', '#141c17'];
-const redScale = ['#fcf3f0', '#f6e2da', '#ecc2b4', '#dfa492', '#cf806b', '#b96350', '#994f3f', '#803c30', '#672e26', '#51251f', '#311510'];
-const greenScale = ['#f1f7f0', '#e0eedc', '#c5ddbd', '#a4c69b', '#82ad7b', '#629568', '#4c7952', '#395e40', '#294a32', '#203b29', '#112218'];
-const scaleSteps = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
-export const themeScales = [
-  { id: 'ink', label: '玄墨', values: inkScale.map((hex, index) => [scaleSteps[index], hex] as const) },
-  { id: 'ocean', label: '沧浪', values: oceanScale },
-  { id: 'red', label: '朱砂', values: redScale.map((hex, index) => [scaleSteps[index], hex] as const) },
-  { id: 'green', label: '松青', values: greenScale.map((hex, index) => [scaleSteps[index], hex] as const) },
-];
-
-const darkScales: Record<string, string[]> = {
-  ink: ['#48554f', '#55645b', '#627267', '#708173', '#809184', '#91a194', '#a5b3a6', '#bac6ba', '#cdd7ca', '#dfe7da', '#f0f4eb'],
-  ocean: ['#305460', '#376574', '#3e7688', '#47889c', '#529aae', '#63aabc', '#78bbcb', '#90cbd8', '#aadbe5', '#c4e9ef', '#ddf5f8'],
-  red: ['#633c36', '#76473e', '#8c5348', '#a36153', '#b87362', '#ca8774', '#d99d8b', '#e7b2a1', '#f0c6b8', '#f7dace', '#fcece4'],
-  green: ['#36513d', '#406148', '#4a7252', '#56845e', '#65966c', '#78a77d', '#8eb98f', '#a5cba4', '#bedcba', '#d5ebd0', '#eaf6e5'],
-};
+import { themeScales, darkScales, scaleSteps, paletteStyle, type Palette } from './themeColors';
+export { themeScales, paletteStyle } from './themeColors';
 
 const themes: ReadonlyArray<{ id: ThemeName; label: string }> = [
   { id: 'light', label: '浅色' },
@@ -122,19 +93,6 @@ function Scale({ label, values }: { label: string; values: ReadonlyArray<readonl
   );
 }
 
-type Palette = typeof themeScales[number];
-
-export function paletteStyle(scale: Palette, theme: ThemeName): TokenStyle {
-  const dark = darkScales[scale.id];
-  return {
-    '--inkra-accent': theme === 'light' ? scale.values[3][1] : dark[2],
-    '--inkra-accent-soft': theme === 'light' ? scale.values[2][1] : dark[1],
-    '--inkra-accent-strong': theme === 'light' ? scale.values[8][1] : dark[8],
-    '--inkra-on-accent': theme === 'light' ? scale.values[9][1] : dark[10],
-    '--inkra-selection-pigment': theme === 'light' ? scale.values[4][1] : dark[3],
-    '--inkra-selection-foreground': theme === 'light' ? scale.values[10][1] : dark[10],
-  };
-}
 
 function ColorPalette({ scale, onChange, currentTheme }: { scale: Palette; onChange: (scale: Palette) => void; currentTheme: ThemeName }) {
   const { t } = useLocale();

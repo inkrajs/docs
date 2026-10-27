@@ -1,5 +1,22 @@
 # Documentation Demo Data
 
+## Theme fonts
+
+The theme customizer includes local, optional WOFF2 conversions of OFL-licensed
+fonts. Sources and per-font copyright/license texts are in `public/fonts/theme/`.
+They load on demand. Xiaolai SC and the original Yozai subset are supplied by
+`@inkra/react`; their notices and OFL licenses are copied into the built site's
+`licenses/` directory. Fonts are not covered by the documentation's MIT license.
+
+The optional multilingual handwriting collection includes Caveat, Patrick Hand,
+Kalam, Handlee, Yomogi, Gaegu, Klee One, Yuji Syuku, Yuji Mai, Hachi Maru Pop,
+Nanum Pen Script, Nanum Brush Script, Hi Melody and Single Day from the official
+google/fonts repository.
+Each retains its original SIL OFL 1.1 license as `<font>-OFL.txt`; immutable source
+URLs, font versions and archive checksums are recorded in
+`public/fonts/theme/sources.json`. WOFF2 conversion preserves character coverage;
+Caveat is instantiated at its regular 400 weight.
+
 The following public datasets were copied unchanged from the travel site's public/data directory. They are documentation fixtures, not bundled geographic data in the Inkra component package.
 
 ## Natural Earth

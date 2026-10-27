@@ -710,7 +710,7 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
         <PencilText as="h2" seed="install-heading">安装与样式</PencilText>
         <CodeSample seed="install-command" language="bash" code="npm install @inkra/react" />
         <CodeSample seed="install-code" code={`import '@inkra/react/tokens.css';\nimport '@inkra/react/styles.css';\nimport { Button } from '@inkra/react';`} />
-        <PencilText as="p" seed="font-note">文档站使用与参考站相同的 Yozai Light 本地子集。该子集仅含 706 个参考站字符，其余文字按系统手写与楷体顺序回退。</PencilText>
+        <PencilText as="p" seed="font-note">文档站默认使用小赖字体，可在主题定制中切换字体并调整各自的笔触参数。</PencilText>
         <Button onClick={() => onNavigate('/components/button')} seed="start-button">{t("查看 Button")}</Button>
       </section>
       <section className="content-section getting-started-links">
@@ -867,7 +867,7 @@ function DesignStandardPage({ theme }: { theme: Theme }) {
       <Tabs.Content value="geometry" className="content-section design-standard"><GeometrySystem /></Tabs.Content>
       <Tabs.Content value="typography" className="content-section design-standard">
         <TypographySystem />
-        <PencilText as="p" className="standard-note" seed="standard-note">本地字体是 Yozai Light 的 706 字符子集；未覆盖字形由 HanziPen SC、Hannotate SC、Kaiti SC、STKaiti 等平台字体回退。</PencilText>
+        <PencilText as="p" className="standard-note" seed="standard-note">默认使用小赖字体，常用字与扩展字按需加载；未覆盖字形由后备字体显示。</PencilText>
       </Tabs.Content>
       <Tabs.Content value="icons" className="content-section design-standard"><IconSystem /></Tabs.Content>
       <Tabs.Content value="materials" className="content-section design-standard">

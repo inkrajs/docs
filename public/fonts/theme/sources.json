@@ -1,0 +1,588 @@
+[
+  {
+    "font": "Iansui",
+    "bytes": 9420560,
+    "license": "﻿Copyright 2022 The Iansui Project Authors (https://github.com/ButTaiwan/iansui).",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/iansui/Iansui-Regular.ttf"
+  },
+  {
+    "font": "Huninn",
+    "bytes": 4683972,
+    "license": "Copyright 2025 The Huninn Project Authors (https://github.com/justfont/Huninn)",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/huninn/Huninn-Regular.ttf"
+  },
+  {
+    "font": "KuaiLe",
+    "bytes": 1514968,
+    "license": "Copyright 2018 The ZCOOL KuaiLe Project Authors (https://github.com/googlefonts/zcool-kuaile)",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/zcoolkuaile/ZCOOLKuaiLe-Regular.ttf"
+  },
+  {
+    "font": "HuangYou",
+    "bytes": 8328684,
+    "license": "Copyright 2018 The ZCOOL QingKe HuangYou Project Authors (https://www.github.com/googlefonts/zcool-qingke-huangyou)",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/zcoolqingkehuangyou/ZCOOLQingKeHuangYou-Regular.ttf"
+  },
+  {
+    "font": "NotoSerif",
+    "bytes": 25125512,
+    "license": "Copyright 2012 Google Inc. All Rights Reserved.",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifsc/NotoSerifSC%5Bwght%5D.ttf"
+  },
+  {
+    "font": "NotoSans",
+    "bytes": 17772300,
+    "license": "Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf"
+  },
+  {
+    "font": "WenKai",
+    "bytes": 13110528,
+    "license": "Copyright 2024 The LXGW WenKai Project Authors (https://github.com/lxgw/LxgwWenkaiTC)",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lxgwwenkaitc/LXGWWenKaiTC-Regular.ttf"
+  },
+  {
+    "font": "Marker",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lxgwmarkergothic/LXGWMarkerGothic-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/main/ofl/lxgwmarkergothic/OFL.txt",
+    "bytes": 3187360
+  },
+  {
+    "font": "Xiaolai",
+    "source": "https://github.com/lxgw/kose-font/releases/download/v3.120/XiaolaiSC-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/lxgw/kose-font/master/OFL.txt",
+    "bytes": 22183944
+  },
+  {
+    "font": "Chenyu",
+    "source": "https://raw.githubusercontent.com/Chenyu-otf/chenyuluoyan_thin/main/ChenYuluoyan-2.0-Thin.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/Chenyu-otf/chenyuluoyan_thin/main/license.txt",
+    "bytes": 9522140
+  },
+  {
+    "font": "Caveat",
+    "family": "Caveat",
+    "version": "Version 2.000",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/caveat/Caveat%5Bwght%5D.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/caveat/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "0bdb6b660482d31531b3945849fba5916b3ef8695da7024a9e6b9ee3c4157988",
+    "woff2Sha256": "2c176850d02455f14bcc3b9f08aaa79cc471fedb1b107e4bda53e43776e22ead",
+    "bytes": 403648,
+    "woff2Bytes": 103584,
+    "glyphs": 753,
+    "license": "Copyright 2014 The Caveat Project Authors (https://github.com/googlefonts/caveat)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "verifiedSamples": {
+      "en": "Wander freely. Take your time.",
+      "fr": "Un été à rêver. Cœur léger, esprit libre."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "unicodeCodepoints": 753
+  },
+  {
+    "font": "PatrickHand",
+    "family": "Patrick Hand",
+    "version": "Version 1.003;PS 001.003;hotconv 1.0.70;makeotf.lib2.5.58329; ttfautohint (v0.94.20-1c74) -l 8 -r 50 -G 200 -x 14 -w \"gGD\" -c -f",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/patrickhand/PatrickHand-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/patrickhand/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "0f173b3e6cb6d1af25babf7f0057c5ac4ee11f9992b0469bb817e967ef4ad0fc",
+    "woff2Sha256": "3453e54e140302947a240227741393ce80e3a4ae9e317e9172ad258762f4a833",
+    "bytes": 214772,
+    "woff2Bytes": 62744,
+    "glyphs": 515,
+    "license": "Copyright (c) 2010-2012 Patrick Wagesreiter (mail@patrickwagesreiter.at)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "verifiedSamples": {
+      "en": "Wander freely. Take your time.",
+      "fr": "Un été à rêver. Cœur léger, esprit libre."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "unicodeCodepoints": 515
+  },
+  {
+    "font": "Kalam",
+    "family": "Kalam",
+    "version": "Version 2.001;PS 1.0;hotconv 1.0.79;makeotf.lib2.5.61930; ttfautohint (v1.3)",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/kalam/Kalam-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/kalam/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "57cecb63d4608019371954274ae1d8c397764debd5b19d4a33c1efa4dc923c0b",
+    "woff2Sha256": "c9bbbfa207952e153182f72c9a484418ec717effad2413d559c3678eb130faca",
+    "bytes": 427360,
+    "woff2Bytes": 137432,
+    "glyphs": 1026,
+    "license": "Copyright (c) 2014, Indian Type Foundry (info@indiantypefoundry.com).",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "verifiedSamples": {
+      "en": "Wander freely. Take your time.",
+      "fr": "Un été à rêver. Cœur léger, esprit libre."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "unicodeCodepoints": 1026
+  },
+  {
+    "font": "Handlee",
+    "family": "Handlee",
+    "version": "Version 1.001",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/handlee/Handlee-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/handlee/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "7b99c0f291b5d52e06c66498a1d0dd6dff45a32e32d13be089c60d2d8dc00445",
+    "woff2Sha256": "ec616ec21511661344743d1b7479af371f3e6e7e4d42ca9b5c5379eaaf8ca6e8",
+    "bytes": 39132,
+    "woff2Bytes": 17548,
+    "glyphs": 201,
+    "license": "Copyright (c) 2011, Joe Prince, Vissol Ltd. (http://www.vissol.co.uk/mavenpro/)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "verifiedSamples": {
+      "en": "Wander freely. Take your time.",
+      "fr": "Un été à rêver. Cœur léger, esprit libre."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "unicodeCodepoints": 201
+  },
+  {
+    "font": "Yomogi",
+    "family": "Yomogi",
+    "version": "Version 3.206",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/yomogi/Yomogi-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/yomogi/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "ec280f473a03187292905618f24fdb08a6dcbf8620b52637e3b589fe745259b9",
+    "woff2Sha256": "077876d1cfc3ae2c90bcd4bd4d70153ddc07766fd840ff60488b9763c801ad4e",
+    "bytes": 4045904,
+    "woff2Bytes": 1735404,
+    "glyphs": 8039,
+    "license": "Copyright 2020 The Yomogi Project Authors (https://github.com/satsuyako/YomogiFont), all rights reserved.",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "verifiedSamples": {
+      "en": "Wander freely. Take your time.",
+      "fr": "Un été à rêver. Cœur léger, esprit libre.",
+      "ja": "山と水、自由な旅。ゆっくり過ごす時間。"
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "unicodeCodepoints": 8039
+  },
+  {
+    "font": "Gaegu",
+    "family": "Gaegu",
+    "version": "Version 1.00",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/gaegu/Gaegu-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/gaegu/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "aa52c98336f7c62e2896fc8b12b56a75d5b476d88a2f104b0980f4f7ce0adfc3",
+    "woff2Sha256": "8314ea34638997811307b967e465af3f85139b8274f790580c3e56ad16e5fd00",
+    "bytes": 3165816,
+    "woff2Bytes": 290556,
+    "glyphs": 2593,
+    "license": "Copyright 2018 The Gaegu Project Authors",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "verifiedSamples": {
+      "en": "Wander freely. Take your time.",
+      "ko": "산과 물, 자유로운 여행. 천천히 머무는 시간."
+    },
+    "unicodeCodepoints": 2593
+  },
+  {
+    "font": "KleeOne",
+    "family": "Klee One",
+    "version": "Version 1.100",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/kleeone/KleeOne-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/kleeone/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "bf4063f030cc2ae6adf0a11424a1888e5c0eb4438f1f6d02f52294af868e9b3a",
+    "woff2Sha256": "396db4748a1e8a3f8c5604893368e6cdd27bc19c802bff859bc23d1c7e9ac8a8",
+    "bytes": 8724204,
+    "woff2Bytes": 2864632,
+    "license": "Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "unicodeCodepoints": 10178,
+    "verifiedSamples": {
+      "ja": "小さなひらめきゆっくり、今日を書こう。",
+      "en": "A little inspirationSlow down. Make room for ideas.",
+      "fr": "Écrire en libertéUn café, un rêve, un cœur léger."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "styleDescription": "Pencil or pen handwriting; suited to body text."
+  },
+  {
+    "font": "YujiSyuku",
+    "family": "Yuji Syuku",
+    "version": "Version 3.002",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/yujisyuku/YujiSyuku-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/yujisyuku/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "82728ebafc8c97391e2dab633414a806f344b8e4e2227d307179f07b548fca61",
+    "woff2Sha256": "d78a0c1de6110e95e96a55d5d1bfb329e22533e0b3ca61c2d8c50f5dfcb9e0ce",
+    "bytes": 8430348,
+    "woff2Bytes": 4067668,
+    "license": "Copyright 2021 The Yuji Project Authors (https://github.com/Kinutafontfactory/Yuji)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "unicodeCodepoints": 8013,
+    "verifiedSamples": {
+      "ja": "小さなひらめきゆっくり、今日を書こう。",
+      "en": "A little inspirationSlow down. Make room for ideas.",
+      "fr": "Écrire en libertéUn café, un rêve, un cœur léger."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "styleDescription": "Formal, approachable brush calligraphy."
+  },
+  {
+    "font": "YujiMai",
+    "family": "Yuji Mai",
+    "version": "Version 3.002",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/yujimai/YujiMai-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/yujimai/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "05d83b65204a5de6fc34c222057fc082f8c6e2e44c05a0d28f4189b3e54c54c2",
+    "woff2Sha256": "8196c14a9c38184f78d56bfa06a8fc2609793404b9186521caef5e528de0b270",
+    "bytes": 8496292,
+    "woff2Bytes": 4089912,
+    "license": "Copyright 2021 The Yuji Project Authors (https://github.com/Kinutafontfactory/Yuji)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "unicodeCodepoints": 8013,
+    "verifiedSamples": {
+      "ja": "小さなひらめきゆっくり、今日を書こう。",
+      "en": "A little inspirationSlow down. Make room for ideas.",
+      "fr": "Écrire en libertéUn café, un rêve, un cœur léger."
+    },
+    "verifiedFrenchCharacters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+    "styleDescription": "Expressive, flowing brush calligraphy."
+  },
+  {
+    "font": "HachiMaruPop",
+    "family": "Hachi Maru Pop",
+    "version": "Version 1.300",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/hachimarupop/HachiMaruPop-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/hachimarupop/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "78408910c8f1a2f174a279cbc1484b48b71780039eba3fe1be2bfcc5d4df3f98",
+    "woff2Sha256": "2b61835f8e544299d1ecfda4aa69560ec3accadcf6bb07a450e8b58fd72d2b7f",
+    "bytes": 4385624,
+    "woff2Bytes": 2103288,
+    "license": "Copyright 2020 The Hachi Maru Pop Project Authors (https://github.com/noriokanisawa/HachiMaruPop)",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "weight": 400,
+      "recalcTimestamp": false
+    },
+    "unicodeCodepoints": 7470,
+    "verifiedSamples": {
+      "ja": "小さなひらめきゆっくり、今日を書こう。",
+      "en": "A little inspirationSlow down. Make room for ideas.",
+      "fr": "Écrire en libertéUn café, un rêve, un cœur léger."
+    },
+    "styleDescription": "Retro rounded handwriting; intended for larger display sizes.",
+    "coverageNotes": "French sample strings are covered, but U+0178 LATIN CAPITAL LETTER Y WITH DIAERESIS is missing from the full French checklist; do not advertise complete French coverage."
+  },
+  {
+    "font": "NanumPen",
+    "file": "NanumPen.woff2",
+    "family": "Nanum Pen",
+    "style": "日常钢笔手写",
+    "version": "Version 1.10",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/nanumpenscript/NanumPenScript-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/nanumpenscript/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "6f0d1ab29c7894010dc88831fb7a0a51edb79136e450344183de5b1a8b52bd43",
+    "woff2Sha256": "7b980e463b30a4a3498c0dbdc44d827e6b20e701faa9a205af61e301e50b5575",
+    "licenseSha256": "eeacf16032901d0ed0456876ec77b8f0fda6b3fecec7d972f8543eb602e6c30f",
+    "bytes": 3201664,
+    "woff2Bytes": 615600,
+    "glyphs": 13751,
+    "unicodeCodepoints": 11742,
+    "license": "SIL Open Font License 1.1",
+    "copyright": "Copyright (c) 2010, NHN Corporation (http://www.nhncorp.com),",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "recalcTimestamp": false
+    },
+    "coverage": {
+      "ko": {
+        "characters": "작은 영감천천히 오늘을 기록해요.오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+        "missing": "éèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»",
+        "complete": false
+      }
+    },
+    "samples": {
+      "ko": {
+        "text": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "text": "A little inspiration Slow down. Make room for ideas.",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "text": "Écrire en liberté Un café, un rêve, un cœur léger.",
+        "missing": "Ééêœ",
+        "complete": false
+      }
+    },
+    "verifiedSamples": {
+      "ko": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+      "en": "A little inspiration Slow down. Make room for ideas."
+    }
+  },
+  {
+    "font": "NanumBrush",
+    "file": "NanumBrush.woff2",
+    "family": "Nanum Brush Script",
+    "style": "粗细变化毛笔手写",
+    "version": "Version 1.100;PS 1;hotconv 1.0.57;makeotf.lib2.0.21895",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/nanumbrushscript/NanumBrushScript-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/nanumbrushscript/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "27ceaf578c96f594cdf07fe0181b251790acbb746a164e45c1f6473f89911a31",
+    "woff2Sha256": "7fc834e74b483d38abf6717f7c0470e57c1d262d080d88e74c017e864ecdc684",
+    "licenseSha256": "eeacf16032901d0ed0456876ec77b8f0fda6b3fecec7d972f8543eb602e6c30f",
+    "bytes": 3564804,
+    "woff2Bytes": 595976,
+    "glyphs": 13799,
+    "unicodeCodepoints": 11789,
+    "license": "SIL Open Font License 1.1",
+    "copyright": "Copyright (c) 2010, NHN Corporation (http://www.nhncorp.com),",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "recalcTimestamp": false
+    },
+    "coverage": {
+      "ko": {
+        "characters": "작은 영감천천히 오늘을 기록해요.오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+        "missing": "éèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»",
+        "complete": false
+      }
+    },
+    "samples": {
+      "ko": {
+        "text": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "text": "A little inspiration Slow down. Make room for ideas.",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "text": "Écrire en liberté Un café, un rêve, un cœur léger.",
+        "missing": "Ééêœ",
+        "complete": false
+      }
+    },
+    "verifiedSamples": {
+      "ko": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+      "en": "A little inspiration Slow down. Make room for ideas."
+    }
+  },
+  {
+    "font": "HiMelody",
+    "file": "HiMelody.woff2",
+    "family": "Hi Melody",
+    "style": "轻快圆润手写",
+    "version": "Version 3.00",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/himelody/HiMelody-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/himelody/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "360d2c0a880918aa48328d1d9219f5390788d09a1c9353e12b471de018673ae6",
+    "woff2Sha256": "ec697cb8d35e785d94d4b9c87c2667be63c319510e8b7bfa6881daa7bdc3a7cb",
+    "licenseSha256": "39de3de5f1873f89bca4af37823ab22e28e88d0d8f7fe2f07e82e9e6e9bf7b70",
+    "bytes": 12623412,
+    "woff2Bytes": 878608,
+    "glyphs": 12103,
+    "unicodeCodepoints": 12102,
+    "license": "SIL Open Font License 1.1",
+    "copyright": "Copyright (c) YoonDesign Inc. All Rights Reserved.",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "recalcTimestamp": false
+    },
+    "coverage": {
+      "ko": {
+        "characters": "작은 영감천천히 오늘을 기록해요.오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+        "missing": "éèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ",
+        "complete": false
+      }
+    },
+    "samples": {
+      "ko": {
+        "text": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "text": "A little inspiration Slow down. Make room for ideas.",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "text": "Écrire en liberté Un café, un rêve, un cœur léger.",
+        "missing": "Ééêœ",
+        "complete": false
+      }
+    },
+    "verifiedSamples": {
+      "ko": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+      "en": "A little inspiration Slow down. Make room for ideas."
+    }
+  },
+  {
+    "font": "SingleDay",
+    "file": "SingleDay.woff2",
+    "family": "Single Day",
+    "style": "活泼随笔手写",
+    "version": "Version 1.00",
+    "source": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/singleday/SingleDay-Regular.ttf",
+    "licenseSource": "https://raw.githubusercontent.com/google/fonts/a4c0b21f839d7ac65a7d8b49eb81bddd110774a3/ofl/singleday/OFL.txt",
+    "revision": "a4c0b21f839d7ac65a7d8b49eb81bddd110774a3",
+    "sourceSha256": "716ff67a4b0675b35c26d60a4bb83173f7d153ab754474ed36c3369593ca1ca8",
+    "woff2Sha256": "36a8449a9d026ae1cf818d0a4dacdad526332232267d5caef935951733e9eb9f",
+    "licenseSha256": "397e83b05703a4240be51e2c3a2be1d0d7693d7a2d8b1ff367c26a2b9afc013e",
+    "bytes": 816524,
+    "woff2Bytes": 92984,
+    "glyphs": 12127,
+    "unicodeCodepoints": 11465,
+    "license": "SIL Open Font License 1.1",
+    "copyright": "Copyright 2015 DXKorea Inc. All rights reserved.",
+    "conversion": {
+      "tool": "fontTools 4.60.2",
+      "flavor": "woff2",
+      "subset": false,
+      "recalcTimestamp": false
+    },
+    "coverage": {
+      "ko": {
+        "characters": "작은 영감천천히 오늘을 기록해요.오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzéèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»’",
+        "missing": "éèêëàâîïôùûüÿçœŒæÆÉÈÊËÀÂÎÏÔÙÛÜŸÇ«»",
+        "complete": false
+      }
+    },
+    "samples": {
+      "ko": {
+        "text": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+        "missing": "",
+        "complete": true
+      },
+      "en": {
+        "text": "A little inspiration Slow down. Make room for ideas.",
+        "missing": "",
+        "complete": true
+      },
+      "fr": {
+        "text": "Écrire en liberté Un café, un rêve, un cœur léger.",
+        "missing": "Ééêœ",
+        "complete": false
+      }
+    },
+    "verifiedSamples": {
+      "ko": "작은 영감 / 천천히 오늘을 기록해요. / 오늘의 기록",
+      "en": "A little inspiration Slow down. Make room for ideas."
+    }
+  }
+]
