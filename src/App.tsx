@@ -427,7 +427,7 @@ function HomeLanguageMenu() {
   return <DropdownMenu.Root>
     <Tooltip.Provider><Tooltip.Root>
       <Tooltip.Trigger asChild><DropdownMenu.Trigger asChild>
-        <Button className="header-language" size="icon" variant="outline" aria-label={label}>
+        <Button className="header-language" size="icon" variant="ghost" aria-label={label}>
           <DocsIcon data={languagesIcon} seed="header-language" size={30} />
         </Button>
       </DropdownMenu.Trigger></Tooltip.Trigger>
@@ -458,17 +458,15 @@ function AppHeader({
 }) {
   const { t } = useLocale();
   const docsActive = currentPath !== '/' && currentPath !== '/blog' && currentPath !== '/ecosystem';
-  const home = currentPath === '/';
-  const ActionGroup = docsActive ? 'div' : ButtonGroup;
   const links = [{ path: '/getting-started', label: '文档' }, { path: '/blog', label: '博客' }, { path: '/ecosystem', label: '生态' }] as const;
   const brand = <a className="brand" href="/" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return; event.preventDefault(); onNavigate('/'); }}>
     <BrandMark />
     <PencilText className="brand-word" seed="inkra-brand">Inkra</PencilText>
   </a>;
   const brandSlot = <div className="header-brand">
-        <button aria-label={t("打开文档目录")} className="icon-button menu-button" data-tooltip={t("打开目录")} onClick={onOpenMenu} ref={menuButtonRef} type="button">
+        {docsActive && <button aria-label={t("打开文档目录")} className="icon-button menu-button" data-tooltip={t("打开目录")} onClick={onOpenMenu} ref={menuButtonRef} type="button">
           <DocsIcon data={menuIcon} seed="menu-icon" size={30} />
-        </button>
+        </button>}
         {brand}
   </div>;
   const navigation = <>
@@ -486,25 +484,16 @@ function AppHeader({
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-search-divider" />
         <SearchBox onNavigate={onNavigate} />
         <PencilLine className="header-action-divider" orientation="vertical" seed="header-actions-divider" />
-        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} triggerVariant={docsActive ? 'ghost' : 'outline'} renderTrigger={trigger =>
-          <ActionGroup className="header-action-group" role="group" aria-label={t('页面操作')}>
-            {docsActive && <MobileSearch onNavigate={onNavigate} />}
-            {home && <HomeLanguageMenu />}{trigger}<GitHubLink variant={docsActive ? 'ghost' : 'outline'} />
-          </ActionGroup>} />
+        <ThemeCustomizer theme={theme} onThemeChange={onThemeChange} triggerVariant="ghost" renderTrigger={trigger =>
+          <div className="header-action-group" role="group" aria-label={t('页面操作')}>
+            <MobileSearch onNavigate={onNavigate} />
+            {!docsActive && <HomeLanguageMenu />}
+            {trigger}<GitHubLink variant="ghost" />
+          </div>} />
   </>;
-  if (docsActive) return <Layout.Header className="app-header app-header--docs" padding={5} sidebar={brandSlot} sidebarDivided divided>
+  return <Layout.Header className={`app-header app-header--shared${docsActive ? ' app-header--docs' : ''}`} padding={5} sidebar={brandSlot} sidebarDivided divided>
     <div className="header-inner">{navigation}</div>
   </Layout.Header>;
-  return (
-    <header className="app-header">
-      <div className="header-inner">
-        {brand}
-        <PencilLine className="header-brand-divider header-action-divider" orientation="vertical" seed="header-brand-divider" />
-        {navigation}
-      </div>
-      <PencilLine className="header-divider" seed="header-divider" roughness={0.7} />
-    </header>
-  );
 }
 
 function MobileDrawer({
@@ -887,6 +876,18 @@ function DesignStandardPage({ theme }: { theme: Theme }) {
   );
 }
 
+function DocsNavigationPanel({ width, onWidthChange, children }: {
+  width: number;
+  onWidthChange: (width: number) => void;
+  children: ReactNode;
+}) {
+  // Restore on mount, but keep defaultSize stable while a drag updates the header.
+  const [initialWidth] = useState(width);
+  return <Resizable.Panel id="docs-navigation" className="docs-sidebar-panel" defaultSize={initialWidth} minSize={200} maxSize={360} groupResizeBehavior="preserve-pixel-size" style={{ overflow: 'visible' }} onResize={size => {
+    if (window.matchMedia('(min-width: 769px)').matches) onWidthChange(size.inPixels);
+  }}>{children}</Resizable.Panel>;
+}
+
 export function App() {
   const initial = legacyLocation();
   const [theme, setTheme] = useState<Theme>(readInitialTheme);
@@ -897,7 +898,6 @@ export function App() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const cancelAnchorScroll = useRef<() => void>(() => {});
   const isDocs = route !== '/' && route !== '/blog' && route !== '/ecosystem';
-  const Shell = isDocs ? Layout.Root : 'div';
   const { t } = useLocale();
 
   useEffect(() => {
@@ -981,15 +981,13 @@ export function App() {
   return (
     <div className="app-shell">
       <PencilSurface aria-hidden="true" className="page-paper" seed="docs-viewport-paper" variant="full" />
-      <Shell className={isDocs ? 'docs-shell' : undefined} {...(isDocs ? { collapseAt: 'never' as const, sidebarWidth } : {})}>
+      <Layout.Root className={`site-shell${isDocs ? ' docs-shell' : ''}`} collapseAt="never" sidebarWidth={sidebarWidth}>
       <AppHeader currentPath={route} menuButtonRef={menuButtonRef} onNavigate={navigate} onOpenMenu={() => setDrawerOpen(true)} theme={theme} onThemeChange={setTheme} />
       {isDocs ? <Layout.Body className="docs-layout">
         <Resizable.Root className="docs-resizable" style={{ overflow: 'visible' }}>
-        <Resizable.Panel id="docs-navigation" className="docs-sidebar-panel" defaultSize={240} minSize={200} maxSize={360} groupResizeBehavior="preserve-pixel-size" style={{ overflow: 'visible' }} onResize={size => {
-          if (window.matchMedia('(min-width: 769px)').matches) setSidebarWidth(size.inPixels);
-        }}>
+        <DocsNavigationPanel width={sidebarWidth} onWidthChange={setSidebarWidth}>
         <Layout.Sidebar className="desktop-sidebar" width="100%" padding={0} divided><SideNavigation currentPath={route} onNavigate={navigate} /><SidebarPreferences theme={theme} onThemeChange={setTheme} /></Layout.Sidebar>
-        </Resizable.Panel>
+        </DocsNavigationPanel>
         <Resizable.Handle className="docs-sidebar-resize" />
         <Resizable.Panel id="docs-content" className="docs-content-panel" minSize="40%" style={{ overflow: 'visible' }}>
         <Layout.Content as="main" id="main-content" padding={0}>
@@ -1000,7 +998,7 @@ export function App() {
       </Layout.Body> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : <main id="main-content" className="site-section" aria-label={t(route === '/blog' ? '博客' : '生态')}>
         <h1 className="visually-hidden">{t(route === '/blog' ? '博客' : '生态')}</h1>
       </main>}
-      </Shell>
+      </Layout.Root>
       {isDocs && <MobileDrawer currentPath={route} onClose={closeDrawer} onNavigate={navigate} onThemeChange={setTheme} open={drawerOpen} theme={theme} />}
     </div>
   );
