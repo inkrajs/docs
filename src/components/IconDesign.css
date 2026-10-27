@@ -1,4 +1,10 @@
 .icon-design { display: grid; gap: 16px; min-width: 0; }
+.icon-design__variants { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-block: 16px; }
+.icon-design__variant { display: grid; gap: 16px; justify-items: center; margin: 0; min-width: 0; }
+.icon-design__variant-icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+@media (max-width: 480px) {
+  .icon-design__variant-icons { flex-direction: column; }
+}
 .icon-design__principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .icon-design__principles > div, .icon-design__guidance, .icon-design__detail { display: grid; gap: 12px; align-content: start; min-width: 0; }
 .icon-design__principles p, .icon-design__guidance p, .icon-design__detail p { color: var(--inkra-ink-muted); }
