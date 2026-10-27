@@ -3,6 +3,7 @@ import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
 import { PencilText, useLocale } from '../i18n';
 import { DocsIcon } from './DocsIcon';
 import { IconDesign } from './IconDesign';
+import { FontGallery } from './FontGallery';
 import './TypographySystem.css';
 
 const textRules = [
@@ -25,14 +26,7 @@ const iconRules = [
 export function TypographySystem() {
   const { t } = useLocale();
   return <div className="typography-system">
-    <section aria-labelledby="font-family-title">
-      <PencilText as="h2" id="font-family-title">字体</PencilText>
-      <div className="typography-system__families">
-        <div><PencilText as="h3">界面文字</PencilText><PencilText className="typography-system__writing">山水有相逢</PencilText><PencilText>Inkra · Aa Bb Cc</PencilText></div>
-        <div><PencilText as="h3">代码与数值</PencilText><code className="typography-system__numbers">0123456789</code><code>const color = '#4b96aa';</code></div>
-      </div>
-      <PencilText as="p" className="typography-system__note">界面使用手写字体；代码、色值和对齐数值使用等宽字体。数字表格不要用比例字宽制造参差。</PencilText>
-    </section>
+    <FontGallery />
     <section aria-labelledby="typography-title">
       <PencilText as="h2" id="typography-title">字号</PencilText>
       <div className="typography-system__rules">
@@ -41,7 +35,7 @@ export function TypographySystem() {
             <PencilText>{rule.role}</PencilText>
           </div>
           <div className="typography-rule__details">
-            <span className="typography-rule__measure">{rule.size}px · {t('行高')} {({ tight: 1.2, ui: 1.45, body: 1.6 })[rule.line]}</span>
+            <PencilText className="typography-rule__measure">{`${rule.size}px · ${t('行高')} ${({ tight: 1.2, ui: 1.45, body: 1.6 })[rule.line]}`}</PencilText>
             <PencilText as="p">{rule.usage}</PencilText>
           </div>
         </div>)}
@@ -52,7 +46,7 @@ export function TypographySystem() {
       <PencilText as="h2" id="line-height-title">行高</PencilText>
       <div className="typography-system__line-examples">
         {([{ label: '标题', size: 24, line: 1.2 }, { label: '控件', size: 15, line: 1.45 }, { label: '正文', size: 15, line: 1.6 }]).map(item => <div key={item.label}>
-          <PencilText>{item.label}</PencilText><span className="typography-rule__measure">{item.size}px / {Math.round(item.size * item.line * 100) / 100}px</span>
+          <PencilText>{item.label}</PencilText><PencilText className="typography-rule__measure">{`${item.size}px / ${Math.round(item.size * item.line * 100) / 100}px`}</PencilText>
           <PencilText as="p" style={{ fontSize: item.size, lineHeight: item.line }}>{t('文字之间留有呼吸。') + '\n' + t('内容之间保持联系。')}</PencilText>
         </div>)}
       </div>
@@ -90,7 +84,7 @@ export function IconSystem() {
           </div>
           <div className="typography-rule__details">
             <PencilText>{rule.role}</PencilText>
-            <span className="typography-rule__measure">{t('图标')} {rule.size}px · {t('文字')} {rule.text}px · {t('按钮')} {rule.button}px</span>
+            <PencilText className="typography-rule__measure">{`${t('图标')} ${rule.size}px · ${t('文字')} ${rule.text}px · ${t('按钮')} ${rule.button}px`}</PencilText>
             <PencilText as="p">{rule.usage}</PencilText>
           </div>
         </div>)}
@@ -100,7 +94,7 @@ export function IconSystem() {
       <div className="typography-system__button-pairs">
         {(['xs', 'sm', 'md', 'lg'] as const).map(size => <div key={size}>
           <Button size={size} disabled startIcon={<DocsIcon data={plusIcon} size={20} seed={`type-button-${size}`} />}>{t('新建笔记')}</Button>
-          <span className="typography-rule__measure">{({ xs: 12, sm: 13, md: 15, lg: 17 })[size]}px / {({ xs: 14, sm: 16, md: 20, lg: 24 })[size]}px</span>
+          <PencilText className="typography-rule__measure">{`${({ xs: 12, sm: 13, md: 15, lg: 17 })[size]}px / ${({ xs: 14, sm: 16, md: 20, lg: 24 })[size]}px`}</PencilText>
         </div>)}
       </div>
     </section>

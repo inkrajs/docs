@@ -17,6 +17,7 @@ import { SelectExamples } from './SelectExamples';
 import { FormInputExamples } from './InputExamples';
 import { InputNumberExamples } from './InputNumberExamples';
 import { SliderExamples } from './SliderExamples';
+import { SwitchCircularExamples } from './SwitchCircularExamples';
 import { IconExamples } from './IconExamples';
 import { PopoverExamples } from './PopoverExamples';
 import { OverlayExamples } from './OverlayExamples';
@@ -154,6 +155,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
         <output className="component-demo-status" aria-live="polite">{status}</output>
       </form>
     </ComponentPlayground>
+    {kind === 'switch' && <SwitchCircularExamples />}
     <ComponentExample id="foundation-pages-native-defaults" title={t('原生默认值')} code={`<form>
   ${choice ? `<RadioGroup name="visibility" defaultValue="private" label="${t('可见范围')}">
     <RadioGroupItem value="private" label="${t('仅自己')}" />
@@ -244,6 +246,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   hotkey: [['Hotkey.value', 'HotkeyValue; key, optional code and modifiers'], ['Hotkey.platform / separator / size', 'auto | mac | windows / ReactNode / sm | md | lg'], ['HotkeyInput.value / defaultValue', 'HotkeyValue | null; controlled / uncontrolled'], ['HotkeyInput.onValueChange', "(value, details: { reason: 'record' | 'clear'; conflict? }) => void"], ['HotkeyInput.platform / size', 'auto | mac | windows / sm | md | lg'], ['HotkeyInput.clearable / clearButtonLabel', 'boolean (default true) / string'], ['HotkeyInput.recordingLabel', 'string; default "Press a shortcut..."'], ['HotkeyInput.blurOnCapture', 'boolean (default true)'], ['HotkeyInput.validateHotkey / onConflict', 'validation callback / conflict callback'], ['HotkeyInput.conflict / conflictMessage', 'boolean | string / string'], ['HotkeyInput.onCancel', '() => void; Escape cancels recording'], ['HotkeyInput.disabled / readOnly / required / invalid', 'boolean; integrates with Field'], ['HotkeyInput.placeholder / classNames', 'string / internal slot classes'], ['HotkeyInput.ref', 'HTMLInputElement']],
   slider: [
     ['variant', 'standard (default) | inset; thin track or wide enclosing track'],
+    ['thumbAlignment', 'edge (default) | contain; center reaches the track ends or stays inset'],
     ['value / defaultValue', 'number[]; one thumb or multiple range thumbs'],
     ['onValueChange / onValueCommit', '(value: number[]) => void; live / committed values'],
     ['min / max / step', 'number; defaults 0 / 100 / 1'],
@@ -255,6 +258,15 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
     ['aria-label / aria-labelledby / aria-describedby', 'shared accessible name / description'],
     ['getValueLabel', '(value: number, index: number) => string; formatted aria-valuetext'],
     ['name / form / ref', 'form field name / form id / HTMLSpanElement'],
+    ['CircularSlider.value / defaultValue', 'number; controlled / uncontrolled scalar value'],
+    ['CircularSlider.onValueChange / onValueCommit', '(value: number) => void; live updates / completed interaction'],
+    ['CircularSlider.min / max / step', 'number; defaults 0 / 100 / 1'],
+    ['CircularSlider.startAngle / sweepAngle / clockwise', 'number / number / boolean; defaults 225 / 270 / true; 0° is top, 90° is right'],
+    ['CircularSlider.size / diameter', 'sm | md | lg / number; sizes 128 / 160 / 192 px'],
+    ['CircularSlider.showValue / getValueLabel', 'boolean (default true) / (value: number) => string'],
+    ['CircularSlider.centerIcon / centerContent', 'ReactNode / ReactNode | ((value: number) => ReactNode)'],
+    ['CircularSlider.disabled / readOnly', 'boolean; readOnly remains focusable'],
+    ['CircularSlider.name / form / ref', 'form field / external form / HTMLDivElement; uncontrolled reset restores initial value'],
   ],
   calendar: [['appearance', 'itinerary (default) | picker'], ['displayRange', '{ from: Date; to: Date }; visible itinerary dates'], ['onEventSelect', '(event: CalendarEvent) => void; independent of date selection'], ['renderDayAccessory', '(date: Date) => ReactNode'], ['mode', 'single | multiple | range'], ['selected / onSelect', 'Date | Date[] | DateRange (by mode)'], ['month / defaultMonth / onMonthChange', 'Date / Date / (month: Date) => void'], ['events', '{ date; label; id?; color?; description? }[]'], ['eventIndicator', 'count (default) | dot | none; picker only'], ['disabled / locale / weekStartsOn / numberOfMonths', 'DayPickerProps'], ['showOutsideDays / showWeekNumber / fixedWeeks', 'boolean; defaults: true / false / false'], ['components / labels / formatters', 'DayPickerProps']],
   'day-agenda': [['date', 'YYYY-MM-DD (local date)'], ['events', 'AgendaEvent[]'], ['event.startMinute / endMinute', 'minutes relative to local midnight; optional'], ['event.id / title / description / kind', 'string / string / ReactNode / activity | travel | stay'], ['event.color / icon', 'string / ReactNode'], ['onPreviousDay / onNextDay', '() => void; absent endpoint disabled'], ['navigationLabels', '{ previous: string; next: string }'], ['selectedEvent / onEventSelect', 'string / (event: AgendaEvent) => void'], ['showOverview', 'boolean (default true); timeline grid visibility'], ['locale / timeZoneLabel', 'string'], ['hourCycle', 'h23 (default) | h12; locale-aware, preserves +1'], ['density', 'comfortable (default) | compact; shared tick/card mapping'], ['showDescriptions / divided', 'boolean; default true'], ['disabled / event.disabled', 'boolean; default false; disables event selection'], ['emptyLabel / untimedLabel', 'string']],
@@ -367,7 +379,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   ],
   checkbox: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['onChange', 'ChangeEventHandler<HTMLInputElement>'], ['indeterminate', 'boolean'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['name / value / form', 'native input props'], ['ref', 'HTMLInputElement']],
   'radio-group': [['value / defaultValue', 'string'], ['onValueChange', '(value: string) => void'], ['variant', 'radio | segmented'], ['orientation', 'horizontal | vertical'], ['RadioGroupItem.value / label / description / icon', 'string / ReactNode / ReactNode / ReactNode'], ['RadioGroupItem.onChange', 'ChangeEventHandler<HTMLInputElement>'], ['name / form', 'string'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['ref / RadioGroupItem.ref', 'HTMLFieldSetElement / HTMLInputElement']],
-  switch: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['onChange', 'ChangeEventHandler<HTMLInputElement>'], ['label / description', 'ReactNode'], ['disabled / required', 'boolean'], ['name / value / form', 'native input props'], ['ref', 'HTMLInputElement']],
+  switch: [['checked / defaultChecked', 'boolean'], ['onCheckedChange', '(checked: boolean) => void'], ['onChange', 'ChangeEventHandler<HTMLInputElement>'], ['variant', 'standard | circular'], ['diameter', 'number'], ['centerIcon / centerContent', 'ReactNode / ReactNode | ((checked: boolean) => ReactNode)'], ['label / description', 'ReactNode'], ['disabled / readOnly / required', 'boolean'], ['name / value / form', 'native input props'], ['ref', 'HTMLInputElement']],
   'audio-player': [
     ['src', 'string'], ['preload / autoPlay / crossOrigin', 'none | metadata | auto / boolean / native audio crossOrigin'],
     ['volume / defaultVolume', 'number (0..1)'], ['muted / defaultMuted', 'boolean'],

@@ -16,6 +16,23 @@ async function changed(locator, before) {
   }
   assert.fail('rendering parameters must change actual canvas pixels');
 }
+async function verifyCircularControls(dialog, keys) {
+  const controls = dialog.locator('[data-render-control]');
+  assert.deepEqual(await controls.evaluateAll(nodes => nodes.map(node => node.dataset.renderControl)), keys);
+  for (const control of await controls.all()) {
+    const slider = control.getByRole('slider');
+    assert.equal(await slider.locator('.inkra-circular-slider__center-icon .inkra-pencil-icon').count(), 1, 'each parameter has its own center icon');
+    assert.equal(await slider.locator('.inkra-circular-slider__value').textContent(), Number(await slider.getAttribute('aria-valuenow')).toFixed(2), 'each circular slider displays its current value');
+    assert(await slider.locator('.inkra-circular-slider__value').evaluate(node => {
+      const style = getComputedStyle(node);
+      const context = document.createElement('canvas').getContext('2d');
+      context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      return !node.classList.contains('inkra-pencil-text--ellipsis') && context.measureText(node.textContent).width <= node.clientWidth + .5;
+    }), 'numeric values fit the center without painted ellipsis');
+  }
+  assert(await dialog.locator('.theme-customizer__controls').evaluate(node => node.scrollWidth <= node.clientWidth + 1), 'circular controls fit without horizontal overflow');
+  assert(await dialog.getByRole('tabpanel').evaluate(node => node.scrollWidth <= node.clientWidth + 1), 'parameter panel has no horizontal overflow');
+}
 try {
   for (const [width, locale] of [[1305, 'zh-CN'], [800, 'en'], [390, 'zh-CN'], [320, 'en']]) {
     const context = await browser.newContext({ viewport: { width, height: 954 }, reducedMotion: 'reduce' });
@@ -33,8 +50,8 @@ try {
     const dialog = page.getByRole('dialog');
     await dialog.waitFor();
     const expectedDefaults = {
-      '--inkra-letter-variation': 0.2, '--inkra-letter-breaks': 0.5, '--inkra-letter-outline': 0.9,
-      '--inkra-letter-fill': 0.9, '--inkra-letter-grain': 0.6, '--inkra-stroke-width': 2,
+      '--inkra-letter-variation': 0.1, '--inkra-letter-breaks': 0.31, '--inkra-letter-outline': 0.44,
+      '--inkra-letter-fill': 0.85, '--inkra-letter-grain': 0.4, '--inkra-stroke-width': 2,
       '--inkra-stroke-amplitude': 1.5, '--inkra-wash-strength': 0.8, '--inkra-wash-spacing': 2,
       '--inkra-wash-roughness': 3, '--inkra-wash-angle': -45,
     };
@@ -48,7 +65,8 @@ try {
       const panel = node.parentElement.getBoundingClientRect();
       const frame = node.querySelector('.inkra-radio-group__frame').getBoundingClientRect();
       const legend = node.querySelector('legend').getBoundingClientRect();
-      return { panel: panel.width, frame: frame.width, top: legend.top - panel.top,
+      const panelStyle = getComputedStyle(node.parentElement);
+      return { panel: node.parentElement.clientWidth - parseFloat(panelStyle.paddingLeft) - parseFloat(panelStyle.paddingRight), frame: frame.width, top: legend.top - panel.top,
         widths: [...node.querySelectorAll('.inkra-radio-group__item')].map(item => item.getBoundingClientRect().width) };
     });
     assert(Math.abs(modeLayout.panel - modeLayout.frame) < 1, 'mode fills the panel');
@@ -72,7 +90,7 @@ try {
     const savedBefore = await page.evaluate(() => ({
       tokens: document.documentElement.getAttribute('style'),
       theme: document.documentElement.dataset.theme,
-      settings: localStorage.getItem('inkra-docs-custom-theme-v1'),
+      settings: localStorage.getItem('inkra-docs-custom-theme-v2'),
     }));
     const globalText = page.locator('.page-heading h1 canvas').first();
     const globalTextBefore = await globalText.evaluate(pixelHash);
@@ -107,10 +125,12 @@ try {
     assert.deepEqual(await page.evaluate(() => ({ paints: window.backgroundPaints, invalidations: window.backgroundInvalidations })), { paints: 0, invalidations: 0 }, `preview theme changes must not redraw or hide background canvases: ${await page.evaluate(() => JSON.stringify(window.backgroundPaintTargets))}`);
     assert.equal(await dialog.locator('.theme-customizer__preview-card').getAttribute('data-inkra-theme'), 'dark');
     await dialog.getByRole('tab', { name: /^(文字|Text)$/ }).click();
+    await verifyCircularControls(dialog, ['variation', 'breaks', 'outline', 'fill', 'grain']);
     const textBefore = await letter.evaluate(pixelHash);
     await dialog.getByRole('slider', { name: /填色浓度|Fill intensity/ }).press('End');
     await changed(letter, textBefore);
     await dialog.getByRole('tab', { name: /^(线条|Lines)$/ }).click();
+    await verifyCircularControls(dialog, ['width', 'roughness']);
     const cardInk = dialog.locator('.theme-customizer__preview-card > .inkra-pencil-surface__ink');
     const iconInk = dialog.locator('.theme-customizer__preview-card .inkra-pencil-icon');
     const lineBefore = await line.evaluate(pixelHash);
@@ -140,6 +160,7 @@ try {
     await changed(surface, thickButton);
     await changed(iconInk, thickIcon);
     await dialog.getByRole('tab', { name: /^(涂色|Fill)$/ }).click();
+    await verifyCircularControls(dialog, ['washStrength', 'washSpacing', 'washRoughness', 'washAngle']);
     const noWashCard = await cardInk.evaluate(pixelHash);
     for (const name of [/涂色浓度|Fill strength/, /笔触间距|Stroke spacing/, /涂色起伏|Fill roughness/, /涂色角度|Fill angle/]) {
       const before = await surface.evaluate(pixelHash);
@@ -150,7 +171,7 @@ try {
     assert.deepEqual(await page.evaluate(() => ({
       tokens: document.documentElement.getAttribute('style'),
       theme: document.documentElement.dataset.theme,
-      settings: localStorage.getItem('inkra-docs-custom-theme-v1'),
+      settings: localStorage.getItem('inkra-docs-custom-theme-v2'),
     })), savedBefore, 'draft changes never affect the global theme or storage');
     assert.equal(await globalText.evaluate(pixelHash), globalTextBefore, 'page lettering stays unchanged before save');
     await page.screenshot({ path: `/tmp/inkra-customizer-${width}.png` });
@@ -180,15 +201,15 @@ try {
     await dialog.getByRole('radio', { name: /^(深色|Dark)$/ }).check();
     await dialog.getByRole('button', { name: /^(保存|Save)$/ }).click();
     await dialog.waitFor({ state: 'hidden' });
-    await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width') === '3' && document.documentElement.dataset.theme === 'dark');
+    await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width') === '3px' && document.documentElement.dataset.theme === 'dark');
     await changed(globalText, globalTextBefore);
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('inkra-docs-custom-theme-v1')).render.width), 3);
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('inkra-docs-custom-theme-v2')).render.width), 3);
     await page.reload();
     await trigger.click();
     await dialog.getByRole('tab', { name: /^(线条|Lines)$/ }).click();
     assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '3');
     await dialog.getByRole('button', { name: /^(恢复默认|Reset)$/ }).click();
-    assert.equal(await page.evaluate(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width')), '3', 'Reset only changes the draft');
+    assert.equal(await page.evaluate(() => document.documentElement.style.getPropertyValue('--inkra-stroke-width')), '3px', 'Reset only changes the draft');
     assert.equal(await dialog.getByRole('slider', { name: /线条粗细|Stroke weight/ }).getAttribute('aria-valuenow'), '2');
     await dialog.getByRole('button', { name: /^(取消|Cancel)$/ }).click();
     await dialog.waitFor({ state: 'hidden' });
@@ -219,7 +240,7 @@ try {
   }
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   await context.addInitScript(() => {
-    localStorage.setItem('inkra-docs-custom-theme-v1', '{broken');
+    localStorage.setItem('inkra-docs-custom-theme-v2', '{broken');
     Storage.prototype.setItem = () => { throw new Error('Storage blocked'); };
   });
   const page = await context.newPage();

@@ -29,6 +29,7 @@ for (const [source, destination] of [
   ['node_modules/@inkra/react/LICENSE', 'inkra-LICENSE.txt'],
   ['node_modules/@inkra/react/THIRD_PARTY_NOTICES.md', 'inkra-THIRD_PARTY_NOTICES.md'],
   ['node_modules/@inkra/react/Yozai-OFL.txt', 'Yozai-OFL.txt'],
+  ['node_modules/@inkra/react/Xiaolai-OFL.txt', 'Xiaolai-OFL.txt'],
 ]) {
   await copyFile(new URL('../' + source, import.meta.url), new URL(destination, notices));
 }

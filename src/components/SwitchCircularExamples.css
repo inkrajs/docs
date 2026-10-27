@@ -1,0 +1,5 @@
+.switch-circular-examples__row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 16px 24px; }
+.switch-circular-examples__row .inkra-switch--circular .inkra-selection-control__copy { align-self: start; margin-top: -22px; padding-block: 0; }
+.switch-circular-examples__row .inkra-switch--circular .inkra-selection-control__label { font-size: var(--inkra-text-sm); line-height: var(--inkra-line-ui); }
+.switch-circular-examples__parameter { display: flex; flex-direction: column; align-items: center; width: 120px; min-width: 0; }
+.switch-circular-examples__label { position: relative; margin-top: -20px; max-width: 100%; font-size: var(--inkra-text-sm); line-height: var(--inkra-line-ui); text-align: center; }

@@ -512,6 +512,7 @@ const english: Record<string, string> = {
   '标题': 'Heading', '控件': 'Control', '文字之间留有呼吸。': 'Give each line room.', '内容之间保持联系。': 'Keep related content close.',
   '手写字重固定为 400；强调依靠字号和前景颜色，不叠加伪粗体破坏笔触。': 'Handwriting stays at weight 400. Use size and foreground color for emphasis, not synthetic bold strokes.',
   '圆角示例使用真实彩铅轮廓；直角保留笔压与颗粒，不使用规则实线替代。': 'Radius samples use real pencil contours, including pressure and grain at square corners, not solid CSS borders.',
+  '丁香': 'Dingxiang · Lilac', '赭橙': 'Zhecheng · Ochre orange', '藤黄': 'Tenghuang · Gamboge',
   '玄墨': 'Xuanmo', '朱砂': 'Zhusha', '松青': 'Songqing', '宣纸': 'Xuan paper', '复制颜色': 'Copy color', '已复制': 'Copied',
   '色值': 'Color values', '主题色可用于文字与铺色，前景随浅深纸面配对。': 'Use accent colors for text or pencil shading, paired with light or dark paper.',
   '颜色分类': 'Color categories', '主题色': 'Accent colors', '字体色': 'Text colors', '背景色': 'Background colors',

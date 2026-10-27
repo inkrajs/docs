@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ColorSwatch, Field, Input, PencilLine, RadioGroup, RadioGroupItem, Select, Slider, Tabs } from '@inkra/react';
+import { Button, ColorSwatch, Field, Input, PencilLine, RadioGroup, RadioGroupItem, Select, Slider, Switch, Tabs } from '@inkra/react';
 import { ThemeProvider } from '@inkra/react/theme';
 import type { InkraTheme, InkraThemeTokens } from '@inkra/react/theme';
 import { __iconData as checkIcon } from 'lucide-react/dist/esm/icons/check.mjs';
@@ -27,11 +27,13 @@ export function ThemeExamples() {
   const [strokeWidth, setStrokeWidth] = useState(1.5);
   const [saved, setSaved] = useState(false);
   const [render, setRender] = useState(defaultThemeRender);
+  const [textEffect, setTextEffect] = useState(true);
   const resolved = useResolvedTheme(theme);
   const scale = themeScales.find(item => item.id === palette);
   const tokens: InkraThemeTokens = {
     ...(scale ? paletteStyle(scale, resolved) : {}),
     ...themeRenderTokens(render),
+    '--inkra-letter-effect': textEffect ? 1 : 0,
     '--inkra-icon-stroke-width': `${strokeWidth}px`,
   };
   const code = [
@@ -66,7 +68,8 @@ export function ThemeExamples() {
             </div>
           </Tabs.Content>
           {(['text', 'lines', 'wash'] as const).map(group => <Tabs.Content key={group} value={group} className="theme-examples__panel">
-            {themeRenderControls.filter(control => control.group === group).map(control => <div className="theme-examples__control" key={control.key}>
+            {group === 'text' && <Switch label={t('彩铅效果', 'Pencil effect')} checked={textEffect} onCheckedChange={setTextEffect} />}
+            {themeRenderControls.filter(control => control.group === group && (group !== 'text' || textEffect)).map(control => <div className="theme-examples__control" key={control.key}>
               <div><PencilText>{t(control.zh, control.en)}</PencilText><output>{render[control.key].toFixed(control.step < 1 ? 2 : 0)}</output></div>
               <Slider aria-label={t(control.zh, control.en)} min={control.min} max={control.max} step={control.step} value={[render[control.key]]}
                 onValueChange={([value]) => setRender(previous => ({ ...previous, [control.key]: value }))} />
@@ -78,7 +81,7 @@ export function ThemeExamples() {
           </Tabs.Content>)}
         </Tabs.Root>
         <Button variant="ghost" size="sm" startIcon={<DocsIcon data={resetIcon} size={20} />}
-          onClick={() => { setTheme('light'); setPalette('default'); setRender(defaultThemeRender); setStrokeWidth(1.5); }}>
+          onClick={() => { setTheme('light'); setPalette('default'); setRender(defaultThemeRender); setStrokeWidth(1.5); setTextEffect(true); }}>
           {t("恢复默认", "Reset")}
         </Button>
       </div>}>

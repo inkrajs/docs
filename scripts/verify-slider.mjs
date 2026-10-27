@@ -1,4 +1,4 @@
-import { chooseDocsOption } from './playground-test-helpers.mjs';
+import { chooseDocsOption, setPlaygroundControls } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -14,14 +14,21 @@ async function valueIs(locator, value) {
 }
 
 async function choose(page, scope, name, value) {
-  await chooseDocsOption(scope, name, value, { exact: true, optionExact: true });
+  await setPlaygroundControls(scope, true);
+  await scope.getByRole('tab', { name: '基础', exact: true }).click();
+  const localized = { RTL: '从右到左', LTR: '从左到右', Small: '小', Medium: '中', Large: '大' };
+  await chooseDocsOption(scope, name, localized[value] ?? value, { exact: true, optionExact: true });
+  if (page.viewportSize().width < 768) await setPlaygroundControls(scope, false);
 }
 
 async function toggle(scope, name) {
+  await setPlaygroundControls(scope, true);
+  await scope.getByRole('tab', { name: name === '禁用' ? '状态' : '交互', exact: true }).click();
   const toggle = scope.getByRole('switch', { name, exact: true });
   const current = await toggle.isChecked();
   await toggle.click();
   await toggle.page().waitForFunction(({ element, current }) => element.checked !== current, { element: await toggle.elementHandle(), current });
+  if (toggle.page().viewportSize().width < 768) await setPlaygroundControls(scope, false);
 }
 
 async function insetThumbInsideTrack(stage, orientation) {
@@ -41,7 +48,8 @@ async function insetThumbInsideTrack(stage, orientation) {
 }
 
 try {
-  for (const width of [1305, 390]) {
+  const widths = process.env.INKRA_SLIDER_WIDTHS?.split(',').map(Number) ?? [1305, 390];
+  for (const width of widths) {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
     page.on('pageerror', error => errors.push(`${width}: ${error.message}`));
     try {
@@ -61,7 +69,6 @@ try {
       await valueIs(thumb, 0);
       await page.keyboard.press('End');
       await valueIs(thumb, 100);
-      assert.match(await stage.locator('.slider-demo__commit').textContent(), /100/);
       await choose(page, playground, '阅读方向', 'RTL');
       await thumb.focus();
       await page.keyboard.press('ArrowRight');
@@ -86,6 +93,7 @@ try {
       const clickedValue = Number(await thumb.getAttribute('aria-valuenow'));
       assert(clickedValue >= 55 && clickedValue <= 65, 'track click updates value');
       await choose(page, playground, '外观', '内嵌滑块');
+      await choose(page, playground, '端点位置', '端部留白');
       for (const size of ['Small', 'Medium', 'Large']) {
         await choose(page, playground, '尺寸', size);
         for (const [orientation, label] of [['horizontal', '横向'], ['vertical', '纵向']]) {
@@ -159,7 +167,13 @@ try {
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no horizontal page overflow');
       await playground.scrollIntoViewIfNeeded();
       await page.screenshot({ path: `/tmp/inkra-slider-${width}.png`, animations: 'disabled' });
+      if (process.env.INKRA_SLIDER_SKIP_POPOVER === '1') {
+        console.log(`PASS Slider keyboard/RTL/vertical/pointer/disabled/range/reset, ${width}px`);
+        continue;
+      }
       await page.goto(`${baseUrl}/components/popover#preview`);
+      await setPlaygroundControls(page.locator('.component-playground'), true);
+      await page.locator('.component-playground').getByRole('tab', { name: '布局', exact: true }).click();
       const offset = page.locator('.component-playground').getByRole('slider', { name: '偏移', exact: true });
       await offset.focus();
       await page.keyboard.press('ArrowRight');

@@ -45,7 +45,7 @@ test('ChoiceGrid documents actual single and multiple contracts, not speculative
 
 test('Native selection APIs expose input events, external forms and usable refs', () => {
   for (const name of ['checkbox', 'switch']) {
-    for (const prop of ['onChange', 'name / value / form', 'disabled / required', 'ref']) {
+    for (const prop of ['onChange', 'name / value / form', name === 'switch' ? 'disabled / readOnly / required' : 'disabled / required', 'ref']) {
       assert(rows.get(name).includes(prop), `${name} documents ${prop}`);
     }
   }

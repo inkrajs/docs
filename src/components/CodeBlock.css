@@ -1,6 +1,6 @@
 .docs-code,
 .docs-code code {
-  font-family: "Trip Map Hand", var(--inkra-font-hand);
+  font-family: var(--inkra-font-hand);
   font-size: var(--inkra-text-md);
   line-height: 1.8;
   font-weight: 400;

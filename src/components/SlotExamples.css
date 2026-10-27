@@ -9,7 +9,7 @@
 
 .slot-examples__resource {
   color: var(--inkra-accent-strong);
-  font-family: "Trip Map Hand", "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", cursive;
+  font-family: var(--inkra-font-hand);
   font-size: var(--inkra-text-lg);
   letter-spacing: 0;
   transform: rotate(-18deg);

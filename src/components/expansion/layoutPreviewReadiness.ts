@@ -161,7 +161,7 @@ function waitForFrames(
 export async function waitForPreviewReadiness({
   links,
   fonts,
-  font = '15px "Trip Map Hand"',
+  font = '15px "Inkra Xiaolai"',
   timeoutMs = 600,
   frameTimeoutMs = 200,
   signal,

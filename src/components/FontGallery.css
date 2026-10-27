@@ -1,0 +1,14 @@
+.font-gallery { min-inline-size: 0; }
+.font-gallery__header { display: grid; grid-template-columns: auto minmax(0, 18rem); align-items: center; justify-content: space-between; gap: 16px; }
+.font-gallery__list { display: flex; gap: 20px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; overflow-anchor: none; min-inline-size: 0; max-inline-size: 100%; margin: 0; padding: 4px 0 12px; list-style: none; }
+.font-gallery__list:focus-visible { outline: var(--inkra-focus-width) solid var(--inkra-accent); outline-offset: 4px; }
+.font-gallery__item { flex: 0 0 min(18rem, 88%); min-inline-size: 0; box-sizing: border-box; padding: 8px 16px 12px 0; border-inline-end: 1px solid var(--inkra-border); scroll-snap-align: start; }
+.font-gallery__item:last-child { border-inline-end: 0; }
+.font-gallery__heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-inline-size: 0; }
+.font-gallery__languages { font-size: var(--inkra-text-xs); line-height: var(--inkra-line-ui); color: var(--inkra-ink-muted); min-width: 0; max-width: 100%; }
+.font-gallery__name { overflow-wrap: anywhere; color: var(--inkra-ink-muted); font-size: var(--inkra-text-sm); }
+.font-gallery__sample, .font-gallery__placeholder { display: grid; grid-template-columns: minmax(0, 1fr); min-inline-size: 0; overflow-wrap: anywhere; align-content: center; gap: 12px; min-block-size: 104px; padding-block-start: 12px; }
+.font-gallery .font-gallery__title { margin: 0; font-size: var(--inkra-text-xl); line-height: var(--inkra-line-tight); font-weight: var(--inkra-weight-regular); }
+.font-gallery__body { font-size: var(--inkra-text-md); line-height: var(--inkra-line-body); }
+.font-gallery__placeholder { color: var(--inkra-ink-muted); font-size: var(--inkra-text-sm); justify-items: start; }
+.font-gallery__empty { min-block-size: 104px; padding-block: 20px; color: var(--inkra-ink-muted); }

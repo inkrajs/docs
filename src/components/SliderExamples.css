@@ -18,6 +18,9 @@
   text-align: center;
 }
 
+.slider-demo__circles { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 32px; width: 100%; }
+.slider-demo__circles > div { display: grid; justify-items: center; gap: 12px; min-width: 0; }
+
 .slider-demo__commit {
   color: var(--inkra-ink-muted);
   font-size: var(--inkra-text-sm);

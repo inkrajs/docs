@@ -17,10 +17,10 @@ export const registeredBrowserChecks = [
   'verify-picker-shared-control', 'verify-expansion-dates', 'verify-input-feedback', 'verify-editable-builtins',
   'verify-minimal-playgrounds', 'verify-markdown', 'verify-pencil-emphasis', 'verify-select-stepper',
   'verify-search-select-refinement', 'verify-tree-select-refinement', 'verify-selection-docs', 'verify-color-picker-refinement',
-  'verify-upload-refinement', 'verify-transfer-refinement', 'verify-refinement-docs', 'verify-slider-refinement',
+  'verify-upload-refinement', 'verify-transfer-refinement', 'verify-refinement-docs', 'verify-slider-refinement', 'verify-circular-slider', 'verify-circular-switch', 'verify-slider-endpoints',
   'verify-rating-refinement', 'verify-numeric-controls-docs', 'verify-selection-refinement', 'verify-choice-grid-refinement',
   'verify-selection-controls-docs', 'verify-progress-ring', 'verify-utility-components', 'verify-context-menu-browser',
-  'verify-docs-spacing', 'verify-theme-customizer', 'verify-navigation-hierarchy', 'verify-header-github',
+  'verify-docs-spacing', 'verify-theme-customizer', 'verify-theme-colors', 'verify-theme-fonts', 'verify-font-gallery', 'verify-navigation-hierarchy', 'verify-header-github',
   'verify-home-header-actions', 'verify-docs-shell', 'verify-docs-layout', 'verify-mobile-search',
   'verify-page-titles', 'verify-docs-actions', 'verify-tabs-dividers', 'verify-overlay-sections',
   'verify-sidebar-preference-sizing', 'verify-select-trigger', 'verify-input-property-tabs', 'verify-input-number',
@@ -30,6 +30,10 @@ export const registeredBrowserChecks = [
 ];
 
 export const browserCheckComponentOverrides = {
+  'verify-theme-colors': ['color-picker', 'color-swatch'],
+  'verify-circular-slider': ['slider'],
+  'verify-circular-switch': ['switch', 'slider'],
+  'verify-slider-endpoints': ['slider', 'range-slider'],
   'verify-icon-fill': ['icon'],
   'verify-icon-fill-docs': ['icon'],
   'verify-icon-color-paths': ['icon'],
@@ -56,12 +60,17 @@ export const browserCheckModuleOverrides = {
   'verify-nav-foreground': ['theme', 'navigation'],
   'verify-docs-spacing': ['docs-shell'],
   'verify-theme-customizer': ['theme'],
+  'verify-theme-colors': ['theme'],
+  'verify-theme-fonts': ['theme'],
+  'verify-font-gallery': ['theme', 'docs-shell'],
   'verify-home-header-actions': ['home'],
   'verify-library-motion': ['theme', 'motion'],
   'verify-example-i18n': ['i18n'],
 };
 
 export const sourceOwnerOverrides = {
+  'scripts/fixtures/CircularSliderFixture.tsx': ['slider'],
+  'scripts/fixtures/CircularSwitchFixture.tsx': ['switch', 'slider'],
   'src/components/iconColorPaths.ts': ['icon'],
   'src/components/iconFilledPaths.ts': ['icon'],
   'src/components/iconFillCopy.ts': ['icon'],
