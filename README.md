@@ -13,7 +13,22 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The published 0.9.0 package adds Guide (including a distinct skip
+The 0.10.0 release adds CircularSlider and the optional circular Switch appearance.
+The slider supports touch and keyboard input, configurable arcs, and icon/text
+content in the center; the switch keeps a quiet off-state ring and animates its
+accent arc without a thumb. Linear Slider and RangeSlider now reach the track
+endpoints by default, with `thumbAlignment="contain"` retaining inset placement.
+Xiaolai is the default font, with updated lettering parameters, a scoped plain-text
+mode, inherited typography across color themes, and grapheme-safe rendering.
+Action and selection washes are softer while retaining the pencil texture.
+
+The documentation adds a searchable 29-font gallery and picker with native-language
+specimens, lazy loading and separate settings per font. Theme customization includes
+circular controls, remembered custom colors and the Dingxiang, Zhecheng and Tenghuang
+palettes. Design standards separate their typography/material sections and compare
+outline, filled and multicolor icons. Draft changes stay inside the preview until Save.
+
+The earlier 0.9.0 release introduced Guide (including a distinct skip
 action), Loading (six presets, fullscreen slots and rotating tips), four-way
 InfiniteScroll with mobile pull-and-release, responsive Masonry, and NumberTicker
 digit rolling. Their routes include interactive examples and API documentation;
@@ -22,11 +37,11 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout consumes an unpublished `@inkra/react` candidate built from the
-exact library source commit and archive checksums pinned in
-`library-candidate.json`. The public npm version remains `0.9.0`.
-Build verifies the installed candidate without a source alias. Documentation
-changes do not publish npm packages or deploy the website.
+This checkout consumes the published `@inkra/react@0.10.0` registry package at an
+exact version. `library-candidate.json` records `source: "registry"`, the released
+library commit, and the public archive's SHA-256 and SHA-512 integrity. Build
+verifies that archive, the lockfile and the installed package without a source
+alias. Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
