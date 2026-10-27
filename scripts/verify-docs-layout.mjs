@@ -111,9 +111,15 @@ try {
       assert(await page.locator('.mobile-search-trigger').evaluate(node => node === document.activeElement));
     }
     await page.locator('.header-customize').click();
-    await page.getByRole('dialog').waitFor();
+    const customizer = page.getByRole('dialog', { name: '主题定制', exact: true });
+    await customizer.waitFor();
+    await page.waitForFunction(() => document.querySelector('.theme-customizer')?.contains(document.activeElement));
+    assert.equal(await customizer.getByRole('button', { name: '恢复默认', exact: true }).evaluate(node => node === document.activeElement), true, 'drawer takes initial focus without opening the reset tooltip');
+    assert.equal(await page.getByRole('tooltip').count(), 0, 'automatic drawer focus does not create an extra Escape-dismiss layer');
     await page.keyboard.press('Escape');
-    await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    await customizer.waitFor({ state: 'hidden' });
+    await page.waitForFunction(() => document.activeElement?.classList.contains('header-customize'));
+    assert.equal(await page.locator('.header-customize').evaluate(node => node === document.activeElement), true, 'one Escape dismisses the customizer and restores its trigger focus');
     await page.screenshot({ path: '/tmp/inkra-docs-layout-' + width + '.png', animations: 'disabled' });
     assert.deepEqual(errors, []);
     console.log('PASS actual Layout shell, alignment, scrolling and controls at ' + width);

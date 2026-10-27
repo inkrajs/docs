@@ -145,11 +145,11 @@ try {
   assert.notEqual(await plainPage.locator('.font-gallery__title .inkra-pencil-text__source').evaluate(node => getComputedStyle(node).color), 'rgba(0, 0, 0, 0)');
 
   // Language changes reorder recommendations and translate specimens, never the saved font.
-  for (const [locale, fontTab, textTab, cancel, firstId, family, title, card] of [
-    ['en', 'Font family', 'Text', 'Cancel', 'caveat', 'Inkra Caveat', 'A little inspiration', 'A little\ninspiration'],
-    ['fr', 'Police', 'Texte', 'Annuler', 'caveat', 'Inkra Caveat', 'Écrire en liberté', 'Écrire en liberté\nUn cœur léger'],
-    ['ja', 'フォント', '文字', 'キャンセル', 'yomogi', 'Inkra Yomogi', '小さなひらめき', '小さな\nひらめき'],
-    ['ko', '글꼴', '텍스트', '취소', 'gaegu', 'Inkra Gaegu', '작은 영감', '작은 영감\n오늘의 기록'],
+  for (const [locale, fontTab, textTab, cancel, firstId, family, title, card, previewTitle] of [
+    ['en', 'Font family', 'Text', 'Cancel', 'caveat', 'Inkra Caveat', 'A little inspiration', 'A little inspiration', 'Theme preview'],
+    ['fr', 'Police', 'Texte', 'Annuler', 'caveat', 'Inkra Caveat', 'Écrire en liberté', 'Écrire en liberté Un cœur léger', 'Aperçu du thème'],
+    ['ja', 'フォント', '文字', 'キャンセル', 'yomogi', 'Inkra Yomogi', '小さなひらめき', '小さな ひらめき', 'テーマプレビュー'],
+    ['ko', '글꼴', '텍스트', '취소', 'gaegu', 'Inkra Gaegu', '작은 영감', '작은 영감 오늘의 기록', '테마 미리보기'],
   ]) {
     const localized = await browser.newPage({ viewport: { width: 1305, height: 954 }, reducedMotion: 'reduce' });
     localized.on('pageerror', error => errors.push(error.message));
@@ -193,7 +193,15 @@ try {
     const localizedCard = localizedDialog.locator(`.font-picker__option[data-font-id="${firstId}"] .font-picker__specimen`);
     assert.equal(await localizedCard.getAttribute('lang'), locale);
     assert.equal(await localizedCard.textContent(), card);
-    assert.equal(await localizedDialog.locator('.theme-customizer__lettering').textContent(), title);
+    assert(await localizedCard.evaluate(node => {
+      const style = getComputedStyle(node);
+      return style.whiteSpace === 'nowrap'
+        && node.getBoundingClientRect().height <= Number.parseFloat(style.lineHeight) + 1;
+    }), locale + ' compact picker specimen stays on one line');
+    const previewHeading = localizedDialog.locator('.theme-customizer__lettering');
+    assert.equal(await previewHeading.textContent(), previewTitle);
+    assert.equal(await previewHeading.getAttribute('lang'), locale);
+    assert(await previewHeading.evaluate((node, family) => getComputedStyle(node).fontFamily.startsWith('"' + family + '"'), family), locale + ' preview uses the newly selected font');
     assert.equal(await localized.evaluate(() => localStorage.getItem('inkra-docs-custom-theme-v2')), stored, 'previewing a recommended font does not save it');
     await localizedDialog.getByRole('button', { name: cancel, exact: true }).click();
     assert.equal(await localized.evaluate(() => localStorage.getItem('inkra-docs-custom-theme-v2')), stored, 'cancel retains the original font and parameters');
