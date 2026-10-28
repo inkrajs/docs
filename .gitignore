@@ -9,3 +9,5 @@ vendor/*.tgz
 .library/
 HANDOFF.md
 .ci-results/
+.ci-plan/
+.trusted-ci/
