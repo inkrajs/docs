@@ -16,8 +16,13 @@ try {
     });
     await page.addInitScript(value => localStorage.setItem('inkra-docs-locale', value), locale);
     await page.goto(`${base}/docs/components/command#preview`);
+    const inline = page.getByTestId('command-playground');
+    assert.equal(await inline.getByRole('dialog').count(), 0, 'basic preview is an inline command list');
+    const inlineInput = inline.getByRole('combobox');
+    await inlineInput.fill(zh ? '新建' : 'New');
+    await inline.getByRole('option', { name: /新建笔记|New note/ }).click();
+    assert(await inlineInput.isVisible(), 'inline selection preserves the basic list');
     for (const { triggerName, title, region } of [
-      { triggerName: zh ? '打开命令面板' : 'Open command palette', title: zh ? '命令面板' : 'Command palette', region: '[data-testid="command-playground"]' },
       { triggerName: zh ? '搜索操作' : 'Search actions', title: zh ? '操作命令' : 'Actions', region: '[data-testid="command-composition"]' },
     ]) {
       const trigger = page.locator(region).getByRole('button', { name: triggerName, exact: true });

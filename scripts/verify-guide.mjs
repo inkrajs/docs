@@ -39,6 +39,12 @@ try {
     assert.equal(await page.getByRole('dialog').count(), 0, 'Guide does not open on page load');
 
     const playground = page.locator('.component-playground').first();
+    const inheritedTrigger = playground.getByRole('button', { name: 'Start guide', exact: true });
+    await inheritedTrigger.waitFor();
+    assert.equal(await inheritedTrigger.count(), 1, 'basic guide initially inherits the English docs locale');
+    await setPlaygroundControls(playground, true);
+    await chooseDocsOption(playground, 'Language', '简体中文', { exact: true, optionExact: true });
+    await setPlaygroundControls(playground, false);
     const trigger = playground.getByRole('button', { name: '开始引导', exact: true });
     await trigger.click();
     let dialog = page.getByRole('dialog');

@@ -12,6 +12,15 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto((process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180') + '/components/overlay#preview');
     const playground = page.locator('.component-playground').first();
+    const configToggle = playground.locator('.playground-config-toggle');
+    if (await configToggle.getAttribute('aria-expanded') === 'false') await configToggle.click();
+    await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
+    await playground.getByRole('tab', { name: '内容', exact: true }).click();
+    const editable = playground.getByRole('switch', { name: '编辑名称', exact: true });
+    assert.equal(await editable.isChecked(), false, 'basic preview starts with read-only content');
+    await editable.check();
+    await configToggle.click();
+    await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
     const trigger = playground.getByRole('button', { name: '编辑笔记', exact: true });
     const dialog = page.getByRole('dialog', { name: '编辑笔记', exact: true });
     await playground.evaluate(node => {
@@ -68,10 +77,11 @@ try {
     await dialog.waitFor({ state: 'hidden' });
     await expectFocus(trigger);
 
-    const configToggle = playground.locator('.playground-config-toggle');
     if (await configToggle.getAttribute('aria-expanded') === 'false') await configToggle.click();
     await page.waitForFunction(() => !document.querySelector('[data-playground-moving]'));
+    await playground.getByRole('tab', { name: '交互', exact: true }).click();
     assert.equal(await playground.locator('output').textContent(), '{"name":"Section form"}');
+    await playground.getByRole('tab', { name: '基础', exact: true }).click();
     await playground.getByRole('switch', { name: '显示关闭按钮', exact: true }).uncheck();
     await playground.getByRole('switch', { name: '分割线', exact: true }).uncheck();
     await configToggle.click();

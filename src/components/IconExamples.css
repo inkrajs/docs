@@ -140,6 +140,13 @@
   height: 104px;
 }
 
+.icon-examples__composites .icon-examples__choice-content { width: 100%; min-width: 0; }
+.icon-examples__composites .icon-examples__choice-content > .inkra-pencil-text {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .icon-examples__choice {
   width: 100%;
   height: 80px;

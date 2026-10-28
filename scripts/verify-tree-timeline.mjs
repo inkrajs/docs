@@ -46,7 +46,9 @@ try {
     const playground = page.locator('.component-playground');
     const timeline = playground.locator('.inkra-timeline');
     await timeline.waitFor();
-    const verify = async (orientation, rtl) => {
+    await setPlaygroundControls(playground, false);
+    await page.evaluate(() => document.fonts.ready);
+    const verify = async (orientation, rtl, compact = false) => {
       await page.waitForFunction(() => [...document.querySelectorAll('.component-playground .inkra-timeline__connector')]
         .every(canvas => canvas.width > 0 && canvas.height > 0));
       const rows = await timeline.evaluate(node => [...node.querySelectorAll('.inkra-timeline__item')].map(item => {
@@ -73,7 +75,7 @@ try {
         const next = rows[i + 1].marker;
         assert(coverage > 0.75, `continuous ink along axis: ${coverage}`);
         if (orientation === 'vertical') {
-          assert(line.height > 50, 'vertical connector must be a line, not an intrinsic-ratio dot');
+          assert(line.height > (compact ? marker.height : 50), 'vertical connector must extend beyond its marker, not form an intrinsic-ratio dot');
           assert(Math.abs((line.left + line.right - marker.left - marker.right) / 2) < 1);
           assert(line.top < marker.bottom && line.bottom >= next.top && line.bottom <= next.top + 6);
         } else {
@@ -85,9 +87,17 @@ try {
       }
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     };
+    await verify('vertical', false, true);
+    await setPlaygroundControls(playground, true);
+    const controls = playground.locator('.preview-controls');
+    await controls.getByRole('tab', { name: /内容|Content/, exact: true }).click();
+    await controls.getByRole('switch', { name: /显示描述|Show descriptions/, exact: true }).check();
+    await controls.getByRole('switch', { name: /显示操作|Show actions/, exact: true }).check();
+    await setPlaygroundControls(playground, false);
     await verify('vertical', false);
     await page.screenshot({ path: `/tmp/inkra-timeline-connected-${width}.png` });
     await setPlaygroundControls(playground, true);
+    await controls.getByRole('tab', { name: /布局|Layout/, exact: true }).click();
     await chooseDocsOption(playground.locator('.preview-controls'), /方向|Orientation/, /横向|Horizontal/, { exact: false, optionExact: true });
     await setPlaygroundControls(playground, false);
     await verify('horizontal', false);
