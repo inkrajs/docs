@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { validateBrowserLocalValidation } from './browser-local-validation.mjs';
 
 const shaPattern = /^[0-9a-f]{40}$/;
 
@@ -25,6 +26,10 @@ export function validateBrowserSelectionPlan(plan, suite, { expectedTestedRevisi
   assert.equal(planDigest, digest(unsigned), 'Browser plan identity mismatch');
   if (expectedPlanDigest) assert.equal(planDigest, expectedPlanDigest, 'Browser plan does not match the trusted build output');
   if (plan.mode === 'full') assert.deepEqual(plan.selectedScripts, suite, 'Full browser plan must select the current suite');
+  validateBrowserLocalValidation(plan, suite);
+  if (plan.eventName === 'release' && plan.localValidation) {
+    assert.deepEqual(plan.localValidation.originalSelectedScripts, suite, 'Release exemptions must account for the complete suite');
+  }
   return plan;
 }
 

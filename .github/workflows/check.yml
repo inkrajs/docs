@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
   workflow_dispatch:
     inputs:
       run_browser:
@@ -11,11 +12,52 @@ on:
         default: false
 permissions:
   contents: read
+  pull-requests: read
 concurrency:
   group: docs-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
+  local-validation:
+    name: Resolve trusted local tests
+    runs-on: ubuntu-latest
+    outputs:
+      accepted: ${{ steps.resolve.outputs.accepted }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: .trusted-ci
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+      - name: Resolve declaration using trusted base code and GitHub editor identity
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          TARGET_SHA: ${{ github.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          OUTPUT_PATH: .ci-plan/local-validation.json
+        shell: bash
+        run: |
+          mkdir -p .ci-plan
+          if [[ -f .trusted-ci/scripts/resolve-pr-local-validation.mjs ]]; then
+            node .trusted-ci/scripts/resolve-pr-local-validation.mjs
+          else
+            node -e 'require("fs").writeFileSync(process.env.OUTPUT_PATH, JSON.stringify({accepted:false,declarations:[],reasons:[{code:"policy-bootstrap",detail:"Base revision has no local-validation policy; normal CI runs"}]}))'
+          fi
+          node -e 'require("fs").appendFileSync(process.env.GITHUB_OUTPUT,"accepted="+JSON.parse(require("fs").readFileSync(process.env.OUTPUT_PATH)).accepted+"\n")'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: local-validation
+          path: .ci-plan/local-validation.json
+          include-hidden-files: true
+          if-no-files-found: error
   build:
+    needs: local-validation
     runs-on: ubuntu-latest
     timeout-minutes: 45
     outputs:
@@ -71,6 +113,18 @@ jobs:
       - run: npm run test:contracts
         if: github.event_name == 'workflow_dispatch' && inputs.run_browser
       - run: npm run build
+      - name: Resolve candidate-bound local browser declarations
+        if: github.event_name == 'workflow_dispatch' && inputs.run_browser
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          TARGET_SHA: ${{ github.sha }}
+          OUTPUT_PATH: .ci-plan/local-validation.json
+        shell: bash
+        run: |
+          mkdir -p .ci-plan
+          export EXPECTED_CANDIDATE_SHA256="$(node -p 'JSON.parse(require("fs").readFileSync("library-candidate.json")).sha256')"
+          node scripts/resolve-pr-local-validation.mjs
       - name: Select affected browser checks
         if: github.event_name == 'workflow_dispatch' && inputs.run_browser
         id: browser-plan
@@ -79,20 +133,17 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           TESTED_SHA: ${{ github.sha }}
-        run: >-
-          node scripts/select-browser-checks.mjs
-          --event "$EVENT_NAME"
-          --base "$BASE_SHA"
-          --tested "$TESTED_SHA"
-          --pr-head "$PR_HEAD_SHA"
-          --output .ci-plan/browser-selection.json
-          --summary "$GITHUB_STEP_SUMMARY"
-          --github-output "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          BASE_SHA="$(node -p 'JSON.parse(require("fs").readFileSync(".ci-plan/local-validation.json")).base || process.env.TESTED_SHA')"
+          node scripts/select-browser-checks.mjs --event "$EVENT_NAME" --base "$BASE_SHA" --tested "$TESTED_SHA" --pr-head "$PR_HEAD_SHA" --output .ci-plan/browser-selection.json
+          node scripts/browser-local-validation.mjs --plan .ci-plan/browser-selection.json --attestation .ci-plan/local-validation.json --candidate library-candidate.json
+          cp library-candidate.json .ci-plan/library-candidate.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: github.event_name == 'workflow_dispatch' && inputs.run_browser
         with:
           name: docs-browser-plan
-          path: .ci-plan/browser-selection.json
+          path: .ci-plan/
           include-hidden-files: true
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -208,4 +259,7 @@ jobs:
           BROWSER_JOB_RESULT: ${{ needs.browser.result }}
           EXPECTED_BROWSER_PLAN_DIGEST: ${{ needs.build.outputs.browser_plan_digest }}
           EXPECTED_TESTED_REVISION: ${{ needs.build.outputs.tested_revision }}
-        run: node scripts/check-browser-reports.mjs .ci-results .ci-plan/browser-selection.json
+        shell: bash
+        run: |
+          export EXPECTED_CANDIDATE_SHA256="$(node -p 'JSON.parse(require("fs").readFileSync(".ci-plan/library-candidate.json")).sha256')"
+          node scripts/check-browser-reports.mjs .ci-results .ci-plan/browser-selection.json

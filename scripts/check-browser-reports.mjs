@@ -32,6 +32,10 @@ if (fullShardCount !== null) {
     if (browserResult) assert.equal(browserResult, 'skipped', 'Only a trusted empty plan may skip the browser job');
   } else if (browserResult) assert.equal(browserResult, 'success', 'Selected browser shards did not succeed');
   checkBrowserReports(reports, selection, suite);
+  if (selection.localValidation) {
+    console.log(selection.localValidation.exemptedScripts.length + ' browser checks locally confirmed / CI waived by '
+      + selection.localValidation.attestation.actor.login + '; these were not executed online.');
+  }
   console.log(selection.selectedCount === 0
     ? `Trusted empty plan ${selection.planDigest}: 0 browser checks selected; browser job correctly skipped.`
     : `All ${selection.selectedCount} selected browser checks passed exactly once across ${selection.shardCount} shards (plan ${selection.planDigest}).`);

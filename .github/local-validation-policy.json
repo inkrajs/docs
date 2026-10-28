@@ -1,0 +1,723 @@
+{
+  "schemaVersion": 1,
+  "allowed_users": [
+    {
+      "id": 51358815,
+      "login": "NWYLZW"
+    }
+  ],
+  "allowed_groups": {
+    "browser:verify-grid-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-icon-fill": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-icon-fill-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-icon-color-paths": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-icon-color-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-icon-fill-edges": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-icon-scroll": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-breadcrumb": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-textarea-sizing": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-i18n": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-locales": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-theme-provider": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-text-first-paint": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-code": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-code-samples": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-textarea-selection": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-editable-composition": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-time-picker-contract": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-tree-timeline": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-sidebar": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-resize": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-header": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-mobile": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-inventory-grid": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-scroll-refinements": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-stability": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-resilience": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-layout-style-sync": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-tabs-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-accordion-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-disclosure-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-initial-theme-ink": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-nav-foreground": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-tree-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-menu-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-floating-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-floating-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-guide": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-loading": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-infinite-scroll": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-masonry": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-drawer-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-alert-dialog-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-command-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-modal-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-data-table-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-log-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-pagination-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-content-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-audio-player-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-carousel-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-image-viewer-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-media-viewer-video": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-media-viewer-layout": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-pan-zoom-drag": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-media-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-form-sizes": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-picker-shared-control": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-expansion-dates": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-input-feedback": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-editable-builtins": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-minimal-playgrounds": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-markdown": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-pencil-emphasis": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-select-stepper": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-search-select-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-tree-select-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-selection-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-color-picker-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-upload-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-transfer-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-refinement-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-slider-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-circular-slider": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-circular-switch": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-slider-endpoints": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-rating-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-numeric-controls-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-selection-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-choice-grid-refinement": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-selection-controls-docs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-progress-ring": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-utility-components": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-context-menu-browser": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-spacing": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-theme-customizer": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-theme-colors": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-theme-fonts": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-font-gallery": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-navigation-hierarchy": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-header-github": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-home-header-actions": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-shell": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-layout": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-mobile-search": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-page-titles": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-actions": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-tabs-dividers": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-overlay-sections": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-sidebar-preference-sizing": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-select-trigger": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-input-property-tabs": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-input-number": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-playground-config": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-docs-motion": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-input-password": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-command-dialog": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-library-motion": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-number-ticker-exact": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-number-ticker-morph": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-number-ticker-compact": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-example-i18n": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-sortable": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-virtual-list": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:verify-homepage": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:log": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ],
+    "browser:number-ticker": [
+      "chromium-playwright1.64.1-react19.3.1"
+    ]
+  },
+  "browser_groups": {
+    "browser:verify-grid-docs": [
+      "verify-grid-docs"
+    ],
+    "browser:verify-icon-fill": [
+      "verify-icon-fill"
+    ],
+    "browser:verify-icon-fill-docs": [
+      "verify-icon-fill-docs"
+    ],
+    "browser:verify-icon-color-paths": [
+      "verify-icon-color-paths"
+    ],
+    "browser:verify-icon-color-docs": [
+      "verify-icon-color-docs"
+    ],
+    "browser:verify-icon-fill-edges": [
+      "verify-icon-fill-edges"
+    ],
+    "browser:verify-icon-scroll": [
+      "verify-icon-scroll"
+    ],
+    "browser:verify-breadcrumb": [
+      "verify-breadcrumb"
+    ],
+    "browser:verify-textarea-sizing": [
+      "verify-textarea-sizing"
+    ],
+    "browser:verify-i18n": [
+      "verify-i18n"
+    ],
+    "browser:verify-docs-locales": [
+      "verify-docs-locales"
+    ],
+    "browser:verify-theme-provider": [
+      "verify-theme-provider"
+    ],
+    "browser:verify-text-first-paint": [
+      "verify-text-first-paint"
+    ],
+    "browser:verify-docs-code": [
+      "verify-docs-code"
+    ],
+    "browser:verify-code-samples": [
+      "verify-code-samples"
+    ],
+    "browser:verify-textarea-selection": [
+      "verify-textarea-selection"
+    ],
+    "browser:verify-editable-composition": [
+      "verify-editable-composition"
+    ],
+    "browser:verify-time-picker-contract": [
+      "verify-time-picker-contract"
+    ],
+    "browser:verify-tree-timeline": [
+      "verify-tree-timeline"
+    ],
+    "browser:verify-layout": [
+      "verify-layout"
+    ],
+    "browser:verify-layout-sidebar": [
+      "verify-layout-sidebar"
+    ],
+    "browser:verify-layout-resize": [
+      "verify-layout-resize"
+    ],
+    "browser:verify-layout-header": [
+      "verify-layout-header"
+    ],
+    "browser:verify-layout-mobile": [
+      "verify-layout-mobile"
+    ],
+    "browser:verify-inventory-grid": [
+      "verify-inventory-grid"
+    ],
+    "browser:verify-layout-scroll-refinements": [
+      "verify-layout-scroll-refinements"
+    ],
+    "browser:verify-layout-stability": [
+      "verify-layout-stability"
+    ],
+    "browser:verify-layout-resilience": [
+      "verify-layout-resilience"
+    ],
+    "browser:verify-layout-style-sync": [
+      "verify-layout-style-sync"
+    ],
+    "browser:verify-tabs-refinement": [
+      "verify-tabs-refinement"
+    ],
+    "browser:verify-accordion-refinement": [
+      "verify-accordion-refinement"
+    ],
+    "browser:verify-disclosure-docs": [
+      "verify-disclosure-docs"
+    ],
+    "browser:verify-initial-theme-ink": [
+      "verify-initial-theme-ink"
+    ],
+    "browser:verify-nav-foreground": [
+      "verify-nav-foreground"
+    ],
+    "browser:verify-tree-refinement": [
+      "verify-tree-refinement"
+    ],
+    "browser:verify-menu-refinement": [
+      "verify-menu-refinement"
+    ],
+    "browser:verify-floating-refinement": [
+      "verify-floating-refinement"
+    ],
+    "browser:verify-floating-docs": [
+      "verify-floating-docs"
+    ],
+    "browser:verify-guide": [
+      "verify-guide"
+    ],
+    "browser:verify-loading": [
+      "verify-loading"
+    ],
+    "browser:verify-infinite-scroll": [
+      "verify-infinite-scroll"
+    ],
+    "browser:verify-masonry": [
+      "verify-masonry"
+    ],
+    "browser:verify-drawer-refinement": [
+      "verify-drawer-refinement"
+    ],
+    "browser:verify-alert-dialog-refinement": [
+      "verify-alert-dialog-refinement"
+    ],
+    "browser:verify-command-refinement": [
+      "verify-command-refinement"
+    ],
+    "browser:verify-modal-docs": [
+      "verify-modal-docs"
+    ],
+    "browser:verify-data-table-refinement": [
+      "verify-data-table-refinement"
+    ],
+    "browser:verify-log-refinement": [
+      "verify-log-refinement"
+    ],
+    "browser:verify-pagination-refinement": [
+      "verify-pagination-refinement"
+    ],
+    "browser:verify-content-docs": [
+      "verify-content-docs"
+    ],
+    "browser:verify-audio-player-refinement": [
+      "verify-audio-player-refinement"
+    ],
+    "browser:verify-carousel-refinement": [
+      "verify-carousel-refinement"
+    ],
+    "browser:verify-image-viewer-refinement": [
+      "verify-image-viewer-refinement"
+    ],
+    "browser:verify-media-viewer-video": [
+      "verify-media-viewer-video"
+    ],
+    "browser:verify-media-viewer-layout": [
+      "verify-media-viewer-layout"
+    ],
+    "browser:verify-pan-zoom-drag": [
+      "verify-pan-zoom-drag"
+    ],
+    "browser:verify-media-docs": [
+      "verify-media-docs"
+    ],
+    "browser:verify-form-sizes": [
+      "verify-form-sizes"
+    ],
+    "browser:verify-picker-shared-control": [
+      "verify-picker-shared-control"
+    ],
+    "browser:verify-expansion-dates": [
+      "verify-expansion-dates"
+    ],
+    "browser:verify-input-feedback": [
+      "verify-input-feedback"
+    ],
+    "browser:verify-editable-builtins": [
+      "verify-editable-builtins"
+    ],
+    "browser:verify-minimal-playgrounds": [
+      "verify-minimal-playgrounds"
+    ],
+    "browser:verify-markdown": [
+      "verify-markdown"
+    ],
+    "browser:verify-pencil-emphasis": [
+      "verify-pencil-emphasis"
+    ],
+    "browser:verify-select-stepper": [
+      "verify-select-stepper"
+    ],
+    "browser:verify-search-select-refinement": [
+      "verify-search-select-refinement"
+    ],
+    "browser:verify-tree-select-refinement": [
+      "verify-tree-select-refinement"
+    ],
+    "browser:verify-selection-docs": [
+      "verify-selection-docs"
+    ],
+    "browser:verify-color-picker-refinement": [
+      "verify-color-picker-refinement"
+    ],
+    "browser:verify-upload-refinement": [
+      "verify-upload-refinement"
+    ],
+    "browser:verify-transfer-refinement": [
+      "verify-transfer-refinement"
+    ],
+    "browser:verify-refinement-docs": [
+      "verify-refinement-docs"
+    ],
+    "browser:verify-slider-refinement": [
+      "verify-slider-refinement"
+    ],
+    "browser:verify-circular-slider": [
+      "verify-circular-slider"
+    ],
+    "browser:verify-circular-switch": [
+      "verify-circular-switch"
+    ],
+    "browser:verify-slider-endpoints": [
+      "verify-slider-endpoints"
+    ],
+    "browser:verify-rating-refinement": [
+      "verify-rating-refinement"
+    ],
+    "browser:verify-numeric-controls-docs": [
+      "verify-numeric-controls-docs"
+    ],
+    "browser:verify-selection-refinement": [
+      "verify-selection-refinement"
+    ],
+    "browser:verify-choice-grid-refinement": [
+      "verify-choice-grid-refinement"
+    ],
+    "browser:verify-selection-controls-docs": [
+      "verify-selection-controls-docs"
+    ],
+    "browser:verify-progress-ring": [
+      "verify-progress-ring"
+    ],
+    "browser:verify-utility-components": [
+      "verify-utility-components"
+    ],
+    "browser:verify-context-menu-browser": [
+      "verify-context-menu-browser"
+    ],
+    "browser:verify-docs-spacing": [
+      "verify-docs-spacing"
+    ],
+    "browser:verify-theme-customizer": [
+      "verify-theme-customizer"
+    ],
+    "browser:verify-theme-colors": [
+      "verify-theme-colors"
+    ],
+    "browser:verify-theme-fonts": [
+      "verify-theme-fonts"
+    ],
+    "browser:verify-font-gallery": [
+      "verify-font-gallery"
+    ],
+    "browser:verify-navigation-hierarchy": [
+      "verify-navigation-hierarchy"
+    ],
+    "browser:verify-header-github": [
+      "verify-header-github"
+    ],
+    "browser:verify-home-header-actions": [
+      "verify-home-header-actions"
+    ],
+    "browser:verify-docs-shell": [
+      "verify-docs-shell"
+    ],
+    "browser:verify-docs-layout": [
+      "verify-docs-layout"
+    ],
+    "browser:verify-mobile-search": [
+      "verify-mobile-search"
+    ],
+    "browser:verify-page-titles": [
+      "verify-page-titles"
+    ],
+    "browser:verify-docs-actions": [
+      "verify-docs-actions"
+    ],
+    "browser:verify-tabs-dividers": [
+      "verify-tabs-dividers"
+    ],
+    "browser:verify-overlay-sections": [
+      "verify-overlay-sections"
+    ],
+    "browser:verify-sidebar-preference-sizing": [
+      "verify-sidebar-preference-sizing"
+    ],
+    "browser:verify-select-trigger": [
+      "verify-select-trigger"
+    ],
+    "browser:verify-input-property-tabs": [
+      "verify-input-property-tabs"
+    ],
+    "browser:verify-input-number": [
+      "verify-input-number"
+    ],
+    "browser:verify-playground-config": [
+      "verify-playground-config"
+    ],
+    "browser:verify-docs-motion": [
+      "verify-docs-motion"
+    ],
+    "browser:verify-input-password": [
+      "verify-input-password"
+    ],
+    "browser:verify-command-dialog": [
+      "verify-command-dialog"
+    ],
+    "browser:verify-library-motion": [
+      "verify-library-motion"
+    ],
+    "browser:verify-number-ticker-exact": [
+      "verify-number-ticker-exact"
+    ],
+    "browser:verify-number-ticker-morph": [
+      "verify-number-ticker-morph"
+    ],
+    "browser:verify-number-ticker-compact": [
+      "verify-number-ticker-compact"
+    ],
+    "browser:verify-example-i18n": [
+      "verify-example-i18n"
+    ],
+    "browser:verify-sortable": [
+      "verify-sortable"
+    ],
+    "browser:verify-virtual-list": [
+      "verify-virtual-list"
+    ],
+    "browser:verify-homepage": [
+      "verify-homepage"
+    ],
+    "browser:log": [
+      "verify-log-refinement"
+    ],
+    "browser:number-ticker": [
+      "verify-number-ticker-exact",
+      "verify-number-ticker-morph",
+      "verify-number-ticker-compact"
+    ]
+  }
+}

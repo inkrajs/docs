@@ -33,7 +33,8 @@ test('optional browser validation creates one trusted plan from the exact checko
   assert.match(workflow, /node scripts\/select-browser-checks\.mjs/);
   assert.match(workflow, /--tested \"\$TESTED_SHA\"/);
   assert.match(workflow, /PR_HEAD_SHA: \$\{\{ github\.event\.pull_request\.head\.sha \}\}/);
-  assert.match(workflow, /name: docs-browser-plan[\s\S]*path: \.ci-plan\/browser-selection\.json[\s\S]*include-hidden-files: true/);
+  assert.match(workflow, /name: docs-browser-plan[\s\S]*path: \.ci-plan\/[\s\S]*include-hidden-files: true/);
+  assert.match(workflow, /cp library-candidate\.json \.ci-plan\/library-candidate\.json/);
 });
 
 test('workflow uses a dynamic matrix and starts no browser job for a trusted empty plan', () => {
@@ -69,7 +70,7 @@ test('final gate runs without node_modules and rejects a mismatched trusted dige
   const root = await mkdtemp(join(tmpdir(), 'inkra-browser-gate-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   await mkdir(join(root, 'scripts'), { recursive: true });
-  for (const file of ['browser-checks.mjs', 'browser-plan.mjs', 'browser-report.mjs', 'browser-shards.mjs', 'browser-timings.mjs', 'check-browser-reports.mjs']) {
+  for (const file of ['browser-checks.mjs', 'browser-plan.mjs', 'browser-local-validation.mjs', 'browser-report.mjs', 'browser-shards.mjs', 'browser-timings.mjs', 'check-browser-reports.mjs']) {
     await copyFile(new URL(`../${file}`, import.meta.url), join(root, 'scripts', file));
   }
   execFileSync('git', ['init', '-q'], { cwd: root });
