@@ -13,7 +13,20 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The 0.10.0 release adds CircularSlider and the optional circular Switch appearance.
+The 0.11.0 candidate adds NumberTicker's optional `animation="morph"` mode:
+exact decimal shifts retain fixed-width glyphs, move the decimal point, and
+reveal entering zeros with sliding, fading and right-edge clipping. The default
+duration is 420ms; ordinary changes use place-aligned rolling, and the existing
+count and roll modes remain available. Log's latest-record action is now a compact
+floating icon button instead of a full-width footer.
+
+All 87 component pages start with basic usage and progress through common options,
+composition, custom rendering and boundary cases. CI supports explicit local-test
+confirmations from configured maintainers, bound to the exact commit, candidate,
+test group and environment; required package/build and coverage gates remain.
+See [the AI CI guide](docs/ai-ci-guide.md) for the declaration workflow.
+
+The earlier 0.10.0 release added CircularSlider and the optional circular Switch appearance.
 The slider supports touch and keyboard input, configurable arcs, and icon/text
 content in the center; the switch keeps a quiet off-state ring and animates its
 accent arc without a thumb. Linear Slider and RangeSlider now reach the track
@@ -39,17 +52,16 @@ shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
 This checkout consumes an unpublished library candidate pinned in
 `library-candidate.json`, with its exact source commit, SHA-256 and SHA-512
-integrity. It adds NumberTicker's optional morph animation and Log's floating
-latest-record icon button. Component demos start with basic usage and progress
-through individual options to composition and boundary cases. The package
-version remains 0.10.0; these changes are not a new npm release.
+integrity. The package version is 0.11.0; it remains an unpublished candidate
+until registry verification completes.
 Build verifies the archive, lockfile and installed package without a source alias.
 Prepare the candidate using the steps below before installing a fresh checkout.
 Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
-Install the pinned registry release, then build and preview:
+Prepare the pinned unpublished candidate first using the procedure below, then
+build and preview:
 
 ```sh
 npm ci
@@ -57,8 +69,9 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-A fresh checkout does not need a sibling library checkout or vendor archive.
-Use **Prepare An Unpublished Candidate** below only when testing unreleased changes.
+A fresh candidate checkout requires the verified vendor archive. Once this checkout
+is switched to an exact published registry version, a sibling library checkout and
+vendor archive are no longer needed.
 
 ## Local Routes And Page Actions
 

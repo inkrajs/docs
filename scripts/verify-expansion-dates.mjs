@@ -47,6 +47,10 @@ try {
     await openDocs(datePage, 'date-picker', 'DatePicker');
     const datePlayground = datePage.locator('.component-playground');
     const dateTrigger = datePlayground.locator('.inkra-date-picker__trigger');
+    assert.equal(await datePlayground.locator('.inkra-date-picker__clear').count(), 0, 'basic preview has no optional clear action');
+    await setControls(datePlayground, true);
+    await datePlayground.getByRole('switch', { name: /可清空|Clearable/ }).check();
+    await setControls(datePlayground, false);
     await dateTrigger.focus();
     await dateTrigger.press('Enter');
     const selectedDay = datePage.locator('.inkra-date-picker__popover .rdp-selected .rdp-day_button');
@@ -97,7 +101,7 @@ try {
     ], ['onValueChange={setRange}']);
     await setControls(datePlayground, false);
 
-    const formExample = datePage.locator('.component-example').nth(1);
+    const formExample = datePage.locator('#dates-form-fields-and-reset');
     const form = formExample.locator('form');
     const departure = form.locator('input[name="departure"]');
     assert.equal(await departure.inputValue(), '2026-10-22');
@@ -124,6 +128,10 @@ try {
       content: '.inkra-time-picker__popover[data-state="closed"] { animation-duration: 600ms; }',
     });
     const timePlayground = timePage.locator('.component-playground');
+    assert.equal(await timePlayground.locator('.inkra-time-picker__clear').count(), 0, 'basic preview has no optional clear action');
+    await setControls(timePlayground, true);
+    await timePlayground.getByRole('switch', { name: /可清空|Clearable/ }).check();
+    await setControls(timePlayground, false);
     const controlledTime = timePlayground.locator('input[type="time"]');
     const timeTrigger = timePlayground.locator('.inkra-time-picker__trigger');
     const popup = timePage.locator('.inkra-time-picker__popover');
@@ -207,16 +215,16 @@ try {
     assert.match(await timeTrigger.textContent(), /下午.*09:30:15|09:30:15.*下午/);
     assert(await timeTrigger.locator('.inkra-pencil-text').count() > 0);
 
-    const basic = timePage.locator('.component-example').first();
+    const basic = timePage.locator('#dates-basic-time-selection');
     const basicRoot = basic.locator('.inkra-time-picker');
     const basicTrigger = await basicRoot.locator('.inkra-time-picker__trigger').boundingBox();
     const basicClear = await basicRoot.locator('.inkra-time-picker__clear').boundingBox();
     assert(Math.abs(basicTrigger.y + basicTrigger.height / 2 - basicClear.y - basicClear.height / 2) < 1, 'time and clear stay on one line');
     assert(basicTrigger.width > 120, 'basic example is not min-content sized');
 
-    const limitsExample = timePage.locator('.component-example').nth(1);
+    const limitsExample = timePage.locator('#dates-limits-steps-and-seconds');
     const limited = limitsExample.locator('input[type="time"]').first();
-    const seconds = limitsExample.locator('input[type="time"]').nth(1);
+    const seconds = timePage.locator('#dates-seconds input[type="time"]');
     assert.equal(await limited.getAttribute('min'), '08:00');
     assert.equal(await limited.getAttribute('max'), '18:00');
     assert.equal(await limited.getAttribute('step'), '900');
@@ -244,7 +252,7 @@ try {
     });
     assert.deepEqual(validity, { underflow: true, overflow: true, step: true });
 
-    const resetExample = timePage.locator('.component-example').nth(2);
+    const resetExample = timePage.locator('#dates-forms-empty-values-and-reset');
     const resetTime = resetExample.locator('input[name="meetingTime"]');
     await resetExample.locator('.inkra-time-picker__trigger').click();
     await choose('时', '12');
