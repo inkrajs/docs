@@ -81,6 +81,9 @@ try {
       await page.reload();
       await controls(page, true);
       await page.getByRole('tab', { name: /Interaction|交互/ }).click();
+      const locked = page.getByRole('switch', { name: /Disable locked item|禁用锁定项/ });
+      assert.equal(await locked.isChecked(), false, 'basic demo does not disable a sample item');
+      await locked.check();
       await page.getByRole('switch', { name: /Drag handle|拖动手柄/ }).click();
       await controls(page, false);
 
