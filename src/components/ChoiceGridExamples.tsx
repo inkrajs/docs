@@ -24,15 +24,16 @@ export function ChoiceGridExamples() {
   const [multipleValues, setMultipleValues] = useState<string[]>(['balanced']);
   const [disabled, setDisabled] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
+  const [showImages, setShowImages] = useState(false);
+  const [showDescriptions, setShowDescriptions] = useState(false);
   const [formResult, setFormResult] = useState('');
   const optionCopy = [
     ['compact', text('紧凑', 'Compact'), text('在有限空间内显示更多选项。', 'Fit more choices into limited space.')],
     ['balanced', text('平衡', 'Balanced'), text('兼顾信息密度与浏览节奏。', 'Balance information density and scanning.')],
     ['spacious', text('宽松', 'Spacious'), text('为图像与说明保留更多空间。', 'Leave more room for imagery and descriptions.')],
   ] as const;
-  const optionsCode = `  <ChoiceGridOption value="compact" label=${quote(optionCopy[0][1])} icon={<RowsIcon />} description=${quote(optionCopy[0][2])} />
-  <ChoiceGridOption value="balanced" label=${quote(optionCopy[1][1])} icon={<GridIcon />} description=${quote(optionCopy[1][2])} />
-  <ChoiceGridOption value="spacious" label=${quote(optionCopy[2][1])} image={{ src: '/favicon.png' }} description=${quote(optionCopy[2][2])} />`;
+  const optionsCode = optionCopy.map(([value, label, description], index) => `  <ChoiceGridOption value="${value}" label=${quote(label)}${showIcons && index < 2 ? ` icon={<${index === 0 ? 'RowsIcon' : 'GridIcon'} />}` : ''}${showImages && index === 2 ? " image={{ src: '/favicon.png', width: 96, height: 96 }}" : ''}${showDescriptions ? ` description=${quote(description)}` : ''} />`).join('\n');
   const code = mode === 'single'
     ? `<ChoiceGrid
   name="choice-grid-density"
@@ -59,11 +60,11 @@ ${optionsCode}
 </ChoiceGrid>`;
   const options = optionCopy.map(([value, label, description], index) => (
     <ChoiceGridOption
-      description={description}
-      icon={index === 0
+      description={showDescriptions ? description : undefined}
+      icon={showIcons && index === 0
         ? <DocsIcon data={rows3Icon} size={40} />
-        : index === 1 ? <DocsIcon data={grid2x2Icon} size={40} /> : undefined}
-      image={index === 2 ? { src: '/favicon.png', width: 96, height: 96 } : undefined}
+        : showIcons && index === 1 ? <DocsIcon data={grid2x2Icon} size={40} /> : undefined}
+      image={showImages && index === 2 ? { src: '/favicon.png', width: 96, height: 96 } : undefined}
       key={value}
       label={label}
       value={value}
@@ -80,6 +81,11 @@ ${optionsCode}
         <DocsSelect label={text('桌面列数', 'Desktop columns')} value={String(columns)} onValueChange={value => setColumns(Number(value) as typeof columns)} options={[
           ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'],
         ]} />
+      </> },
+      { label: text('内容', 'Content'), content: <>
+        <Switch label={text('显示图标', 'Show icons')} checked={showIcons} onCheckedChange={setShowIcons} />
+        <Switch label={text('显示图片', 'Show images')} checked={showImages} onCheckedChange={setShowImages} />
+        <Switch label={text('显示描述', 'Show descriptions')} checked={showDescriptions} onCheckedChange={setShowDescriptions} />
       </> },
       { label: text('状态', 'State'), content: <>
         <Switch label={text('禁用整组', 'Disable group')} checked={disabled} onCheckedChange={setDisabled} />

@@ -28,7 +28,7 @@ export function SegmentedProgressExamples() {
   const [segmentGap, setSegmentGap] = useState(3);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [partialSegment, setPartialSegment] = useState<ProgressPartialSegment>('fractional');
-  const [colored, setColored] = useState(true);
+  const [colored, setColored] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const progressValue = indeterminate ? null : value;
   const code = `<Progress shape="segmented" aria-label="${zh ? '发布进度' : 'Release progress'}"

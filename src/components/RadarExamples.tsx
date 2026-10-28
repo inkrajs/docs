@@ -36,12 +36,12 @@ export function RadarExamples() {
     emptyMessage: text('暂无雷达图数据', 'No radar data'),
     missingLabel: text('缺失', 'Missing'),
   };
-  const [selected, setSelected] = useState<RadarKey | null>('alpha');
+  const [selected, setSelected] = useState<RadarKey | null>(null);
   const [showLabels, setShowLabels] = useState(true);
-  const [showValues, setShowValues] = useState(true);
+  const [showValues, setShowValues] = useState(false);
   const [showTable, setShowTable] = useState(false);
   const [levels, setLevels] = useState('4');
-  const code = `<Radar\n  label=${quote(text('能力画像', 'Capability profile'))}\n  axes={axes}\n  series={series}\n  levels={${levels}}\n  showLabels={${showLabels}}\n  showValues={${showValues}}\n  showTable={${showTable}}\n  selectedSeries=${JSON.stringify(selected)}\n  onSelectedSeriesChange={setSelected}\n/>`;
+  const code = `<Radar\n  label=${quote(text('能力画像', 'Capability profile'))}\n  axes={axes}\n  series={series.slice(0, 1)}\n  levels={${levels}}\n  showLabels={${showLabels}}\n  showValues={${showValues}}\n  showTable={${showTable}}\n  selectedSeries=${JSON.stringify(selected)}\n  onSelectedSeriesChange={setSelected}\n/>`;
   return <div className="radar-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: text('图表', 'Chart'), content: <>
@@ -51,8 +51,11 @@ export function RadarExamples() {
         <Switch label={text('显示数据表', 'Show data table')} checked={showTable} onCheckedChange={setShowTable} />
       </> },
     ]} />}>
-      <Radar {...labels} axes={axes} series={series} label={text('能力画像', 'Capability profile')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
+      <Radar {...labels} axes={axes} series={series.slice(0, 1)} label={text('能力画像', 'Capability profile')} levels={Number(levels)} showLabels={showLabels} showValues={showValues} showTable={showTable} selectedSeries={selected} onSelectedSeriesChange={setSelected} getValueLabel={value => `${value}`} />
     </ComponentPlayground>
+    <ComponentExample id="radar-series-comparison" title={text('多个系列对比', 'Compare multiple series')} code={`<Radar axes={axes} series={series} showValues={false} label="${text('能力画像', 'Capability profile')}" />`}>
+      <Radar {...labels} axes={axes} series={series} showValues={false} label={text('能力画像', 'Capability profile')} />
+    </ComponentExample>
     <ComponentExample id="radar-missing-and-negative-values" title={text('缺失值与负值', 'Missing and negative values')} code={'<Radar {...labels} axes={axes} series={[{ id: "beta", label: "Beta", data: [{ axisId: "speed", value: -4 }, { axisId: "clarity", value: null }] }]} label="Boundary values" />'}>
       <Radar {...labels} axes={axes.slice(0, 3)} series={[{ id: 'boundary', label: text('边界样本', 'Boundary sample'), data: [{ axisId: 'speed', value: -4 }, { axisId: 'quality', value: 0 }, { axisId: 'clarity', value: null }] }]} label={text('边界样本', 'Boundary sample')} description={text('0 是有效数值，空值显示为缺失。', 'Zero is measured; null is missing.')} showLegend={false} />
     </ComponentExample>

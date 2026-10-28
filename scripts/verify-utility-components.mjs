@@ -26,11 +26,17 @@ try {
 
     await open(page, 'slot');
     const slot = page.locator('.preview-display .inkra-slot');
+    assert.equal(await slot.getAttribute('aria-pressed'), 'false');
+    assert.equal(await slot.locator('.inkra-slot__count').count(), 0);
+    const slotPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(slotPlayground, true);
+    await slotPlayground.getByRole('switch', { name: config.locale === 'en' ? 'Show count' : '显示数量', exact: true }).check();
+    await setPlaygroundControls(slotPlayground, false);
     await slot.focus();
     await page.keyboard.press('Space');
-    assert.equal(await slot.getAttribute('aria-pressed'), 'false');
-    await page.keyboard.press('Enter');
     assert.equal(await slot.getAttribute('aria-pressed'), 'true');
+    await page.keyboard.press('Enter');
+    assert.equal(await slot.getAttribute('aria-pressed'), 'false');
     const slotBox = await slot.boundingBox();
     assert.equal(slotBox.width, 64);
     assert.equal(slotBox.height, 64);

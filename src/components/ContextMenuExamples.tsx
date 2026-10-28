@@ -11,29 +11,32 @@ export function ContextMenuExamples() {
   const { locale } = useLocale();
   const text = (zh: string, en: string) => locale === 'zh-CN' ? zh : en;
   const [open, setOpen] = useState(false);
-  const [controlled, setControlled] = useState(true);
+  const [controlled, setControlled] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [longPress, setLongPress] = useState(true);
   const [compact, setCompact] = useState(false);
   const [policyAction, setPolicyAction] = useState(false);
   const [lastAction, setLastAction] = useState<'none' | 'duplicate' | 'ideas' | 'drafts' | 'archive'>('none');
-  const code = `${controlled ? `const [open, setOpen] = useState(${open});\n\n` : ''}<ContextMenu.Root${controlled ? ' open={open} onOpenChange={setOpen}' : ''}>
+  const code = `const [lastAction, setLastAction] = useState('none');
+${controlled ? `const [open, setOpen] = useState(${open});\n\n` : ''}<ContextMenu.Root${controlled ? ' open={open} onOpenChange={setOpen}' : ''}>
   <ContextMenu.Trigger longPress={${longPress}} disabled={${disabled}}>
     <article>${text('在这张笔记上右键', 'Right-click this note')}</article>
   </ContextMenu.Trigger>
   <ContextMenu.Portal>
     <ContextMenu.Content>
-      <ContextMenu.Label>${text('笔记操作', 'Note actions')}</ContextMenu.Label>
-      <ContextMenu.Item>${text('复制', 'Duplicate')}</ContextMenu.Item>
+      <ContextMenu.Item onSelect={() => setLastAction('duplicate')}>${text('复制笔记', 'Duplicate note')}</ContextMenu.Item>
+${advanced ? `      <ContextMenu.Label>${text('笔记操作', 'Note actions')}</ContextMenu.Label>
       <ContextMenu.Item disabled>${text('发布', 'Publish')}</ContextMenu.Item>
       <ContextMenu.Separator />
       <ContextMenu.Sub>
         <ContextMenu.SubTrigger>${text('移动到', 'Move to')}</ContextMenu.SubTrigger>
         <ContextMenu.SubContent>
-          <ContextMenu.Item>${text('灵感', 'Ideas')}</ContextMenu.Item>
-          <ContextMenu.Item>${text('归档', 'Archive')}</ContextMenu.Item>
+          <ContextMenu.Item onSelect={() => setLastAction('ideas')}>${text('灵感', 'Ideas')}</ContextMenu.Item>
+          <ContextMenu.Item onSelect={() => setLastAction('drafts')}>${text('草稿', 'Drafts')}</ContextMenu.Item>
         </ContextMenu.SubContent>
-      </ContextMenu.Sub>
+      </ContextMenu.Sub>` : ''}
+      <ContextMenu.Item destructive onSelect={() => setLastAction('archive')}>${text('归档笔记', 'Archive note')}</ContextMenu.Item>
     </ContextMenu.Content>
   </ContextMenu.Portal>
 </ContextMenu.Root>`;
@@ -49,6 +52,7 @@ export function ContextMenuExamples() {
   return <div className="context-menu-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: text('交互', 'Interaction'), content: <>
+        <Switch label={text('更多设置', 'More settings')} checked={advanced} onCheckedChange={setAdvanced} />
         <Switch label={text('受控打开状态', 'Controlled open state')} checked={controlled} onCheckedChange={next => { setControlled(next); setOpen(false); }} />
         <Switch label={text('启用触屏长按', 'Enable touch long press')} checked={longPress} onCheckedChange={setLongPress} />
       </> },
@@ -78,8 +82,9 @@ export function ContextMenuExamples() {
           </ContextMenu.Trigger>
           <ContextMenu.Portal>
             <ContextMenu.Content aria-label={text('笔记操作', 'Note actions')}>
-              <ContextMenu.Label>{text('笔记操作', 'Note actions')}</ContextMenu.Label>
               <ContextMenu.Item onSelect={() => setLastAction('duplicate')}>{text('复制笔记', 'Duplicate note')}</ContextMenu.Item>
+              {advanced && <>
+              <ContextMenu.Label>{text('笔记操作', 'Note actions')}</ContextMenu.Label>
               <ContextMenu.Item disabled>{text('发布到团队（不可用）', 'Publish to team (unavailable)')}</ContextMenu.Item>
               <ContextMenu.Separator />
               <ContextMenu.Group>
@@ -92,6 +97,7 @@ export function ContextMenuExamples() {
                 </ContextMenu.Sub>
               </ContextMenu.Group>
               <ContextMenu.Separator />
+              </>}
               <ContextMenu.Item destructive onSelect={() => setLastAction('archive')}>{text('归档笔记', 'Archive note')}</ContextMenu.Item>
             </ContextMenu.Content>
           </ContextMenu.Portal>

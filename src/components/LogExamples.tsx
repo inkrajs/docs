@@ -76,10 +76,10 @@ export function LogExamples() {
   const localizedRecords = records.map(localizeRecord);
   const [filteredLevels, setFilteredLevels] = useState<readonly string[] | undefined>(undefined);
   const [paused, setPaused] = useState(false);
-  const [showFilters, setShowFilters] = useState(true);
-  const [showFollow, setShowFollow] = useState(true);
-  const [showTime, setShowTime] = useState(true);
-  const [showIcons, setShowIcons] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showFollow, setShowFollow] = useState(false);
+  const [showTime, setShowTime] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
   const [bounded, setBounded] = useState(false);
   const visibleRecords = localizedRecords.map(record => ({
     ...record,
@@ -87,8 +87,15 @@ export function LogExamples() {
     dateTime: showTime ? record.dateTime : undefined,
     icon: showIcons ? record.icon : undefined,
   }));
-  const code = `<Log
-  items={records}
+  const code = `const visibleRecords = records.map(record => ({
+  ...record,
+  time: ${showTime ? 'record.time' : 'undefined'},
+  dateTime: ${showTime ? 'record.dateTime' : 'undefined'},
+  icon: ${showIcons ? 'record.icon' : 'undefined'},
+}));
+
+<Log
+  items={visibleRecords}
   levels={levels}
   filteredLevels={filteredLevels}
   onFilteredLevelsChange={setFilteredLevels}

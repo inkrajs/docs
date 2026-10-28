@@ -34,7 +34,7 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
 }
 
 export function CarouselExamples() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const text = (chinese: string, english: string) => locale === 'en' ? english : chinese;
   const labels = {
     previous: text('上一组', 'Previous items'), next: text('下一组', 'Next items'),
@@ -45,11 +45,11 @@ export function CarouselExamples() {
     status: (index: number, count: number) => text(`当前第 ${index} 项，共 ${count} 项`, `Current item ${index} of ${count}`),
   };
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [controlled, setControlled] = useState(true);
+  const [controlled, setControlled] = useState(false);
   const [loop, setLoop] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
-  const [density, setDensity] = useState<'adaptive' | 'single' | 'pair'>('adaptive');
+  const [density, setDensity] = useState<'adaptive' | 'single' | 'pair'>('single');
   const visibleItems: number | CarouselVisibleItems = density === 'adaptive'
     ? { base: 1, sm: 2, md: 3 }
     : density === 'pair' ? 2 : 1;
@@ -60,7 +60,7 @@ export function CarouselExamples() {
   dir="${direction}"
   loop={${loop}}${autoplay ? '\n  autoplay={{ delay: 5000, pauseOnHover: true, pauseOnFocus: true }}' : ''}${controlled ? `\n  currentIndex={${currentIndex}}\n  onCurrentIndexChange={setCurrentIndex}` : ''}
 >
-  {projects.map(project => <ProjectCard key={project.id} project={project} />)}
+  {projects.map(project => <PencilSurface key={project.id} variant="paper"><PencilText>{project.title}</PencilText></PencilSurface>)}
 </Carousel>`;
 
   return <div className="carousel-examples">
@@ -91,7 +91,9 @@ export function CarouselExamples() {
           loop={loop}
           visibleItems={visibleItems}
         >
-          {projects.map(project => <ProjectCard key={project.id} project={project} />)}
+          {projects.map(project => <PencilSurface className="carousel-examples__card carousel-examples__simple-slide" key={project.id} variant="paper">
+            <PencilText as="h3">{t(project.title)}</PencilText>
+          </PencilSurface>)}
         </Carousel>
       </div>
     </ComponentPlayground>
@@ -114,6 +116,14 @@ export function CarouselExamples() {
             <img src="/favicon.png" alt={text('小尺寸 Inkra 标志', 'Compact Inkra mark')} />
             <figcaption><PencilText>{text('紧凑预览', 'Compact preview')}</PencilText><ButtonLink variant="ghost" href="/favicon.png" target="_blank" rel="noopener noreferrer">{text('查看细节', 'View details')}</ButtonLink></figcaption>
           </PencilSurface>
+        </Carousel>
+      </div>
+    </ComponentExample>
+
+    <ComponentExample id="carousel-interactive-cards" title={text('卡片与弹层组合', 'Cards and overlays')} code={`<Carousel aria-label="${text('创作项目', 'Creative projects')}" visibleItems={{ base: 1, sm: 2, md: 3 }}>\n  {projects.map(project => <ProjectCard key={project.id} project={project} />)}\n</Carousel>`}>
+      <div className="carousel-examples__frame">
+        <Carousel aria-label={text('创作项目', 'Creative projects')} labels={labels} visibleItems={{ base: 1, sm: 2, md: 3 }}>
+          {projects.map(project => <ProjectCard key={project.id} project={project} />)}
         </Carousel>
       </div>
     </ComponentExample>

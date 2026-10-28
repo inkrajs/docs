@@ -26,12 +26,12 @@ export function RatingExamples() {
     quality: '绘图质量', value: '当前值', uncontrolled: '非受控与只读',
     difficulty: '难度', completion: '完成度', custom: '自定义符号', priority: '收藏优先级',
   };
-  const [value, setValue] = useState(3.5);
+  const [value, setValue] = useState(3);
   const [count, setCount] = useState(5);
-  const [step, setStep] = useState(0.5);
+  const [step, setStep] = useState(1);
   const [size, setSize] = useState<RatingSize>('md');
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
-  const [clearable, setClearable] = useState<RatingClearStrategy>(true);
+  const [clearable, setClearable] = useState<RatingClearStrategy>(false);
   const [readOnly, setReadOnly] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [hoverPreview, setHoverPreview] = useState(true);
@@ -87,6 +87,12 @@ export function RatingExamples() {
         />
       </div>
     </ComponentPlayground>
+    <ComponentExample id="rating-uncontrolled" title={text.uncontrolled} code={`<Rating aria-label="${text.difficulty}" defaultValue={2} count={4} />\n<Rating aria-label="${text.completion}" defaultValue={3.5} step={0.5} readOnly />`}>
+      <div className="rating-example-list">
+        <Rating aria-label={text.difficulty} defaultValue={2} count={4} />
+        <Rating aria-label={text.completion} defaultValue={3.5} step={0.5} readOnly />
+      </div>
+    </ComponentExample>
     <ComponentExample id="rating-form-submission-and-reset" title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`<form onSubmit={event => {
   event.preventDefault();
   setSubmitted(String(new FormData(event.currentTarget).get('quality')));
@@ -106,12 +112,6 @@ export function RatingExamples() {
       </form>
     </ComponentExample>
 
-    <ComponentExample id="rating-uncontrolled" title={text.uncontrolled} code={`<Rating aria-label="${text.difficulty}" defaultValue={2} count={4} />\n<Rating aria-label="${text.completion}" defaultValue={3.5} step={0.5} readOnly />`}>
-      <div className="rating-example-list">
-        <Rating aria-label={text.difficulty} defaultValue={2} count={4} />
-        <Rating aria-label={text.completion} defaultValue={3.5} step={0.5} readOnly />
-      </div>
-    </ComponentExample>
 
     <ComponentExample id="rating-custom" title={text.custom} code={`<Rating aria-label="${text.priority}" defaultValue={2} count={4}
   renderSymbol={({ filled, index }) => (

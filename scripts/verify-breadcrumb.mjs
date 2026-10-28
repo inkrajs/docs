@@ -24,6 +24,8 @@ try {
     const currentPage = breadcrumb.locator('.inkra-breadcrumb__page');
     await breadcrumb.waitFor();
     await page.evaluate(() => document.fonts.ready);
+    assert.equal(await breadcrumb.locator('.inkra-breadcrumb__icon, .inkra-button__icon').count(), 0, 'Basic breadcrumbs have no icons');
+    await playground.getByRole('switch', { name: en ? 'Show icons' : '显示图标', exact: true }).check();
 
     assert.equal(await firstLink.getAttribute('data-variant'), 'link');
     assert.equal(await firstLink.getAttribute('href'), '/');

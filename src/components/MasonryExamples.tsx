@@ -84,7 +84,7 @@ export function MasonryExamples() {
   const [rowGap, setRowGap] = useState(16);
   const [strategy, setStrategy] = useState<MasonryStrategy>('shortest');
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
-  const [animated, setAnimated] = useState(true);
+  const [animated, setAnimated] = useState(false);
   const [items, setItems] = useState<readonly DemoItem[]>(initialItems);
   const [showAsyncImage, setShowAsyncImage] = useState(false);
   const nextAddedId = useMemo(() => 1 + items.filter(item => item.id.startsWith('added-')).length, [items]);
@@ -97,6 +97,7 @@ export function MasonryExamples() {
   columnGap={${columnGap}}
   rowGap={${rowGap}}
   strategy="${strategy}"
+  animated={${animated}}
   dir="${direction}"
   renderItem={({ item }) => <ProjectCard item={item} />}
 />`;

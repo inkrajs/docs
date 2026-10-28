@@ -25,11 +25,12 @@ export const registeredBrowserChecks = [
   'verify-page-titles', 'verify-docs-actions', 'verify-tabs-dividers', 'verify-overlay-sections',
   'verify-sidebar-preference-sizing', 'verify-select-trigger', 'verify-input-property-tabs', 'verify-input-number',
   'verify-playground-config', 'verify-docs-motion', 'verify-input-password', 'verify-command-dialog',
-  'verify-library-motion', 'verify-number-ticker-exact', 'verify-number-ticker-compact', 'verify-example-i18n',
+  'verify-library-motion', 'verify-number-ticker-exact', 'verify-number-ticker-morph', 'verify-number-ticker-compact', 'verify-example-i18n',
   'verify-sortable', 'verify-virtual-list',
 ];
 
 export const browserCheckComponentOverrides = {
+  'verify-number-ticker-morph': ['number-ticker'],
   'verify-theme-colors': ['color-picker', 'color-swatch'],
   'verify-circular-slider': ['slider'],
   'verify-circular-switch': ['switch', 'slider'],
@@ -69,6 +70,7 @@ export const browserCheckModuleOverrides = {
 };
 
 export const sourceOwnerOverrides = {
+  'scripts/fixtures/NumberTickerMorphFixture.tsx': ['number-ticker'],
   'scripts/fixtures/CircularSliderFixture.tsx': ['slider'],
   'scripts/fixtures/CircularSwitchFixture.tsx': ['switch', 'slider'],
   'src/components/iconColorPaths.ts': ['icon'],

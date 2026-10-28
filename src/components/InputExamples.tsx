@@ -299,7 +299,12 @@ export function InputExamples() {
   const { t } = useLocale();
   return <>
     <InputPlayground />
-    <PasswordExample />
+    <ComponentExample id="input-appearance" title="外观" code={variants.map(([variant, label]) => `<Field label=${quote(t(label))}><Input variant="${variant}" defaultValue="Inkra" /></Field>`).join('\n')}>
+      <div className="input-examples__fields">{variants.map(([variant, label]) => <Field key={variant} label={t(label)}><Input variant={variant} defaultValue="Inkra" /></Field>)}</div>
+    </ComponentExample>
+    <ComponentExample id="input-size" title="尺寸" code={controlSizes.map(([size, label]) => `<Field label=${quote(t(label))}><Input size="${size}" defaultValue="Inkra" /></Field>`).join('\n')}>
+      <div className="input-examples__fields">{controlSizes.map(([size, label]) => <Field key={size} label={t(label)}><Input size={size} defaultValue="Inkra" /></Field>)}</div>
+    </ComponentExample>
     <ComponentExample id="input-leading-and-trailing-icons" title="首尾图标" code={`<Field label=${quote(t('搜索文档'))}><Input type="search" placeholder=${quote(t('搜索文档'))} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>\n<Field label=${quote(t('电子邮箱'))}><Input type="email" defaultValue="hello@example.com" startIcon={<DocsIcon data={mailIcon} size={22} />} endIcon={<DocsIcon data={checkIcon} size={22} />} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('搜索文档')}><Input type="search" placeholder={t('搜索文档')} startIcon={<DocsIcon data={searchIcon} size={22} />} /></Field>
@@ -312,14 +317,9 @@ export function InputExamples() {
         <Field label={t('行李重量')} description={t('单位：千克')}><Input inputMode="decimal" suffix="kg" defaultValue="12.5" textAlign="end" /></Field>
       </div>
     </ComponentExample>
+    <PasswordExample />
     <ClearExamples />
     <ActionExamples />
-    <ComponentExample id="input-appearance" title="外观" code={variants.map(([variant, label]) => `<Field label=${quote(t(label))}><Input variant="${variant}" defaultValue="Inkra" /></Field>`).join('\n')}>
-      <div className="input-examples__fields">{variants.map(([variant, label]) => <Field key={variant} label={t(label)}><Input variant={variant} defaultValue="Inkra" /></Field>)}</div>
-    </ComponentExample>
-    <ComponentExample id="input-size" title="尺寸" code={controlSizes.map(([size, label]) => `<Field label=${quote(t(label))}><Input size="${size}" defaultValue="Inkra" /></Field>`).join('\n')}>
-      <div className="input-examples__fields">{controlSizes.map(([size, label]) => <Field key={size} label={t(label)}><Input size={size} defaultValue="Inkra" /></Field>)}</div>
-    </ComponentExample>
     <ComponentExample id="input-states" title="状态" code={`<Field label=${quote(t('只读'))}><Input readOnly defaultValue="Inkra" clearable clearButtonLabel=${quote(t('清空名称'))} /></Field>\n<Field label=${quote(t('禁用'))} disabled><Input defaultValue="Inkra" clearable clearButtonLabel=${quote(t('清空名称'))} /></Field>\n<Field label=${quote(t('名称'))} required error=${quote(t('请输入名称'))}><Input placeholder=${quote(t('笔记名称'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('只读')}><Input readOnly defaultValue="Inkra" clearable clearButtonLabel={t('清空名称')} /></Field>
@@ -338,7 +338,7 @@ export function TextareaExamples() {
   const [rows, setRows] = useState(3);
   const [autoSize, setAutoSize] = useState(false);
   const [maxRows, setMaxRows] = useState(6);
-  const [maxLength, setMaxLength] = useState('120');
+  const [maxLength, setMaxLength] = useState('none');
   const [countMode, setCountMode] = useState<'remaining' | 'fraction' | 'progress' | 'none'>('remaining');
   const [countDisplay, setCountDisplay] = useState<'auto' | 'always'>('auto');
   const [countThreshold, setCountThreshold] = useState('0.8');
@@ -392,6 +392,18 @@ export function TextareaExamples() {
           countMode={countMode} countDisplay={countDisplay} countThreshold={Number(countThreshold)} getCountLabel={countLabel} resize={resizable ? 'vertical' : 'none'} resizeLabel={zh ? '调整输入框高度' : 'Resize text area'} /></Field>
       </div>
     </ComponentPlayground>
+    <ComponentExample id="input-auto-size" title={zh ? '从一行增长到最多六行' : 'Grow from one to six rows'} code={`<Field label=${quote(t('笔记内容'))}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder=${quote(t('写下你的想法'))} /></Field>`}>
+      <Field label={t('笔记内容')}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder={t('写下你的想法')} /></Field>
+    </ComponentExample>
+    <ComponentExample id="input-rows-and-length-limits" title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
+      <div className="input-examples__fields">
+        <Field label={t('简短备注')} description={t('最多 40 个 UTF-16 码元')}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder={t('写下你的想法')} /></Field>
+        <Field label={t('笔记内容')} description={t('最多 120 个 UTF-16 码元')}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>
+      </div>
+    </ComponentExample>
+    <ComponentExample id="input-states-textarea" title="状态" code={`<Field label=${quote(t('只读'))}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field>\n<Field label=${quote(t('禁用'))} disabled><Textarea rows={3} defaultValue="Inkra" /></Field>`}>
+      <div className="input-examples__fields"><Field label={t('只读')}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field><Field label={t('禁用')} disabled><Textarea rows={3} defaultValue="Inkra" /></Field></div>
+    </ComponentExample>
     <ComponentExample id="input-form-submission-and-reset" title={zh ? '表单提交与重置' : 'Form submission and reset'} code={`const [submitted, setSubmitted] = useState('');
 <form onSubmit={event => {
   event.preventDefault();
@@ -410,18 +422,6 @@ export function TextareaExamples() {
         <div className="component-demo-actions"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="outline">{t('重置')}</Button></div>
         <output aria-live="polite">{submitted}</output>
       </form>
-    </ComponentExample>
-    <ComponentExample id="input-auto-size" title={zh ? '从一行增长到最多六行' : 'Grow from one to six rows'} code={`<Field label=${quote(t('笔记内容'))}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder=${quote(t('写下你的想法'))} /></Field>`}>
-      <Field label={t('笔记内容')}><Textarea autoSize={{ minRows: 1, maxRows: 6 }} placeholder={t('写下你的想法')} /></Field>
-    </ComponentExample>
-    <ComponentExample id="input-rows-and-length-limits" title="行数与长度限制" code={`<Field label=${quote(t('简短备注'))} description=${quote(t('最多 40 个 UTF-16 码元'))}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder=${quote(t('写下你的想法'))} /></Field>\n<Field label=${quote(t('笔记内容'))} description=${quote(t('最多 120 个 UTF-16 码元'))}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>`}>
-      <div className="input-examples__fields">
-        <Field label={t('简短备注')} description={t('最多 40 个 UTF-16 码元')}><Textarea rows={2} maxLength={40} countMode="fraction" countDisplay="always" placeholder={t('写下你的想法')} /></Field>
-        <Field label={t('笔记内容')} description={t('最多 120 个 UTF-16 码元')}><Textarea rows={5} maxLength={120} countMode="progress" countDisplay="always" defaultValue="Inkra" /></Field>
-      </div>
-    </ComponentExample>
-    <ComponentExample id="input-states-textarea" title="状态" code={`<Field label=${quote(t('只读'))}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field>\n<Field label=${quote(t('禁用'))} disabled><Textarea rows={3} defaultValue="Inkra" /></Field>`}>
-      <div className="input-examples__fields"><Field label={t('只读')}><Textarea readOnly rows={3} defaultValue="Inkra" /></Field><Field label={t('禁用')} disabled><Textarea rows={3} defaultValue="Inkra" /></Field></div>
     </ComponentExample>
   </>;
 }

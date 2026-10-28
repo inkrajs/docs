@@ -73,7 +73,6 @@ export function AudioPlayerExamples() {
   const code = `<AudioPlayer
   src={sampleAudio}
   autoPlay={${autoPlay}}
-  onStateChange={setState}
   labels={localizedLabels}
   ${custom ? 'renderControls={controls => <YourControls {...controls} />}' : ''}
 />`;
@@ -85,8 +84,7 @@ export function AudioPlayerExamples() {
       { label: text('组合', 'Composition'), content: <Switch label={text('自定义控制区', 'Custom controls')} checked={custom} onCheckedChange={setCustom} /> },
     ]} />}>
       <div className="audio-player-examples__stage" data-testid="audio-player-playground">
-        <AudioPlayer src={sampleAudio} autoPlay={autoPlay} onStateChange={setState} labels={labels} renderControls={custom ? controls => <div className="audio-player-examples__custom-controls"><Button variant="outline" onClick={() => void controls.togglePlay()}>{controls.state.status === 'playing' ? text('暂停', 'Pause') : text('播放', 'Play')}</Button><Button variant="ghost" onClick={() => controls.seek(0)}>{text('回到开头', 'Restart')}</Button></div> : undefined} />
-        <PencilText as="p" className="audio-player-examples__status" aria-live="polite">{status}</PencilText>
+        <AudioPlayer src={sampleAudio} autoPlay={autoPlay} labels={labels} renderControls={custom ? controls => <div className="audio-player-examples__custom-controls"><Button variant="outline" onClick={() => void controls.togglePlay()}>{controls.state.status === 'playing' ? text('暂停', 'Pause') : text('播放', 'Play')}</Button><Button variant="ghost" onClick={() => controls.seek(0)}>{text('回到开头', 'Restart')}</Button></div> : undefined} />
       </div>
     </ComponentPlayground>
 
@@ -102,9 +100,10 @@ export function AudioPlayerExamples() {
 />`}>
       <div className="audio-player-examples__secondary" data-testid="audio-player-controlled">
         <AudioPlayer src={sampleAudio} preload="none" volume={volume} muted={muted} playbackRate={playbackRate}
-          onVolumeChange={setVolume} onMutedChange={setMuted} onPlaybackRateChange={setPlaybackRate} labels={labels} />
+          onVolumeChange={setVolume} onMutedChange={setMuted} onPlaybackRateChange={setPlaybackRate} onStateChange={setState} labels={labels} />
         <Button variant="outline" onClick={() => { setVolume(0.5); setMuted(false); setPlaybackRate(1); }}>{text('重置播放设置', 'Reset playback settings')}</Button>
         <PencilText as="p" className="audio-player-examples__status">{text(`音量 ${Math.round(volume * 100)}% · ${muted ? '已静音' : '未静音'} · ${playbackRate} 倍速`, `Volume ${Math.round(volume * 100)}% · ${muted ? 'Muted' : 'Unmuted'} · ${playbackRate}x`)}</PencilText>
+        <PencilText as="p" className="audio-player-examples__status" aria-live="polite">{status}</PencilText>
       </div>
     </ComponentExample>
   </div>;

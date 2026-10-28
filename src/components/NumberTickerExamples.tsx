@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Field, Input, InputNumber, NumberTicker, PencilIcon, PencilSurface, PencilText, Switch, createNumberFormatter, formatTickerValue, numberTickerUnits, type NumberTickerCompactOptions, type NumberTickerFormatOptions } from '@inkra/react';
+import { Button, Field, Input, InputNumber, NumberTicker, PencilIcon, PencilText, Switch, createNumberFormatter, formatTickerValue, numberTickerUnits, type NumberTickerCompactOptions, type NumberTickerFormatOptions } from '@inkra/react';
 import { __iconData as coinsIcon } from 'lucide-react/dist/esm/icons/coins.mjs';
 import { __iconData as gemIcon } from 'lucide-react/dist/esm/icons/gem.mjs';
 
@@ -9,7 +9,7 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { DocsSelect } from './DocsSelect';
 import { iconPaths } from './DocsIcon';
 import { PropertyTabs } from './PropertyTabs';
-import { NumberTickerRollExamples } from './NumberTickerRollExamples';
+import { NumberTickerRollExamples, NumberTickerShiftExamples } from './NumberTickerRollExamples';
 import { numberTickerRollCopy } from './numberTickerRollCopy';
 import './NumberTickerExamples.css';
 
@@ -18,6 +18,19 @@ const coinPaths = iconPaths(coinsIcon);
 const gemPaths = iconPaths(gemIcon);
 const binaryUnits = [{ factor: 1024, label: 'KiB' }, { factor: 1048576, label: 'MiB' }, { factor: 1073741824, label: 'GiB' }];
 type AffixMode = 'none' | 'text' | 'icon' | 'both';
+
+function BasicNumberExample() {
+  const { locale } = useLocale();
+  const [value, setValue] = useState(12);
+  return <ComponentExample id="number-ticker-basic" title={locale === 'zh-CN' ? '基础用法' : 'Basic usage'} code={`const [value, setValue] = useState(${value});
+<NumberTicker value={value} />
+<Button onClick={() => setValue(current => current + 1)}>+1</Button>`}>
+    <div className="number-ticker-examples__basic">
+      <NumberTicker value={value} />
+      <Button onClick={() => setValue(current => current + 1)}>+1</Button>
+    </div>
+  </ComponentExample>;
+}
 
 function ExactNumberExamples() {
   const { locale } = useLocale();
@@ -60,9 +73,9 @@ export function NumberTickerExamples() {
   const { locale } = useLocale();
   const zh = locale === 'zh-CN';
   const text = (chinese: string, english: string) => zh ? chinese : english;
-  const [value, setValue] = useState(12840);
+  const [value, setValue] = useState(12);
   const [format, setFormat] = useState<'standard' | 'compact' | 'compact-en' | 'compact-zh' | 'binary' | 'scientific' | 'engineering' | 'currency' | 'decimal'>('standard');
-  const [precision, setPrecision] = useState(1);
+  const [precision, setPrecision] = useState(3);
   const [roundingMode, setRoundingMode] = useState<NonNullable<NumberTickerFormatOptions['roundingMode']>>('halfExpand');
   const [padDecimals, setPadDecimals] = useState(false);
   const [grouping, setGrouping] = useState(true);
@@ -72,12 +85,12 @@ export function NumberTickerExamples() {
   const [promotionThreshold, setPromotionThreshold] = useState(1);
   const [promoteAfterRounding, setPromoteAfterRounding] = useState(true);
   const [overflow, setOverflow] = useState<'auto' | 'unit' | 'scientific'>('auto');
-  const [prefixMode, setPrefixMode] = useState<AffixMode>('text');
-  const [suffixMode, setSuffixMode] = useState<AffixMode>('text');
-  const [showDelta, setShowDelta] = useState(true);
+  const [prefixMode, setPrefixMode] = useState<AffixMode>('none');
+  const [suffixMode, setSuffixMode] = useState<AffixMode>('none');
+  const [showDelta, setShowDelta] = useState(false);
   const [animate, setAnimate] = useState(true);
   const [duration, setDuration] = useState(420);
-  const [animation, setAnimation] = useState<'count' | 'roll'>('count');
+  const [animation, setAnimation] = useState<'count' | 'roll' | 'morph'>('count');
   const [rollDirection, setRollDirection] = useState<'auto' | 'up' | 'down'>('auto');
   const rollLabels = numberTickerRollCopy(locale);
   const compact = format === 'compact' ? true : format === 'compact-en' || format === 'binary' ? 'en' : format === 'compact-zh' ? 'zh' : false;
@@ -104,24 +117,20 @@ export function NumberTickerExamples() {
     : `{<>${`<PencilIcon paths={${name}} size={28} sourceSize={24} decorative />`}${mode === 'both' ? `<PencilText>{${quote(label)}}</PencilText>` : ''}</>}`;
   const prefix = affix(prefixMode, text('积分', 'Points'), coinPaths);
   const suffix = affix(suffixMode, text('总计', 'total'), gemPaths);
-  const code = `${[prefixMode, suffixMode].some(mode => mode === 'icon' || mode === 'both') ? `const coinPaths = ${JSON.stringify(coinPaths)};\nconst gemPaths = ${JSON.stringify(gemPaths)};\n` : ''}const [value, setValue] = useState(${value});
-
-<NumberTicker
-  value={value}
-  locale=${quote(locale)}
-  compact={${JSON.stringify(compact)}}
-  ${compactOptions ? `compactOptions={${JSON.stringify(compactOptions)}}\n  ` : ''}formatOptions={${JSON.stringify(formatOptions)}}
-  animate={${animate}}
-  animation="${animation}"
-  rollDirection="${rollDirection}"
-  duration={${duration}}
-  showDelta={${showDelta}}${prefixMode !== 'none' ? `
-  prefix=${affixCode(prefixMode, text('积分', 'Points'), 'coinPaths')}` : ''}${suffixMode !== 'none' ? `
-  suffix=${affixCode(suffixMode, text('总计', 'total'), 'gemPaths')}` : ''}
-  getValueLabel={(_value, formatted) => ${quote(text('当前积分 ', 'Current points '))} + formatted}
-/>
-<Button onClick={() => setValue(current => current + 275)}>${text('增加', 'Increase')}</Button>
-<Button onClick={() => setValue(current => current - 180)} variant="secondary">${text('减少', 'Decrease')}</Button>`;
+  const changedFormat = format !== 'standard' || precision !== 3 || padDecimals || roundingMode !== 'halfExpand' || !grouping;
+  const codeProps = [
+    `value={${value}}`,
+    ...(compact ? [`compact={${JSON.stringify(compact)}}`, `compactOptions={${JSON.stringify(compactOptions)}}`] : []),
+    ...(changedFormat ? [`formatOptions={${JSON.stringify(formatOptions)}}`] : []),
+    ...(!animate ? ['animate={false}'] : []),
+    ...(animation !== 'count' ? [`animation="${animation}"`] : []),
+    ...(rollDirection !== 'auto' ? [`rollDirection="${rollDirection}"`] : []),
+    ...(duration !== 420 ? [`duration={${duration}}`] : []),
+    ...(showDelta ? ['showDelta'] : []),
+    ...(prefixMode !== 'none' ? [`prefix=${affixCode(prefixMode, text('积分', 'Points'), 'coinPaths')}`] : []),
+    ...(suffixMode !== 'none' ? [`suffix=${affixCode(suffixMode, text('总计', 'total'), 'gemPaths')}`] : []),
+  ];
+  const code = `${[prefixMode, suffixMode].some(mode => mode === 'icon' || mode === 'both') ? `const coinPaths = ${JSON.stringify(coinPaths)};\nconst gemPaths = ${JSON.stringify(gemPaths)};\n` : ''}<NumberTicker ${codeProps.join('\n  ')} />`;
 
   return <div className="number-ticker-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
@@ -174,9 +183,9 @@ export function NumberTickerExamples() {
       </> },
       { label: '交互', content: <>
         <DocsSelect label={rollLabels.animation} value={animation} onValueChange={next => setAnimation(next as typeof animation)} options={[
-          ['count', rollLabels.count], ['roll', rollLabels.roll],
+          ['count', rollLabels.count], ['roll', rollLabels.roll], ['morph', rollLabels.morph],
         ]} />
-        <DocsSelect label={rollLabels.direction} value={rollDirection} disabled={animation !== 'roll'} onValueChange={next => setRollDirection(next as typeof rollDirection)} options={[
+        <DocsSelect label={rollLabels.direction} value={rollDirection} disabled={animation === 'count'} onValueChange={next => setRollDirection(next as typeof rollDirection)} options={[
           ['auto', rollLabels.auto], ['up', rollLabels.up], ['down', rollLabels.down],
         ]} />
         <DocsSelect label={text('动画时长', 'Duration')} value={String(duration)} onValueChange={next => setDuration(Number(next))} options={[
@@ -205,13 +214,29 @@ export function NumberTickerExamples() {
           showDelta={showDelta}
           prefix={prefix}
           suffix={suffix}
-          getValueLabel={(_number, formatted) => text(`当前积分 ${formatted}`, `Current points ${formatted}`)}
         />
       </div>
     </ComponentPlayground>
 
+    <BasicNumberExample />
+
+    <ComponentExample id="number-ticker-statistics-and-edge-values" title={text('小数与百分比', 'Decimals and percentages')} code={`<NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2 }} />
+<NumberTicker value={0.0038} formatOptions={{ style: 'percent', maximumFractionDigits: 2 }} />`}>
+      <div className="number-ticker-examples__statistics">
+        <div><span>{text('周环比', 'Weekly change')}</span><NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} getValueLabel={(_number, formatted) => text(`周环比 ${formatted}%`, `Weekly change ${formatted}%`)} /></div>
+        <div><span>{text('转化率', 'Conversion rate')}</span><NumberTicker value={0.0038} formatOptions={{ style: 'percent', maximumFractionDigits: 2 }} getValueLabel={(_number, formatted) => text(`转化率 ${formatted}`, `Conversion rate ${formatted}`)} /></div>
+      </div>
+    </ComponentExample>
+
+    <ComponentExample id="number-ticker-points-and-resources" title={text('文字前后缀', 'Text affixes')} code={`<NumberTicker value={4820} prefix="${text('积分', 'Points')}" />
+<NumberTicker value={73650} suffix="${text('晶石', 'crystals')}" locale="en-US" />`}>
+      <div className="number-ticker-examples__specimens">
+        <NumberTicker value={4820} prefix={text('积分', 'Points')} />
+        <NumberTicker value={73650} suffix={text('晶石', 'crystals')} locale="en-US" formatOptions={{ maximumFractionDigits: 0 }} />
+      </div>
+    </ComponentExample>
+
     <NumberTickerRollExamples />
-    <ExactNumberExamples />
 
     <ComponentExample id="number-ticker-automatic-compact-units" title={text('自动单位换算', 'Automatic compact units')} code={`<NumberTicker value={12840} compact="en" />
 <NumberTicker value={12840} compact="zh" />
@@ -219,12 +244,18 @@ export function NumberTickerExamples() {
 <NumberTicker value={1250000000} compact="zh" />
 <NumberTicker value={1250000000000} compact locale="zh-CN" formatOptions={{ maximumFractionDigits: 2 }} />`}>
       <div className="number-ticker-examples__unit-grid">
-        {[1000, 12840, 1250000, 1e16, 1e24, 1e68].map(amount => <div className="number-ticker-examples__unit-row" key={amount}>
+        {[12840, 1250000, 1250000000].map(amount => <div className="number-ticker-examples__unit-row" key={amount}>
           <PencilText>{amount >= 1e16 ? String(amount.toExponential()) : new Intl.NumberFormat(locale).format(amount)}</PencilText>
           <NumberTicker value={amount} locale={locale} compact="en" />
           <NumberTicker value={amount} locale={locale} compact="zh" />
         </div>)}
       </div>
+    </ComponentExample>
+
+    <ComponentExample id="number-ticker-icon-prefixes-and-suffixes" title={text('图标前后缀', 'Icon prefixes and suffixes')} code={`const coinPaths = ${JSON.stringify(coinPaths)};
+const gemPaths = ${JSON.stringify(gemPaths)};
+<NumberTicker value={12840} compact="en" prefix={<PencilIcon paths={coinPaths} size={28} sourceSize={24} decorative />} suffix={<PencilIcon paths={gemPaths} size={28} sourceSize={24} decorative />} getValueLabel={(_value, formatted) => ${quote(text('积分 ', 'Points '))} + formatted} />`}>
+      <NumberTicker value={12840} compact="en" prefix={<PencilIcon paths={coinPaths} size={28} sourceSize={24} decorative />} suffix={<PencilIcon paths={gemPaths} size={28} sourceSize={24} decorative />} getValueLabel={(_value, formatted) => text(`积分 ${formatted}`, `Points ${formatted}`)} />
     </ComponentExample>
 
     <ComponentExample id="number-ticker-fixed-units-and-custom-thresholds" title={text('固定单位与独立阈值', 'Fixed units and custom thresholds')} code={`<NumberTicker value={1e8} compact="zh" compactOptions={{ maxUnit: '万' }} />
@@ -247,34 +278,9 @@ export function NumberTickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample id="number-ticker-icon-prefixes-and-suffixes" title={text('图标前后缀', 'Icon prefixes and suffixes')} code={`const coinPaths = ${JSON.stringify(coinPaths)};
-const gemPaths = ${JSON.stringify(gemPaths)};
-<NumberTicker value={12840} compact="en" prefix={<PencilIcon paths={coinPaths} size={28} sourceSize={24} decorative />} suffix={<PencilIcon paths={gemPaths} size={28} sourceSize={24} decorative />} getValueLabel={(_value, formatted) => ${quote(text('积分 ', 'Points '))} + formatted} />`}>
-      <NumberTicker value={12840} compact="en" prefix={<PencilIcon paths={coinPaths} size={28} sourceSize={24} decorative />} suffix={<PencilIcon paths={gemPaths} size={28} sourceSize={24} decorative />} getValueLabel={(_value, formatted) => text(`积分 ${formatted}`, `Points ${formatted}`)} />
-    </ComponentExample>
+    <NumberTickerShiftExamples />
 
-    <ComponentExample id="number-ticker-points-and-resources" title={text('积分与资源', 'Points and resources')} code={`<NumberTicker value={4820} prefix="${text('积分', 'Points')}" showDelta />
-<NumberTicker value={73650} suffix="${text('晶石', 'crystals')}" locale="en-US" />`}>
-      <div className="number-ticker-examples__specimens">
-        <PencilSurface as="section" className="number-ticker-examples__metric" variant="quiet" radius={8}>
-          <span>{text('账户积分', 'Account points')}</span>
-          <NumberTicker value={4820} prefix={text('积分', 'Points')} showDelta getValueLabel={(_number, formatted) => text(`账户积分 ${formatted}`, `Account points ${formatted}`)} />
-        </PencilSurface>
-        <PencilSurface as="section" className="number-ticker-examples__metric" variant="quiet" radius={8}>
-          <span>{text('可用资源', 'Available resources')}</span>
-          <NumberTicker value={73650} suffix={text('晶石', 'crystals')} locale="en-US" formatOptions={{ maximumFractionDigits: 0 }} getValueLabel={(_number, formatted) => text(`可用资源 ${formatted} 晶石`, `${formatted} crystals available`)} />
-        </PencilSurface>
-      </div>
-    </ComponentExample>
-
-    <ComponentExample id="number-ticker-statistics-and-edge-values" title={text('普通统计与边界值', 'Statistics and edge values')} code={`<NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2 }} />
-<NumberTicker value={0.0038} formatOptions={{ style: 'percent', maximumFractionDigits: 2 }} />`}>
-      <div className="number-ticker-examples__statistics">
-        <div><span>{text('周环比', 'Weekly change')}</span><NumberTicker value={-12.75} suffix="%" formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} getValueLabel={(_number, formatted) => text(`周环比 ${formatted}%`, `Weekly change ${formatted}%`)} /></div>
-        <div><span>{text('转化率', 'Conversion rate')}</span><NumberTicker value={0.0038} formatOptions={{ style: 'percent', maximumFractionDigits: 2 }} getValueLabel={(_number, formatted) => text(`转化率 ${formatted}`, `Conversion rate ${formatted}`)} /></div>
-        <div><span>{text('样本量', 'Sample size')}</span><NumberTicker value={1250000} compact locale={locale} formatOptions={{ maximumFractionDigits: 1 }} /></div>
-      </div>
-    </ComponentExample>
+    <ExactNumberExamples />
 
     <ComponentExample id="number-ticker-custom-display" title={text('自定义展示', 'Custom display')} code={`<NumberTicker value={4.8} formatOptions={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }} renderValue={(_value, { animating, formattedValue }) => (
   <span className={animating ? 'is-changing' : undefined}>{formattedValue} / 5</span>

@@ -11,8 +11,8 @@ export function ButtonGroupPlayground() {
   const [variant, setVariant] = useState<ButtonVariant>('outline');
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
   const [disabled, setDisabled] = useState(false);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [equalWidth, setEqualWidth] = useState(true);
+  const [fullWidth, setFullWidth] = useState(false);
+  const [equalWidth, setEqualWidth] = useState(false);
   const [alignment, setAlignment] = useState('start');
   const items = [['start', '左对齐'], ['center', '居中'], ['end', '右对齐']] as const;
   const code = `<ButtonGroup aria-label="${t('文本对齐')}" orientation="${orientation}" size="${size}" variant="${variant}" disabled={${disabled}} fullWidth={${fullWidth}} equalWidth={${equalWidth}}>\n${items.map(([value, label]) => `  <Button aria-pressed={align === '${value}'} onClick={() => setAlign('${value}')}>${t(label)}</Button>`).join('\n')}\n</ButtonGroup>`;

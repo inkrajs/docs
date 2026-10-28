@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const outputDir = process.env.INKRA_PAN_ZOOM_OUTPUT_DIR || '/tmp';
@@ -68,7 +69,9 @@ async function assertControlledBoardFits(page) {
 async function openExample(page) {
   await page.goto(`${base}/docs/components/pan-zoom#preview`);
   const viewport = page.locator('.component-playground .inkra-pan-zoom').first();
-  await viewport.locator('.pan-zoom-examples__board').waitFor();
+  await viewport.locator('img').waitFor();
+  await page.waitForFunction(node => node.complete && node.naturalWidth > 0, await viewport.locator('img').elementHandle());
+  assert.equal(await viewport.getByRole('button').count(), 0, 'basic PanZoom contains only the artwork');
   return viewport;
 }
 
@@ -84,9 +87,10 @@ try {
   assert(await viewport.evaluate(node => node.classList.contains('inkra-pan-zoom__viewport')), 'installed TransformComponent preserves the Inkra viewport class');
   await assertContained(root);
 
-  const clicksBefore = Number((await page.locator('.pan-zoom-examples__output').last().textContent())?.match(/\d+$/)?.[0] ?? 0);
-  await root.getByRole('button', { name: /保留这个想法|Keep this idea/ }).click();
-  const clicksAfter = Number((await page.locator('.pan-zoom-examples__output').last().textContent())?.match(/\d+$/)?.[0] ?? 0);
+  const interactive = page.locator('#pan-zoom-interactive-content');
+  const clicksBefore = Number((await interactive.locator('output').textContent())?.match(/\d+$/)?.[0] ?? 0);
+  await interactive.getByRole('button', { name: /保留这个想法|Keep this idea/ }).click();
+  const clicksAfter = Number((await interactive.locator('output').textContent())?.match(/\d+$/)?.[0] ?? 0);
   assert.equal(clicksAfter, clicksBefore + 1, 'content button remains clickable without starting a pan');
 
   await viewport.hover({ position: { x: 260, y: 220 } });
@@ -121,6 +125,7 @@ try {
   await page.waitForTimeout(140);
   assert((await currentTransform(root)).scale > afterKeyboard.scale, 'keyboard plus provides a zoom alternative');
 
+  await setPlaygroundControls(page.locator('.component-playground'), true);
   const controls = page.getByRole('group', { name: '属性', exact: true });
   await controls.getByRole('tab', { name: /布局|Layout/ }).click();
   await controls.getByRole('button', { name: /适配|Fit/ }).click();

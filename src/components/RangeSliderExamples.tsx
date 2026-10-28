@@ -41,8 +41,8 @@ export function RangeSliderExamples() {
     valueLabels: ['最低值', '最高值'] as [string, string],
   };
   const [value, setValue] = useState<RangeSliderValue>([20, 80]);
-  const [step, setStep] = useState(5);
-  const [minDistance, setMinDistance] = useState(10);
+  const [step, setStep] = useState(1);
+  const [minDistance, setMinDistance] = useState(0);
   const [allowCross, setAllowCross] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
@@ -60,8 +60,7 @@ export function RangeSliderExamples() {
   step={${step}}
   minDistance={${minDistance}}
   allowCross={${allowCross}}
-  thumbLabels={${JSON.stringify(labels)}}
-  getValueLabel={value => '$' + value}
+  thumbLabels={${JSON.stringify(copy.valueLabels)}}
   variant="${variant}"
   size="${size}"
   dir="${dir}"
@@ -83,7 +82,7 @@ export function RangeSliderExamples() {
       { label: '状态', content: <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
       <div className="range-slider-demo">
-        <RangeSlider value={value} onValueChange={setValue} min={0} max={100} step={step} minDistance={minDistance} allowCross={allowCross} thumbLabels={labels} getValueLabel={number => `$${number}`} variant={variant} size={size} dir={dir} disabled={disabled} />
+        <RangeSlider value={value} onValueChange={setValue} min={0} max={100} step={step} minDistance={minDistance} allowCross={allowCross} thumbLabels={copy.valueLabels} variant={variant} size={size} dir={dir} disabled={disabled} />
       </div>
     </ComponentPlayground>
 
@@ -94,6 +93,12 @@ export function RangeSliderExamples() {
       </div>
     </ComponentExample>
 
+    <ComponentExample id="range-slider-rtl-disabled" title={copy.rtlDisabled} code={`<RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={${JSON.stringify(copy.valueLabels)}} />\n<RangeSlider defaultValue={[30, 70]} disabled thumbLabels={${JSON.stringify(copy.valueLabels)}} />`}>
+      <div className="range-slider-examples__stack">
+        <RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={copy.valueLabels} />
+        <RangeSlider defaultValue={[30, 70]} disabled thumbLabels={copy.valueLabels} />
+      </div>
+    </ComponentExample>
     <ComponentExample id="range-slider-form-and-reset" title={t('表单与重置')} code={`const [result, setResult] = useState('');
 
 <form onSubmit={event => {
@@ -120,11 +125,5 @@ export function RangeSliderExamples() {
       </form>
     </ComponentExample>
 
-    <ComponentExample id="range-slider-rtl-disabled" title={copy.rtlDisabled} code={`<RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={${JSON.stringify(copy.valueLabels)}} />\n<RangeSlider defaultValue={[30, 70]} disabled thumbLabels={${JSON.stringify(copy.valueLabels)}} />`}>
-      <div className="range-slider-examples__stack">
-        <RangeSlider dir="rtl" defaultValue={[25, 75]} thumbLabels={copy.valueLabels} />
-        <RangeSlider defaultValue={[30, 70]} disabled thumbLabels={copy.valueLabels} />
-      </div>
-    </ComponentExample>
   </>;
 }

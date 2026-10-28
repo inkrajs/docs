@@ -35,7 +35,13 @@ try {
     await page.goto(`${base}/docs/components/data-table#preview`);
     const tableStage = page.getByTestId('data-table-playground');
     await tableStage.locator('tbody tr').first().waitFor();
-    await configure(page.locator('.component-playground'), false);
+    const tablePlayground = page.locator('.component-playground');
+    await configure(tablePlayground, true);
+    await tablePlayground.getByRole('tab', { name: zh ? '交互' : 'Interaction', exact: true }).click();
+    for (const name of zh ? ['显示筛选', '允许选择', '显示分页'] : ['Show filter', 'Selectable rows', 'Show pagination']) {
+      await tablePlayground.getByRole('switch', { name, exact: true }).check();
+    }
+    await configure(tablePlayground, false);
     assert.equal(await tableStage.locator('tbody tr').count(), 3);
     await tableStage.getByRole('checkbox').nth(1).check();
     assert(await tableStage.getByRole('checkbox').nth(1).isChecked());
@@ -72,6 +78,8 @@ try {
     assert(await log.locator('.inkra-log__viewport').evaluate(node => node.scrollHeight <= node.clientHeight + 1), 'natural log does not clip records');
     await configure(playground, true);
     await playground.getByRole('switch', { name: zh ? '限制滚动高度' : 'Bound scroll height', exact: true }).check();
+    await playground.getByRole('tab', { name: zh ? '交互' : 'Interaction', exact: true }).click();
+    await playground.getByRole('switch', { name: zh ? '跟随控制' : 'Follow control', exact: true }).check();
     await configure(playground, false);
     assert(Math.abs((await log.boundingBox()).height - 352) < 1, 'explicit bounded log retains its viewport');
     assert(await log.locator('.inkra-log__viewport').evaluate(node => node.scrollHeight > node.clientHeight));

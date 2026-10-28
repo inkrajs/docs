@@ -1,6 +1,7 @@
 import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -25,9 +26,12 @@ try {
     const alertPlayground = page.locator('.component-playground').first();
     const alertTrigger = page.getByRole('button', { name: /归档项目|Archive project/ });
     await alertTrigger.waitFor();
+    await setPlaygroundControls(alertPlayground, true);
     const alertControls = alertPlayground.locator('.preview-controls');
     await alertPlayground.locator('.property-tabs').getByRole('tab', { name: /交互|Interaction/ }).click();
+    await alertControls.getByRole('switch', { name: /异步确认|Async confirmation/ }).check();
     await chooseOption(alertControls, /异步时长|Async duration/, '300 ms');
+    await setPlaygroundControls(alertPlayground, false);
     const basicTrigger = page.getByRole('button', { name: /删除草稿|Delete draft/ });
     await basicTrigger.click();
     const basicAlert = page.getByRole('alertdialog');
@@ -53,11 +57,16 @@ try {
     const drawerPlayground = page.locator('.component-playground').first();
     const trigger = page.getByRole('button', { name: /打开任务抽屉|Open task drawer/ });
     await trigger.waitFor();
+    await setPlaygroundControls(drawerPlayground, true);
     const drawerControls = drawerPlayground.locator('.preview-controls');
+    await drawerPlayground.getByRole('tab', { name: /内容|Content/ }).click();
+    await drawerControls.getByRole('switch', { name: /长内容|Long content/ }).check();
     await drawerPlayground.locator('.property-tabs').getByRole('tab', { name: /布局|Layout/ }).click();
-    await chooseOption(drawerControls, /尺寸|Size/, 'lg');
+    await chooseOption(drawerControls, /尺寸|Size/, /大|Large/);
     for (const direction of ['top', 'right', 'bottom', 'left']) {
-      await chooseOption(drawerControls, /方向|Direction/, direction);
+      await setPlaygroundControls(drawerPlayground, true);
+      await chooseOption(drawerControls, /方向|Direction/, { top: /上|Top/, right: /右|Right/, bottom: /下|Bottom/, left: /左|Left/ }[direction]);
+      await setPlaygroundControls(drawerPlayground, false);
       await trigger.click();
       const drawer = page.getByRole('dialog', { name: /任务详情|Task details/ });
       await drawer.waitFor();

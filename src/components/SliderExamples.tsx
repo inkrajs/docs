@@ -88,6 +88,16 @@ export function SliderExamples() {
           : <Slider value={values} onValueChange={setValues} min={0} max={100} step={step} minStepsBetweenThumbs={minSteps} preserveThumbOrder size={size} variant={variant} thumbAlignment={thumbAlignment} orientation={orientation} dir={dir} inverted={inverted} disabled={disabled} thumbLabels={thumbLabels} getValueLabel={number => `${number}%`} />}
       </div>
     </ComponentPlayground>
+    <ComponentExample id="slider-endpoints" title="端点位置" code={`<Slider aria-label="${t('贴齐端点')}" defaultValue={[100]} />
+<Slider aria-label="${t('端部留白')}" defaultValue={[100]} thumbAlignment="contain" />`}>
+      <div className="component-demo-form">
+        <div><PencilText>贴齐端点</PencilText><Slider aria-label={t('贴齐端点')} defaultValue={[100]} /></div>
+        <div><PencilText>端部留白</PencilText><Slider aria-label={t('端部留白')} defaultValue={[100]} thumbAlignment="contain" /></div>
+      </div>
+    </ComponentExample>
+    <ComponentExample id="slider-inset-thumb" title="内嵌滑块" code={`<Slider variant="inset" size="sm" aria-label="${t('音量')}" defaultValue={[40]} />\n<Slider variant="inset" thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} preserveThumbOrder />\n<Slider variant="inset" size="lg" aria-label="${t('音量')}" defaultValue={[60]} />`}>
+      <div className="component-demo-form"><Slider variant="inset" size="sm" aria-label={t('音量')} defaultValue={[40]} /><Slider variant="inset" thumbLabels={[t('下限'), t('上限')]} defaultValue={[20, 80]} preserveThumbOrder /><Slider variant="inset" size="lg" aria-label={t('音量')} defaultValue={[60]} /></div>
+    </ComponentExample>
     <ComponentExample id="slider-circular" title="圆环拖拽" code={`const [value, setValue] = useState(35);
 
 <CircularSlider aria-label="${t('音量')}" value={value} onValueChange={setValue}
@@ -108,16 +118,6 @@ export function SliderExamples() {
         <div><CircularSlider aria-label={t('仅文字')} defaultValue={35} size="sm" centerContent={value => `${value}%`} getValueLabel={value => `${value}%`} /><PencilText>仅文字</PencilText></div>
         <div><CircularSlider aria-label={t('图标与文字')} defaultValue={35} size="sm" centerIcon={<DocsIcon data={volumeIcon} size={20} />} getValueLabel={value => `${value}%`} /><PencilText>图标与文字</PencilText></div>
       </div>
-    </ComponentExample>
-    <ComponentExample id="slider-endpoints" title="端点位置" code={`<Slider aria-label="${t('贴齐端点')}" defaultValue={[100]} />
-<Slider aria-label="${t('端部留白')}" defaultValue={[100]} thumbAlignment="contain" />`}>
-      <div className="component-demo-form">
-        <div><PencilText>贴齐端点</PencilText><Slider aria-label={t('贴齐端点')} defaultValue={[100]} /></div>
-        <div><PencilText>端部留白</PencilText><Slider aria-label={t('端部留白')} defaultValue={[100]} thumbAlignment="contain" /></div>
-      </div>
-    </ComponentExample>
-    <ComponentExample id="slider-inset-thumb" title="内嵌滑块" code={`<Slider variant="inset" size="sm" aria-label="${t('音量')}" defaultValue={[40]} />\n<Slider variant="inset" thumbLabels={['${t('下限')}', '${t('上限')}']} defaultValue={[20, 80]} preserveThumbOrder />\n<Slider variant="inset" size="lg" aria-label="${t('音量')}" defaultValue={[60]} />`}>
-      <div className="component-demo-form"><Slider variant="inset" size="sm" aria-label={t('音量')} defaultValue={[40]} /><Slider variant="inset" thumbLabels={[t('下限'), t('上限')]} defaultValue={[20, 80]} preserveThumbOrder /><Slider variant="inset" size="lg" aria-label={t('音量')} defaultValue={[60]} /></div>
     </ComponentExample>
     <ComponentExample id="slider-form-and-reset" title="表单与重置" code={formCode}>
       <form className="component-demo-form" onSubmit={event => {

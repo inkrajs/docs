@@ -21,7 +21,7 @@ const values = [12, 18, 14, 25, 22, 32, 29, 41, 37, 48];
 
 export function GridExamples() {
   const { t } = useLocale();
-  const [mode, setMode] = useState('board');
+  const [mode, setMode] = useState('basic');
   const [count, setCount] = useState(3);
   const [gap, setGap] = useState(12);
   const [rowHeight, setRowHeight] = useState(40);
@@ -60,11 +60,19 @@ export function GridExamples() {
     {({ rowIndex, columnIndex }) => <div className="grid-examples__cell"><PencilText>{names[rowIndex * 3 + columnIndex]}</PencilText></div>}
   </Grid.Resizable>;
 
+  const dashboard = <Grid.Board layout={board} onLayoutChange={setBoard} rowHeight={rowHeight} gap={gap}
+        draggable={draggable} resizable={resizable} disabled={disabled} stackAt={responsive ? 480 : 0} getItemLabel={id => labels[id]}>
+        {item => item.i === 'activity' ? <div className="grid-examples__metric"><PencilText as="strong">48</PencilText><Sparkline data={values} height={64} width={220} showSummary={false} label={labels.activity} /></div>
+          : item.i === 'tasks' ? <div className="grid-examples__metric"><PencilText as="strong">12 / 18</PencilText><Progress value={12} max={18} aria-label={labels.tasks} /></div>
+            : item.i === 'review' ? <div className="grid-examples__review"><Badge>{t('图标', 'Icons')}</Badge><Badge variant="warning">{t('布局', 'Layout')}</Badge></div>
+              : <Button variant="ghost" onClick={() => setSaved(value => !value)}>{saved ? t('已保存', 'Saved') : t('保存草稿', 'Save draft')}</Button>}
+      </Grid.Board>;
+
   return <div className="grid-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '布局', content: <>
         <DocsSelect label={t('模式', 'Mode')} value={mode} onValueChange={setMode} options={[
-          ['board', t('拖拽看板', 'Dashboard')], ['tracks', t('行列调整', 'Resizable tracks')], ['basic', t('基础网格', 'Basic grid')],
+          ['basic', t('基础网格', 'Basic grid')], ['tracks', t('行列调整', 'Resizable tracks')], ['board', t('拖拽看板', 'Dashboard')],
         ]} />
         {mode !== 'tracks' && <DocsSlider label={t('间距', 'Gap')} value={gap} onValueChange={setGap}
           min={0} max={24} step={4} unit=" px" />}
@@ -83,17 +91,12 @@ export function GridExamples() {
       </> },
       { label: '状态', content: <Switch label={t('禁用调整', 'Disable editing')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
-      {mode === 'board' ? <Grid.Board layout={board} onLayoutChange={setBoard} rowHeight={rowHeight} gap={gap}
-        draggable={draggable} resizable={resizable} disabled={disabled} stackAt={responsive ? 480 : 0} getItemLabel={id => labels[id]}>
-        {item => item.i === 'activity' ? <div className="grid-examples__metric"><PencilText as="strong">48</PencilText><Sparkline data={values} height={64} width={220} showSummary={false} label={labels.activity} /></div>
-          : item.i === 'tasks' ? <div className="grid-examples__metric"><PencilText as="strong">12 / 18</PencilText><Progress value={12} max={18} aria-label={labels.tasks} /></div>
-            : item.i === 'review' ? <div className="grid-examples__review"><Badge>{t('图标', 'Icons')}</Badge><Badge variant="warning">{t('布局', 'Layout')}</Badge></div>
-              : <Button variant="ghost" onClick={() => setSaved(value => !value)}>{saved ? t('已保存', 'Saved') : t('保存草稿', 'Save draft')}</Button>}
-      </Grid.Board> : mode === 'tracks' ? tracks
+      {mode === 'board' ? dashboard : mode === 'tracks' ? tracks
         : <Grid className="grid-examples__basic" columns={responsive ? { base: 1, sm: 2, lg: Number(count) } : Number(count)} gap={Number(gap) / 4 as LayoutSpace}>
           {names.map(name => <div className="grid-examples__cell" key={name}><PencilText>{name}</PencilText></div>)}
         </Grid>}
     </ComponentPlayground>
     {mode !== 'tracks' && <ComponentExample id="grid-resize-shared-columns-and-rows" title={t('同步调整整列与整行', 'Resize shared columns and rows')} code={trackCode}>{tracks}</ComponentExample>}
+    {mode !== 'board' && <ComponentExample id="grid-dashboard" title={t('拖拽看板', 'Dashboard')} code={`const [layout, setLayout] = useState(${JSON.stringify(initialBoard, null, 2)});\n\n${boardCode}`}>{dashboard}</ComponentExample>}
   </div>;
 }

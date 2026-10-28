@@ -28,8 +28,8 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
   const [date, setDate] = useState<Date | undefined>(initialDate);
   const [range, setRange] = useState<DateRange | undefined>({ from: initialDate, to: new Date(2026, 9, 24) });
   const [mode, setMode] = useState('single');
-  const [showEvents, setShowEvents] = useState(true);
-  const [showOverview, setOverview] = useState(true);
+  const [showEvents, setShowEvents] = useState(false);
+  const [showOverview, setOverview] = useState(false);
   const [empty, setEmpty] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [selected, setSelected] = useState('');
@@ -42,7 +42,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
   const [outsideDays, setOutsideDays] = useState(true);
   const [hourCycle, setHourCycle] = useState<'h12' | 'h23'>('h23');
   const [density, setDensity] = useState<'compact' | 'comfortable'>('comfortable');
-  const [descriptions, setDescriptions] = useState(true);
+  const [descriptions, setDescriptions] = useState(false);
   const [divided, setDivided] = useState(true);
   const [interactive, setInteractive] = useState(true);
   const [wheelZoom, setWheelZoom] = useState(false);

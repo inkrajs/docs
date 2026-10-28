@@ -26,6 +26,7 @@ try {
         await setPlaygroundControls(playground, true);
         const controls = playground.locator('.preview-controls');
         await controls.getByRole('tab', { name: zh ? '交互' : 'Interaction', exact: true }).click();
+        await controls.getByRole('switch', { name: zh ? '更多标签' : 'More tabs', exact: true }).check();
         await chooseDocsOption(controls, zh ? '溢出交互' : 'Overflow', option, { exact: true, optionExact: true });
         await chooseDocsOption(controls, zh ? '容器宽度' : 'Container width', '240 px', { exact: true, optionExact: true });
         await setPlaygroundControls(playground, false);
@@ -49,8 +50,8 @@ try {
     }
   }
   await page.goto(`${base}/docs/components/tabs#api`);
-  for (const property of ['List.overflow', 'List.moreLabel', 'List.scrollPreviousLabel / scrollNextLabel', 'Trigger.overflowLabel']) {
-    await page.getByRole('cell', { name: property, exact: true }).waitFor();
+  for (const [part, property] of [['Tabs.List', 'overflow'], ['Tabs.List', 'moreLabel'], ['Tabs.List', 'scrollPreviousLabel / scrollNextLabel'], ['Tabs.Trigger', 'overflowLabel']]) {
+    await page.getByRole('region', { name: part + ' API', exact: true }).getByRole('cell', { name: property, exact: true }).waitFor();
   }
   assert.deepEqual(errors, []);
   console.log('PASS Tabs localized overflow controls, real menu selection, scrolling, code/API, desktop and narrow screenshots');

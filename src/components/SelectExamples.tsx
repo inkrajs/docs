@@ -102,16 +102,12 @@ export function SelectExamples() {
   const items = visibilityOptions.map(([optionValue, label]) => ({ value: optionValue, label: t(label) }));
   const selectableItems = items.map(item => ({ ...item, disabled: item.value === 'public' }));
   const itemCode = visibilityOptions.map(([item, label]) => `              <Select.Item value="${item}"${item === 'public' ? ' disabled' : ''}><Select.ItemText>${t(label)}</Select.ItemText><Select.ItemIndicator /></Select.Item>`).join('\n');
+  const basicItemCode = visibilityOptions.map(([item, label]) => `              <Select.Item value="${item}"><Select.ItemText>${t(label)}</Select.ItemText><Select.ItemIndicator /></Select.Item>`).join('\n');
   const contentCode = `        <Select.Portal>
           <Select.Content position="popper" side="${side}" align="${align}" sideOffset={${offset}} collisionPadding={${collisionPadding}}>
-            <Select.ScrollUpButton />
             <Select.Viewport>
-              <Select.Group>
-                <Select.Label>${t('可见范围')}</Select.Label>
-${itemCode}
-              </Select.Group>
+${basicItemCode}
             </Select.Viewport>
-            <Select.ScrollDownButton />
 ${playgroundMultiple ? `            <Select.Clear>${t('清空选择')}</Select.Clear>` : ''}
           </Select.Content>
         </Select.Portal>`;
@@ -248,7 +244,7 @@ ${itemCode}
               <Tooltip.Portal><Tooltip.Content>{t('可见范围')}</Tooltip.Content></Tooltip.Portal>
             </Tooltip.Root></Tooltip.Provider>
             <Select.Portal><Select.Content position="popper" side={side} align={align} sideOffset={offset} collisionPadding={collisionPadding}>
-              <Select.ScrollUpButton /><Select.Viewport><VisibilityItems /></Select.Viewport><Select.ScrollDownButton />
+              <Select.Viewport>{visibilityOptions.map(([item, label]) => <Select.Item key={item} value={item}><Select.ItemText>{t(label)}</Select.ItemText><Select.ItemIndicator /></Select.Item>)}</Select.Viewport>
               {playgroundMultiple && <Select.Clear>{t('清空选择')}</Select.Clear>}
             </Select.Content></Select.Portal>
           </Select.Root>}
@@ -256,6 +252,26 @@ ${itemCode}
       </div>
     </ComponentPlayground>
     <TriggerExamples />
+    <ComponentExample id="select-default-value-and-form-reset" title="默认值与表单重置" code={defaultCode}>
+      <form className="component-demo-form">
+        <Field label={t('可见范围')}><Select.Root name="visibility" defaultValue="team"><Select.Trigger><Select.Value /></Select.Trigger>
+          <Select.Portal><Select.Content position="popper" sideOffset={8}><Select.ScrollUpButton /><Select.Viewport><VisibilityItems /></Select.Viewport><Select.ScrollDownButton /></Select.Content></Select.Portal>
+        </Select.Root></Field>
+        <div><Button type="reset" variant="secondary">{t('重置')}</Button></div>
+      </form>
+    </ComponentExample>
+    <ComponentExample id="select-grouped-and-scrollable-options" title="分组与滚动选项" code={groupedCode}>
+      <div className="component-demo-form"><Field label={t('笔记分类')}><Select.Root defaultValue="notes">
+        <Select.Trigger><Select.Value /></Select.Trigger>
+        <Select.Portal><Select.Content position="popper" sideOffset={8}>
+          <Select.ScrollUpButton /><Select.Viewport style={{ maxHeight: 200 }}>
+            <Select.Group><Select.Label>{t('笔记分类')}</Select.Label>
+              {archiveOptions.map(([item, label]) => <Select.Item key={item} value={item}><Select.ItemText>{t(label)}</Select.ItemText><Select.ItemIndicator /></Select.Item>)}
+            </Select.Group><Select.Separator /><VisibilityItems />
+          </Select.Viewport><Select.ScrollDownButton />
+        </Select.Content></Select.Portal>
+      </Select.Root></Field></div>
+    </ComponentExample>
     <ComponentExample id="select-multiple-selection" title="多选" code={`const [result, setResult] = useState('');
 
 <form onSubmit={event => {
@@ -294,26 +310,6 @@ ${archiveOptions.map(([value, label]) => `          <Select.Item value="${value}
         <div className="component-demo-row"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
         <output className="component-demo-status" aria-live="polite">{multipleStatus}</output>
       </form>
-    </ComponentExample>
-    <ComponentExample id="select-default-value-and-form-reset" title="默认值与表单重置" code={defaultCode}>
-      <form className="component-demo-form">
-        <Field label={t('可见范围')}><Select.Root name="visibility" defaultValue="team"><Select.Trigger><Select.Value /></Select.Trigger>
-          <Select.Portal><Select.Content position="popper" sideOffset={8}><Select.ScrollUpButton /><Select.Viewport><VisibilityItems /></Select.Viewport><Select.ScrollDownButton /></Select.Content></Select.Portal>
-        </Select.Root></Field>
-        <div><Button type="reset" variant="secondary">{t('重置')}</Button></div>
-      </form>
-    </ComponentExample>
-    <ComponentExample id="select-grouped-and-scrollable-options" title="分组与滚动选项" code={groupedCode}>
-      <div className="component-demo-form"><Field label={t('笔记分类')}><Select.Root defaultValue="notes">
-        <Select.Trigger><Select.Value /></Select.Trigger>
-        <Select.Portal><Select.Content position="popper" sideOffset={8}>
-          <Select.ScrollUpButton /><Select.Viewport style={{ maxHeight: 200 }}>
-            <Select.Group><Select.Label>{t('笔记分类')}</Select.Label>
-              {archiveOptions.map(([item, label]) => <Select.Item key={item} value={item}><Select.ItemText>{t(label)}</Select.ItemText><Select.ItemIndicator /></Select.Item>)}
-            </Select.Group><Select.Separator /><VisibilityItems />
-          </Select.Viewport><Select.ScrollDownButton />
-        </Select.Content></Select.Portal>
-      </Select.Root></Field></div>
     </ComponentExample>
   </>;
 }

@@ -52,11 +52,14 @@ function AlertDialogPlayground() {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [delay, setDelay] = useState(700);
+  const [async, setAsync] = useState(false);
+  const [withIcon, setWithIcon] = useState(false);
   const [message, setMessage] = useState<'idle' | 'pending' | 'done'>('idle');
   const timer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   function confirmArchive() {
+    if (!async) { setOpen(false); setMessage('done'); return; }
     if (timer.current !== undefined) return;
     setPending(true);
     setMessage('pending');
@@ -68,7 +71,7 @@ function AlertDialogPlayground() {
     }, delay);
   }
 
-  const code = `const [open, setOpen] = useState(false);
+  const asyncCode = `const [open, setOpen] = useState(false);
 const [pending, setPending] = useState(false);
 const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 useEffect(() => () => clearTimeout(timer.current), []);
@@ -82,7 +85,7 @@ function archive() {
   }, ${delay});
 }
 <AlertDialog.Root open={open} onOpenChange={setOpen} pending={pending}>
-  <AlertDialog.Trigger asChild><Button>${zh ? '归档项目' : 'Archive project'}</Button></AlertDialog.Trigger>
+  <AlertDialog.Trigger asChild><Button${withIcon ? ` startIcon={<PencilIcon paths={${JSON.stringify(alertPaths)}} size={20} sourceSize={24} decorative />}` : ''}>${zh ? '归档项目' : 'Archive project'}</Button></AlertDialog.Trigger>
   <AlertDialog.Portal>
     <AlertDialog.Backdrop />
     <AlertDialog.Content>
@@ -99,21 +102,35 @@ function archive() {
   </AlertDialog.Portal>
 </AlertDialog.Root>`;
 
+  const code = async ? asyncCode : `<AlertDialog.Root>
+  <AlertDialog.Trigger asChild><Button${withIcon ? ` startIcon={<PencilIcon paths={${JSON.stringify(alertPaths)}} size={20} sourceSize={24} decorative />}` : ''}>${zh ? '归档项目' : 'Archive project'}</Button></AlertDialog.Trigger>
+  <AlertDialog.Portal><AlertDialog.Backdrop /><AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>${zh ? '归档这个项目？' : 'Archive this project?'}</AlertDialog.Title>
+      <AlertDialog.Description>${zh ? '团队成员将无法继续编辑，但以后仍可恢复项目。' : 'Team members cannot continue editing, but the project can be restored later.'}</AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>${zh ? '取消' : 'Cancel'}</AlertDialog.Cancel>
+      <AlertDialog.Action>${zh ? '确认归档' : 'Confirm archive'}</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content></AlertDialog.Portal>
+</AlertDialog.Root>`;
   return <ComponentPlayground code={code} controls={<PropertyTabs groups={[
-    { label: '交互', content: <DocsSelect label={zh ? '异步时长' : 'Async duration'} value={String(delay)} onValueChange={value => setDelay(Number(value))} options={[["300", "300 ms"], ["700", "700 ms"], ["1200", "1200 ms"]]} /> },
+    { label: '内容', content: <Switch label={zh ? '显示图标' : 'Show icon'} checked={withIcon} onCheckedChange={setWithIcon} /> },
+    { label: '交互', content: <><Switch label={zh ? '异步确认' : 'Async confirmation'} checked={async} disabled={pending} onCheckedChange={setAsync} /><DocsSelect label={zh ? '异步时长' : 'Async duration'} disabled={!async} value={String(delay)} onValueChange={value => setDelay(Number(value))} options={[["300", "300 ms"], ["700", "700 ms"], ["1200", "1200 ms"]]} /></> },
     { label: '状态', content: <>{message !== 'idle' && <output aria-live="polite">{message === 'pending' ? (zh ? '正在归档…' : 'Archiving...') : (zh ? '归档完成' : 'Archived')}</output>}<Button variant="secondary" onClick={() => setOpen(true)} disabled={open}>{zh ? '从属性区打开' : 'Open from controls'}</Button></> },
   ]} />}>
     <div className="expansion-overlay-demo">
       <AlertDialog.Root open={open} onOpenChange={setOpen} pending={pending}>
-        <AlertDialog.Trigger asChild><Button startIcon={<PencilIcon decorative paths={alertPaths} size={20} sourceSize={24} />}>{zh ? '归档项目' : 'Archive project'}</Button></AlertDialog.Trigger>
+        <AlertDialog.Trigger asChild><Button startIcon={withIcon ? <PencilIcon decorative paths={alertPaths} size={20} sourceSize={24} /> : undefined}>{zh ? '归档项目' : 'Archive project'}</Button></AlertDialog.Trigger>
         <AlertDialog.Portal>
           <AlertDialog.Backdrop />
           <AlertDialog.Content>
             <AlertDialog.Header>
               <AlertDialog.Title>{zh ? '归档这个项目？' : 'Archive this project?'}</AlertDialog.Title>
-              <AlertDialog.Description>{zh ? '归档期间用户发起的取消和 Escape 会被拦截。' : 'User-initiated Cancel and Escape are blocked while the action is pending.'}</AlertDialog.Description>
+              <AlertDialog.Description>{async ? (zh ? '归档期间用户发起的取消和 Escape 会被拦截。' : 'User-initiated Cancel and Escape are blocked while the action is pending.') : (zh ? '团队成员将无法继续编辑，但以后仍可恢复项目。' : 'Team members cannot continue editing, but the project can be restored later.')}</AlertDialog.Description>
             </AlertDialog.Header>
-            <AlertDialog.Body>{zh ? '团队成员将无法继续编辑，但以后仍可恢复项目。' : 'Team members cannot continue editing, but the project can be restored later.'}</AlertDialog.Body>
+            {async && <AlertDialog.Body>{zh ? '团队成员将无法继续编辑，但以后仍可恢复项目。' : 'Team members cannot continue editing, but the project can be restored later.'}</AlertDialog.Body>}
             <AlertDialog.Footer>
               <AlertDialog.Cancel>{zh ? '取消' : 'Cancel'}</AlertDialog.Cancel>
               <AlertDialog.Action closeOnAction={false} onClick={confirmArchive}>{pending ? (zh ? '归档中' : 'Archiving') : (zh ? '确认归档' : 'Confirm archive')}</AlertDialog.Action>
@@ -186,6 +203,8 @@ function DrawerPlayground() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [divided, setDivided] = useState(true);
   const [showClose, setShowClose] = useState(true);
+  const [editable, setEditable] = useState(false);
+  const [longContent, setLongContent] = useState(false);
   const [open, setOpen] = useState(false);
   const [savedName, setSavedName] = useState('Inkra');
   const [draftName, setDraftName] = useState(savedName);
@@ -200,36 +219,34 @@ function DrawerPlayground() {
     setOpen(false);
   }
   const paragraphs = Array.from({ length: 24 }, (_, index) => zh ? `第 ${index + 1} 条更新：这里是可滚动的完整正文，不会推动头部和底部操作。` : `Update ${index + 1}: this scrollable body does not move the header or footer actions.`);
-  const code = `const [open, setOpen] = useState(false);
+  const code = `const [open, setOpen] = useState(false);${editable ? `
 const [savedName, setSavedName] = useState('Inkra');
-const [draftName, setDraftName] = useState(savedName);
-<Drawer.Root open={open} onOpenChange={next => {
-  if (next) setDraftName(savedName);
+const [draftName, setDraftName] = useState(savedName);` : ''}
+<Drawer.Root open={open} onOpenChange={next => {${editable ? '\n  if (next) setDraftName(savedName);' : ''}
   setOpen(next);
 }}>
   <Drawer.Trigger asChild><Button>${zh ? '打开任务抽屉' : 'Open task drawer'}</Button></Drawer.Trigger>
-  <Drawer.Portal>
-    <Drawer.Backdrop />
+  <Drawer.Portal><Drawer.Backdrop />
     <Drawer.Content direction="${direction}" size="${size}">
       <Drawer.Header closeLabel="${zh ? '关闭' : 'Close'}" showClose={${showClose}} divided={${divided}}>
         <Drawer.Title>${zh ? '任务详情' : 'Task details'}</Drawer.Title>
         <Drawer.Description>${zh ? `${directionLabels[direction]}侧，${sizeLabels[size]}尺寸。` : `${directionLabels[direction]} edge, ${sizeLabels[size].toLowerCase()} size.`}</Drawer.Description>
       </Drawer.Header>
-      <Drawer.Body>
-        <Field label="${zh ? '项目名称' : 'Project name'}">
-          <Input value={draftName} onChange={event => setDraftName(event.target.value)} />
-        </Field>
+      <Drawer.Body>${editable ? `
+        <Field label="${zh ? '项目名称' : 'Project name'}"><Input value={draftName} onChange={event => setDraftName(event.target.value)} /></Field>` : `
+        <p>${zh ? '在这里查看项目成员、状态和最近更新。' : 'Review project members, status, and recent updates here.'}</p>`}${longContent ? `
+        {${JSON.stringify(paragraphs)}.map(paragraph => <p key={paragraph}>{paragraph}</p>)}` : ''}
       </Drawer.Body>
       <Drawer.Footer divided={${divided}}>
-        <Drawer.Close asChild><Button variant="secondary">${zh ? '关闭' : 'Close'}</Button></Drawer.Close>
-        <Button onClick={() => { setSavedName(draftName); setOpen(false); }}>${zh ? '保存' : 'Save'}</Button>
+        <Drawer.Close asChild><Button variant="secondary">${zh ? '关闭' : 'Close'}</Button></Drawer.Close>${editable ? `
+        <Button onClick={() => { setSavedName(draftName); setOpen(false); }}>${zh ? '保存' : 'Save'}</Button>` : ''}
       </Drawer.Footer>
     </Drawer.Content>
   </Drawer.Portal>
 </Drawer.Root>`;
   return <ComponentPlayground code={code} controls={<PropertyTabs groups={[
     { label: '布局', content: <><DocsSelect label={zh ? '方向' : 'Direction'} value={direction} onValueChange={value => setDirection(value as typeof direction)} options={Object.entries(directionLabels)} /><DocsSelect label={zh ? '尺寸' : 'Size'} value={size} onValueChange={value => setSize(value as typeof size)} options={Object.entries(sizeLabels)} /></> },
-    { label: '内容', content: <><Switch checked={showClose} onCheckedChange={setShowClose} label={zh ? '显示关闭按钮' : 'Show close button'} /><Switch checked={divided} onCheckedChange={setDivided} label={zh ? '显示分割线' : 'Show dividers'} /></> },
+    { label: '内容', content: <><Switch label={zh ? '编辑名称' : 'Edit name'} checked={editable} onCheckedChange={setEditable} /><Switch label={zh ? '长内容' : 'Long content'} checked={longContent} onCheckedChange={setLongContent} /><Switch checked={showClose} onCheckedChange={setShowClose} label={zh ? '显示关闭按钮' : 'Show close button'} /><Switch checked={divided} onCheckedChange={setDivided} label={zh ? '显示分割线' : 'Show dividers'} /></> },
     { label: '状态', content: <Field label={zh ? '已保存名称' : 'Saved name'}><Input value={savedName} readOnly /></Field> },
   ]} />}>
     <div className="expansion-overlay-demo">
@@ -242,8 +259,8 @@ const [draftName, setDraftName] = useState(savedName);
             <Drawer.Title>{zh ? '任务详情' : 'Task details'}</Drawer.Title>
             <Drawer.Description>{zh ? `${directionLabels[direction]}侧，${sizeLabels[size]}尺寸。` : `${directionLabels[direction]} edge, ${sizeLabels[size].toLowerCase()} size.`}</Drawer.Description>
           </Drawer.Header>
-          <Drawer.Body><div className="expansion-drawer-copy"><Field label={zh ? '项目名称' : 'Project name'}><Input value={draftName} onChange={event => setDraftName(event.target.value)} /></Field>{paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></Drawer.Body>
-          <Drawer.Footer divided={divided}><Drawer.Close asChild><Button variant="secondary">{zh ? '关闭' : 'Close'}</Button></Drawer.Close><Button onClick={saveDraft}>{zh ? '保存' : 'Save'}</Button></Drawer.Footer>
+          <Drawer.Body><div className="expansion-drawer-copy">{editable ? <Field label={zh ? '项目名称' : 'Project name'}><Input value={draftName} onChange={event => setDraftName(event.target.value)} /></Field> : <p>{zh ? '在这里查看项目成员、状态和最近更新。' : 'Review project members, status, and recent updates here.'}</p>}{longContent && paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></Drawer.Body>
+          <Drawer.Footer divided={divided}><Drawer.Close asChild><Button variant="secondary">{zh ? '关闭' : 'Close'}</Button></Drawer.Close>{editable && <Button onClick={saveDraft}>{zh ? '保存' : 'Save'}</Button>}</Drawer.Footer>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

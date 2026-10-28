@@ -8,10 +8,11 @@ export async function verifyRollingTicker(browser, base) {
     await page.goto(`${base}/docs/components/number-ticker#preview`);
     const example = page.getByTestId('rolling-example');
     await example.scrollIntoViewIfNeeded();
-    await example.getByRole('button', { name: '\u00d7 100', exact: true }).click();
+    await example.getByRole('radio', { name: '按位滚动', exact: true }).click();
+    await example.getByRole('button', { name: '10 → 1000', exact: true }).click();
     await page.waitForFunction(() => {
       const ticker = document.querySelector('[data-testid="rolling-number"]');
-      return ticker && !ticker.hasAttribute('data-animating') && ticker.querySelector('[aria-live]').textContent.includes('1,200');
+      return ticker && ticker.dataset.animation === 'roll' && !ticker.hasAttribute('data-animating') && ticker.querySelector('[aria-live]').textContent === '1000';
     });
     await example.screenshot({ path: `/tmp/inkra-number-ticker-roll-example-${width}.png` });
 

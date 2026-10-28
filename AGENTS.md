@@ -8,6 +8,7 @@ prepared local candidate. Never alias to a sibling source directory.
 - Read README.md and library-candidate.json before changing the package.
 - Component behavior, types, tokens and design contracts belong to inkrajs/inkra.
 - Preserve the bilingual playground and styling during repository setup.
+- Keep the primary preview at the component's basic usage and defaults, with only necessary labels/content. Order supplements from single capabilities and common options to combinations, custom rendering and boundary cases. Do not prepend a new feature's validation matrix ahead of basic examples; keep advanced features available in controls or later examples and keep displayed source synchronized.
 - Every new catalog icon must work in both outline and filled modes, including its installed-package pixel checks in scripts/verify-icon-fill.mjs. Supply iconFilledPaths for silhouettes that cannot be derived safely from an outline; keep per-icon colors configurable rather than hard-coded.
 - Build with npm run build; check:candidate verifies archive identity.
 - A successful build is not visual or real-device acceptance.

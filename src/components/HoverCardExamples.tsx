@@ -23,6 +23,7 @@ const copy = {
     open: '展开',
     controlled: '受控',
     image: '显示图片',
+    details: '显示详情',
     openDelay: '打开延迟',
     closeDelay: '关闭延迟',
     side: '方向',
@@ -49,6 +50,7 @@ const copy = {
     open: 'Open',
     controlled: 'Controlled',
     image: 'Show image',
+    details: 'Show details',
     openDelay: 'Open delay',
     closeDelay: 'Close delay',
     side: 'Side',
@@ -68,9 +70,10 @@ const copy = {
 export function HoverCardExamples() {
   const { locale } = useLocale();
   const text = locale === 'en' ? copy.en : copy.zh;
-  const [controlled, setControlled] = useState(true);
+  const [controlled, setControlled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [showImage, setShowImage] = useState(true);
+  const [showImage, setShowImage] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [openDelay, setOpenDelay] = useState(500);
   const [closeDelay, setCloseDelay] = useState(250);
   const [side, setSide] = useState<Side>('bottom');
@@ -90,7 +93,9 @@ export function HoverCardExamples() {
     <article className="profile-card">
       ${showImage ? `<img src="/favicon.png" alt="${text.imageAlt}" />\n      ` : ''}<div>
         <HoverCard.Title>${text.title}</HoverCard.Title>
-        <HoverCard.Description>${text.description}</HoverCard.Description>
+        <HoverCard.Description>${text.description}</HoverCard.Description>${showDetails ? `
+        <p>${text.role}</p>
+        <dl><dt>${text.works}</dt><dd>${text.projects}</dd><dt>${text.location}</dt><dd>${text.city}</dd></dl>` : ''}
       </div>
     </article>
   </HoverCard.Content>
@@ -112,7 +117,7 @@ export function HoverCardExamples() {
         <label>{text.openDelay}<Slider aria-label={text.openDelay} min={0} max={1200} step={100} value={[openDelay]} onValueChange={values => setOpenDelay(values[0])} getValueLabel={value => `${value}ms`} /><output>{openDelay}ms</output></label>
         <label>{text.closeDelay}<Slider aria-label={text.closeDelay} min={0} max={800} step={50} value={[closeDelay]} onValueChange={values => setCloseDelay(values[0])} getValueLabel={value => `${value}ms`} /><output>{closeDelay}ms</output></label>
       </> },
-      { label: '状态', content: <Switch label={text.image} checked={showImage} onCheckedChange={setShowImage} /> },
+      { label: '状态', content: <><Switch label={text.image} checked={showImage} onCheckedChange={setShowImage} /><Switch label={text.details} checked={showDetails} onCheckedChange={setShowDetails} /></> },
     ]} />}>
       <div className="hover-card-demo">
         <HoverCard.Root key={controlled ? 'controlled' : 'uncontrolled'} {...controlledProps} openDelay={openDelay} closeDelay={closeDelay}>
@@ -125,13 +130,13 @@ export function HoverCardExamples() {
               <div className="hover-card-profile__main">
                 <header>
                   <HoverCard.Title>{text.title}</HoverCard.Title>
-                  <p className="hover-card-profile__role">{text.role}</p>
+                  {showDetails && <p className="hover-card-profile__role">{text.role}</p>}
                 </header>
                 <HoverCard.Description>{text.description}</HoverCard.Description>
-                <dl>
+                {showDetails && <dl>
                   <div><dt>{text.works}</dt><dd>{text.projects}</dd></div>
                   <div><dt>{text.location}</dt><dd>{text.city}</dd></div>
-                </dl>
+                </dl>}
               </div>
             </article>
           </HoverCard.Content>

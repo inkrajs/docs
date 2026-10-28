@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import inkraArtwork from '../assets/inkra.png';
 import {
   Badge,
   Button,
@@ -112,7 +113,7 @@ export function PanZoomExamples() {
     fitOnInit
     onTransformChange={transform => setScale(transform.scale)}
   >
-    <VisualBoard />
+    <img src={image} alt="${text('彩铅图案', 'Pencil artwork')}" width={800} height={800} draggable={false} />
   </PanZoom>
 </div>`;
 
@@ -147,7 +148,6 @@ export function PanZoomExamples() {
         <Switch label={text('只读手势', 'Read-only gestures')} checked={readOnly} onCheckedChange={setReadOnly} disabled={disabled} />
         <Switch label={text('禁用', 'Disabled')} checked={disabled} onCheckedChange={setDisabled} />
         <output className="pan-zoom-examples__output"><PencilText>{`${text('缩放', 'Scale')}: ${scale.toFixed(2)}x`}</PencilText></output>
-        <output className="pan-zoom-examples__output"><PencilText>{`${text('内容按钮点击', 'Content button clicks')}: ${actionCount}`}</PencilText></output>
       </> },
     ]} />}>
       <div className="pan-zoom-examples__frame">
@@ -168,10 +168,19 @@ export function PanZoomExamples() {
           instructions={text('按方向键平移，按加号或减号缩放，按 0 复位。Ctrl 或 Command 加滚轮可围绕指针缩放。', 'Use arrow keys to pan, plus or minus to zoom, and 0 to reset. Use Control or Command with the wheel to zoom around the pointer.')}
           onTransformChange={transform => setScale(transform.scale)}
         >
-          <VisualBoard zh={zh} onAction={() => setActionCount(count => count + 1)} />
+          <img src={inkraArtwork} alt={text('彩铅图案', 'Pencil artwork')} width={800} height={800} draggable={false} />
         </PanZoom>
       </div>
     </ComponentPlayground>
+
+    <ComponentExample id="pan-zoom-interactive-content" title={text('包含交互内容的画布', 'Canvas with interactive content')} code={'<PanZoom fitOnInit><VisualBoard /></PanZoom>'}>
+      <div className="pan-zoom-examples__frame">
+        <PanZoom aria-label={text('秋日工作台', 'Autumn workbench')} fitOnInit>
+          <VisualBoard zh={zh} onAction={() => setActionCount(count => count + 1)} />
+        </PanZoom>
+      </div>
+      <output><PencilText>{`${text('内容按钮点击', 'Content button clicks')}: ${actionCount}`}</PencilText></output>
+    </ComponentExample>
 
     <ComponentExample id="pan-zoom-controlled-transform-and-zoom-anchor" title={text('受控变换与缩放锚点', 'Controlled transform and zoom anchor')} code={`const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
 const view = useRef<PanZoomRef>(null);

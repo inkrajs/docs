@@ -1,7 +1,7 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useId, useState } from 'react';
 import { Button, Field, Input, Overlay, Popover, Switch } from '@inkra/react';
-import { useLocale } from '../i18n';
+import { PencilText, useLocale } from '../i18n';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 
@@ -11,6 +11,7 @@ export function OverlayExamples() {
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(true);
   const [status, setStatus] = useState('');
+  const [editable, setEditable] = useState(false);
   const [backdrop, setBackdrop] = useState(true);
   const [divided, setDivided] = useState(true);
   const [showClose, setShowClose] = useState(true);
@@ -18,7 +19,7 @@ export function OverlayExamples() {
   const [escapeClose, setEscapeClose] = useState(true);
   const [nestedOpen, setNestedOpen] = useState(false);
   const [notifications, setNotifications] = useState(false);
-  const code = `const formId = useId();
+  const formCode = `const formId = useId();
 const [open, setOpen] = useState(false);
 const [status, setStatus] = useState('');
 
@@ -43,6 +44,21 @@ const [status, setStatus] = useState('');
         <Overlay.Close asChild><Button variant="outline">${t('取消')}</Button></Overlay.Close>
         <Button type="submit" form={formId}>${t('保存更改')}</Button>
       </Overlay.Footer>
+    </Overlay.Content>
+  </Overlay.Portal>
+</Overlay.Root>`;
+  const code = editable ? formCode : `const [open, setOpen] = useState(false);
+
+<Overlay.Root open={open} onOpenChange={setOpen} modal={${modal}}>
+  <Overlay.Trigger asChild><Button>${t('编辑笔记')}</Button></Overlay.Trigger>
+  <Overlay.Portal>${backdrop && modal ? '<Overlay.Backdrop />' : ''}
+    <Overlay.Content layout="sections"${outsideClose ? '' : ' onPointerDownOutside={event => event.preventDefault()}'}${escapeClose ? '' : ' onEscapeKeyDown={event => event.preventDefault()}'}>
+      <Overlay.Header closeLabel="${t('关闭')}" showClose={${showClose}} divided={${divided}}>
+        <Overlay.Title>${t('编辑笔记')}</Overlay.Title>
+        <Overlay.Description>${t('今天的创作记录')}</Overlay.Description>
+      </Overlay.Header>
+      <Overlay.Body>${t('记录一个值得继续探索的想法。')}</Overlay.Body>
+      <Overlay.Footer divided={${divided}}><Overlay.Close asChild><Button>${t('完成')}</Button></Overlay.Close></Overlay.Footer>
     </Overlay.Content>
   </Overlay.Portal>
 </Overlay.Root>`;
@@ -80,6 +96,7 @@ const [notifications, setNotifications] = useState(false);
         <Switch label={t('显示关闭按钮')} checked={showClose} onCheckedChange={setShowClose} />
         <Switch label={t('分割线')} checked={divided} onCheckedChange={setDivided} />
       </> },
+      { label: '内容', content: <Switch label={t('编辑名称')} checked={editable} onCheckedChange={setEditable} /> },
       { label: '交互', content: <>
         <Switch label={t('展开')} checked={open} onCheckedChange={setOpen} />
         <Switch label={t('外部点击关闭')} checked={outsideClose} onCheckedChange={setOutsideClose} />
@@ -94,20 +111,20 @@ const [notifications, setNotifications] = useState(false);
             <Overlay.Content layout="sections" onPointerDownOutside={event => { if (!outsideClose) event.preventDefault(); }} onEscapeKeyDown={event => { if (!escapeClose) event.preventDefault(); }}>
               <Overlay.Header closeLabel={t('关闭')} showClose={showClose} divided={divided}>
                 <Overlay.Title>{t('编辑笔记')}</Overlay.Title>
-                <Overlay.Description>{t('更新笔记的名称与提醒偏好')}</Overlay.Description>
+                <Overlay.Description>{t(editable ? '更新笔记的名称与提醒偏好' : '今天的创作记录')}</Overlay.Description>
               </Overlay.Header>
               <Overlay.Body>
-                <form id={formId} onSubmit={event => {
+                {editable ? <form id={formId} onSubmit={event => {
                   event.preventDefault();
                   setStatus(JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))));
                   setOpen(false);
                 }}>
                   <Field label={t('名称')} required><Input name="name" defaultValue="Inkra" /></Field>
-                </form>
+                </form> : <PencilText>{t('记录一个值得继续探索的想法。')}</PencilText>}
               </Overlay.Body>
               <Overlay.Footer divided={divided}>
-                <Overlay.Close asChild><Button variant="outline">{t('取消')}</Button></Overlay.Close>
-                <Button type="submit" form={formId}>{t('保存更改')}</Button>
+                {editable ? <><Overlay.Close asChild><Button variant="outline">{t('取消')}</Button></Overlay.Close>
+                <Button type="submit" form={formId}>{t('保存更改')}</Button></> : <Overlay.Close asChild><Button>{t('完成')}</Button></Overlay.Close>}
               </Overlay.Footer>
             </Overlay.Content>
           </Overlay.Portal>

@@ -129,12 +129,14 @@ function StepsExamples() {
   const [current, setCurrent] = useState(1);
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
   const [error, setError] = useState(false);
+  const [descriptions, setDescriptions] = useState(false);
+  const [disableLast, setDisableLast] = useState(false);
   const items: StepItem[] = [
     { id: 'details', title: zh ? '填写资料' : 'Details', description: zh ? '基础联系信息' : 'Basic contact information' },
-    { id: 'review', title: zh ? '确认内容' : 'Review', description: zh ? '检查后再继续' : 'Check before continuing', status: error ? 'error' : undefined },
+    { id: 'review', title: zh ? '确认内容' : 'Review', description: zh ? '检查后再继续' : 'Check before continuing', status: error ? 'error' as const : undefined },
     { id: 'finish', title: zh ? '完成' : 'Finish', description: zh ? '保存本次设置' : 'Save these settings' },
-    { id: 'locked', title: zh ? '归档' : 'Archive', description: zh ? '当前不可进入' : 'Currently unavailable', disabled: true },
-  ];
+    { id: 'locked', title: zh ? '归档' : 'Archive', description: zh ? '当前不可进入' : 'Currently unavailable', disabled: disableLast },
+  ].map(item => ({ ...item, description: descriptions ? item.description : undefined }));
   const codeItems = items.map(item => ({ ...item, status: item.status ?? undefined }));
   const code = `const [current, setCurrent] = useState(${current});
 const steps: StepItem[] = ${JSON.stringify(codeItems, null, 2)};
@@ -152,6 +154,8 @@ const steps: StepItem[] = ${JSON.stringify(codeItems, null, 2)};
       { label: '布局', content: <DocsSelect label={zh ? '方向' : 'Orientation'} value={orientation} onValueChange={value => setOrientation(value as typeof orientation)} options={[["horizontal", zh ? "横向" : "Horizontal"], ["vertical", zh ? "纵向" : "Vertical"]]} /> },
       { label: '状态', content: <>
         <DocsSelect label={zh ? '当前步骤' : 'Current step'} value={String(current)} onValueChange={value => setCurrent(Number(value))} options={items.slice(0, 3).map((item, index) => [String(index), String(item.title)] as const)} />
+        <Switch label={zh ? '显示描述' : 'Show descriptions'} checked={descriptions} onCheckedChange={setDescriptions} />
+        <Switch label={zh ? '禁用最后一步' : 'Disable last step'} checked={disableLast} onCheckedChange={setDisableLast} />
         <Switch label={zh ? '确认步骤错误' : 'Review step error'} checked={error} onCheckedChange={setError} />
       </> },
     ]} />}>
@@ -167,16 +171,17 @@ function TimelineExamples() {
   const { locale } = useLocale();
   const zh = locale === 'zh-CN';
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('vertical');
-  const [details, setDetails] = useState(true);
+  const [details, setDetails] = useState(false);
+  const [actions, setActions] = useState(false);
   const [selected, setSelected] = useState('');
   const items: TimelineItem[] = [
     { id: 'draft', date: zh ? '10 月 20 日' : 'Oct 20', dateTime: '2026-10-20', title: zh ? '建立草稿' : 'Draft created', description: zh ? '保存第一版内容。' : 'The first version was saved.' },
     { id: 'review', date: zh ? '10 月 21 日' : 'Oct 21', dateTime: '2026-10-21', title: zh ? '团队评审' : 'Team review', description: zh ? '记录修改意见和决定。' : 'Feedback and decisions were recorded.' },
     { id: 'ready', date: zh ? '10 月 22 日' : 'Oct 22', dateTime: '2026-10-22', title: zh ? '准备交付' : 'Ready to hand off', description: zh ? '验证交互和无障碍状态。' : 'Interactions and accessibility states were verified.' },
   ];
-  const interactive = items.map(item => ({ ...item, description: details ? item.description : undefined, content: <Button size="sm" variant="ghost" onClick={() => setSelected(item.id)}>{zh ? '查看记录' : 'View entry'}</Button> }));
+  const interactive = items.map(item => ({ ...item, description: details ? item.description : undefined, content: actions ? <Button size="sm" variant="ghost" onClick={() => setSelected(item.id)}>{zh ? '查看记录' : 'View entry'}</Button> : undefined }));
   const codeEvents = items.map(item => details ? item : { ...item, description: undefined });
-  const code = `const [selectedEntry, setSelectedEntry] = useState('');
+  const code = actions ? `const [selectedEntry, setSelectedEntry] = useState('');
 const events: TimelineItem[] = ${JSON.stringify(codeEvents, null, 2)};
 const timelineItems = events.map(event => ({
   ...event,
@@ -197,17 +202,19 @@ const timelineItems = events.map(event => ({
       ? '${zh ? '已选择' : 'Selected'}: ' + (events.find(event => event.id === selectedEntry)?.title ?? '')
       : '${zh ? '尚未选择记录' : 'No entry selected'}'}
   </p>
-</>`;
+</>` : `const events: TimelineItem[] = ${JSON.stringify(codeEvents, null, 2)};
+
+<Timeline orientation="${orientation}" items={events} />`;
   return <div className="flows-examples flows-examples--timeline">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '布局', content: <DocsSelect label={zh ? '方向' : 'Orientation'} value={orientation} onValueChange={value => setOrientation(value as typeof orientation)} options={[["vertical", zh ? "纵向" : "Vertical"], ["horizontal", zh ? "横向" : "Horizontal"]]} /> },
-      { label: '内容', content: <Switch label={zh ? '显示描述' : 'Show descriptions'} checked={details} onCheckedChange={setDetails} /> },
+      { label: '内容', content: <><Switch label={zh ? '显示描述' : 'Show descriptions'} checked={details} onCheckedChange={setDetails} /><Switch label={zh ? '显示操作' : 'Show actions'} checked={actions} onCheckedChange={setActions} /></> },
     ]} />}>
       <div className="flows-examples__timeline-stage">
         <Timeline orientation={orientation} items={interactive} aria-label={zh ? '交付时间线' : 'Delivery timeline'} />
-        <div className="flows-examples__selection" role="status">{selected
+        {actions && <div className="flows-examples__selection" role="status">{selected
           ? `${zh ? '已选择' : 'Selected'}: ${items.find(item => item.id === selected)?.title ?? ''}`
-          : (zh ? '尚未选择记录' : 'No entry selected')}</div>
+          : (zh ? '尚未选择记录' : 'No entry selected')}</div>}
       </div>
     </ComponentPlayground>
     <ComponentExample id="flows-basic-timeline" title={zh ? '基础时间线' : 'Basic timeline'} code={'<Timeline items={events} />'}>

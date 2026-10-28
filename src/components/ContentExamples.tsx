@@ -19,9 +19,26 @@ function MenuExamples() {
   const [align, setAlign] = useState<'start' | 'center' | 'end'>('start');
   const [disabled, setDisabled] = useState(false);
   const [checked, setChecked] = useState(true);
+  const [options, setOptions] = useState(false);
   const [view, setView] = useState('list');
   const [result, setResult] = useState('');
-  const code = `<DropdownMenu.Root>\n  <DropdownMenu.Trigger asChild><Button>${t('笔记操作')}</Button></DropdownMenu.Trigger>\n  <DropdownMenu.Portal>\n    <DropdownMenu.Content side="${side}" align="${align}">\n      <DropdownMenu.Label>${t('笔记操作')}</DropdownMenu.Label>\n      <DropdownMenu.Item disabled={${disabled}} onSelect={() => setResult('copied')}>${t('复制笔记')}</DropdownMenu.Item>\n      <DropdownMenu.CheckboxItem checked={${checked}} onCheckedChange={setChecked}>${t('接收更新')}</DropdownMenu.CheckboxItem>\n      <DropdownMenu.Separator />\n      <DropdownMenu.RadioGroup value="${view}" onValueChange={setView}>\n        <DropdownMenu.RadioItem value="list">${t('列表')}</DropdownMenu.RadioItem>\n        <DropdownMenu.RadioItem value="grid">${t('网格')}</DropdownMenu.RadioItem>\n      </DropdownMenu.RadioGroup>\n    </DropdownMenu.Content>\n  </DropdownMenu.Portal>\n</DropdownMenu.Root>`;
+  const code = `const [result, setResult] = useState('');${options ? `\nconst [checked, setChecked] = useState(${checked});\nconst [view, setView] = useState(${JSON.stringify(view)});` : ''}
+
+<DropdownMenu.Root>
+  <DropdownMenu.Trigger asChild><Button>${t('笔记操作')}</Button></DropdownMenu.Trigger>
+  <DropdownMenu.Portal>
+    <DropdownMenu.Content side="${side}" align="${align}">
+      <DropdownMenu.Item disabled={${disabled}} onSelect={() => setResult('${t('已复制笔记')}')}>${t('复制笔记')}</DropdownMenu.Item>${options ? `
+      <DropdownMenu.Label>${t('笔记操作')}</DropdownMenu.Label>
+      <DropdownMenu.CheckboxItem checked={checked} onCheckedChange={setChecked}>${t('接收更新')}</DropdownMenu.CheckboxItem>
+      <DropdownMenu.Separator />
+      <DropdownMenu.RadioGroup value={view} onValueChange={setView}>
+        <DropdownMenu.RadioItem value="list">${t('列表')}</DropdownMenu.RadioItem>
+        <DropdownMenu.RadioItem value="grid">${t('网格')}</DropdownMenu.RadioItem>
+      </DropdownMenu.RadioGroup>` : ''}
+    </DropdownMenu.Content>
+  </DropdownMenu.Portal>
+</DropdownMenu.Root>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '布局', content: <>
@@ -30,17 +47,20 @@ function MenuExamples() {
       </> },
       { label: '状态', content: <>
         <Switch label={t('禁用复制')} checked={disabled} onCheckedChange={setDisabled} />
-        <Switch label={t('接收更新')} checked={checked} onCheckedChange={setChecked} />
+        <Switch label={t('更多设置')} checked={options} onCheckedChange={setOptions} />
+        <Switch label={t('接收更新')} checked={checked} disabled={!options} onCheckedChange={setChecked} />
         {result && <output aria-live="polite">{t(result)}</output>}
       </> },
     ]} />}>
       <div className="content-demo-stack">
         <DropdownMenu.Root><DropdownMenu.Trigger asChild><Button>{t('笔记操作')}</Button></DropdownMenu.Trigger><DropdownMenu.Portal><DropdownMenu.Content side={side} align={align}>
-          <DropdownMenu.Label>{t('笔记操作')}</DropdownMenu.Label>
           <DropdownMenu.Item disabled={disabled} onSelect={() => setResult('已复制笔记')}>{t('复制笔记')}</DropdownMenu.Item>
+          {options && <>
+          <DropdownMenu.Label>{t('笔记操作')}</DropdownMenu.Label>
           <DropdownMenu.CheckboxItem checked={checked} onCheckedChange={setChecked}>{t('接收更新')}</DropdownMenu.CheckboxItem>
           <DropdownMenu.Separator />
           <DropdownMenu.RadioGroup value={view} onValueChange={setView}><DropdownMenu.RadioItem value="list">{t('列表')}</DropdownMenu.RadioItem><DropdownMenu.RadioItem value="grid">{t('网格')}</DropdownMenu.RadioItem></DropdownMenu.RadioGroup>
+          </>}
         </DropdownMenu.Content></DropdownMenu.Portal></DropdownMenu.Root>
       </div>
     </ComponentPlayground>
@@ -54,7 +74,7 @@ function AlertExamples() {
   const { t, locale } = useLocale();
   const zh = locale === 'zh-CN';
   const [variant, setVariant] = useState<AlertVariant>('info');
-  const [icon, setIcon] = useState(true);
+  const [icon, setIcon] = useState(false);
   const [title, setTitle] = useState(t('同步完成'));
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [appearance, setAppearance] = useState<'soft' | 'outline'>('soft');
@@ -125,13 +145,13 @@ function AvatarExamples() {
 function CardExamples() {
   const { t } = useLocale();
   const [variant, setVariant] = useState<'paper' | 'quiet' | 'outline'>('paper');
-  const [footer, setFooter] = useState(true);
+  const [footer, setFooter] = useState(false);
   const [radius, setRadius] = useState(8);
   const [saved, setSaved] = useState(false);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [divided, setDivided] = useState(true);
   const [action, setAction] = useState(false);
-  const [description, setDescription] = useState(true);
+  const [description, setDescription] = useState(false);
   const [padding, setPadding] = useState<CardPadding>('inherit');
   const [headerPadding, setHeaderPadding] = useState<CardPadding>('inherit');
   const [footerPadding, setFooterPadding] = useState<CardPadding>('inherit');

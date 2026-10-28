@@ -88,6 +88,12 @@ const workflowEdges: DemoEdge[] = [
   { id: 'revise-brief', source: 'revise', sourceHandle: 'out', target: 'brief', targetHandle: 'revise-in', label: '再试一次' },
 ];
 
+const basicWorkflowNodes: DemoNode[] = [
+  { ...workflowNodes[0], data: { label: workflowNodes[0].data.label, ports: workflowNodes[0].data.ports?.slice(0, 1) } },
+  { ...workflowNodes[3], position: { x: 300, y: 70 } },
+];
+const basicWorkflowEdges: DemoEdge[] = [{ id: 'brief-ship', source: 'brief', sourceHandle: 'out', target: 'ship', targetHandle: 'in' }];
+
 const dependencyNodes: DemoNode[] = [
   { id: 'tokens', position: { x: 20, y: 40 }, data: { label: '设计变量', status: 'stable', ports: [{ id: 'out', type: 'source', position: 'right', label: '变量输出' }] } },
   { id: 'controls', position: { x: 300, y: 0 }, data: { label: '控件', status: 'active', ports: [{ id: 'in', type: 'target', position: 'left', label: '变量输入' }, { id: 'out', type: 'source', position: 'right', label: '控件输出' }] } },
@@ -144,12 +150,13 @@ export function NodeGraphExamples() {
   const english = locale === 'en';
   const text = (chinese: string, englishText: string) => english ? englishText : chinese;
   const graphRef = useRef<NodeGraphRef>(null);
-  const [nodes, setNodes] = useState<DemoNode[]>(workflowNodes);
-  const [edges, setEdges] = useState<DemoEdge[]>(workflowEdges);
+  const [nodes, setNodes] = useState<DemoNode[]>(basicWorkflowNodes);
+  const [edges, setEdges] = useState<DemoEdge[]>(basicWorkflowEdges);
+  const [fullWorkflow, setFullWorkflow] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-  const [connectOnClick, setConnectOnClick] = useState(true);
-  const [zoomOnScroll, setZoomOnScroll] = useState(true);
+  const [showControls, setShowControls] = useState(false);
+  const [connectOnClick, setConnectOnClick] = useState(false);
+  const [zoomOnScroll, setZoomOnScroll] = useState(false);
   const [empty, setEmpty] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -208,10 +215,13 @@ const [edges, setEdges] = useState(initialEdges);
         <Switch label={text('滚轮缩放', 'Wheel zoom')} checked={zoomOnScroll} onCheckedChange={setZoomOnScroll} />
       </> },
       { label: '布局', content: <>
+        <Switch label={text('完整流程', 'Complete workflow')} checked={fullWorkflow} onCheckedChange={value => {
+          setFullWorkflow(value); setNodes(value ? workflowNodes : basicWorkflowNodes); setEdges(value ? workflowEdges : basicWorkflowEdges);
+        }} />
         <Switch label={text('显示视口控件', 'Show viewport controls')} checked={showControls} onCheckedChange={setShowControls} />
         <Switch label={text('显示空态', 'Show empty state')} checked={empty} onCheckedChange={setEmpty} />
         <Button variant="outline" onClick={() => void graphRef.current?.fitView({ padding: 0.18 })}>{text('适应视图', 'Fit view')}</Button>
-        <Button variant="ghost" onClick={() => { setNodes(workflowNodes); setEdges(workflowEdges); setEmpty(false); }}>{text('重置流程', 'Reset workflow')}</Button>
+        <Button variant="ghost" onClick={() => { setNodes(fullWorkflow ? workflowNodes : basicWorkflowNodes); setEdges(fullWorkflow ? workflowEdges : basicWorkflowEdges); setEmpty(false); }}>{text('重置流程', 'Reset workflow')}</Button>
       </> },
     ]} />}>
       <GraphFrame>
@@ -236,6 +246,10 @@ const [edges, setEdges] = useState(initialEdges);
         <span className="visually-hidden" role="status">{message}</span>
       </GraphFrame>
     </ComponentPlayground>
+
+    <ComponentExample id="node-graph-workflow" title={text('完整流程', 'Complete workflow')} code={'<NodeGraph.Root nodes={workflowNodes} edges={workflowEdges} readOnly controls fitView />'}>
+      <GraphFrame><NodeGraph.Root aria-label={text('发布流程', 'Release workflow')} nodes={localizeNodes(workflowNodes)} edges={localizeEdges(workflowEdges)} readOnly controls fitView /></GraphFrame>
+    </ComponentExample>
 
     <ComponentExample id="node-graph-dependencies-and-custom-nodes" title={text('依赖关系与自定义节点', 'Dependencies and custom nodes')} code={`const renderNode = useCallback(props => <DependencyCardNode {...props} />, []);
 const renderEdge = useCallback(props => <DependencyEdge {...props} />, []);

@@ -13,12 +13,16 @@ try {
     await page.goto(`${base}/docs/components/progress#preview`);
     const playground = page.locator('.component-playground').first();
     const playgroundProgress = playground.locator('.inkra-progress');
-    await playgroundProgress.locator('.inkra-progress__ring-ink[data-ready="true"]').waitFor();
     const controls = playground.getByRole('group', { name: '属性', exact: true });
+    assert.equal(await playgroundProgress.getAttribute('data-shape'), 'linear');
     await setPlaygroundControls(playground, true);
+    await chooseDocsOption(controls, '展示形式', '环状', { exact: true, optionExact: true });
+    await playgroundProgress.locator('.inkra-progress__ring-ink[data-ready="true"]').waitFor();
     await chooseDocsOption(controls, '展示形式', '条形', { exact: true, optionExact: true });
     assert.equal(await playgroundProgress.getAttribute('data-shape'), 'linear');
     await chooseDocsOption(controls, '展示形式', '环状', { exact: true, optionExact: true });
+    await controls.getByRole('tab', { name: '内容', exact: true }).click();
+    await chooseDocsOption(controls, '自定义内容', '百分比', { exact: true, optionExact: true });
     await controls.getByRole('tab', { name: '布局', exact: true }).click();
     await chooseDocsOption(controls, '内容位置', '下方', { exact: true, optionExact: true });
     assert.equal(await playgroundProgress.locator('.inkra-progress__body').getAttribute('data-content-position'), 'bottom');
@@ -171,6 +175,10 @@ try {
     };
   });
   await page.goto(`${base}/docs/components/progress#preview`);
+  const fallbackPlayground = page.locator('.component-playground').first();
+  await setPlaygroundControls(fallbackPlayground, true);
+  await chooseDocsOption(fallbackPlayground, '展示形式', '环状', { exact: true, optionExact: true });
+  await setPlaygroundControls(fallbackPlayground, false);
   const fallbackProgress = page.locator('.component-playground .inkra-progress').first();
   const fallback = fallbackProgress.locator('.inkra-progress__ring-fallback');
   await fallback.waitFor();

@@ -68,10 +68,10 @@ function DataTableExamples() {
     { accessorKey: 'items', header: text.items },
   ], [text.name, text.status, text.items]);
   const [density, setDensity] = useState<'compact' | 'comfortable'>('comfortable');
-  const [filterable, setFilterable] = useState(true);
-  const [selectable, setSelectable] = useState(true);
+  const [filterable, setFilterable] = useState(false);
+  const [selectable, setSelectable] = useState(false);
   const [disableRows, setDisableRows] = useState(false);
-  const [pagination, setPagination] = useState(true);
+  const [pagination, setPagination] = useState(false);
   const [loading, setLoading] = useState(false);
   const [empty, setEmpty] = useState(false);
   const [pageState, setPageState] = useState<DataTablePaginationState>({ pageIndex: 0, pageSize: 3 });
@@ -191,10 +191,10 @@ function TreeExamples() {
     assets: 'Assets', images: 'Images', selectionMode: 'Selection mode', none: 'None', single: 'Single', multiple: 'Multiple',
     disableArchive: 'Disable archive', selected: 'Selected', nothing: 'None', expand: 'Expand item', collapse: 'Collapse item',
   };
-  const [selectionMode, setSelectionMode] = useState<'none' | 'single' | 'multiple'>('multiple');
-  const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(new Set<TreeKey>(['drafts']));
+  const [selectionMode, setSelectionMode] = useState<'none' | 'single' | 'multiple'>('single');
+  const [selectedKeys, setSelectedKeys] = useState<TreeSelection>(new Set<TreeKey>());
   const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(new Set<TreeKey>(['workspace', 'assets']));
-  const [disableArchive, setDisableArchive] = useState(true);
+  const [disableArchive, setDisableArchive] = useState(false);
   const [disclosureStyle, setDisclosureStyle] = useState<'folder' | 'chevron'>('folder');
   const [indent, setIndent] = useState(24);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');

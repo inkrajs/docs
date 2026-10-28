@@ -26,8 +26,8 @@ function PaginationExamples() {
   const { locale } = useLocale();
   const zh = locale === 'zh-CN';
   const labels = paginationLabels(zh);
-  const [page, setPage] = useState(6);
-  const [totalPages, setTotalPages] = useState(20);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(5);
   const [siblings, setSiblings] = useState(1);
   const [boundaries, setBoundaries] = useState(1);
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
@@ -133,10 +133,9 @@ function CommandExamples() {
   const [search, setSearch] = useState('');
   const [active, setActive] = useState('new-note');
   const [loop, setLoop] = useState(true);
-  const [disableArchive, setDisableArchive] = useState(true);
+  const [disableArchive, setDisableArchive] = useState(false);
   const [rtl, setRtl] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [open, setOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   return <div className="component-examples navigation-examples">
     <ComponentPlayground code={`const [active, setActive] = useState(${JSON.stringify(active)});
@@ -148,17 +147,12 @@ const [selected, setSelected] = useState('');
   <Command.Input value={search} onValueChange={setSearch} />
   <Command.List>
   <Command.Empty>No matching commands</Command.Empty>
-  <Command.Group heading="Workspace">
     <Command.Item value="new-note" keywords={['create']}
-      shortcut="⌘N" onSelect={setSelected}>New note</Command.Item>
+      onSelect={setSelected}>New note</Command.Item>
     <Command.Item value="find-note" keywords={['search']}
-      shortcut="⌘F" onSelect={setSelected}>Find note</Command.Item>
-  </Command.Group>
-  <Command.Separator />
-  <Command.Group heading="Settings">
+      onSelect={setSelected}>Find note</Command.Item>
     <Command.Item value="preferences" onSelect={setSelected}>Preferences</Command.Item>
     <Command.Item value="archive" disabled={${disableArchive}} onSelect={setSelected}>Archive workspace</Command.Item>
-  </Command.Group>
   </Command.List>
 </Command.Root>
 </div>`} controls={<PropertyTabs groups={[
@@ -176,18 +170,15 @@ const [selected, setSelected] = useState('');
       <div className="navigation-examples__stage navigation-examples__themed" dir={rtl ? 'rtl' : 'ltr'} data-inkra-theme={theme} data-testid="command-playground">
         <Command.Root label={zh ? '工作区命令' : 'Workspace commands'} loop={loop} value={active} onValueChange={setActive}>
           <Command.Input value={search} onValueChange={setSearch} placeholder={zh ? '搜索命令' : 'Search commands'} />
-          <Command.List label={zh ? '搜索结果' : 'Search results'}><CommandItems zh={zh} onSelect={setSelected} disabled={disableArchive} /></Command.List>
+          <Command.List label={zh ? '搜索结果' : 'Search results'}>
+            <Command.Empty>{zh ? '没有匹配的命令' : 'No matching commands'}</Command.Empty>
+            <Command.Item value="new-note" keywords={['note', 'create', '新建', '笔记']} onSelect={setSelected}>{zh ? '新建笔记' : 'New note'}</Command.Item>
+            <Command.Item value="find-note" keywords={['find', 'search', '查找', '笔记']} onSelect={setSelected}>{zh ? '查找笔记' : 'Find note'}</Command.Item>
+            <Command.Item value="preferences" keywords={['settings', '设置', '偏好']} onSelect={setSelected}>{zh ? '偏好设置' : 'Preferences'}</Command.Item>
+            <Command.Item value="archive" keywords={['archive', '归档']} disabled={disableArchive} onSelect={setSelected}>{zh ? '归档工作区' : 'Archive workspace'}</Command.Item>
+          </Command.List>
         </Command.Root>
-        <Overlay.Root open={open} onOpenChange={setOpen}>
-          <Overlay.Trigger asChild><Button variant="outline">{zh ? '打开命令面板' : 'Open command palette'}</Button></Overlay.Trigger>
-          <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" className="navigation-command-overlay" aria-describedby={undefined}>
-            <Overlay.Title className="visually-hidden">{zh ? '命令面板' : 'Command palette'}</Overlay.Title>
-            <Command.Root surface={false} label={zh ? '面板命令' : 'Palette commands'}>
-              <Command.Input placeholder={zh ? '搜索命令' : 'Search commands'} />
-              <Command.List label={zh ? '面板结果' : 'Palette results'}><CommandItems zh={zh} onSelect={value => { setSelected(value); setOpen(false); }} /></Command.List>
-            </Command.Root>
-          </Overlay.Content></Overlay.Portal>
-        </Overlay.Root>
+
       </div>
     </ComponentPlayground>
     <ComponentExample id="navigation-inline-command-list" title={zh ? '内嵌命令列表' : 'Inline command list'} code={`const [selected, setSelected] = useState('');
@@ -211,6 +202,7 @@ const [selected, setSelected] = useState('');
     </ComponentExample>
     <ComponentExample id="navigation-compose-with-overlay" title={zh ? '与 Overlay 组合' : 'Compose with Overlay'} code={`const [open, setOpen] = useState(false);
 const [selected, setSelected] = useState('');
+<div dir="${rtl ? 'rtl' : 'ltr'}" data-inkra-theme="${theme}">
 <Overlay.Root open={open} onOpenChange={setOpen}>
   <Overlay.Trigger asChild><Button>Search actions</Button></Overlay.Trigger>
   <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" aria-describedby={undefined}>
@@ -221,22 +213,22 @@ const [selected, setSelected] = useState('');
       <Command.List><Command.Empty>No matching commands</Command.Empty>
         <Command.Item value="new-note" onSelect={value => { setSelected(value); setOpen(false); }}>New note</Command.Item>
         <Command.Item value="find-note" onSelect={value => { setSelected(value); setOpen(false); }}>Find note</Command.Item>
+        <Command.Item value="preferences" onSelect={value => { setSelected(value); setOpen(false); }}>Preferences</Command.Item>
+        <Command.Item value="archive" disabled onSelect={value => { setSelected(value); setOpen(false); }}>Archive workspace</Command.Item>
       </Command.List>
     </Command.Root>
   </Overlay.Content></Overlay.Portal>
 </Overlay.Root>
+</div>
 <output aria-live="polite">{selected || 'No command executed'}</output>`}>
-      <div className="navigation-examples__stage" data-testid="command-composition">
+      <div className="navigation-examples__stage navigation-examples__themed" dir={rtl ? 'rtl' : 'ltr'} data-inkra-theme={theme} data-testid="command-composition">
         <Overlay.Root open={advancedOpen} onOpenChange={setAdvancedOpen}>
           <Overlay.Trigger asChild><Button variant="outline">{zh ? '搜索操作' : 'Search actions'}</Button></Overlay.Trigger>
           <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" className="navigation-command-overlay" aria-describedby={undefined}>
             <Overlay.Title className="visually-hidden">{zh ? '操作命令' : 'Actions'}</Overlay.Title>
             <Command.Root surface={false} label={zh ? '操作命令' : 'Actions'}>
               <Command.Input placeholder={zh ? '搜索命令' : 'Search commands'} />
-              <Command.List><Command.Empty>{zh ? '没有匹配的命令' : 'No matching commands'}</Command.Empty>
-                <Command.Item value="new-note" keywords={[zh ? '新建笔记' : 'New note']} onSelect={value => { setSelected(value); setAdvancedOpen(false); }}>{zh ? '新建笔记' : 'New note'}</Command.Item>
-                <Command.Item value="find-note" keywords={[zh ? '查找笔记' : 'Find note']} onSelect={value => { setSelected(value); setAdvancedOpen(false); }}>{zh ? '查找笔记' : 'Find note'}</Command.Item>
-              </Command.List>
+              <Command.List><CommandItems zh={zh} onSelect={value => { setSelected(value); setAdvancedOpen(false); }} /></Command.List>
             </Command.Root>
           </Overlay.Content></Overlay.Portal>
         </Overlay.Root>

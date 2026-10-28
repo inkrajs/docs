@@ -71,7 +71,7 @@ function TagInputPlayground() {
   const [tags, setTags] = useState<TagInputTag[]>(initialTags);
   const [size, setSize] = useState<TagInputSize>('md');
   const [variant, setVariant] = useState<TagInputVariant>('outline');
-  const [maxTags, setMaxTags] = useState(5);
+  const [maxTags, setMaxTags] = useState<number | undefined>(undefined);
   const [clearable, setClearable] = useState(true);
   const [validateLength, setValidateLength] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
@@ -89,7 +89,7 @@ function TagInputPlayground() {
     name="tags"
     value={tags}
     onValueChange={next => setTags([...next])}
-    size="${size}" variant="${variant}" maxTags={${maxTags}}
+    size="${size}" variant="${variant}"${maxTags === undefined ? '' : ` maxTags={${maxTags}}`}
     clearable={${clearable}} readOnly={${readOnly}} disabled={${disabled}}
     validateTag={candidate =>
       ${validateLength} && candidate.length < 2
@@ -107,7 +107,8 @@ function TagInputPlayground() {
         ['underline', zh ? '下划线' : 'Underline'],
         ['soft', zh ? '柔和铺色' : 'Soft'],
       ]} />
-      <DocsSelect label={zh ? '数量上限' : 'Maximum tags'} value={String(maxTags)} onValueChange={next => setMaxTags(Number(next))} options={[
+      <DocsSelect label={zh ? '数量上限' : 'Maximum tags'} value={maxTags === undefined ? 'none' : String(maxTags)} onValueChange={next => setMaxTags(next === 'none' ? undefined : Number(next))} options={[
+        ['none', zh ? '不限' : 'Unlimited'],
         ['3', '3'], ['5', '5'], ['8', '8'],
       ]} />
     </> },

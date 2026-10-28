@@ -37,11 +37,15 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout consumes the published `@inkra/react@0.10.0` registry package at an
-exact version. `library-candidate.json` records `source: "registry"`, the released
-library commit, and the public archive's SHA-256 and SHA-512 integrity. Build
-verifies that archive, the lockfile and the installed package without a source
-alias. Documentation changes do not publish npm packages or deploy the website.
+This checkout consumes an unpublished library candidate pinned in
+`library-candidate.json`, with its exact source commit, SHA-256 and SHA-512
+integrity. It adds NumberTicker's optional morph animation and Log's floating
+latest-record icon button. Component demos start with basic usage and progress
+through individual options to composition and boundary cases. The package
+version remains 0.10.0; these changes are not a new npm release.
+Build verifies the archive, lockfile and installed package without a source alias.
+Prepare the candidate using the steps below before installing a fresh checkout.
+Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 

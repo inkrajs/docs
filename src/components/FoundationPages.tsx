@@ -122,7 +122,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
   const [checked, setChecked] = useState(false);
   const [status, setStatus] = useState('');
   const [nativeStatus, setNativeStatus] = useState('');
-  const [demoChecked, setDemoChecked] = useState(true);
+  const [demoChecked, setDemoChecked] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [mixed, setMixed] = useState(false);
   const [visibility, setVisibility] = useState('private');
@@ -136,7 +136,7 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
   const Toggle = kind === 'switch' ? Switch : Checkbox;
   const name = foundationNames[kind];
   const code = choice
-    ? `<RadioGroup name="visibility" value="${visibility}" onValueChange={setValue} variant="${variant}" orientation="${orientation}" label="${t('可见范围')}"${disabled ? ' disabled' : ''}>\n  <RadioGroupItem value="private" label="${t('仅自己')}" />\n  <RadioGroupItem value="team" label="${t('团队')}" />\n  <RadioGroupItem value="public" label="${t('公开')}" disabled />\n</RadioGroup>`
+    ? `<RadioGroup name="visibility" value="${visibility}" onValueChange={setValue} variant="${variant}" orientation="${orientation}" label="${t('可见范围')}"${disabled ? ' disabled' : ''}>\n  <RadioGroupItem value="private" label="${t('仅自己')}" />\n  <RadioGroupItem value="team" label="${t('团队')}" />\n</RadioGroup>`
     : `<${name} name="updates" label="${t('接收更新')}" checked={${demoChecked}} onCheckedChange={setChecked}${disabled ? ' disabled' : ''}${kind === 'checkbox' && mixed ? ' indeterminate' : ''} />`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
@@ -149,13 +149,19 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
         {kind === 'checkbox' && <Switch label={t('半选')} checked={mixed} onCheckedChange={setMixed} />}
       </> },
     ]} />}>
-      <form className="component-demo-form" onSubmit={submit} onReset={() => { setStatus(''); setDemoChecked(true); setVisibility('private'); setMixed(false); }}>
-        {choice ? <RadioGroup name="visibility" value={visibility} onValueChange={setVisibility} disabled={disabled} variant={variant} orientation={orientation} label={t('可见范围')}><RadioGroupItem value="private" label={t('仅自己')} /><RadioGroupItem value="team" label={t('团队')} /><RadioGroupItem value="public" label={t('公开')} disabled /></RadioGroup> : kind === 'checkbox' ? <Checkbox name="updates" label={t('接收更新')} description={t('有新内容时通知我')} checked={demoChecked} onCheckedChange={setDemoChecked} disabled={disabled} indeterminate={mixed} /> : <Switch name="updates" label={t('接收更新')} description={t('有新内容时通知我')} checked={demoChecked} onCheckedChange={setDemoChecked} disabled={disabled} />}
-        <div className="component-demo-row"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
-        <output className="component-demo-status" aria-live="polite">{status}</output>
-      </form>
+      {choice ? <RadioGroup name="visibility" value={visibility} onValueChange={setVisibility} disabled={disabled} variant={variant} orientation={orientation} label={t('可见范围')}><RadioGroupItem value="private" label={t('仅自己')} /><RadioGroupItem value="team" label={t('团队')} /></RadioGroup> : kind === 'checkbox' ? <Checkbox name="updates" label={t('接收更新')} checked={demoChecked} onCheckedChange={setDemoChecked} disabled={disabled} indeterminate={mixed} /> : <Switch name="updates" label={t('接收更新')} checked={demoChecked} onCheckedChange={setDemoChecked} disabled={disabled} />}
     </ComponentPlayground>
+
+    {!choice && <ComponentExample id="foundation-pages-states" title="状态" code={`<${name} checked={checked} onCheckedChange={setChecked} label="${t('受控状态')}" />\n<${name} disabled label="${t('禁用')}" />${kind === 'checkbox' ? `\n<Checkbox indeterminate label="${t('半选')}" />` : ''}`}>
+      <div className="component-demo-form"><Toggle checked={checked} onCheckedChange={setChecked} label={t('受控状态')} /><Toggle disabled label={t('禁用')} /><Toggle disabled defaultChecked label={t('已选且禁用')} />{kind === 'checkbox' && <Checkbox indeterminate label={t('半选')} />}</div>
+    </ComponentExample>}
+
+    {choice && <ComponentExample id="foundation-pages-icon-segments" title="图标分段选择" code={`<RadioGroup name="example-theme" label="${t('主题模式')}" variant="segmented" orientation="horizontal" defaultValue="auto">\n  <RadioGroupItem value="auto" label="${t('跟随系统')}" icon={<MonitorIcon />} />\n  <RadioGroupItem value="light" label="${t('浅色')}" icon={<SunIcon />} />\n  <RadioGroupItem value="dark" label="${t('深色')}" icon={<MoonIcon />} />\n</RadioGroup>`}>
+      <RadioGroup name="example-theme" label={t('主题模式')} variant="segmented" orientation="horizontal" defaultValue="auto"><RadioGroupItem value="auto" label={t('跟随系统')} icon={<DocsIcon data={monitorIcon} size={20} />} /><RadioGroupItem value="light" label={t('浅色')} icon={<DocsIcon data={sunIcon} size={20} />} /><RadioGroupItem value="dark" label={t('深色')} icon={<DocsIcon data={moonIcon} size={20} />} /></RadioGroup>
+    </ComponentExample>}
+
     {kind === 'switch' && <SwitchCircularExamples />}
+
     <ComponentExample id="foundation-pages-native-defaults" title={t('原生默认值')} code={`<form>
   ${choice ? `<RadioGroup name="visibility" defaultValue="private" label="${t('可见范围')}">
     <RadioGroupItem value="private" label="${t('仅自己')}" />
@@ -176,12 +182,21 @@ function SelectionExamples({ kind }: { kind: 'checkbox' | 'radio-group' | 'switc
         <output className="component-demo-status" aria-live="polite">{nativeStatus}</output>
       </form>
     </ComponentExample>
-    {choice && <ComponentExample id="foundation-pages-icon-segments" title="图标分段选择" code={`<RadioGroup name="example-theme" label="${t('主题模式')}" variant="segmented" orientation="horizontal" defaultValue="auto">\n  <RadioGroupItem value="auto" label="${t('跟随系统')}" icon={<MonitorIcon />} />\n  <RadioGroupItem value="light" label="${t('浅色')}" icon={<SunIcon />} />\n  <RadioGroupItem value="dark" label="${t('深色')}" icon={<MoonIcon />} />\n</RadioGroup>`}>
-      <RadioGroup name="example-theme" label={t('主题模式')} variant="segmented" orientation="horizontal" defaultValue="auto"><RadioGroupItem value="auto" label={t('跟随系统')} icon={<DocsIcon data={monitorIcon} size={20} />} /><RadioGroupItem value="light" label={t('浅色')} icon={<DocsIcon data={sunIcon} size={20} />} /><RadioGroupItem value="dark" label={t('深色')} icon={<DocsIcon data={moonIcon} size={20} />} /></RadioGroup>
-    </ComponentExample>}
-    {!choice && <ComponentExample id="foundation-pages-states" title="状态" code={`<${name} checked={checked} onCheckedChange={setChecked} label="${t('受控状态')}" />\n<${name} disabled label="${t('禁用')}" />${kind === 'checkbox' ? `\n<Checkbox indeterminate label="${t('半选')}" />` : ''}`}>
-      <div className="component-demo-form"><Toggle checked={checked} onCheckedChange={setChecked} label={t('受控状态')} /><Toggle disabled label={t('禁用')} /><Toggle disabled defaultChecked label={t('已选且禁用')} />{kind === 'checkbox' && <Checkbox indeterminate label={t('半选')} />}</div>
-    </ComponentExample>}
+
+    <ComponentExample id="foundation-pages-controlled-form" title={t('受控表单', 'Controlled form')} code={`<form onSubmit={handleSubmit}>
+  ${choice ? `<RadioGroup name="visibility" value={visibility} onValueChange={setVisibility} label="${t('可见范围')}">
+    <RadioGroupItem value="private" label="${t('仅自己')}" />
+    <RadioGroupItem value="team" label="${t('团队')}" />
+  </RadioGroup>` : `<${name} name="updates" label="${t('接收更新')}" description="${t('有新内容时通知我')}" checked={checked} onCheckedChange={setChecked} />`}
+  <Button type="submit">${t('读取表单')}</Button>
+  <Button type="reset">${t('重置')}</Button>
+</form>`}>
+      <form className="component-demo-form selection-controlled-form" onSubmit={submit} onReset={() => { setStatus(''); setDemoChecked(false); setVisibility('private'); setMixed(false); }}>
+        {choice ? <RadioGroup name="visibility" value={visibility} onValueChange={setVisibility} disabled={disabled} variant={variant} orientation={orientation} label={t('可见范围')}><RadioGroupItem value="private" label={t('仅自己')} /><RadioGroupItem value="team" label={t('团队')} /></RadioGroup> : kind === 'checkbox' ? <Checkbox name="updates" label={t('接收更新')} description={t('有新内容时通知我')} checked={demoChecked} onCheckedChange={setDemoChecked} disabled={disabled} indeterminate={mixed} /> : <Switch name="updates" label={t('接收更新')} description={t('有新内容时通知我')} checked={demoChecked} onCheckedChange={setDemoChecked} disabled={disabled} />}
+        <div className="component-demo-row"><Button type="submit">{t('读取表单')}</Button><Button type="reset" variant="secondary">{t('重置')}</Button></div>
+        <output className="component-demo-status" aria-live="polite">{status}</output>
+      </form>
+    </ComponentExample>
   </>;
 }
 
@@ -280,7 +295,7 @@ const apiRows: Partial<Record<Exclude<FoundationComponent, ExpansionComponent>, 
   accordion: [['Root.type', 'single | multiple'], ['Root.value / defaultValue', 'string (single) | string[] (multiple)'], ['Root.onValueChange', '(value: string | string[]) => void (by type)'], ['Root.collapsible', 'boolean (single only)'], ['Root.orientation / dir', 'horizontal | vertical / ltr | rtl'], ['Root.disabled / Item.disabled', 'boolean'], ['Item.value / showDivider', 'string / boolean'], ['Trigger.icon', 'ReactNode'], ['Content.forceMount', 'true']],
   badge: [['variant', 'neutral | accent | success | warning | danger | info'], ['size', 'sm | md (default) | lg'], ['startIcon / endIcon / children', 'ReactNode'], ['seed', 'string | number']],
   'number-ticker': [
-    ['animation', 'count (default) | roll'], ['rollDirection', 'auto (default) | up | down'],
+    ['animation', 'count (default) | roll | morph'], ['rollDirection', 'auto (default) | up | down'],
     ['value', 'number | bigint | string'], ['compact', 'boolean | en | zh (default false)'],
     ['locale / formatOptions', 'NumberTickerLocale / NumberTickerFormatOptions'],
     ['formatOptions.notation', 'standard | scientific | engineering | compact'],

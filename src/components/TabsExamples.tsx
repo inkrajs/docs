@@ -31,7 +31,9 @@ export function TabsExamples() {
   const [animated, setAnimated] = useState(true);
   const [icons, setIcons] = useState(false);
   const [keepMounted, setKeepMounted] = useState(false);
-  const code = `<Tabs.Root value="${value}" onValueChange={setValue} style={{ width: ${width}, maxWidth: '100%' }} size="${size}" animated={${animated}} dir="${dir}" orientation="${orientation}" activationMode="${activationMode}">\n  <Tabs.List aria-label="${t('笔记分类')}" overflow="${overflow}" moreLabel="${labels.moreLabel}" scrollPreviousLabel="${labels.scrollPreviousLabel}" scrollNextLabel="${labels.scrollNextLabel}" align="${align}" fullWidth={${fullWidth}} divided={${divided}} loop={${loop}}>\n    <Tabs.Trigger value="notes"${icons ? ' startIcon={<FileTextIcon />}' : ''}>${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts"${disabled ? ' disabled' : ''}>${t('草稿')}</Tabs.Trigger>\n${extraTabs.map(([key, label]) => `    <Tabs.Trigger value="${key}">${label}</Tabs.Trigger>`).join('\n')}\n  </Tabs.List>\n  <Tabs.Content value="notes"${keepMounted ? ' forceMount' : ''}>${t('笔记内容')}</Tabs.Content>\n  <Tabs.Content value="drafts"${keepMounted ? ' forceMount' : ''}>${t('草稿内容')}</Tabs.Content>\n${extraTabs.map(([key, label]) => `  <Tabs.Content value="${key}"${keepMounted ? ' forceMount' : ''}>${label}</Tabs.Content>`).join('\n')}\n</Tabs.Root>`;
+  const [expandedTabs, setExpandedTabs] = useState(false);
+  const previewTabs = expandedTabs ? extraTabs : [];
+  const code = `<Tabs.Root value="${value}" onValueChange={setValue} style={{ width: ${width}, maxWidth: '100%' }} size="${size}" animated={${animated}} dir="${dir}" orientation="${orientation}" activationMode="${activationMode}">\n  <Tabs.List aria-label="${t('笔记分类')}" overflow="${overflow}" moreLabel="${labels.moreLabel}" scrollPreviousLabel="${labels.scrollPreviousLabel}" scrollNextLabel="${labels.scrollNextLabel}" align="${align}" fullWidth={${fullWidth}} divided={${divided}} loop={${loop}}>\n    <Tabs.Trigger value="notes"${icons ? ' startIcon={<FileTextIcon />}' : ''}>${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts"${disabled ? ' disabled' : ''}>${t('草稿')}</Tabs.Trigger>\n${previewTabs.map(([key, label]) => `    <Tabs.Trigger value="${key}">${label}</Tabs.Trigger>`).join('\n')}\n  </Tabs.List>\n  <Tabs.Content value="notes"${keepMounted ? ' forceMount' : ''}>${t('笔记内容')}</Tabs.Content>\n  <Tabs.Content value="drafts"${keepMounted ? ' forceMount' : ''}>${t('草稿内容')}</Tabs.Content>\n${previewTabs.map(([key, label]) => `  <Tabs.Content value="${key}"${keepMounted ? ' forceMount' : ''}>${label}</Tabs.Content>`).join('\n')}\n</Tabs.Root>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
@@ -49,6 +51,7 @@ export function TabsExamples() {
         <DocsSelect label="激活方式" value={activationMode} onValueChange={next => setActivationMode(next as typeof activationMode)} options={[["automatic", "自动"], ["manual", "手动"]]} />
         <Switch label={t('循环导航')} checked={loop} onCheckedChange={setLoop} />
         <Switch label={t('绘制动画')} checked={animated} onCheckedChange={setAnimated} />
+        <Switch label={text('更多标签', 'More tabs')} checked={expandedTabs} onCheckedChange={setExpandedTabs} />
         <Switch label={t('保留面板内容')} checked={keepMounted} onCheckedChange={setKeepMounted} />
       </> },
       { label: '状态', content: <>
@@ -56,12 +59,29 @@ export function TabsExamples() {
       </> },
     ]} />}>
       <Tabs.Root className="tabs-demo" style={{ width: Number(width), maxWidth: '100%' }} value={value} onValueChange={setValue} orientation={orientation} activationMode={activationMode} size={size} dir={dir} animated={animated}>
-        <Tabs.List aria-label={t('笔记分类')} overflow={overflow} {...labels} align={align} fullWidth={fullWidth} divided={divided} loop={loop}><Tabs.Trigger value="notes" startIcon={icons ? <DocsIcon data={fileIcon} size={20} /> : undefined}>{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts" disabled={disabled}>{t('草稿')}</Tabs.Trigger>{extraTabs.map(([key, label]) => <Tabs.Trigger key={key} value={key}>{label}</Tabs.Trigger>)}</Tabs.List>
+        <Tabs.List aria-label={t('笔记分类')} overflow={overflow} {...labels} align={align} fullWidth={fullWidth} divided={divided} loop={loop}><Tabs.Trigger value="notes" startIcon={icons ? <DocsIcon data={fileIcon} size={20} /> : undefined}>{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts" disabled={disabled}>{t('草稿')}</Tabs.Trigger>{previewTabs.map(([key, label]) => <Tabs.Trigger key={key} value={key}>{label}</Tabs.Trigger>)}</Tabs.List>
         <Tabs.Content value="notes" forceMount={keepMounted || undefined}>{t('笔记内容')}</Tabs.Content>
         <Tabs.Content value="drafts" forceMount={keepMounted || undefined}>{t('草稿内容')}</Tabs.Content>
-        {extraTabs.map(([key, label]) => <Tabs.Content key={key} value={key} forceMount={keepMounted || undefined}>{label}</Tabs.Content>)}
+        {previewTabs.map(([key, label]) => <Tabs.Content key={key} value={key} forceMount={keepMounted || undefined}>{label}</Tabs.Content>)}
       </Tabs.Root>
     </ComponentPlayground>
+
+    <ComponentExample id="tabs-dividers" title="分割线" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List divided aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes">${t('笔记内容')}</Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
+      <Tabs.Root defaultValue="notes" className="tabs-demo">
+        <Tabs.List divided aria-label={t('分割线')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
+        <Tabs.Content value="notes">{t('笔记内容')}</Tabs.Content>
+        <Tabs.Content value="drafts">{t('草稿内容')}</Tabs.Content>
+      </Tabs.Root>
+    </ComponentExample>
+
+    <ComponentExample id="tabs-preserved-panel-content" title="保留面板内容" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes" forceMount><Input /></Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
+      <Tabs.Root defaultValue="notes" className="tabs-demo">
+        <Tabs.List aria-label={t('保留面板内容')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
+        <Tabs.Content value="notes" forceMount><Field label={t('名称')}><Input defaultValue="Inkra" /></Field></Tabs.Content>
+        <Tabs.Content value="drafts">{t('草稿内容')}</Tabs.Content>
+      </Tabs.Root>
+    </ComponentExample>
+
     {(['menu', 'buttons'] as const).map(mode => <ComponentExample id={`tabs-overflow-${mode}`} key={mode} title={mode === 'menu' ? text('更多菜单', 'More menu') : text('两侧滚动按钮', 'Scroll buttons')} code={`<Tabs.Root defaultValue="favorites">\n  <Tabs.List overflow="${mode}" aria-label="${t('笔记分类')}" moreLabel="${labels.moreLabel}" scrollPreviousLabel="${labels.scrollPreviousLabel}" scrollNextLabel="${labels.scrollNextLabel}">\n${extraTabs.map(([key, label]) => `    <Tabs.Trigger value="${key}">${label}</Tabs.Trigger>`).join('\n')}\n  </Tabs.List>\n${extraTabs.map(([key, label]) => `  <Tabs.Content value="${key}">${label}</Tabs.Content>`).join('\n')}\n</Tabs.Root>`}>
       <Tabs.Root className="tabs-demo" defaultValue="favorites" style={{ width: 240, maxWidth: '100%' }}>
         <Tabs.List overflow={mode} {...labels} aria-label={t('笔记分类')}>
@@ -70,19 +90,5 @@ export function TabsExamples() {
         {extraTabs.map(([key, label]) => <Tabs.Content key={key} value={key}>{label}</Tabs.Content>)}
       </Tabs.Root>
     </ComponentExample>)}
-    <ComponentExample id="tabs-dividers" title="分割线" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List divided aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes">${t('笔记内容')}</Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
-      <Tabs.Root defaultValue="notes" className="tabs-demo">
-        <Tabs.List divided aria-label={t('分割线')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
-        <Tabs.Content value="notes">{t('笔记内容')}</Tabs.Content>
-        <Tabs.Content value="drafts">{t('草稿内容')}</Tabs.Content>
-      </Tabs.Root>
-    </ComponentExample>
-    <ComponentExample id="tabs-preserved-panel-content" title="保留面板内容" code={`<Tabs.Root defaultValue="notes">\n  <Tabs.List aria-label="${t('笔记分类')}">\n    <Tabs.Trigger value="notes">${t('笔记')}</Tabs.Trigger>\n    <Tabs.Trigger value="drafts">${t('草稿')}</Tabs.Trigger>\n  </Tabs.List>\n  <Tabs.Content value="notes" forceMount><Input /></Tabs.Content>\n  <Tabs.Content value="drafts">${t('草稿内容')}</Tabs.Content>\n</Tabs.Root>`}>
-      <Tabs.Root defaultValue="notes" className="tabs-demo">
-        <Tabs.List aria-label={t('保留面板内容')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
-        <Tabs.Content value="notes" forceMount><Field label={t('名称')}><Input defaultValue="Inkra" /></Field></Tabs.Content>
-        <Tabs.Content value="drafts">{t('草稿内容')}</Tabs.Content>
-      </Tabs.Root>
-    </ComponentExample>
   </>;
 }

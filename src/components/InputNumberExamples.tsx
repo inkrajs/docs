@@ -49,8 +49,8 @@ export function InputNumberExamples() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [variant, setVariant] = useState<'underline' | 'outline' | 'soft' | 'ghost'>('underline');
   const [step, setStep] = useState('1');
-  const [min, setMin] = useState('0');
-  const [max, setMax] = useState('100');
+  const [min, setMin] = useState('none');
+  const [max, setMax] = useState('none');
   const [controls, setControls] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
@@ -61,8 +61,8 @@ export function InputNumberExamples() {
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [textAlign, setTextAlign] = useState<'start' | 'center' | 'end'>('center');
   const [shiftStep, setShiftStep] = useState('10');
-  const [altStep, setAltStep] = useState('0.1');
-  const [chordStep, setChordStep] = useState('100');
+  const [altStep, setAltStep] = useState('none');
+  const [chordStep, setChordStep] = useState('none');
   const [pressAndHold, setPressAndHold] = useState(true);
   const [repeatDelay, setRepeatDelay] = useState('400');
   const [repeatInterval, setRepeatInterval] = useState('80');
@@ -76,7 +76,7 @@ export function InputNumberExamples() {
 <Field label=${quote(t('数量'))}${required ? ' required' : ''}${invalid ? ` error=${quote(t('请输入范围内的数值'))}` : ''}>
   <InputNumber name="quantity" value={value} onValueChange={setValue}
     size="${size}" variant="${variant}" textAlign="${textAlign}" dir="${dir}"
-    min={${min}} max={${max}} step={${step === 'any' ? '"any"' : step}}
+    ${min === 'none' ? '' : `min={${min}} `}${max === 'none' ? '' : `max={${max}} `}step={${step === 'any' ? '"any"' : step}}
     stepModifiers={${JSON.stringify(stepModifiers)}}
     pressAndHold={${pressAndHold}} repeatDelay={${repeatDelay}} repeatInterval={${repeatInterval}}
     controls={${controls}} fullWidth={${fullWidth}}${disabled ? '\n    disabled' : ''}${readOnly ? '\n    readOnly' : ''}${suffix ? '\n    suffix="kg"' : ''}
@@ -94,8 +94,8 @@ export function InputNumberExamples() {
         <Switch label={t('撑满宽度')} checked={fullWidth} onCheckedChange={setFullWidth} />
       </> },
       { label: '交互', content: <>
-        <DocsSelect label="最小值" value={min} onValueChange={setMin} options={[["-10", "-10"], ["0", "0"], ["1", "1"]]} />
-        <DocsSelect label="最大值" value={max} onValueChange={setMax} options={[["5", "5"], ["10", "10"], ["100", "100"]]} />
+        <DocsSelect label="最小值" value={min} onValueChange={setMin} options={[["none", "不限"], ["-10", "-10"], ["0", "0"], ["1", "1"]]} />
+        <DocsSelect label="最大值" value={max} onValueChange={setMax} options={[["none", "不限"], ["5", "5"], ["10", "10"], ["100", "100"]]} />
         <DocsSelect label="步长" value={step} onValueChange={setStep} options={[["1", "1"], ["0.1", "0.1"], ["0.25", "0.25"], ["5", "5"], ["any", "不限"]]} />
         <Switch label={t('步进按钮')} checked={controls} onCheckedChange={setControls} />
         <DocsSelect label="Shift 步长" value={shiftStep} onValueChange={setShiftStep} options={[["none", "不启用"], ["1", "1"], ["10", "10"], ["100", "100"]]} />
@@ -114,13 +114,10 @@ export function InputNumberExamples() {
     ]} />}>
       <div className="component-demo-form">
         <Field label={t('数量')} required={required} error={invalid ? t('请输入范围内的数值') : undefined}>
-          <InputNumber name="quantity" value={value} onValueChange={setValue} size={size} variant={variant} min={Number(min)} max={Number(max)} step={step === 'any' ? 'any' : Number(step)} stepModifiers={stepModifiers} pressAndHold={pressAndHold} repeatDelay={Number(repeatDelay)} repeatInterval={Number(repeatInterval)} controls={controls} disabled={disabled} readOnly={readOnly} fullWidth={fullWidth} dir={dir} textAlign={textAlign} suffix={suffix ? 'kg' : undefined} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} />
+          <InputNumber name="quantity" value={value} onValueChange={setValue} size={size} variant={variant} min={min === 'none' ? undefined : Number(min)} max={max === 'none' ? undefined : Number(max)} step={step === 'any' ? 'any' : Number(step)} stepModifiers={stepModifiers} pressAndHold={pressAndHold} repeatDelay={Number(repeatDelay)} repeatInterval={Number(repeatInterval)} controls={controls} disabled={disabled} readOnly={readOnly} fullWidth={fullWidth} dir={dir} textAlign={textAlign} suffix={suffix ? 'kg' : undefined} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} />
         </Field>
       </div>
     </ComponentPlayground>
-    <ComponentExample id="input-number-modifiers-and-hold-repeat" title="组合键与长按" code={`<Field label=${quote(t('快捷调整'))}>\n  <InputNumber defaultValue={2} min={-1000} max={1000}\n    stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]}\n    pressAndHold repeatDelay={400} repeatInterval={80}\n    incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} />\n</Field>`}>
-      <div className="component-demo-form"><Field label={t('快捷调整')}><InputNumber defaultValue={2} min={-1000} max={1000} stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]} pressAndHold repeatDelay={400} repeatInterval={80} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field></div>
-    </ComponentExample>
     <ComponentExample id="input-number-range-and-step" title="范围与步长" code={`<Field label=${quote(t('数量'))}><InputNumber defaultValue={0} min={0} max={5} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('小数步长'))}><InputNumber defaultValue={1.25} min={0} max={3} step={0.25} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('数量')}><InputNumber defaultValue={0} min={0} max={5} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
@@ -136,7 +133,6 @@ export function InputNumberExamples() {
     <ComponentExample id="input-number-arbitrary-decimals" title="任意小数" code={`<Field label=${quote(t('测量值'))}><InputNumber defaultValue={1.2345} step="any" controls={false} /></Field>`}>
       <div className="component-demo-form"><Field label={t('测量值')}><InputNumber defaultValue={1.2345} step="any" controls={false} /></Field></div>
     </ComponentExample>
-    <ResetExample />
     <ComponentExample id="input-number-states" title="状态" code={`<Field label=${quote(t('只读'))} readOnly><InputNumber defaultValue={2} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('禁用'))} disabled><InputNumber defaultValue={2} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>\n<Field label=${quote(t('数量'))} error=${quote(t('请输入范围内的数值'))}><InputNumber defaultValue={12} min={0} max={10} incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} /></Field>`}>
       <div className="input-examples__fields">
         <Field label={t('只读')} readOnly><InputNumber defaultValue={2} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
@@ -144,5 +140,9 @@ export function InputNumberExamples() {
         <Field label={t('数量')} error={t('请输入范围内的数值')}><InputNumber defaultValue={12} min={0} max={10} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field>
       </div>
     </ComponentExample>
+    <ComponentExample id="input-number-modifiers-and-hold-repeat" title="组合键与长按" code={`<Field label=${quote(t('快捷调整'))}>\n  <InputNumber defaultValue={2} min={-1000} max={1000}\n    stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]}\n    pressAndHold repeatDelay={400} repeatInterval={80}\n    incrementButtonLabel=${quote(t('增加数量'))} decrementButtonLabel=${quote(t('减少数量'))} />\n</Field>`}>
+      <div className="component-demo-form"><Field label={t('快捷调整')}><InputNumber defaultValue={2} min={-1000} max={1000} stepModifiers={[{ shiftKey: true, step: 10 }, { altKey: true, step: 0.1 }, { ctrlKey: true, shiftKey: true, step: 100 }]} pressAndHold repeatDelay={400} repeatInterval={80} incrementButtonLabel={t('增加数量')} decrementButtonLabel={t('减少数量')} /></Field></div>
+    </ComponentExample>
+    <ResetExample />
   </>;
 }

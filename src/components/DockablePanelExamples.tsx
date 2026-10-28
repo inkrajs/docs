@@ -33,22 +33,24 @@ function InspectorContent({ t }: { t: (value: string) => string }) {
 
 export function DockablePanelExamples() {
   const { t } = useLocale();
-  const [snap, setSnap] = useState(true);
-  const [collapsible, setCollapsible] = useState(true);
+  const [snap, setSnap] = useState(false);
+  const [collapsible, setCollapsible] = useState(false);
+  const [multiple, setMultiple] = useState(false);
   const [activeId, setActiveId] = useState('notes');
   const [controlledPosition, setControlledPosition] = useState<DockablePanelPosition>({ x: 164, y: 72 });
   const code = `<DockablePanelWorkspace snapThreshold={${snap ? 16 : 0}} defaultActiveId="notes">
-  <DockablePanel id="notes" title="${t('便笺')}" defaultPosition={{ x: 20, y: 24 }}>
+  <DockablePanel id="notes" title="${t('便笺')}" defaultPosition={{ x: 20, y: 24 }} collapsible={${collapsible}}>
     <Notes />
   </DockablePanel>
-  <DockablePanel id="inspector" title="${t('检查器')}" defaultPosition={{ x: 184, y: 86 }}>
+  ${multiple ? `<DockablePanel id="inspector" title="${t('检查器')}" defaultPosition={{ x: 184, y: 86 }} collapsible={${collapsible}}>
     <Inspector />
-  </DockablePanel>
+  </DockablePanel>` : ''}
 </DockablePanelWorkspace>`;
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '交互', content: <>
+        <Switch label={t('显示检查器', 'Show inspector')} checked={multiple} onCheckedChange={setMultiple} />
         <Switch label={t('边缘吸附')} checked={snap} onCheckedChange={setSnap} />
         <Switch label={t('允许收起')} checked={collapsible} onCheckedChange={setCollapsible} />
       </> },
@@ -71,10 +73,9 @@ export function DockablePanelExamples() {
         >
           <div className="dockable-panel-example__content">
             <PencilText>{t('拖动标题栏，把便笺放到顺手的位置。')}</PencilText>
-            <Button size="sm" variant="secondary" data-dockable-panel-no-drag>{t('完成')}</Button>
           </div>
         </DockablePanel>
-        <DockablePanel
+        {multiple && <DockablePanel
           id="inspector"
           title={t('检查器')}
           defaultPosition={{ x: 184, y: 86 }}
@@ -82,7 +83,7 @@ export function DockablePanelExamples() {
           labels={panelLabels(t)}
         >
           <InspectorContent t={t} />
-        </DockablePanel>
+        </DockablePanel>}
       </DockablePanelWorkspace>
     </ComponentPlayground>
 

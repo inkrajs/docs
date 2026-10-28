@@ -49,8 +49,12 @@ try {
     await seek.focus();
     await seek.press('End');
     assert((await audio.locator('audio').evaluate(node => node.currentTime)) > 11, 'real audio seeks');
-    assert.match(await audio.locator('.audio-player-examples__status').textContent(), zh ? /状态：[\u4e00-\u9fff]+/ : /Status: /);
+    assert.equal(await audio.locator('.audio-player-examples__status').count(), 0, 'basic audio omits event diagnostics');
     const controlled = page.getByTestId('audio-player-controlled');
+    await controlled.getByRole('button', { name: zh ? '播放' : 'Play', exact: true }).click();
+    await page.waitForFunction(node => !node.querySelector('audio').paused, await controlled.elementHandle());
+    assert.match(await controlled.locator('[aria-live="polite"]').textContent(), zh ? /状态：[\u4e00-\u9fff]+/ : /Status: /);
+    await controlled.getByRole('button', { name: zh ? '暂停' : 'Pause', exact: true }).click();
     await controlled.getByRole('button', { name: zh ? '静音' : 'Mute', exact: true }).click();
     assert(await controlled.locator('audio').evaluate(node => node.muted));
     await choose(controlled, zh ? '倍速' : 'Speed', '1.5x');
@@ -74,6 +78,11 @@ try {
     const carousel = page.getByTestId('carousel-playground').locator('.inkra-carousel');
     await carousel.waitFor();
     await configure(page, false);
+    assert.equal(await carousel.locator('.inkra-carousel__viewport').evaluate(node => Number(getComputedStyle(node).getPropertyValue('--inkra-carousel-visible'))), 1, 'basic carousel starts with one visible slide');
+    assert.equal(await carousel.getByRole('button', { name: zh ? '打开笔记' : 'Open notes', exact: true }).count(), 0, 'project overlays are a composition example');
+    await configure(page, true);
+    await choose(page, zh ? '可见项' : 'Visible items', zh ? '自适应' : 'Adaptive');
+    await configure(page, false);
     const geometry = await carousel.evaluate(node => {
       const viewport = node.querySelector('.inkra-carousel__viewport');
       const style = getComputedStyle(viewport);
@@ -81,7 +90,7 @@ try {
     });
     assert.equal(geometry.visible, geometry.width >= 768 ? 3 : geometry.width >= 480 ? 2 : 1, JSON.stringify(geometry));
     assert(Math.abs(geometry.slide * geometry.visible + 16 * (geometry.visible - 1) - geometry.viewport) < 2, JSON.stringify(geometry));
-    const project = carousel.getByRole('button', { name: zh ? '打开笔记' : 'Open notes', exact: true }).first();
+    const project = page.locator('#carousel-interactive-cards').getByRole('button', { name: zh ? '打开笔记' : 'Open notes', exact: true }).first();
     await project.click();
     const details = page.getByRole('dialog');
     await details.waitFor();
@@ -104,6 +113,8 @@ try {
     await configure(page, true);
     await choose(page, zh ? '阅读方向' : 'Reading direction', zh ? '从右到左' : 'RTL');
     await page.getByRole('switch', { name: zh ? '显示图片计数' : 'Show image count', exact: true }).click();
+    await page.getByRole('switch', { name: zh ? '启用缩放' : 'Enable zoom', exact: true }).check();
+    await page.getByRole('switch', { name: zh ? '显示旋转' : 'Show rotation', exact: true }).check();
     await configure(page, false);
     const open = gallery.getByRole('button', { name: zh ? '打开图片查看器' : 'Open image viewer', exact: true });
     await open.click();

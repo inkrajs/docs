@@ -138,9 +138,9 @@ export function LoadingExamples() {
       </div>
     </ComponentPlayground>
 
-    <ScenePresetExample />
-    <SimulationExample />
     <CarrierExample />
+    <SimulationExample />
+    <ScenePresetExample />
   </>;
 }
 
