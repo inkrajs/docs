@@ -99,6 +99,48 @@ function flattenNavGroups(groups: NavGroup[]): NavGroup[] {
 const flatNavGroups = flattenNavGroups(navGroups);
 const allNavItems = flatNavGroups.flatMap(group => group.items);
 
+function DocumentPageNavigation({ currentPath, onNavigate }: {
+  currentPath: RoutePath;
+  onNavigate: (path: RoutePath) => void;
+}) {
+  const { t } = useLocale();
+  const index = allNavItems.findIndex(item => item.path === currentPath);
+  if (index < 0) return null;
+  const previous = allNavItems[index - 1];
+  const next = allNavItems[index + 1];
+  const pageLink = (item: NavItem, direction: 'prev' | 'next') => (
+    <a className={`docs-page-navigation__link docs-page-navigation__link--${direction}`}
+      href={routeHref(item.path)} rel={direction}
+      onClick={event => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        onNavigate(item.path);
+        window.requestAnimationFrame(() => {
+          const heading = document.querySelector<HTMLElement>('#main-content .documentation h1');
+          heading?.setAttribute('tabindex', '-1');
+          heading?.focus({ preventScroll: true });
+        });
+      }}>
+      <PencilSurface as="span" className="docs-page-navigation__hover" variant="selection" aria-hidden="true" seed={`docs-${direction}-hover`} />
+      <span className="docs-page-navigation__content">
+        <span className="docs-page-navigation__direction">
+          {direction === 'prev' && <DocsIcon data={arrowLeftIcon} size={20} seed="docs-previous-arrow" />}
+          <PencilText seed={`docs-${direction}-label`}>{t(direction === 'prev' ? '上一页' : '下一页')}</PencilText>
+          {direction === 'next' && <DocsIcon data={arrowRightIcon} size={20} seed="docs-next-arrow" />}
+        </span>
+        <PencilText className="docs-page-navigation__title" seed={`docs-${direction}-${item.path}`}>{item.label}</PencilText>
+      </span>
+    </a>
+  );
+  return <nav className="docs-page-navigation" aria-label={t('文档页导航')}>
+    <PencilLine className="docs-page-navigation__divider" aria-hidden="true" seed="docs-page-navigation-divider" />
+    <div className="docs-page-navigation__links">
+      {previous && pageLink(previous, 'prev')}
+      {next && pageLink(next, 'next')}
+    </div>
+  </nav>;
+}
+
 function expandedForPath(path: RoutePath): string[] {
   return flatNavGroups.filter(group => flattenNavGroups([group])
     .some(child => child.items.some(item => item.path === path))).map(group => group.label);
@@ -713,10 +755,6 @@ function GettingStartedPage({ onNavigate }: { onNavigate: (path: RoutePath) => v
         <PencilText as="p" seed="font-note">文档站默认使用小赖字体，可在主题定制中切换字体并调整各自的笔触参数。</PencilText>
         <Button onClick={() => onNavigate('/components/button')} seed="start-button">{t("查看 Button")}</Button>
       </section>
-      <section className="content-section getting-started-links">
-        <ButtonLink variant="link" href="/docs/internationalization">{t('国际化')}</ButtonLink>
-        <ButtonLink variant="link" href="/docs/theming">{t('主题定制')}</ButtonLink>
-      </section>
     </article>
   );
 }
@@ -991,8 +1029,9 @@ export function App() {
         </DocsNavigationPanel>
         <Resizable.Handle className="docs-sidebar-resize" />
         <Resizable.Panel id="docs-content" className="docs-content-panel" minSize="40%" style={{ overflow: 'visible' }}>
-        <Layout.Content as="main" id="main-content" padding={0}>
+        <Layout.Content as="main" id="main-content" className="docs-main" padding={0}>
           {route === '/components/button' ? <ButtonPage activeTab={buttonTab} onTabChange={changeButtonTab} /> : route.startsWith('/components/') ? <FoundationPage key={route} component={route.slice('/components/'.length) as FoundationComponent} activeTab={buttonTab} onTabChange={changeButtonTab} /> : route === '/internationalization' ? <article className="documentation"><PageHeading title="国际化" description="换种语言打招呼，别让用户自己翻译。" /><InternationalizationExamples /></article> : route === '/theming' ? <article className="documentation"><PageHeading title="主题定制" description="颜色、笔触都能改，不用和我长得一样。" /><ThemeExamples /></article> : route === '/design-standard' ? <DesignStandardPage theme={theme} /> : route === '/usage-guide' ? <article className="documentation"><PageHeading title="使用指南" /><section className="content-section"><UsageGuide theme={theme} /></section></article> : <GettingStartedPage onNavigate={navigate} />}
+          <DocumentPageNavigation currentPath={route} onNavigate={navigate} />
         </Layout.Content>
         </Resizable.Panel>
         </Resizable.Root>

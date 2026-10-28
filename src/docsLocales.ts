@@ -10,6 +10,9 @@ export function resolveDocsLocale(value: unknown): DocsLocale {
 
 // Chinese source keys stay stable. Untranslated reference prose falls back to English.
 export const docsMessages: Record<string, readonly [string, string, string, string]> = {
+  '文档页导航': ['Documentation pages', 'ドキュメントのページ移動', '문서 페이지 탐색', 'Navigation des pages de documentation'],
+  '上一页': ['Previous page', '前のページ', '이전 페이지', 'Page précédente'],
+  '下一页': ['Next page', '次のページ', '다음 페이지', 'Page suivante'],
   '丁香': ['Dingxiang · Lilac', '丁香・ライラック', '정향 · 라일락', 'Dingxiang · Lilas'],
   '赭橙': ['Zhecheng · Ochre orange', '赭橙・オーカーオレンジ', '자등 · 황토 주황', 'Zhecheng · Orange ocre'],
   '藤黄': ['Tenghuang · Gamboge', '藤黄・ガンボージ', '등황', 'Tenghuang · Gomme-gutte'],
