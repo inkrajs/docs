@@ -13,7 +13,7 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The 0.11.0 candidate adds NumberTicker's optional `animation="morph"` mode:
+The 0.11.0 release adds NumberTicker's optional `animation="morph"` mode:
 exact decimal shifts retain fixed-width glyphs, move the decimal point, and
 reveal entering zeros with sliding, fading and right-edge clipping. The default
 duration is 420ms; ordinary changes use place-aligned rolling, and the existing
@@ -50,18 +50,16 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout consumes an unpublished library candidate pinned in
-`library-candidate.json`, with its exact source commit, SHA-256 and SHA-512
-integrity. The package version is 0.11.0; it remains an unpublished candidate
-until registry verification completes.
-Build verifies the archive, lockfile and installed package without a source alias.
-Prepare the candidate using the steps below before installing a fresh checkout.
+This checkout consumes the published `@inkra/react@0.11.0` package from npm.
+`library-candidate.json` pins the released source commit, SHA-256 and SHA-512
+integrity. Build verifies the public archive, lockfile and installed package
+without a source alias. A sibling library checkout and vendor archive are not
+needed for this registry release.
 Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
-Prepare the pinned unpublished candidate first using the procedure below, then
-build and preview:
+Install the exact registry dependencies, then build and preview:
 
 ```sh
 npm ci
@@ -69,9 +67,8 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-A fresh candidate checkout requires the verified vendor archive. Once this checkout
-is switched to an exact published registry version, a sibling library checkout and
-vendor archive are no longer needed.
+Only when testing unpublished library changes, prepare the verified candidate
+archive using the procedure below before installing dependencies.
 
 ## Local Routes And Page Actions
 
