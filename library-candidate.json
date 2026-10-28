@@ -4,5 +4,6 @@
   "revision": "fbe25a47085c77e088781328eb17019d24b7204c",
   "version": "0.11.0",
   "sha256": "ae972df038a104fb00bc84b77e98b81c2567cd439a55dab5a37695c2b7007661",
-  "integrity": "sha512-EC+dMi2OHZuBRggjag4aCuLJj//dHVDRfZwtjXU5WqGglReJy7UQw0ZdwzhiwF1iUrjRC1id3JevbC1CV6qZPw=="
+  "integrity": "sha512-EC+dMi2OHZuBRggjag4aCuLJj//dHVDRfZwtjXU5WqGglReJy7UQw0ZdwzhiwF1iUrjRC1id3JevbC1CV6qZPw==",
+  "source": "registry"
 }
