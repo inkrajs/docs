@@ -12,10 +12,10 @@ export function SparklineExamples() {
   const zh = locale !== 'en';
   const text = (cn: string, en: string) => zh ? cn : en;
   const [type, setType] = useState<'line' | 'bar'>('line');
-  const [showArea, setShowArea] = useState(true);
-  const [showPoints, setShowPoints] = useState(true);
+  const [showArea, setShowArea] = useState(false);
+  const [showPoints, setShowPoints] = useState(false);
   const [dataset, setDataset] = useState<'sales' | 'negative' | 'empty'>('sales');
-  const data = dataset === 'sales' ? [12, 18, 15, null, 25, 22, 31, 28] : dataset === 'negative' ? [-4, -8, -3, 2, -1, 5] : [];
+  const data = dataset === 'sales' ? [12, 18, 15, 21, 25, 22, 31, 28] : dataset === 'negative' ? [-4, -8, -3, 2, -1, 5] : [];
   const code = `<Sparkline\n  data={${JSON.stringify(data)}}\n  type="${type}"\n  showArea={${showArea}}\n  showPoints={${showPoints}}\n  label="${text('销售趋势', 'Sales trend')}"\n/>`;
   return <div className="sparkline-examples">
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
@@ -25,6 +25,12 @@ export function SparklineExamples() {
     ]} />}>
       <div className="sparkline-examples__preview"><Sparkline data={data} type={type} showArea={showArea} showPoints={showPoints} label={text('销售趋势', 'Sales trend')} /></div>
     </ComponentPlayground>
+    <ComponentExample id="sparkline-area" title={text('面积洗色', 'Area wash')} code={`<Sparkline data={[12, 18, 15, 21, 25, 22, 31, 28]} showArea showPoints={false} label="${text('销售趋势', 'Sales trend')}" />`}>
+      <Sparkline data={[12, 18, 15, 21, 25, 22, 31, 28]} showArea showPoints={false} label={text('销售趋势', 'Sales trend')} />
+    </ComponentExample>
+    <ComponentExample id="sparkline-points" title={text('数据点', 'Data points')} code={`<Sparkline data={[12, 18, 15, 21, 25, 22, 31, 28]} showArea={false} showPoints label="${text('销售趋势', 'Sales trend')}" />`}>
+      <Sparkline data={[12, 18, 15, 21, 25, 22, 31, 28]} showArea={false} showPoints label={text('销售趋势', 'Sales trend')} />
+    </ComponentExample>
     <ComponentExample id="sparkline-negative-and-missing-values" title={text('负值与缺失值', 'Negative and missing values')} code={`<Sparkline data={[-4, -8, null, 2, 5]} type="bar" label="${text('收益趋势', 'Revenue trend')}" />`}>
       <Sparkline data={[-4, -8, null, 2, 5]} type="bar" label={text('收益趋势', 'Revenue trend')} />
     </ComponentExample>

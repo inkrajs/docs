@@ -8,7 +8,7 @@ const root = new URL('../../src/components/', import.meta.url);
 function files(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
     const path = join(directory, entry.name);
-    return entry.isDirectory() ? files(path) : path.endsWith('Examples.tsx') ? [path] : [];
+    return entry.isDirectory() ? files(path) : path.endsWith('.tsx') ? [path] : [];
   });
 }
 

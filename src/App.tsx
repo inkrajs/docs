@@ -735,16 +735,15 @@ function ButtonPlayground() {
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [clicks, setClicks] = useState(0);
   const [announcement, setAnnouncement] = useState('');
   const iconOnly = size.startsWith('icon');
   const code = useMemo(() => {
-    const props = [`variant="${variant}"`, `size="${size}"`, `dir="${dir}"`, fullWidth ? 'fullWidth' : '', `align="${align}"`, `loadingPosition="${loadingPosition}"`, customIndicator ? 'loadingIndicator={<LoadingIcon />}' : '', !iconOnly && icons ? 'startIcon={<PlusIcon />} endIcon={<ArrowRightIcon />}' : '', loading ? 'loading' : '', disabled ? 'disabled' : '', 'seed="docs-playground"'].filter(Boolean);
+    const props = [variant !== 'primary' ? `variant="${variant}"` : '', size !== 'md' ? `size="${size}"` : '', dir !== 'ltr' ? `dir="${dir}"` : '', fullWidth ? 'fullWidth' : '', align !== 'center' ? `align="${align}"` : '', loadingPosition !== 'center' ? `loadingPosition="${loadingPosition}"` : '', customIndicator ? 'loadingIndicator={<LoadingIcon />}' : '', !iconOnly && icons ? 'startIcon={<PlusIcon />} endIcon={<ArrowRightIcon />}' : '', loading ? 'loading' : '', disabled ? 'disabled' : ''].filter(Boolean);
     const iconImports = [iconOnly || icons ? 'Plus as PlusIcon' : '', icons && !iconOnly ? 'ArrowRight as ArrowRightIcon' : '', customIndicator ? 'Sun as LoadingIcon' : ''].filter(Boolean);
     const imports = `${iconImports.length ? `import { ${iconImports.join(', ')} } from 'lucide-react';\n` : ''}import { Button } from '@inkra/react';\n\n`;
     return imports + (iconOnly
       ? `<Button aria-label="${t('新建')}" ${props.join(' ')}><PlusIcon /></Button>`
-      : `<Button ${props.join(' ')}>${t('保存草稿')}</Button>`);
+      : `<Button${props.length ? ' ' + props.join(' ') : ''}>${t('保存草稿')}</Button>`);
   }, [disabled, iconOnly, loading, size, variant, fullWidth, align, loadingPosition, customIndicator, icons, dir, t]);
   return (
     <PencilSurface className="playground component-playground button-playground" seed="button-playground" variant="paper" data-doc-code={code}>
@@ -780,14 +779,13 @@ function ButtonPlayground() {
                 startIcon={!iconOnly && icons ? <DocsIcon data={plusIcon} size={20} /> : undefined}
                 endIcon={!iconOnly && icons ? <DocsIcon data={arrowRightIcon} size={20} /> : undefined}
                 loading={loading}
-                onClick={() => setClicks((value) => value + 1)}
+                onClick={() => setAnnouncement(t('已保存'))}
                 seed="docs-playground"
                 size={size}
                 variant={variant}
               >
                 {iconOnly ? <DocsIcon data={plusIcon} seed="playground-plus" size={28} /> : t('保存草稿')}
               </Button>
-              <PencilText className="preview-feedback" seed={`preview-feedback-${clicks}`}>{clicks ? `已保存 ${clicks} 次` : '尚未保存'}</PencilText>
             </div>
             <div className="code-panel" hidden={view !== 'code'} aria-labelledby="button-demo-tab-code" id="button-demo-panel-code" role="tabpanel">{view === 'code' && <CodeBlock code={code} />}</div>
             </div>
@@ -827,13 +825,13 @@ function ButtonPage({ activeTab, onTabChange }: { activeTab: ButtonTab; onTabCha
         <section aria-labelledby="button-tab-preview" className="content-section" id="button-panel-preview" role="tabpanel">
           <ButtonPlayground />
           <div className="comparison-list">
-            <ButtonGroupPlayground />
             <ComparisonGroup kind="appearance" />
             <ComparisonGroup kind="size" />
-            <ComparisonGroup kind="icon-size" />
             <ComparisonGroup kind="icons" />
-            <ComparisonGroup kind="state" />
+            <ComparisonGroup kind="icon-size" />
             <ComparisonGroup kind="link" />
+            <ComparisonGroup kind="state" />
+            <ButtonGroupPlayground />
             <ComparisonGroup kind="group" />
             <ComparisonGroup kind="rtl" />
           </div>

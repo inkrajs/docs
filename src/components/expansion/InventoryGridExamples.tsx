@@ -33,7 +33,7 @@ export function InventoryGridExamples() {
   const { t } = useLocale();
   const [containers, setContainers] = useState(initial);
   const [size, setSize] = useState(48);
-  const [rotation, setRotation] = useState(true);
+  const [rotation, setRotation] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const [reject, setReject] = useState(false);

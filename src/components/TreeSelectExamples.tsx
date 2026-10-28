@@ -32,6 +32,7 @@ export function TreeSelectExamples() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [clearable, setClearable] = useState(true);
+  const [descriptions, setDescriptions] = useState(false);
   const [customLabels, setCustomLabels] = useState(false);
   const items: TreeSelectNode[] = [
     {
@@ -39,7 +40,7 @@ export function TreeSelectExamples() {
       label: text('设计', 'Design'),
       keywords: 'design ux',
       children: [
-        { id: 'wireframes', label: text('线框稿', 'Wireframes'), description: text('早期页面结构', 'Early page structure') },
+        { id: 'wireframes', label: text('线框稿', 'Wireframes'), description: descriptions ? text('早期页面结构', 'Early page structure') : undefined },
         { id: 'research', label: text('用户研究', 'User research'), disabled: true },
       ],
     },
@@ -77,6 +78,7 @@ export function TreeSelectExamples() {
     </span> : undefined,
   };
   const code = `const [value, setValue] = useState(${JSON.stringify(mode === 'multiple' ? multipleValue : singleValue)});
+const workspaceTree = ${JSON.stringify(items, null, 2)};
 
 <Field label=${JSON.stringify(text('工作区', 'Workspace'))}>
   <TreeSelect${mode === 'multiple' ? ' multiple' : ''}
@@ -126,6 +128,7 @@ export function TreeSelectExamples() {
         ]} />
       </> },
       { label: text('内容', 'Content'), content: <>
+        <Switch label={text('显示描述', 'Show descriptions')} checked={descriptions} onCheckedChange={setDescriptions} />
         <Switch label={text('自定义节点标签', 'Custom node labels')} checked={customLabels} onCheckedChange={setCustomLabels} />
         <Switch label={text('允许清空', 'Clearable')} checked={clearable} onCheckedChange={setClearable} />
       </> },

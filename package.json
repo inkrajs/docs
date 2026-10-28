@@ -19,7 +19,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@inkra/react": "0.10.0",
+    "@inkra/react": "file:vendor/inkra.tgz",
     "lucide-react": "1.60.0",
     "prismjs": "1.30.0",
     "react": "19.3.1",

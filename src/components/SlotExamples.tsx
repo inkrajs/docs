@@ -16,10 +16,10 @@ import './SlotExamples.css';
 export function SlotExamples() {
   const { t } = useLocale();
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
-  const [selected, setSelected] = useState(true);
+  const [selected, setSelected] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [empty, setEmpty] = useState(false);
-  const [count, setCount] = useState(true);
+  const [count, setCount] = useState(false);
   const code = `<Slot interactive aria-label="${t('使用锤子')}" size="${size}"
   selected={${selected}} disabled={${disabled}} empty={${empty}}${count ? '\n  count={4}' : ''}
   onClick={() => setSelected(value => !value)}>

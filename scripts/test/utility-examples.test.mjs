@@ -32,8 +32,9 @@ test('utility component documentation starts with playgrounds and stays general 
   assert.match(slot, /资源槽位/);
   assert.match(log, /t\('运行记录'\)/);
   assert.match(hotkey, /Editor shortcuts/);
-  assert.match(ticker, /Points and resources/);
-  assert.match(ticker, /Statistics and edge values/);
+  assert.match(ticker, /Basic usage/);
+  assert.match(ticker, /Text affixes/);
+  assert.match(ticker, /Decimals and percentages/);
   assert.match(ticker, /Custom display/);
   assert.doesNotMatch(slot + ticker, /battle|combat|rarity|equipment/i);
   assert.doesNotMatch(slot, /sortable|drag(?:gable)?|drop/i);

@@ -20,10 +20,10 @@ export function ColorPickerExamples() {
   const { t, locale } = useLocale();
   const text = (zh: string, en: string) => locale === 'zh-CN' ? zh : en;
   const presets = presetMessages.map(preset => ({ ...preset, label: t(preset.label) }));
-  const [value, setValue] = useState<ColorValue>('#4b96aacc');
+  const [value, setValue] = useState<ColorValue>('#4b96aaff');
   const [presentation, setPresentation] = useState<ColorPickerPresentation>('inline');
   const [showAlpha, setShowAlpha] = useState(true);
-  const [showPresets, setShowPresets] = useState(true);
+  const [showPresets, setShowPresets] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [controlled, setControlled] = useState(true);
   const [formValue, setFormValue] = useState('');
@@ -50,7 +50,7 @@ export function ColorPickerExamples() {
     : `<ColorPicker
   presentation="${presentation}"
   label="${t('品牌色')}"
-  defaultValue="#4b96aacc"
+  defaultValue="#4b96aaff"
   showAlpha={${showAlpha}}
   presets={${showPresets ? 'presets' : '[]'}}
   disabled={${disabled}}
@@ -85,7 +85,7 @@ export function ColorPickerExamples() {
         /> : <ColorPicker
           presentation={presentation}
           key="uncontrolled"
-          defaultValue="#4b96aacc"
+          defaultValue="#4b96aaff"
           disabled={disabled}
           label={t('品牌色')}
           labels={labels}
@@ -103,7 +103,6 @@ export function ColorPickerExamples() {
         <ColorPicker presentation="swatches" label={text('仅色样', 'Swatches only')} labels={labels} presets={presets} defaultValue="#4b96aaff" />
       </div>
     </ComponentExample>
-    <GradientColorExample />
     <ComponentExample id="color-picker-form-and-custom-presets" title="表单与自定义预设" code={`<form onSubmit={readForm}>
   <ColorPicker name="accent" label="${t('强调色')}" defaultValue="#629568bf"
     presets={${JSON.stringify(presets.slice(1, 3))}} labels={localizedLabels} />
@@ -125,6 +124,7 @@ export function ColorPickerExamples() {
         </output>
       </form>
     </ComponentExample>
+    <GradientColorExample />
   </>;
 }
 

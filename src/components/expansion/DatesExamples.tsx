@@ -29,7 +29,7 @@ function DatePickerExamples() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
-  const [clearable, setClearable] = useState(true);
+  const [clearable, setClearable] = useState(false);
   const value: DatePickerValue = mode === 'single' ? single : range;
   const code = mode === 'single'
     ? `const [date, setDate] = useState<Date | undefined>(new Date(2026, 9, 22));\n\n<DatePicker\n  locale="${locale}"\n  size="${size}"\n  value={date}\n  onValueChange={next => setDate(next instanceof Date ? next : undefined)}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n/>`
@@ -78,6 +78,10 @@ function DatePickerExamples() {
       </Field>
     </ComponentExample>
 
+    <ComponentExample id="dates-range-selection" title={zh ? '日期范围' : 'Date range'} code={'<DatePicker mode="range" defaultValue={{ from: new Date(2026, 9, 22), to: new Date(2026, 9, 25) }} />'}>
+      <DatePicker mode="range" locale={locale} defaultValue={initialRange} />
+    </ComponentExample>
+
     <ComponentExample id="dates-form-fields-and-reset" title={zh ? '表单字段与重置' : 'Form fields and reset'} code={`<form>\n  <DatePicker name="departure" required defaultValue={new Date(2026, 9, 22)} />\n  <DatePicker mode="range" name="stayStart" endName="stayEnd" />\n  <button type="reset">Reset</button>\n</form>`}>
       <form className="dates-examples__form" onSubmit={event => event.preventDefault()}>
         <Field label={zh ? '出发日期' : 'Departure date'}>
@@ -105,7 +109,7 @@ function TimePickerExamples() {
   const [hourCycle, setHourCycle] = useState<'h12' | 'h24'>('h24');
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [showSeconds, setShowSeconds] = useState(false);
-  const [clearable, setClearable] = useState(true);
+  const [clearable, setClearable] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
   const code = `const [time, setTime] = useState('${showSeconds ? '09:30:00' : '09:30'}');\n\n<TimePicker\n  locale="${locale}"\n  size="${size}"\n  value={time}\n  hourCycle="${hourCycle}"\n  showSeconds={${showSeconds}}\n  clearable={${clearable}}\n  disabled={${disabled}}\n  readOnly={${readOnly}}\n  onValueChange={(next: string) => setTime(next)}\n/>`;
@@ -153,15 +157,15 @@ function TimePickerExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample id="dates-limits-steps-and-seconds" title={zh ? '边界、步进与秒' : 'Limits, steps, and seconds'} code={`<TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" />\n<TimePicker showSeconds defaultValue="09:30:15" />`}>
+    <ComponentExample id="dates-limits-steps-and-seconds" title={zh ? '时间边界与步进' : 'Time limits and steps'} code={'<TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" />'}>
       <div className="dates-examples__fields">
         <Field label={zh ? '15 分钟步进' : '15-minute steps'} description="08:00–18:00">
           <TimePicker min="08:00" max="18:00" step={900} defaultValue="09:30" locale={locale} />
         </Field>
-        <Field label={zh ? '秒级精度' : 'Second precision'}>
-          <TimePicker showSeconds defaultValue="09:30:15" locale={locale} />
-        </Field>
       </div>
+    </ComponentExample>
+    <ComponentExample id="dates-seconds" title={zh ? '秒级精度' : 'Second precision'} code={'<TimePicker showSeconds defaultValue="09:30:15" />'}>
+      <TimePicker showSeconds defaultValue="09:30:15" locale={locale} />
     </ComponentExample>
 
     <ComponentExample id="dates-forms-empty-values-and-reset" title={zh ? '表单、空值与重置' : 'Forms, empty values, and reset'} code={`<form>\n  <TimePicker name="meetingTime" defaultValue="09:30" />\n  <button type="reset">Reset</button>\n</form>`}>

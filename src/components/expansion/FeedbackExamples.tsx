@@ -99,12 +99,11 @@ function ToastControlsContent({
   const lastId = useRef<string | undefined>(undefined);
   const [tone, setTone] = useState<'neutral' | 'success' | 'warning' | 'danger' | 'info'>('neutral');
   const [priority, setPriority] = useState<'low' | 'high'>('low');
-  const [withAction, setWithAction] = useState(true);
+  const [withAction, setWithAction] = useState(false);
 
   const addToast = () => {
     lastId.current = toast.add({
       title: text('行程已保存', 'Itinerary saved'),
-      description: text('刚刚修改的内容已同步到工作区。', 'Your changes have been synced to the workspace.'),
       timeout,
       type: tone,
       priority,
@@ -154,12 +153,15 @@ function SaveButtons() {
           { label: '交互', content: <>
             <DocsSelect label={text('播报优先级', 'Announcement priority')} value={priority} onValueChange={value => setPriority(value as typeof priority)} options={[["low", text('普通', 'Polite')], ["high", text('紧急', 'Urgent')]]} />
             <Switch label={text('显示撤销操作', 'Show undo action')} checked={withAction} onCheckedChange={setWithAction} />
+            <div className="component-demo-row">
+            <Button variant="outline" onClick={saveAsync}>{text('保存草稿', 'Save draft')}</Button>
+            <Button variant="ghost" onClick={() => lastId.current && toast.close(lastId.current)}>{text('关闭上一条', 'Close last')}</Button>
+            </div>
           </> },
         ]} />}>
           <div className="component-demo-row">
             <Button onClick={addToast}>{text('显示通知', 'Show notification')}</Button>
-            <Button variant="outline" onClick={saveAsync}>{text('保存草稿', 'Save draft')}</Button>
-            <Button variant="ghost" onClick={() => lastId.current && toast.close(lastId.current)}>{text('关闭上一条', 'Close last')}</Button>
+
           </div>
       </ComponentPlayground>
   );
@@ -205,7 +207,7 @@ function BasicToastButton() {
   </Button>;
 }`;
   return <ComponentExample id="feedback-basic-notification" title={text('基础通知', 'Basic notification')} code={code}>
-    <Button onClick={() => toast.add({ title: text('保存好了', 'Saved'), description: text('可以继续下一步。', 'You can move on to the next step.') })}>{text('显示通知', 'Show notification')}</Button>
+    <Button onClick={() => toast.add({ title: text('保存好了', 'Saved') })}>{text('显示通知', 'Show notification')}</Button>
   </ComponentExample>;
 }
 
@@ -240,9 +242,9 @@ function EmptyExamples() {
   const [illustration, setIllustration] = useState<EmptyIllustration>('inbox');
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [align, setAlign] = useState<'start' | 'center'>('center');
-  const [showIcon, setShowIcon] = useState(true);
-  const [showDescription, setShowDescription] = useState(true);
-  const [showActions, setShowActions] = useState(true);
+  const [showIcon, setShowIcon] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+  const [showActions, setShowActions] = useState(false);
   const [noteCreated, setNoteCreated] = useState(false);
   const [inboxStatus, setInboxStatus] = useState('');
   const code = `const [noteCreated, setNoteCreated] = useState(false);
@@ -271,6 +273,12 @@ function EmptyExamples() {
         {showActions && <Empty.Actions><Button onClick={() => setNoteCreated(current => !current)}>{noteCreated ? text('重置', 'Reset') : text('新建笔记', 'Create note')}</Button></Empty.Actions>}
       </Empty.Root>
     </ComponentPlayground>
+    <ComponentExample id="feedback-minimal-empty-state" title={text('最小空态', 'Minimal empty state')} code={`<Empty.Root><Empty.Title>${text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>`}>
+      <Empty.Root><Empty.Title>{text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>
+    </ComponentExample>
+    <ComponentExample id="feedback-unframed-layout" title={text('非卡片布局', 'Unframed layout')} code={`<Empty.Root align="start" size="sm"><Empty.Title>${text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>…</Empty.Description></Empty.Root>`}>
+      <Empty.Root align="start" size="sm"><Empty.Title>{text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>{text('尝试移除一个筛选条件。', 'Try removing one filter.')}</Empty.Description></Empty.Root>
+    </ComponentExample>
     <ComponentExample id="feedback-illustration-collection" title={text('通用场景插画', 'Illustration collection')} code={'<Empty.Icon illustration="search" />\n<Empty.Icon illustration="folder" size={144} />'}>
       <div className="empty-illustration-gallery">
         {emptyIllustrations.map(([value, zh, en]) => <Empty.Root key={value} size="sm">
@@ -278,15 +286,6 @@ function EmptyExamples() {
           <Empty.Title>{text(zh, en)}</Empty.Title>
         </Empty.Root>)}
       </div>
-    </ComponentExample>
-    <ComponentExample id="feedback-custom-visual" title={text('自定义图形', 'Custom visual')} code={'<Empty.Icon><PencilIcon paths={[{ d: "M5 12.5 10 17l9-10" }]} size={64} sourceSize={24} /></Empty.Icon>'}>
-      <Empty.Root>
-        <Empty.Icon><PencilIcon paths={checkPaths} size={64} sourceSize={24} decorative /></Empty.Icon>
-        <Empty.Title>{text('全部处理完了', 'All caught up')}</Empty.Title>
-      </Empty.Root>
-    </ComponentExample>
-    <ComponentExample id="feedback-minimal-empty-state" title={text('最小空态', 'Minimal empty state')} code={`<Empty.Root><Empty.Title>${text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>`}>
-      <Empty.Root><Empty.Title>{text('暂无内容', 'Nothing here yet')}</Empty.Title></Empty.Root>
     </ComponentExample>
     <ComponentExample id="feedback-description-and-actions" title={text('说明与操作', 'Description and actions')} code={`const [status, setStatus] = useState('');
 
@@ -308,8 +307,11 @@ function EmptyExamples() {
         <output className="component-demo-status" aria-live="polite">{inboxStatus}</output>
       </Empty.Root>
     </ComponentExample>
-    <ComponentExample id="feedback-unframed-layout" title={text('非卡片布局', 'Unframed layout')} code={`<Empty.Root align="start" size="sm"><Empty.Title>${text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>…</Empty.Description></Empty.Root>`}>
-      <Empty.Root align="start" size="sm"><Empty.Title>{text('没有筛选结果', 'No matching results')}</Empty.Title><Empty.Description>{text('尝试移除一个筛选条件。', 'Try removing one filter.')}</Empty.Description></Empty.Root>
+    <ComponentExample id="feedback-custom-visual" title={text('自定义图形', 'Custom visual')} code={'<Empty.Icon><PencilIcon paths={[{ d: "M5 12.5 10 17l9-10" }]} size={64} sourceSize={24} /></Empty.Icon>'}>
+      <Empty.Root>
+        <Empty.Icon><PencilIcon paths={checkPaths} size={64} sourceSize={24} decorative /></Empty.Icon>
+        <Empty.Title>{text('全部处理完了', 'All caught up')}</Empty.Title>
+      </Empty.Root>
     </ComponentExample>
   </div>;
 }
@@ -317,6 +319,7 @@ function EmptyExamples() {
 function ToggleGroupExamples() {
   const text = useBilingual();
   const [multiple, setMultiple] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [disabled, setDisabled] = useState(false);
@@ -327,7 +330,8 @@ const multiple = ${multiple};
 const orientation = '${orientation}' as const;
 const size = '${size}' as const;
 const disabled = ${disabled};
-const rtl = ${rtl};
+const rtl = ${rtl};${showIcons ? `
+const alignPaths = ${JSON.stringify([alignStartPaths, alignCenterPaths, alignEndPaths])};` : ''}
 
 <ToggleGroup.Root
   aria-label="${text('文字对齐', 'Text alignment')}"
@@ -339,9 +343,9 @@ const rtl = ${rtl};
   disabled={disabled}
   dir={rtl ? 'rtl' : 'ltr'}
 >
-  <ToggleGroup.Item value="start">${text('靠前', 'Start')}</ToggleGroup.Item>
-  <ToggleGroup.Item value="center">${text('居中', 'Center')}</ToggleGroup.Item>
-  <ToggleGroup.Item value="end">${text('靠后', 'End')}</ToggleGroup.Item>
+  <ToggleGroup.Item value="start"${showIcons ? ' startIcon={<PencilIcon paths={alignPaths[0]} size={20} sourceSize={24} decorative />}' : ''}>${text('靠前', 'Start')}</ToggleGroup.Item>
+  <ToggleGroup.Item value="center"${showIcons ? ' startIcon={<PencilIcon paths={alignPaths[1]} size={20} sourceSize={24} decorative />}' : ''}>${text('居中', 'Center')}</ToggleGroup.Item>
+  <ToggleGroup.Item value="end"${showIcons ? ' startIcon={<PencilIcon paths={alignPaths[2]} size={20} sourceSize={24} decorative />}' : ''}>${text('靠后', 'End')}</ToggleGroup.Item>
 </ToggleGroup.Root>`;
   const icons = [alignStartPaths, alignCenterPaths, alignEndPaths];
 
@@ -349,6 +353,7 @@ const rtl = ${rtl};
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
         <DocsSelect label={text('尺寸', 'Size')} value={size} onValueChange={value => setSize(value as typeof size)} options={[["sm", "小"], ["md", "中"], ["lg", "大"]]} />
+        <Switch label={text('显示图标', 'Show icons')} checked={showIcons} onCheckedChange={setShowIcons} />
         <DocsSelect label={text('方向', 'Orientation')} value={orientation} onValueChange={value => setOrientation(value as typeof orientation)} options={[["horizontal", text('横向', 'Horizontal')], ["vertical", text('纵向', 'Vertical')]]} />
       </> },
       { label: '状态', content: <><Switch label={text('允许多选', 'Multiple')} checked={multiple} onCheckedChange={next => { setMultiple(next); setValue(['start']); }} /><Switch label={text('整体禁用', 'Disabled')} checked={disabled} onCheckedChange={setDisabled} /></> },
@@ -356,7 +361,7 @@ const rtl = ${rtl};
     ]} />}>
       <div className="feedback-toggle-stage" dir={rtl ? 'rtl' : 'ltr'}>
         <ToggleGroup.Root aria-label={text('文字对齐', 'Text alignment')} value={value} onValueChange={setValue} multiple={multiple} orientation={orientation} size={size} disabled={disabled} dir={rtl ? 'rtl' : 'ltr'}>
-          {['start', 'center', 'end'].map((item, index) => <ToggleGroup.Item key={item} value={item} startIcon={<PencilIcon paths={icons[index]} size={20} sourceSize={24} decorative />}>{text(['靠前', '居中', '靠后'][index], ['Start', 'Center', 'End'][index])}</ToggleGroup.Item>)}
+          {['start', 'center', 'end'].map((item, index) => <ToggleGroup.Item key={item} value={item} startIcon={showIcons ? <PencilIcon paths={icons[index]} size={20} sourceSize={24} decorative /> : undefined}>{text(['靠前', '居中', '靠后'][index], ['Start', 'Center', 'End'][index])}</ToggleGroup.Item>)}
         </ToggleGroup.Root>
       </div>
     </ComponentPlayground>

@@ -19,9 +19,10 @@ export function PopoverExamples() {
   const [arrow, setArrow] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [onlyPending, setOnlyPending] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const focusRef = useRef<HTMLInputElement>(null);
   const code = `const [open, setOpen] = useState(false);
-const [onlyPending, setOnlyPending] = useState(${onlyPending});
+${showFilter ? `const [onlyPending, setOnlyPending] = useState(${onlyPending});` : ''}
 
 <Popover.Root open={open} onOpenChange={setOpen} modal={${modal}}>
   <Popover.Trigger asChild><Button variant="outline" disabled={${disabled}}>${t('筛选')}</Button></Popover.Trigger>
@@ -30,7 +31,7 @@ const [onlyPending, setOnlyPending] = useState(${onlyPending});
       <div className="component-demo-stack">
         <Popover.Title>${t('筛选')}</Popover.Title>
         <Popover.Description>${t('选择要显示的笔记')}</Popover.Description>
-        <Checkbox label="${t('仅看未完成')}" checked={onlyPending} onCheckedChange={setOnlyPending} />
+${showFilter ? `        <Checkbox label="${t('仅看未完成')}" checked={onlyPending} onCheckedChange={setOnlyPending} />` : ''}
         <Popover.Close asChild><Button>${t('完成')}</Button></Popover.Close>
       </div>
     </Popover.Content>
@@ -61,6 +62,7 @@ const [onlyPending, setOnlyPending] = useState(${onlyPending});
         <DocsSelect label="对齐" visuals={side === 'left' || side === 'right' ? choiceVisuals.verticalAlignment : choiceVisuals.horizontalAlignment} value={align} onValueChange={next => setAlign(next as typeof align)} options={[["start", "Start"], ["center", "Center"], ["end", "End"]]} />
         <Switch label={t('显示箭头')} checked={arrow} onCheckedChange={setArrow} />
       </> },
+      { label: '内容', content: <Switch label={t('更多设置')} checked={showFilter} onCheckedChange={setShowFilter} /> },
       { label: '布局', content: <>
         <div><PencilText>偏移</PencilText><Slider aria-label={t('偏移')} min={0} max={32} step={4} value={[offset]} onValueChange={next => setOffset(next[0])} getValueLabel={number => `${number}px`} /><output>{offset}px</output></div>
         <div><PencilText>边缘留白</PencilText><Slider aria-label={t('边缘留白')} min={0} max={32} step={4} value={[collisionPadding]} onValueChange={next => setCollisionPadding(next[0])} getValueLabel={number => `${number}px`} /><output>{collisionPadding}px</output></div>
@@ -78,7 +80,7 @@ const [onlyPending, setOnlyPending] = useState(${onlyPending});
           <div className="component-demo-stack">
             <Popover.Title>{t('筛选')}</Popover.Title>
             <Popover.Description>{t('选择要显示的笔记')}</Popover.Description>
-            <Checkbox label={t('仅看未完成')} checked={onlyPending} onCheckedChange={setOnlyPending} />
+            {showFilter && <Checkbox label={t('仅看未完成')} checked={onlyPending} onCheckedChange={setOnlyPending} />}
             <Popover.Close asChild><Button>{t('完成')}</Button></Popover.Close>
           </div>
         </Popover.Content></Popover.Portal>

@@ -43,7 +43,8 @@ export function TransferExamples() {
   const { t, locale } = useLocale();
   const text = (zh: string, en: string) => locale === 'zh-CN' ? zh : en;
   const labels = Object.fromEntries(Object.entries(labelMessages).map(([key, value]) => [key, t(value)]));
-  const localizedPeople = people.map(person => ({ ...person, label: t(String(person.label)), description: t(String(person.description)) }));
+  const [descriptions, setDescriptions] = useState(false);
+  const localizedPeople = people.map(person => ({ ...person, label: t(String(person.label)), description: descriptions ? t(String(person.description)) : undefined }));
   const [targetKeys, setTargetKeys] = useState<string[]>(['grace', 'margaret']);
   const [disabled, setDisabled] = useState(false);
   const [searchable, setSearchable] = useState(true);
@@ -51,9 +52,10 @@ export function TransferExamples() {
   const formatCount = ({ visible, total, selected }: TransferCountDetails) => selected > 0
     ? `${selected} ${t('已勾选')} · ${visible}/${total}` : `${visible}/${total}`;
   const code = useMemo(() => `const [targetKeys, setTargetKeys] = useState(['grace', 'margaret']);
+const items = people${descriptions ? '' : '.map(({ description, ...item }) => item)'};
 
 <Transfer
-  items={people}
+  items={items}
   targetKeys={targetKeys}
   onTargetKeysChange={setTargetKeys}
   labels={labels}
@@ -61,11 +63,12 @@ export function TransferExamples() {
   dir="${dir}"
   searchable={${searchable}}
   disabled={${disabled}}
-/>`, [dir, disabled, searchable]);
+/>`, [dir, disabled, searchable, descriptions]);
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: t('交互'), content: <>
+        <Switch label={text('显示描述', 'Show descriptions')} checked={descriptions} onCheckedChange={setDescriptions} />
         <Switch label={t('显示搜索')} checked={searchable} onCheckedChange={setSearchable} />
         <DocsSelect label={text('阅读方向', 'Direction')} value={dir} onValueChange={value => setDir(value as typeof dir)} options={[
           ['ltr', 'LTR'], ['rtl', 'RTL'],

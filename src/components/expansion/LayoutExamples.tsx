@@ -196,9 +196,9 @@ function LayoutExamples() {
   const [mobileNavigation, setMobileNavigation] = useState<MobileNavigation>('drawer');
   const [backdrops, setBackdrops] = useState<Record<MobileNavigation, boolean>>({ drawer: true, page: false, push: false, 'push-full': false });
   const mobileBackdrop = backdrops[mobileNavigation];
-  const [swipeNavigation, setSwipeNavigation] = useState(true);
-  const [resizable, setResizable] = useState(true);
-  const [collapsible, setCollapsible] = useState(true);
+  const [swipeNavigation, setSwipeNavigation] = useState(false);
+  const [resizable, setResizable] = useState(false);
+  const [collapsible, setCollapsible] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(true);
   const sidebarId = useId();
   const detailsId = useId();
@@ -712,7 +712,6 @@ return ${sharedHeader ? '<Tabs.Root value={workspaceTab} onValueChange={setWorks
       <Switch label={t('滑动手势')} checked={swipeNavigation} onCheckedChange={setSwipeNavigation}
         disabled={!sidebar || layout === 'content' || collapseAt === 'never'} />
     </> }]} />}><LayoutViewport width={previewWidth} onWidthChange={next => { setPreviewWidth(next); setCompactOpen(false); }}>{sample}</LayoutViewport></ComponentPlayground>
-    <LayoutPartsExamples />
     <ComponentExample id="without-a-sidebar" title={zh ? '没有侧栏也可以' : 'Without a sidebar'} code={`<Layout.Root>
   <Layout.Header divided><PencilText>${zh ? '一页笔记' : 'One-page notebook'}</PencilText></Layout.Header>
   <Layout.Content><PencilText>${zh ? '正文自己做主，不需要额外的外框。' : 'Content has the space it needs, without another frame.'}</PencilText></Layout.Content>
@@ -724,6 +723,8 @@ return ${sharedHeader ? '<Tabs.Root value={workspaceTab} onValueChange={setWorks
         <Layout.Footer divided><Badge variant="success">{zh ? '已保存' : 'Saved'}</Badge></Layout.Footer>
       </Layout.Root>
     </ComponentExample>
+    <LayoutPartsExamples />
+
   </div>;
 }
 const baseApi = [

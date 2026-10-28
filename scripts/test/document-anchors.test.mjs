@@ -171,5 +171,5 @@ test('Button comparison groups use the same example shell and retain published a
     ts.forEachChild(node, findKinds);
   };
   findKinds(syntax);
-  assert.deepEqual(kinds, ['appearance', 'size', 'icon-size', 'icons', 'state', 'link', 'group', 'rtl']);
+  assert.deepEqual(kinds, ['appearance', 'size', 'icons', 'icon-size', 'link', 'state', 'group', 'rtl']);
 });

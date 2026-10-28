@@ -15,7 +15,7 @@ export function ScrollAreaExamples() {
   const text = (zh: string, en: string) => locale === 'en' ? en : zh;
   const [type, setType] = useState<'auto' | 'always'>('auto');
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
-  const [axis, setAxis] = useState<'both' | 'vertical' | 'horizontal'>('both');
+  const [axis, setAxis] = useState<'both' | 'vertical' | 'horizontal'>('vertical');
   const [expanded, setExpanded] = useState(false);
   const code = `<ScrollArea
   type="${type}"

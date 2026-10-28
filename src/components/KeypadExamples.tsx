@@ -56,7 +56,7 @@ const operationMessages: readonly (readonly KeypadKey[])[] = [
 ];
 
 export function KeypadExamples() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const localizeLayout = (rows: readonly (readonly KeypadKey[])[]) => rows.map(row => row.map(key => ({
     ...key,
     label: typeof key.label === 'string' ? t(key.label) : key.label,
@@ -66,46 +66,49 @@ export function KeypadExamples() {
   const compactLayout = localizeLayout(compactLayoutMessages);
   const passwordLayout = localizeLayout(passwordLayoutMessages);
   const operations = localizeLayout(operationMessages);
-  const [value, setValue] = useState('12');
+  const [value, setValue] = useState('');
   const [layoutName, setLayoutName] = useState<'numeric' | 'custom'>('numeric');
   const [disabled, setDisabled] = useState(false);
-  const [maxLength, setMaxLength] = useState('6');
+  const [showInput, setShowInput] = useState(false);
+  const [maxLength, setMaxLength] = useState('none');
   const [password, setPassword] = useState('');
   const [passwordStatus, setPasswordStatus] = useState('');
   const [operation, setOperation] = useState('');
   const layout = layoutName === 'numeric' ? numericLayout : compactLayout;
-  const limit = Number(maxLength);
+  const limit = maxLength === 'none' ? undefined : Number(maxLength);
   const code = useMemo(() => `const [value, setValue] = useState(${JSON.stringify(value)});
 
-<Field label="${t('可编辑值')}">
-  <Input value={value} onValueChange={setValue} maxLength={${limit}} />
-</Field>
+${showInput ? `<Field label="${t('可编辑值')}">
+  <Input value={value} onValueChange={setValue}${limit === undefined ? '' : ` maxLength={${limit}}`} disabled={${disabled}} />
+</Field>` : ''}
 <Keypad
   label="${t('输入面板')}"
   layout={${layoutName === 'numeric' ? 'numericLayout' : 'customLayout'}}
   value={value}
   onValueChange={setValue}
-  maxLength={${limit}}
+  ${limit === undefined ? '' : `maxLength={${limit}}`}
   disabled={${disabled}}
-/>`, [disabled, layoutName, limit, t, value]);
+/>`, [disabled, layoutName, limit, showInput, t, value]);
 
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[
       { label: t('内容'), content: <>
+        <Switch label={locale === 'zh-CN' ? '配合输入框' : 'Pair with an input'} checked={showInput} onCheckedChange={setShowInput} />
         <DocsSelect label={t('按键排列')} value={layoutName} onValueChange={next => setLayoutName(next as typeof layoutName)} options={[
           ['numeric', '数字面板'],
           ['custom', '自定义字符'],
         ]} />
         <DocsSelect label={t('最大长度')} value={maxLength} onValueChange={setMaxLength} options={[
+          ['none', '不限'],
           ['4', '4'], ['6', '6'], ['12', '12'],
         ]} />
       </> },
       { label: t('状态'), content: <Switch label={t('禁用')} checked={disabled} onCheckedChange={setDisabled} /> },
     ]} />}>
       <div className="keypad-example__playground" data-testid="keypad-playground">
-        <Field label={t('可编辑值')}>
+        {showInput ? <Field label={t('可编辑值')}>
           <Input value={value} onValueChange={setValue} maxLength={limit} disabled={disabled} />
-        </Field>
+        </Field> : null}
         <Keypad
           disabled={disabled}
           label={t('输入面板')}
@@ -117,6 +120,15 @@ export function KeypadExamples() {
       </div>
     </ComponentPlayground>
 
+    <ComponentExample id="keypad-operation-panel" title={t('操作面板')} code={`<Keypad layout={operations} onKeyPress={({ key }) => runAction(key.id)} />`}>
+      <div className="keypad-example__stack" data-testid="keypad-operations">
+        <Keypad label={t('编辑操作')} layout={operations} onKeyPress={({ key }) => setOperation(key.id)} />
+        <div className="keypad-example__operation-row">
+          <output className="keypad-example__status" aria-live="polite">{operation ? operations.flat().find(key => key.id === operation)?.label : t('尚未选择操作')}</output>
+          <Button variant="ghost" onClick={() => setOperation('')}>{t('清除状态')}</Button>
+        </div>
+      </div>
+    </ComponentExample>
     <ComponentExample id="keypad-password-keypad" title={t('密码面板')} code={`<Input type="password" inputMode="numeric" value={password} onValueChange={setPassword} />
 <Keypad layout={passwordLayout} value={password} onValueChange={setPassword} maxLength={6}
   onConfirm={value => verifyPin(value)} />`}>
@@ -129,14 +141,5 @@ export function KeypadExamples() {
       </div>
     </ComponentExample>
 
-    <ComponentExample id="keypad-operation-panel" title={t('操作面板')} code={`<Keypad layout={operations} onKeyPress={({ key }) => runAction(key.id)} />`}>
-      <div className="keypad-example__stack" data-testid="keypad-operations">
-        <Keypad label={t('编辑操作')} layout={operations} onKeyPress={({ key }) => setOperation(key.id)} />
-        <div className="keypad-example__operation-row">
-          <output className="keypad-example__status" aria-live="polite">{operation ? operations.flat().find(key => key.id === operation)?.label : t('尚未选择操作')}</output>
-          <Button variant="ghost" onClick={() => setOperation('')}>{t('清除状态')}</Button>
-        </div>
-      </div>
-    </ComponentExample>
   </>;
 }

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, PencilSurface, Switch, Typewriter } from '@inkra/react';
+import { Button, Switch, Typewriter } from '@inkra/react';
 import type { TypewriterHandle } from '@inkra/react';
 
 import { useLocale } from '../i18n';
@@ -18,6 +18,7 @@ export function TypewriterExamples() {
   const [speed, setSpeed] = useState(52);
   const [punctuationDelay, setPunctuationDelay] = useState(260);
   const [paused, setPaused] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
   const [completionCount, setCompletionCount] = useState(0);
   const message = text(
     '沿着海岸慢慢写下今天：风起，云散，然后出发。',
@@ -28,9 +29,8 @@ export function TypewriterExamples() {
   punctuationDelay={${punctuationDelay}}
   paused={${paused}}
   onPausedChange={setPaused}
-  onComplete={() => setCompletionCount(count => count + 1)}
->
-  ${JSON.stringify(message)}
+${showStatus ? '  onComplete={() => setCompletionCount(count => count + 1)}\n' : ''}>
+  {${JSON.stringify(message)}}
 </Typewriter>`;
 
   const restart = () => {
@@ -45,6 +45,7 @@ export function TypewriterExamples() {
         <DocsSlider label={text('标点停顿', 'Punctuation pause')} value={punctuationDelay} onValueChange={setPunctuationDelay} min={0} max={800} step={20} unit=" ms" />
       </> },
       { label: '交互', content: <>
+        <Switch label={text('显示状态', 'Show status')} checked={showStatus} onCheckedChange={setShowStatus} />
         <Switch label={text('暂停', 'Paused')} checked={paused} onCheckedChange={setPaused} />
         <div className="typewriter-examples__controls">
           <Button variant="secondary" onClick={() => setPaused(value => !value)}>{paused ? text('继续', 'Resume') : text('暂停', 'Pause')}</Button>
@@ -53,7 +54,7 @@ export function TypewriterExamples() {
         </div>
       </> },
     ]} />}>
-      <PencilSurface as="section" className="typewriter-examples__paper" variant="paper" radius={8}>
+      <div className="typewriter-examples__paper">
         <Typewriter
           ref={writer}
           speed={speed}
@@ -62,10 +63,10 @@ export function TypewriterExamples() {
           onPausedChange={setPaused}
           onComplete={() => setCompletionCount(count => count + 1)}
         >{message}</Typewriter>
-        <span className="typewriter-examples__status" aria-live="polite">
+        {showStatus && <span className="typewriter-examples__status" aria-live="polite">
           {completionCount > 0 ? text('书写完成', 'Writing complete') : paused ? text('已暂停', 'Paused') : text('正在书写', 'Writing')}
-        </span>
-      </PencilSurface>
+        </span>}
+      </div>
     </ComponentPlayground>
 
     <ComponentExample id="typewriter-emoji-and-combining-characters" title={text('表情与组合字符', 'Emoji and combining characters')} code={`<Typewriter speed={42}>\n  {${JSON.stringify(text('你好，世界 👩🏽‍💻', 'Hello, world 👩🏽‍💻 — élan!'))}}\n</Typewriter>`}>

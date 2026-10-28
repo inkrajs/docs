@@ -15,30 +15,32 @@ export function BreadcrumbExamples() {
   const [rtl, setRtl] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [custom, setCustom] = useState(false);
+  const [icons, setIcons] = useState(false);
   const [branch, setBranch] = useState<'components' | 'patterns'>('components');
   const en = locale === 'en';
   const branchLabel = branch === 'components' ? (en ? 'Components' : '组件') : (en ? 'Patterns' : '模式');
   const code = `<Breadcrumb.Root aria-label="${en ? 'Current location' : '当前位置'}" dir="${rtl ? 'rtl' : 'ltr'}">
   <Breadcrumb.List>
-    <Breadcrumb.Item><Breadcrumb.Link href="/" startIcon={<HomeIcon />}>Inkra</Breadcrumb.Link></Breadcrumb.Item>
+    <Breadcrumb.Item><Breadcrumb.Link href="/"${icons ? ' startIcon={<HomeIcon />}' : ''}>Inkra</Breadcrumb.Link></Breadcrumb.Item>
     <Breadcrumb.Separator>${custom ? '>' : ''}</Breadcrumb.Separator>
-    <Breadcrumb.Item><Breadcrumb.Link href="/docs/getting-started" endIcon={<FileTextIcon />} disabled={${disabled}}>${en ? 'Docs' : '文档'}</Breadcrumb.Link></Breadcrumb.Item>
+    <Breadcrumb.Item><Breadcrumb.Link href="/docs/getting-started"${icons ? ' endIcon={<FileTextIcon />}' : ''} disabled={${disabled}}>${en ? 'Docs' : '文档'}</Breadcrumb.Link></Breadcrumb.Item>
     <Breadcrumb.Separator>${custom ? '>' : ''}</Breadcrumb.Separator>
-    <Breadcrumb.Item><Breadcrumb.Page startIcon={<RouteIcon />}>Breadcrumb</Breadcrumb.Page></Breadcrumb.Item>
+    <Breadcrumb.Item><Breadcrumb.Page${icons ? ' startIcon={<RouteIcon />}' : ''}>Breadcrumb</Breadcrumb.Page></Breadcrumb.Item>
   </Breadcrumb.List>
 </Breadcrumb.Root>`;
   return <>
     <ComponentPlayground code={code} controls={<PropertyTabs groups={[{ label: '基础', content: <>
       <Switch label={en ? 'Right to left' : '从右向左'} checked={rtl} onCheckedChange={setRtl} />
       <Switch label={en ? 'Custom separator' : '自定义分隔符'} checked={custom} onCheckedChange={setCustom} />
+      <Switch label={en ? 'Show icons' : '显示图标'} checked={icons} onCheckedChange={setIcons} />
       <Switch label={en ? 'Disable parent link' : '禁用上级链接'} checked={disabled} onCheckedChange={setDisabled} />
     </> }]} />}>
       <Breadcrumb.Root aria-label={en ? 'Current location' : '当前位置'} dir={rtl ? 'rtl' : 'ltr'}><Breadcrumb.List>
-        <Breadcrumb.Item><Breadcrumb.Link href="/" startIcon={<DocsIcon data={homeIcon} size={20} />}>Inkra</Breadcrumb.Link></Breadcrumb.Item>
+        <Breadcrumb.Item><Breadcrumb.Link href="/" startIcon={icons ? <DocsIcon data={homeIcon} size={20} /> : undefined}>Inkra</Breadcrumb.Link></Breadcrumb.Item>
         <Breadcrumb.Separator>{custom ? '>' : '/'}</Breadcrumb.Separator>
-        <Breadcrumb.Item><Breadcrumb.Link href="/docs/getting-started" endIcon={<DocsIcon data={fileTextIcon} size={20} />} disabled={disabled}>{en ? 'Docs' : '文档'}</Breadcrumb.Link></Breadcrumb.Item>
+        <Breadcrumb.Item><Breadcrumb.Link href="/docs/getting-started" endIcon={icons ? <DocsIcon data={fileTextIcon} size={20} /> : undefined} disabled={disabled}>{en ? 'Docs' : '文档'}</Breadcrumb.Link></Breadcrumb.Item>
         <Breadcrumb.Separator>{custom ? '>' : '/'}</Breadcrumb.Separator>
-        <Breadcrumb.Item><Breadcrumb.Page startIcon={<DocsIcon data={routeIcon} size={20} />}>Breadcrumb</Breadcrumb.Page></Breadcrumb.Item>
+        <Breadcrumb.Item><Breadcrumb.Page startIcon={icons ? <DocsIcon data={routeIcon} size={20} /> : undefined}>Breadcrumb</Breadcrumb.Page></Breadcrumb.Item>
       </Breadcrumb.List></Breadcrumb.Root>
     </ComponentPlayground>
     <ComponentExample id="breadcrumb-path-menus" title={en ? 'Path menus' : '路径菜单'} code={`<Breadcrumb.Root aria-label="${en ? 'Project path' : '项目路径'}">

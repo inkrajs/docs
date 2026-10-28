@@ -29,10 +29,12 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 此前 `0.9.0` 的 Guide、Loading、四向 InfiniteScroll、Masonry、数字滚动，以及支持
 自定义配色的填充与彩色图标均继续提供。
 
-当前检出固定安装已发布的 `@inkra/react@0.10.0`。`library-candidate.json` 记录
-`source: "registry"`、已发布源码的精确提交、公开归档的 SHA-256 与 SHA-512 integrity。
-构建核对归档、锁文件及真实安装包，不引用组件源码。文档改动不会自行发布 npm 包
-或部署网站。全新检出运行：
+当前检出使用尚未发布的组件库候选包，`library-candidate.json` 固定源码的精确提交、
+归档的 SHA-256 与 SHA-512 integrity。候选包新增 NumberTicker 的可选 morph 动画和
+Log 的悬浮回到底部图标按钮；组件示例从基础用法、单项配置逐步到组合和边界场景。
+包版本仍为 0.10.0，这些改动尚未发布为新的 npm 版本。构建核对归档、锁文件及真实
+安装包，不引用组件源码。全新检出须先按下文候选包流程准备归档，再安装依赖。
+文档改动不会自行发布 npm 包或部署网站。完成候选包准备后运行：
 
 ```sh
 npm ci

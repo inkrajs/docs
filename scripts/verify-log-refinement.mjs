@@ -9,13 +9,29 @@ const errors = [];
 page.on('pageerror', error => errors.push(error.message));
 const events = () => page.evaluate(() => window.logRefinementFixture.events);
 
-async function assertLatestIsSeparateFromViewport(caseNode) {
+async function assertLatestFloatsWithinViewport(caseNode) {
   const latest = caseNode.locator('.inkra-log__latest');
+  const button = latest.getByRole('button');
   const viewport = caseNode.locator('.inkra-log__viewport');
   const latestBox = await latest.boundingBox();
+  const buttonBox = await button.boundingBox();
   const viewportBox = await viewport.boundingBox();
-  assert(latestBox && viewportBox && viewportBox.y + viewportBox.height <= latestBox.y + 1,
-    `latest footer follows viewport without overlap: ${JSON.stringify({ latestBox, viewportBox })}`);
+  assert(latestBox && buttonBox && viewportBox);
+  assert(buttonBox.width >= 44 && buttonBox.height >= 44 && buttonBox.width <= 64 && buttonBox.height <= 64,
+    `floating action retains a compact touch target: ${JSON.stringify(buttonBox)}`);
+  assert(latestBox.width <= buttonBox.width + 1 && latestBox.height <= buttonBox.height + 1,
+    'latest wrapper occupies only the icon button rather than a full-width strip');
+  const rtl = await viewport.evaluate(node => getComputedStyle(node).direction === 'rtl');
+  const endGap = rtl ? buttonBox.x - viewportBox.x : viewportBox.x + viewportBox.width - buttonBox.x - buttonBox.width;
+  const bottomGap = viewportBox.y + viewportBox.height - buttonBox.y - buttonBox.height;
+  assert(endGap >= -1 && endGap <= 32 && bottomGap >= -1 && bottomGap <= 24,
+    `latest floats at the viewport lower-end: ${JSON.stringify({ buttonBox, viewportBox, endGap, bottomGap, rtl })}`);
+  assert(buttonBox.y >= viewportBox.y - 1, 'short viewports keep the floating hit target below the toolbar');
+  assert.equal((await button.innerText()).trim(), '', 'floating latest action is icon-only');
+  assert((await button.getAttribute('aria-label'))?.length > 0, 'floating action retains its accessible name');
+  assert((await button.getAttribute('data-tooltip')) || (await button.getAttribute('title')),
+    'icon-only action exposes its text as a tooltip');
+  assert.equal(await latest.locator('.inkra-log__latest-divider').count(), 0, 'floating action has no footer divider');
 }
 
 async function assertInternalWidth(caseNode) {
@@ -102,11 +118,47 @@ try {
 
   const autoCase = page.getByTestId('auto-case');
   await autoCase.waitFor();
+  const floating = page.getByTestId('floating-case');
+  const floatingLog = floating.locator('.inkra-log');
+  const floatingViewport = floating.locator('.inkra-log__viewport');
+  for (const width of [1305, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const dir of ['ltr', 'rtl']) {
+      await floatingLog.evaluate((node, dir) => node.dir = dir, dir);
+      await floatingViewport.evaluate(node => { node.scrollTop = 0; node.dispatchEvent(new Event('scroll', { bubbles: true })); });
+      await floating.locator('.inkra-log__latest button').waitFor();
+      await floating.scrollIntoViewIfNeeded();
+      await assertLatestFloatsWithinViewport(floating);
+      const fullHeight = await floatingViewport.evaluate(node => node.clientHeight);
+      assert(fullHeight >= 190, 'floating latest preserves the whole 200px no-toolbar viewport');
+      assert.equal(await floatingViewport.evaluate(node => {
+        const box = node.getBoundingClientRect();
+        const hit = document.elementFromPoint(box.left + box.width / 2, box.bottom - 20);
+        return !!hit && node.contains(hit) && !hit.closest('.inkra-log__latest');
+      }), true, 'log content below the floating button remains pointer accessible outside its hit target');
+      const latest = floating.locator('.inkra-log__latest button');
+      const expectedName = await floatingLog.getAttribute('data-paused') === 'true'
+        ? 'Resume automatic following with a long action label' : 'Go to the latest record with a long action label';
+      assert.equal(await latest.getAttribute('aria-label'), expectedName);
+      await latest.focus();
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(() => !document.querySelector('[data-testid="floating-case"] .inkra-log__latest'));
+      assert(await floatingViewport.evaluate(node => node.scrollHeight - node.scrollTop - node.clientHeight <= 1),
+        'keyboard latest action reaches the bottom');
+      assert.equal(await floatingViewport.evaluate(node => document.activeElement === node), true,
+        'removing latest returns focus to the log viewport');
+      assert.equal(await floatingViewport.evaluate(node => node.clientHeight), fullHeight, 'latest visibility never changes viewport height');
+      await floatingViewport.evaluate(node => { node.scrollTop = 0; node.dispatchEvent(new Event('scroll', { bubbles: true })); });
+      await floating.locator('.inkra-log__latest button').waitFor();
+      await floating.screenshot({ path: `/tmp/inkra-log-floating-${width}-${dir}.png`, animations: 'disabled' });
+    }
+  }
+  await page.setViewportSize({ width: 390, height: 900 });
   const autoLog = autoCase.locator('.inkra-log');
   const autoViewport = autoCase.locator('.inkra-log__viewport');
   assert((await autoLog.boundingBox()).height >= (await autoViewport.boundingBox()).height, 'auto log grows naturally');
   assert.equal(await autoCase.locator('.inkra-log__latest').count(), 1, 'paused auto-height log exposes resume action');
-  await assertLatestIsSeparateFromViewport(autoCase);
+  await assertLatestFloatsWithinViewport(autoCase);
   await assertInternalWidth(autoCase);
 
   const flexAuto = page.getByTestId('flex-auto-case');
@@ -131,10 +183,10 @@ try {
   assert(await boundedViewport.evaluate(node => node.scrollHeight > node.clientHeight), 'bounded record viewport scrolls');
   await boundedViewport.evaluate(node => { node.scrollTop = 0; node.dispatchEvent(new Event('scroll', { bubbles: true })); });
   await page.waitForFunction(() => document.querySelector('[data-testid="bounded-case"] .inkra-log__latest'));
-  const withFooter = await clippingGeometry(bounded);
-  assert(withFooter.root.scrollHeight > withFooter.root.clientHeight,
-    `short Log exposes root scroll fallback when its footer needs space: ${JSON.stringify(withFooter)}`);
-  await assertLatestIsSeparateFromViewport(bounded);
+  const withLatest = await clippingGeometry(bounded);
+  assert.equal(withLatest.viewport.height, boundedGeometry.viewport.height,
+    'showing the floating action does not take a viewport row away from the log');
+  await assertLatestFloatsWithinViewport(bounded);
   await assertInternalWidth(bounded);
   await assertFocusPixels(bounded);
 
@@ -145,7 +197,6 @@ try {
   assert.deepEqual((await events()).paused, [true]);
   const latestButton = bounded.locator('.inkra-log__latest button');
   await latestButton.scrollIntoViewIfNeeded();
-  assert(await boundedLog.evaluate(node => node.scrollTop > 0), 'root scroll makes footer action reachable');
   await latestButton.click();
   assert.deepEqual((await events()).paused, [true, false]);
   assert.equal(await boundedLog.getAttribute('data-paused'), null);
@@ -224,10 +275,7 @@ try {
     'wrapped follow control grows beyond the 36px sm visual surface while retaining its hit target');
   await boundedViewport.evaluate(node => { node.scrollTop = 0; node.dispatchEvent(new Event('scroll', { bubbles: true })); });
   await latestButton.scrollIntoViewIfNeeded();
-  const latestButtonBox = await latestButton.boundingBox();
-  const latestSurfaceBox = await bounded.locator('.inkra-log__latest .inkra-button__surface').boundingBox();
-  assert(latestButtonBox && latestSurfaceBox && latestButtonBox.height >= 44 && latestSurfaceBox.height > 36,
-    'wrapped latest control grows beyond the 36px sm visual surface while retaining its hit target');
+  await assertLatestFloatsWithinViewport(bounded);
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'narrow toolbar does not overflow page');
 
   const forced = await browser.newPage({ viewport: { width: 390, height: 700 }, forcedColors: 'active', reducedMotion: 'reduce' });
@@ -253,7 +301,7 @@ try {
 
   await page.screenshot({ path: '/tmp/inkra-log-refinement-390.png', fullPage: true, animations: 'disabled' });
   assert.deepEqual(errors, []);
-  console.log('PASS Log focus, latest spacing, toolbar wrapping, follow/filter state and reduced motion');
+  console.log('PASS Log focus, floating latest icon, toolbar wrapping, follow/filter state and reduced motion');
 } finally {
   await page.evaluate(() => {
     window.logRefinementFixture?.unmount();

@@ -47,6 +47,12 @@ try {
         await propertiesOpen(page, true);
         await page.locator('.preview-controls').getByRole('switch', { name: '显示数据表', exact: true }).check();
       }
+      if (component === 'keypad' || component === 'dockable-panel') {
+        await propertiesOpen(page, true);
+        await page.locator('.preview-controls').getByRole('switch', {
+          name: component === 'keypad' ? '配合输入框' : '显示检查器', exact: true,
+        }).check();
+      }
       await propertiesOpen(page, false);
       await page.waitForFunction(({ selector, text }) => document.querySelector(selector)?.textContent.includes(text), { selector: '.component-playground .preview-display', text: chinese });
       let activePropertiesPanel;

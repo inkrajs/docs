@@ -58,8 +58,10 @@ try {
   await page.keyboard.press('Enter');
   assert.equal(await finish.getAttribute('aria-current'), 'step');
   const disabled = stepsPlayground.getByRole('button', { name: /归档/ });
-  assert(await disabled.isDisabled());
+  assert.equal(await disabled.isDisabled(), false, 'Basic steps have no disabled items');
   await selectPropertyTab(page, stepsPlayground, '状态');
+  await stepsPlayground.getByRole('switch', { name: '禁用最后一步', exact: true }).check();
+  assert(await disabled.isDisabled());
   await stepsPlayground.getByRole('switch', { name: '确认步骤错误' }).check();
   assert.equal(await stepsPlayground.locator('.inkra-steps__item[data-status="error"]').count(), 1);
   await selectPropertyTab(page, stepsPlayground, '布局');
@@ -74,6 +76,9 @@ try {
   await page.goto(`${baseUrl}/components/timeline`);
   const timelinePlayground = page.locator('.component-playground');
   await timelinePlayground.waitFor();
+  assert.equal(await timelinePlayground.getByRole('button', { name: '查看记录', exact: true }).count(), 0);
+  await selectPropertyTab(page, timelinePlayground, '内容');
+  await timelinePlayground.getByRole('switch', { name: '显示操作', exact: true }).check();
   await timelinePlayground.getByRole('button', { name: '查看记录', exact: true }).nth(1).click();
   assert.match(await timelinePlayground.locator('.flows-examples__selection').textContent(), /团队评审/);
   assert.equal(await timelinePlayground.locator('time[datetime="2026-10-21"]').count(), 1);

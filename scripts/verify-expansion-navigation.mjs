@@ -1,6 +1,7 @@
 import { chooseDocsOption } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -18,6 +19,10 @@ try {
     const basic = page.getByTestId('pagination-basic');
     await basic.getByRole('button', { name: /^(下一页|Next page)$/ }).click();
     assert.equal(await currentPage(basic), '2');
+    const paginationPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(paginationPlayground, true);
+    await paginationPlayground.getByRole('spinbutton', { name: /总页数|Total pages/ }).fill('20');
+    await setPlaygroundControls(paginationPlayground, false);
     const controlled = page.getByTestId('pagination-playground');
     const paginationList = controlled.locator('.inkra-pagination__list');
     assert(await paginationList.evaluate(node => {
@@ -27,15 +32,21 @@ try {
     await controlled.getByRole('button', { name: /^(最后一页|Last page)$/ }).click();
     assert.equal(await currentPage(controlled), '20');
     assert(await controlled.getByRole('button', { name: /^(下一页|Next page)$/ }).isDisabled());
+    await setPlaygroundControls(paginationPlayground, true);
     await page.getByRole('spinbutton', { name: /总页数|Total pages/ }).fill('3');
+    await setPlaygroundControls(paginationPlayground, false);
     assert.equal(await currentPage(controlled), '3', 'shrinking totals must clamp the controlled display');
     await controlled.getByRole('button', { name: /^(第一页|First page)$/ }).click();
     assert.equal(await currentPage(controlled), '1');
     assert(await controlled.getByRole('button', { name: /^(上一页|Previous page)$/ }).isDisabled());
+    await setPlaygroundControls(paginationPlayground, true);
     await page.getByRole('spinbutton', { name: /总页数|Total pages/ }).fill('0');
+    await setPlaygroundControls(paginationPlayground, false);
     assert.equal(await controlled.locator('[aria-current="page"]').count(), 0);
     for (const button of await controlled.getByRole('button').all()) assert(await button.isDisabled());
+    await setPlaygroundControls(paginationPlayground, true);
     await page.getByRole('spinbutton', { name: /总页数|Total pages/ }).fill('3');
+    await setPlaygroundControls(paginationPlayground, false);
     assert.equal(await currentPage(controlled), '1');
     const empty = page.getByTestId('pagination-empty');
     for (const button of await empty.getByRole('button').all()) assert(await button.isDisabled());
@@ -65,15 +76,19 @@ try {
     assert.equal(await page.locator(`[id="${loopedId}"]`).getAttribute('data-value'), 'new-note');
 
     const playground = page.getByTestId('command-playground');
+    const commandPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(commandPlayground, true);
     await page.getByRole('tab', { name: /^(状态|State)$/ }).click();
     await chooseDocsOption(page, /预览主题|Preview theme/, /^(深色|Dark)$/, { exact: false, optionExact: false });
+    await commandPlayground.getByRole('switch', { name: /禁用归档|Disable archive/ }).check();
     await page.getByRole('tab', { name: /^(布局|Layout)$/ }).click();
     await page.getByRole('switch', { name: 'RTL', exact: true }).click();
-    const trigger = playground.getByRole('button', { name: /打开命令面板|Open command palette/ });
+    await setPlaygroundControls(commandPlayground, false);
+    const trigger = page.getByTestId('command-composition').getByRole('button', { name: /搜索操作|Search actions/ });
     await trigger.click();
-    const dialog = page.getByRole('dialog', { name: /^(命令面板|Command palette)$/ });
+    const dialog = page.getByRole('dialog', { name: /^(操作命令|Actions)$/ });
     assert.equal(await dialog.evaluate(node => getComputedStyle(node).direction), 'rtl');
-    assert.equal(await dialog.locator('xpath=ancestor::*[contains(@class,"inkra-portal-theme-bridge")]').getAttribute('data-inkra-theme'), 'dark');
+    assert.equal(await dialog.getAttribute('data-inkra-theme'), 'dark');
     await dialog.getByRole('combobox').fill('preferences');
     await dialog.getByRole('combobox').press('Enter');
     await dialog.waitFor({ state: 'hidden' });
@@ -81,7 +96,6 @@ try {
     await trigger.click();
     await page.keyboard.press('Escape');
     await dialog.waitFor({ state: 'hidden' });
-    const commandPlayground = page.locator('.component-playground');
     await commandPlayground.getByRole('tab', { name: /^(代码|Code)$/ }).click();
     const code = await commandPlayground.locator('code').textContent();
     assert.match(code, /const \[active, setActive\] = useState/);

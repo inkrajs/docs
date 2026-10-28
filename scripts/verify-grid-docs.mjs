@@ -88,6 +88,14 @@ try {
     await page.addInitScript(locale => localStorage.setItem('inkra-docs-locale', locale), locale);
     await page.goto(`${base}/docs/components/grid#preview`);
     const playground = page.locator('.component-playground');
+    await playground.locator('.grid-examples__basic').waitFor();
+    await showPreview(playground);
+    assert.equal(await playground.locator('.grid-examples__basic .grid-examples__cell').count(), 6,
+      'primary preview starts with a basic grid');
+    assert.equal(await playground.locator('.inkra-grid-board, .inkra-grid-resizable').count(), 0,
+      'dashboard and shared-track controls are opt-in');
+    await setControls(playground, true);
+    await chooseDocsOption(playground, locale === 'en' ? 'Mode' : '模式', locale === 'en' ? 'Dashboard' : '拖拽看板', { exact: true, optionExact: true });
     const board = playground.locator('.inkra-grid-board');
     await board.waitFor();
     await showPreview(playground);

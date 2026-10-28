@@ -266,8 +266,12 @@ try {
       await page.goto(`${baseUrl}/components/infinite-scroll#preview`);
       const board = page.getByTestId('infinite-scroll-board');
       await board.waitFor();
+      assert.equal(await board.locator('[data-infinite-scroll-anchor]').count(), 7, 'basic preview starts with a single list column');
+      assert(await board.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && node.scrollTop === 0),
+        'bottom-only preview begins at the top without horizontal overflow');
       const playground = page.locator('.component-playground').first();
       await setPlaygroundControls(playground, true);
+      await chooseDocsOption(playground, '加载方向', '四个方向');
       await chooseDocsOption(playground, '触发方式', '到达边界自动加载');
       await setPlaygroundControls(playground, false);
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'page does not overflow horizontally');

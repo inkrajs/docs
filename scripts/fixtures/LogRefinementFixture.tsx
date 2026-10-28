@@ -39,6 +39,11 @@ function Fixture({ events }: { events: Events }) {
   };
 
   return <main style={{ display: 'grid', gap: 24, maxWidth: 760, padding: 24 }}>
+    <section data-testid="floating-case" style={{ blockSize: 200, inlineSize: 320, minInlineSize: 0 }}>
+      <Log defaultPaused items={items} labels={labels} levels={levels} showLevelFilter={false} showFollowControl={false}
+        style={{ blockSize: '100%', minBlockSize: 0 }} />
+    </section>
+
     <section data-testid="flex-auto-case" style={{ alignItems: 'center', display: 'flex', inlineSize: 320, justifyContent: 'center', minInlineSize: 0 }}>
       <Log items={items.slice(0, 2)} labels={labels} levels={levels} showFollowControl={false} />
     </section>

@@ -1,4 +1,4 @@
-import { chooseDocsOption } from './playground-test-helpers.mjs';
+import { chooseDocsOption, setPlaygroundControls } from './playground-test-helpers.mjs';
 import assert from 'node:assert/strict';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -14,37 +14,51 @@ async function expectValue(slider, value) {
 }
 
 async function choose(page, scope, name, value) {
+  await setPlaygroundControls(scope, true);
+  await scope.getByRole('tab', { name: name === '阅读方向' ? '基础' : '交互', exact: true }).click();
   await chooseDocsOption(scope, name, value, { exact: true, optionExact: true });
+  await setPlaygroundControls(scope, false);
 }
 
 async function toggle(scope, name) {
+  await setPlaygroundControls(scope, true);
+  await scope.getByRole('tab', { name: name === '禁用' ? '状态' : '交互', exact: true }).click();
   await scope.getByRole('switch', { name, exact: true }).click();
+  await setPlaygroundControls(scope, false);
 }
 
 try {
   for (const width of [1305, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 954 } });
+    page.setDefaultTimeout(15000);
     page.on('pageerror', error => errors.push(`${width}: ${error.message}`));
+    await page.addInitScript(() => localStorage.setItem('inkra-docs-locale', 'zh-CN'));
     await page.goto(`${baseUrl}/components/range-slider#preview`);
 
     const playground = page.locator('.component-playground').first();
     const stage = playground.locator('.preview-stage');
-    const lower = stage.getByRole('slider', { name: '最低价格', exact: true });
-    const upper = stage.getByRole('slider', { name: '最高价格', exact: true });
+    const lower = stage.getByRole('slider', { name: '最低值', exact: true });
+    const upper = stage.getByRole('slider', { name: '最高值', exact: true });
     await lower.waitFor();
     assert.equal(await stage.getByRole('slider').count(), 2);
     await expectValue(lower, 20);
     await expectValue(upper, 80);
-    assert.equal(await lower.getAttribute('aria-valuetext'), '$20');
-    assert.equal(await upper.getAttribute('aria-valuetext'), '$80');
+    assert.equal(await lower.getAttribute('aria-valuetext'), null);
+    assert.equal(await upper.getAttribute('aria-valuetext'), null);
+    await lower.focus();
+    await page.keyboard.press('ArrowRight');
+    await expectValue(lower, 21);
+    await page.keyboard.press('ArrowLeft');
+    await expectValue(lower, 20);
+    // Endpoint spacing and coarse stepping are opt-in, not basic defaults.
+    await choose(page, playground, '步长', '5');
+    await choose(page, playground, '最小间距', '10');
 
     await lower.focus();
     for (let index = 0; index < 15; index += 1) await page.keyboard.press('ArrowRight');
     await expectValue(lower, 70);
     await expectValue(upper, 80);
 
-    const controls = playground.getByRole('group', { name: '属性', exact: true });
-    await controls.getByRole('tab', { name: '交互', exact: true }).click();
     await choose(page, playground, '最小间距', '20');
     await lower.focus();
     for (let index = 0; index < 20; index += 1) await page.keyboard.press('ArrowRight');
@@ -58,17 +72,30 @@ try {
     await expectValue(stage.getByRole('slider').nth(0), 80);
     await expectValue(stage.getByRole('slider').nth(1), 100);
 
-    await controls.getByRole('tab', { name: '基础', exact: true }).click();
-    await choose(page, playground, '阅读方向', 'RTL');
+    await choose(page, playground, '阅读方向', '从右到左');
     const first = stage.getByRole('slider').nth(0);
     await first.focus();
     await page.keyboard.press('ArrowRight');
     await expectValue(first, 75);
 
-    await controls.getByRole('tab', { name: '状态', exact: true }).click();
     await toggle(playground, '禁用');
     assert.equal(await first.getAttribute('tabindex'), null);
     assert.equal(await first.getAttribute('data-disabled'), '');
+
+    const form = page.getByTestId('range-slider-form');
+    const priceLower = form.getByRole('slider', { name: '最低价格', exact: true });
+    const priceUpper = form.getByRole('slider', { name: '最高价格', exact: true });
+    assert.equal(await priceLower.getAttribute('aria-valuetext'), '$20');
+    assert.equal(await priceUpper.getAttribute('aria-valuetext'), '$80');
+    await priceLower.focus();
+    await page.keyboard.press('ArrowRight');
+    await expectValue(priceLower, 25);
+    await form.getByRole('button', { name: '读取表单', exact: true }).click();
+    assert.equal(await form.locator('output').textContent(), '25 - 80');
+    await form.getByRole('button', { name: '重置', exact: true }).click();
+    await expectValue(priceLower, 20);
+    await expectValue(priceUpper, 80);
+    assert.equal(await form.locator('output').textContent(), '');
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no horizontal overflow');
     await playground.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `/tmp/inkra-range-slider-${width}.png`, animations: 'disabled' });

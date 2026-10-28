@@ -231,12 +231,12 @@ function ProgressExamples() {
   const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [label, setLabel] = useState('Progress');
-  const [shape, setShape] = useState<'linear' | 'circular'>('circular');
+  const [shape, setShape] = useState<'linear' | 'circular'>('linear');
   const [position, setPosition] = useState<ProgressContentPosition>('center');
   const [diameter, setDiameter] = useState(128);
   const [customDiameter, setCustomDiameter] = useState(false);
   const [thickness, setThickness] = useState(6);
-  const [contentMode, setContentMode] = useState('both');
+  const [contentMode, setContentMode] = useState('none');
   const [customText, setCustomText] = useState('Inkra');
   const progressValue = indeterminate ? null : value;
   const contentCode = contentMode === 'none' ? '' : contentMode === 'text' ? JSON.stringify(customText)
@@ -285,18 +285,18 @@ function ProgressExamples() {
       <div className="more-examples__progress-demo"><Progress label={label || undefined} aria-label={label ? undefined : 'Progress'} value={progressValue} max={max} size={size} dir={dir}
         shape={shape} diameter={customDiameter ? diameter : undefined} thickness={thickness} contentPosition={position}>{renderContent}</Progress></div>
     </ComponentPlayground>
+    <ComponentExample id="more-states-progress" title="状态" code={`<Progress aria-label="Progress" value={24} />\n<Progress aria-label="Progress" value={null} />`}>
+      <div className="more-examples__progress-stack"><Progress aria-label="24" value={24} /><Progress aria-label="72" value={72} /><Progress aria-label="Indeterminate" value={null} /></div>
+    </ComponentExample>
+    <ComponentExample id="more-empty-complete-and-indeterminate" title={zh ? '空环、闭合与未知进度' : 'Empty, complete and indeterminate'} code={`<Progress shape="circular" value={0} label="0%">0%</Progress>\n<Progress shape="circular" value={100} label="100%">100%</Progress>\n<Progress shape="circular" value={null} label="Loading">...</Progress>`}>
+      <div className="more-examples__ring-examples"><Progress shape="circular" value={0} label="0%">0%</Progress><Progress shape="circular" value={100} label="100%">100%</Progress><Progress shape="circular" value={null} label={zh ? '加载中' : 'Loading'}>...</Progress></div>
+    </ComponentExample>
     <ComponentExample id="more-inside-and-outside-the-ring" title={zh ? '环内内容与外部说明' : 'Inside and outside the ring'} code={`<Progress shape="circular" value={72} aria-label="Download">\n  {({ percent }) => <PencilText>{Math.round(percent ?? 0)}%</PencilText>}\n</Progress>\n<Progress shape="circular" value={3} max={5} contentPosition="end" aria-label="Files">\n  <span>3 / 5 files</span>\n</Progress>`}>
       <div className="more-examples__ring-examples">
         <Progress shape="circular" value={72} aria-label={zh ? '下载进度' : 'Download progress'}>{({ percent }) => `${Math.round(percent ?? 0)}%`}</Progress>
         <Progress shape="circular" value={3} max={5} contentPosition="end" aria-label={zh ? '文件进度' : 'File progress'}><span className="more-examples__progress-content"><DocsIcon data={downloadIcon} size={28} /><PencilText>{zh ? '3 / 5 个文件' : '3 / 5 files'}</PencilText></span></Progress>
         <Progress shape="circular" value={100} contentPosition="bottom" aria-label={zh ? '同步完成' : 'Sync complete'}><span className="more-examples__progress-content"><DocsIcon data={checkIcon} size={28} /><PencilText>{zh ? '同步完成' : 'Sync complete'}</PencilText></span></Progress>
       </div>
-    </ComponentExample>
-    <ComponentExample id="more-empty-complete-and-indeterminate" title={zh ? '空环、闭合与未知进度' : 'Empty, complete and indeterminate'} code={`<Progress shape="circular" value={0} label="0%">0%</Progress>\n<Progress shape="circular" value={100} label="100%">100%</Progress>\n<Progress shape="circular" value={null} label="Loading">...</Progress>`}>
-      <div className="more-examples__ring-examples"><Progress shape="circular" value={0} label="0%">0%</Progress><Progress shape="circular" value={100} label="100%">100%</Progress><Progress shape="circular" value={null} label={zh ? '加载中' : 'Loading'}>...</Progress></div>
-    </ComponentExample>
-    <ComponentExample id="more-states-progress" title="状态" code={`<Progress aria-label="Progress" value={24} />\n<Progress aria-label="Progress" value={null} />`}>
-      <div className="more-examples__progress-stack"><Progress aria-label="24" value={24} /><Progress aria-label="72" value={72} /><Progress aria-label="Indeterminate" value={null} /></div>
     </ComponentExample>
   </>;
 }

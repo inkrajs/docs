@@ -28,9 +28,6 @@ function NoteFace({ back = false, zh }: { back?: boolean; zh: boolean }) {
         : (zh ? '保留一个值得继续探索的想法。' : 'Keep one idea worth exploring.')}</PencilText>
       <div className="flip-examples__actions">
         <FlipToggle variant="outline">{back ? (zh ? '查看正面' : 'Show front') : (zh ? '查看背面' : 'Show back')}</FlipToggle>
-        {back
-          ? <Button variant="ghost" onClick={() => undefined}>{zh ? '保存动作' : 'Save action'}</Button>
-          : <a className="flip-examples__link" href="#flip-independent-content">{zh ? '阅读说明' : 'Read notes'}</a>}
       </div>
     </Card.Content>
   </Card.Root>;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocale } from '../i18n';
 import { Button, Guide, Switch, type InkraLocale } from '@inkra/react';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
@@ -106,9 +107,10 @@ const localeOptions: Array<[InkraLocale, string]> = [
 ];
 
 export function GuideExamples() {
+  const { locale } = useLocale();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
-  const [guideLocale, setGuideLocale] = useState<InkraLocale>('zh-CN');
+  const [guideLocale, setGuideLocale] = useState<InkraLocale>(locale);
   const [showSkip, setShowSkip] = useState(true);
   const [skipPlacement, setSkipPlacement] = useState<SkipPlacement>('top-end');
   const [skipAppearance, setSkipAppearance] = useState<SkipAppearance>('icon');

@@ -16,10 +16,10 @@ export function ImageCropperExamples() {
   const text = (zh: string, en: string) => english ? en : zh;
   const [aspect, setAspect] = useState<'square' | 'portrait' | 'free'>('square');
   const [source, setSource] = useState(previewLight);
-  const [controlled, setControlled] = useState(true);
-  const [showExport, setShowExport] = useState(true);
+  const [controlled, setControlled] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1.05);
+  const [zoom, setZoom] = useState(1);
   const [selection, setSelection] = useState<ImageCropperSelection | null>(null);
   const [exported, setExported] = useState('');
   const cropperRef = useRef<ImageCropperHandle>(null);
@@ -27,10 +27,9 @@ export function ImageCropperExamples() {
   const code = useMemo(() => `<ImageCropper
   source={image}
   alt="${text('Inkra 文档预览', 'Inkra documentation preview')}"
-  aspect="${aspect === 'free' ? 'free' : resolvedAspect}"
-  ${controlled ? 'crop={crop}\n  zoom={zoom}\n  onCropChange={setCrop}\n  onZoomChange={setZoom}' : 'defaultZoom={1.1}'}
+  aspect=${aspect === 'free' ? '"free"' : `{${resolvedAspect}}`}
+  ${controlled ? 'crop={crop}\n  zoom={zoom}\n  onCropChange={setCrop}\n  onZoomChange={setZoom}' : 'defaultZoom={1}'}
   showExport={${showExport}}
-  onSelectionCommit={selection => setSelection(selection)}
 />`, [aspect, controlled, english, resolvedAspect, showExport]);
 
   const labels = {
@@ -73,18 +72,22 @@ export function ImageCropperExamples() {
         alt={text('Inkra 文档预览', 'Inkra documentation preview')}
         aspect={resolvedAspect}
         {...(controlled ? { crop, onCropChange: next => setCrop(next), zoom, onZoomChange: next => setZoom(next) } : {})}
-        defaultZoom={1.05}
+        defaultZoom={1}
         labels={labels}
-        onExport={result => setExported(`${result.width} x ${result.height} ${result.type}`)}
-        onSelectionCommit={setSelection}
         showExport={showExport}
         source={source}
       />
+    </ComponentPlayground>
+
+    <ComponentExample id="image-cropper-controlled-export" title={text('受控裁剪与导出', 'Controlled crop and export')} code={`<ImageCropper source={image} crop={crop} zoom={zoom}\n  onCropChange={setCrop} onZoomChange={setZoom}\n  showExport onSelectionCommit={setSelection} onExport={handleExport} />`}>
+      <ImageCropper source={previewLight} alt={text('Inkra 文档预览', 'Inkra documentation preview')} aspect={1}
+        crop={crop} zoom={zoom} onCropChange={setCrop} onZoomChange={setZoom} labels={labels} showExport
+        onSelectionCommit={setSelection} onExport={result => setExported(`${result.width} x ${result.height} ${result.type}`)} />
       <div className="image-cropper-examples__status" aria-live="polite">
         {selection ? `${text('原图裁剪像素', 'Natural pixels')}: ${selection.pixels.width} x ${selection.pixels.height}` : ''}
         {exported ? ` · ${text('已导出', 'Exported')}: ${exported}` : ''}
       </div>
-    </ComponentPlayground>
+    </ComponentExample>
 
     <ComponentExample id="image-cropper-source-switching-and-failure" title={text('切换来源与错误状态', 'Source switching and failure')} code={`<ImageCropper source={image} alt="${text('合法本地图片', 'Legitimate local asset')}" onLoadError={handleLoadError} />`}>
       <div className="image-cropper-examples__stack">

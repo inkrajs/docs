@@ -39,7 +39,7 @@ function FourWayBoard() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState(initialRange);
   const [counts, setCounts] = useState<Record<Direction, number>>({ top: 0, bottom: 0, left: 0, right: 0 });
-  const [directionMode, setDirectionMode] = useState<'bottom' | 'vertical' | 'all'>('all');
+  const [directionMode, setDirectionMode] = useState<'bottom' | 'vertical' | 'all'>('bottom');
   const [mode, setMode] = useState<'automatic' | 'release' | 'both'>('release');
   const [disabled, setDisabled] = useState(false);
   const [triggerDistance, setTriggerDistance] = useState(48);
@@ -47,21 +47,21 @@ function FourWayBoard() {
   const directions = directionMode === 'bottom' ? ['bottom'] as const
     : directionMode === 'vertical' ? ['top', 'bottom'] as const
       : ['top', 'bottom', 'left', 'right'] as const;
-  const columns = range.maxX - range.minX + 1;
+  const columns = directionMode === 'all' ? range.maxX - range.minX + 1 : 1;
   const cells = useMemo(() => {
     const next = [];
     for (let y = range.minY; y <= range.maxY; y += 1) {
-      for (let x = range.minX; x <= range.maxX; x += 1) next.push({ x, y, id: `${x}:${y}` });
+      for (let x = directionMode === 'all' ? range.minX : 0; x <= (directionMode === 'all' ? range.maxX : 0); x += 1) next.push({ x, y, id: `${x}:${y}` });
     }
     return next;
-  }, [range]);
+  }, [range, directionMode]);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    root.scrollLeft = Math.max(0, (root.scrollWidth - root.clientWidth) / 2);
-    root.scrollTop = Math.max(0, (root.scrollHeight - root.clientHeight) / 2);
-  }, []);
+    root.scrollLeft = directionMode === 'all' ? Math.max(0, (root.scrollWidth - root.clientWidth) / 2) : 0;
+    root.scrollTop = directionMode === 'bottom' ? 0 : Math.max(0, (root.scrollHeight - root.clientHeight) / 2);
+  }, [directionMode]);
 
   async function load({ direction, signal }: LoadContext) {
     await wait(360, signal);
@@ -82,7 +82,7 @@ function FourWayBoard() {
   hasMore={hasMore}
   onLoad={load}
 >
-  <ResearchBoard />
+  ${directionMode === 'all' ? '<ResearchBoard />' : '<NoteList />'}
 </InfiniteScroll>`;
 
   return <>
@@ -116,24 +116,24 @@ function FourWayBoard() {
           ref={rootRef}
           triggerDistance={triggerDistance}
         >
-          <div className="infinite-scroll-examples__grid" style={{ gridTemplateColumns: `repeat(${columns}, 104px)` }}>
+          <div className="infinite-scroll-examples__grid" style={{ gridTemplateColumns: directionMode === 'all' ? `repeat(${columns}, 104px)` : 'minmax(0, 1fr)', width: directionMode === 'all' ? 'max-content' : '100%' }}>
             {cells.map(cell => <PencilSurface
               className="infinite-scroll-examples__cell"
               data-infinite-scroll-anchor={cell.id}
               key={cell.id}
               radius={6}
               variant="quiet"
-            ><PencilText>{`${text.column} ${cell.x}`}</PencilText><small><PencilText>{`${text.row} ${cell.y}`}</PencilText></small></PencilSurface>)}
+            >{directionMode === 'all' ? <><PencilText>{`${text.column} ${cell.x}`}</PencilText><small><PencilText>{`${text.row} ${cell.y}`}</PencilText></small></> : <PencilText>{`${text.note} ${cell.y + 4}`}</PencilText>}</PencilSurface>)}
           </div>
         </InfiniteScroll>
       </PencilSurface>
     </ComponentPlayground>
 
-    <HistoryExample />
     <PullExample />
+    <HistoryExample />
+    <FailureExample />
     <LoadingMasonryExample />
     <LifecycleExample />
-    <FailureExample />
   </>;
 }
 

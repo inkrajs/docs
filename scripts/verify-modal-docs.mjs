@@ -18,6 +18,12 @@ try {
     const trigger = page.getByRole('button', { name: zh ? '打开任务抽屉' : 'Open task drawer', exact: true });
     const drawer = page.getByRole('dialog', { name: zh ? '任务详情' : 'Task details', exact: true });
     const input = drawer.getByRole('textbox', { name: zh ? '项目名称' : 'Project name', exact: true });
+    const drawerPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(drawerPlayground, true);
+    await drawerPlayground.getByRole('tab', { name: zh ? '内容' : 'Content', exact: true }).click();
+    await drawerPlayground.getByRole('switch', { name: zh ? '编辑名称' : 'Edit name', exact: true }).check();
+    await drawerPlayground.getByRole('switch', { name: zh ? '长内容' : 'Long content', exact: true }).check();
+    await setPlaygroundControls(drawerPlayground, false);
     await trigger.click();
     await input.fill('Unsaved draft');
     await page.keyboard.press('Escape');
@@ -29,7 +35,6 @@ try {
     await drawer.getByRole('button', { name: zh ? '保存' : 'Save', exact: true }).click();
     await drawer.waitFor({ state: 'hidden' });
     await page.waitForFunction(node => document.activeElement === node, await trigger.elementHandle());
-    const drawerPlayground = page.locator('.component-playground');
     await setPlaygroundControls(drawerPlayground, true);
     await drawerPlayground.locator('.preview-controls').getByRole('tab', { name: zh ? '状态' : /^States?$/, exact: true }).click();
     assert.equal(await drawerPlayground.getByRole('textbox', { name: zh ? '已保存名称' : 'Saved name', exact: true }).inputValue(), 'Inkra Studio');
@@ -49,6 +54,11 @@ try {
     await page.goto(`${base}/docs/components/alert-dialog#preview`);
     const archive = page.getByRole('button', { name: zh ? '归档项目' : 'Archive project', exact: true });
     const alert = page.getByRole('alertdialog');
+    const alertPlayground = page.locator('.component-playground');
+    await setPlaygroundControls(alertPlayground, true);
+    await alertPlayground.getByRole('tab', { name: zh ? '交互' : 'Interaction', exact: true }).click();
+    await alertPlayground.getByRole('switch', { name: zh ? '异步确认' : 'Async confirmation', exact: true }).check();
+    await setPlaygroundControls(alertPlayground, false);
     await archive.click();
     const cancel = alert.getByRole('button', { name: zh ? '取消' : 'Cancel', exact: true });
     await page.waitForFunction(node => document.activeElement === node, await cancel.elementHandle());
@@ -67,14 +77,13 @@ try {
     assert(await alert.isVisible(), 'pending action rejects Escape dismissal');
     await alert.waitFor({ state: 'hidden' });
     await page.waitForFunction(node => document.activeElement === node, await archive.elementHandle());
-    const alertPlayground = page.locator('.component-playground');
     await setPlaygroundControls(alertPlayground, true);
     await alertPlayground.locator('.preview-controls').getByRole('tab', { name: zh ? '状态' : /^States?$/, exact: true }).click();
     assert.equal(await alertPlayground.locator('.preview-controls output').textContent(), zh ? '归档完成' : 'Archived');
     await setPlaygroundControls(alertPlayground, false);
 
     await page.goto(`${base}/docs/components/command#preview`);
-    await page.getByRole('button', { name: zh ? '打开命令面板' : 'Open command palette', exact: true }).click();
+    await page.getByTestId('command-composition').getByRole('button', { name: zh ? '搜索操作' : 'Search actions', exact: true }).click();
     const command = page.getByRole('dialog');
     await command.evaluate(node => { node.dir = 'rtl'; });
     const commandBox = await command.boundingBox();

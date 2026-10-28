@@ -109,13 +109,10 @@ export function HeatmapExamples() {
   };
   const [scaleType, setScaleType] = useState<HeatmapScaleType>('continuous');
   const [binCount, setBinCount] = useState(5);
-  const [showValues, setShowValues] = useState(true);
+  const [showValues, setShowValues] = useState(false);
   const [showLegend, setShowLegend] = useState(true);
-  const [selectedCell, setSelectedCell] = useState<HeatmapSelection | null>({ rowId: 'engineering', columnId: 'momentum' });
-  const code = `const [selectedCell, setSelectedCell] = useState({
-  rowId: "${selectedCell?.rowId ?? 'engineering'}",
-  columnId: "${selectedCell?.columnId ?? 'momentum'}"
-});
+  const [selectedCell, setSelectedCell] = useState<HeatmapSelection | null>(null);
+  const code = `const [selectedCell, setSelectedCell] = useState<HeatmapSelection | null>(${JSON.stringify(selectedCell)});
 
 <Heatmap
   label="${text.title}"
@@ -170,6 +167,11 @@ export function HeatmapExamples() {
         />
       </div>
     </ComponentPlayground>
+
+    <ComponentExample id="heatmap-values" title={text.values} code={'<Heatmap rows={rows} columns={columns} cells={cells} showValues domain={[0, 100]} />'}>
+      <Heatmap label={text.title} rows={rows} columns={columns} cells={cells} showValues domain={[0, 100]}
+        legendLabel={text.intensity} missingValueLabel={text.missing} rowHeaderLabel={locale === 'en' ? 'Teams' : '团队'} />
+    </ComponentExample>
 
     <ComponentExample id="heatmap-custom" title={text.custom} code={`<Heatmap
   label="${text.customTitle}"

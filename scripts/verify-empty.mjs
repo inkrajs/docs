@@ -29,6 +29,11 @@ try {
       await page.reload();
       const playground = page.locator('.component-playground');
       await playground.waitFor();
+      assert.equal(await playground.locator('.inkra-empty__icon').count(), 0, 'the initial empty state has no optional illustration');
+      await setPlaygroundControls(playground, true);
+      await playground.getByRole('tab', { name: locale === 'zh-CN' ? '内容' : 'Content', exact: true }).click();
+      await playground.getByRole('switch', { name: locale === 'zh-CN' ? '显示图标' : 'Show icon', exact: true }).check();
+      await setPlaygroundControls(playground, false);
       const illustration = playground.locator('.inkra-empty__icon[data-illustration]');
       await illustration.locator('canvas[data-pencil-icon-ready]').first().waitFor();
       assert.equal(Math.round((await illustration.boundingBox()).width), 160);
@@ -58,6 +63,7 @@ try {
       }
       await setPlaygroundControls(playground, true);
       const controls = playground.locator('.preview-controls');
+      await controls.getByRole('tab', { name: /基础|Foundations|Basics/, exact: false }).click();
       await chooseDocsOption(controls, locale === 'zh-CN' ? '插画' : 'Illustration', locale === 'zh-CN' ? '无搜索结果' : 'No results', { exact: true, optionExact: true });
       await setPlaygroundControls(playground, false);
       assert.equal(await illustration.getAttribute('data-illustration'), 'search');
@@ -96,6 +102,11 @@ try {
   await page.addInitScript(() => { HTMLCanvasElement.prototype.getContext = () => null; });
   await page.reload();
   await page.goto(`${base}/docs/components/empty#preview`);
+  const fallbackPlayground = page.locator('.component-playground');
+  await setPlaygroundControls(fallbackPlayground, true);
+  await fallbackPlayground.getByRole('tab', { name: /^(内容|Content)$/ }).click();
+  await fallbackPlayground.getByRole('switch', { name: /^(显示图标|Show icon)$/ }).check();
+  await setPlaygroundControls(fallbackPlayground, false);
   const fallback = page.locator('.component-playground .inkra-empty__illustration-fallback').last();
   await fallback.waitFor();
   assert.equal(await fallback.isVisible(), true, 'no context preserves visible SVG');

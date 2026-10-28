@@ -22,12 +22,14 @@ try {
     const ticker = page.locator('.preview-display .inkra-number-ticker');
     const visual = ticker.locator('.inkra-number-ticker__value .inkra-pencil-text__source');
     await visual.waitFor();
-    assert.equal(await visual.textContent(), '12,840');
+    assert.equal(await visual.textContent(), '12');
     const toggle = page.locator('.playground-config-toggle');
     if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
     const select = async (label, option) => {
       await chooseDocsOption(properties, label, option, { exact: true, optionExact: true });
     };
+    await select(zh ? '数值样本' : 'Value preset', '12840');
+    await select(zh ? '最多小数位' : 'Maximum decimals', '1');
     for (const [option, expected] of [
       ['K / M / B / T', '12.8 K'], ['千 / 万 / 亿 / 兆', '1.3 万'],
       [zh ? '自动单位（跟随语言）' : 'Compact (locale)', zh ? '1.3 万' : '12.8 K'],

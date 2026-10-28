@@ -8,12 +8,15 @@ import { DocsIcon } from './DocsIcon';
 import './SwitchCircularExamples.css';
 
 export function SwitchCircularExamples() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [sound, setSound] = useState(true);
   const [volume, setVolume] = useState(60);
 
   return <>
-    <ComponentExample id="switch-circular" title={t('圆环开关')} code={`<Switch variant="circular" diameter={120} defaultChecked
+    <ComponentExample id="switch-circular" title={t('圆环开关')} code={`<Switch variant="circular" diameter={120} label="${t('音效')}" />`}>
+      <Switch variant="circular" diameter={120} label={t('音效')} />
+    </ComponentExample>
+    <ComponentExample id="switch-circular-icons-and-disabled" title={locale === 'zh-CN' ? '图标与禁用' : 'Icons and disabled state'} code={`<Switch variant="circular" diameter={120} defaultChecked
   label="${t('音效')}" centerIcon={<PowerIcon />} />
 <Switch variant="circular" diameter={120} disabled
   label="${t('禁用')}" centerIcon={<PowerIcon />} />`}>

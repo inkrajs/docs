@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, PencilText, Switch } from '@inkra/react';
+import { Button, Switch } from '@inkra/react';
 
 import { ImageViewer, MediaViewer, type ImageViewerItem } from '@inkra/react';
 import inkraArtwork from '../assets/inkra.png';
@@ -50,14 +50,13 @@ export function ImageViewerExamples() {
   const text = (zh: string, en: string) => english ? en : zh;
   const [items, setItems] = useState<readonly ImageViewerItem[]>(gallery);
   const [activeId, setActiveId] = useState<string | null>(gallery[0].id);
-  const [showThumbnails, setShowThumbnails] = useState(true);
+  const [showThumbnails, setShowThumbnails] = useState(false);
   const [showCounter, setShowCounter] = useState(false);
   const [toolbarPosition, setToolbarPosition] = useState<'top' | 'bottom'>('top');
   const controlsCopy = viewerControlCopy[locale];
-  const [loop, setLoop] = useState(true);
-  const [zoomable, setZoomable] = useState(true);
-  const [rotatable, setRotatable] = useState(true);
-  const [lastChange, setLastChange] = useState('');
+  const [loop, setLoop] = useState(false);
+  const [zoomable, setZoomable] = useState(false);
+  const [rotatable, setRotatable] = useState(false);
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr');
   const [failureRecovered, setFailureRecovered] = useState(false);
 
@@ -110,7 +109,6 @@ export function ImageViewerExamples() {
   function restore() {
     setItems(gallery);
     setActiveId(gallery[0].id);
-    setLastChange('');
   }
 
   return <div className="image-viewer-examples">
@@ -140,10 +138,7 @@ export function ImageViewerExamples() {
         <ImageViewer.Root
           items={items.map(item => ({ ...item, alt: t(item.alt) }))}
           activeId={activeId}
-          onActiveIdChange={(nextId, details) => {
-            setActiveId(nextId);
-            setLastChange(details.item?.id ?? 'none');
-          }}
+          onActiveIdChange={setActiveId}
           loop={loop}
         >
           <ImageViewer.Trigger asChild>
@@ -152,7 +147,6 @@ export function ImageViewerExamples() {
           <ImageViewer.Content dir={direction} labels={labels} rotatable={rotatable} showThumbnails={showThumbnails}
             showCounter={showCounter} toolbarPosition={toolbarPosition} zoomable={zoomable} />
         </ImageViewer.Root>
-        <PencilText as="span" aria-live="polite" className="image-viewer-examples__status">{lastChange ? `${text('当前', 'Current')}: ${t(gallery.find(item => item.id === lastChange)?.alt ?? '无')}` : ''}</PencilText>
       </div>
     </ComponentPlayground>
 

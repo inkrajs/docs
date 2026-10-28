@@ -108,6 +108,7 @@ export const browserChecks = [
   'verify-command-dialog',
   'verify-library-motion',
   'verify-number-ticker-exact',
+  'verify-number-ticker-morph',
   'verify-number-ticker-compact',
   'verify-example-i18n',
   'verify-sortable',

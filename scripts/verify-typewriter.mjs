@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-controls.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 const browser = await chromium.launch();
@@ -23,8 +24,11 @@ try {
     await page.waitForFunction(() => document.querySelector('.component-playground .inkra-typewriter__grapheme[data-revealed="true"]')?.dataset.pencilReady === 'true');
     const pixels = await existing.locator('canvas').evaluate(node => node.toDataURL());
 
+    const playground = page.locator('.component-playground');
+    await setPlaygroundControls(playground, true);
     const controls = page.getByRole('group', { name: '属性', exact: true });
     await controls.getByRole('tab', { name: /交互|Interaction/ }).click();
+    await controls.getByRole('switch', { name: /显示状态|Show status/ }).check();
     await controls.getByRole('switch', { name: /暂停|Paused/ }).click();
     const pausedAt = await preview.getAttribute('data-revealed');
     await page.waitForTimeout(320);
@@ -36,6 +40,7 @@ try {
     assert.equal(await preview.getAttribute('data-revealed'), String(total));
     assert.equal(await preview.locator('.inkra-typewriter__accessible').textContent(), fullText);
     assert.equal(await existing.locator('canvas').evaluate(node => node.toDataURL()), pixels, 'show-all does not repaint an existing glyph');
+    await page.waitForFunction(() => /书写完成|Writing complete/.test(document.querySelector('.typewriter-examples__status')?.textContent ?? ''));
     assert.match(await page.locator('.typewriter-examples__status').textContent(), /书写完成|Writing complete/);
 
     await controls.getByRole('button', { name: /重新开始|Restart/ }).click();
@@ -44,6 +49,8 @@ try {
     await controls.getByRole('button', { name: /重新开始|Restart/ }).click();
     await page.waitForFunction(expected => document.querySelector('.component-playground .inkra-typewriter')?.dataset.revealed === expected, String(total));
     assert.equal(await preview.getAttribute('data-state'), 'complete');
+    await setPlaygroundControls(playground, false);
+    await preview.scrollIntoViewIfNeeded();
 
     const selectedText = await preview.locator('.inkra-typewriter__visual').evaluate(node => {
       const selection = getSelection();

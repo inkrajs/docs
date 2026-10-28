@@ -73,7 +73,7 @@ export function SortableExamples() {
   };
   const [layout, setLayout] = useState<'list' | 'grid'>('list');
   const [handle, setHandle] = useState(false);
-  const [disableLocked, setDisableLocked] = useState(true);
+  const [disableLocked, setDisableLocked] = useState(false);
   const [notes, setNotes] = useState<SortableContainerData<SortableNote>[]>([
     { id: 'notes', layout: 'list', items: initialNotes },
   ]);
