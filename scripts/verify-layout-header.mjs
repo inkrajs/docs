@@ -86,6 +86,10 @@ try {
 
     await playground.getByRole('radio', { name: '1024', exact: true }).check();
     await setControls(playground, true);
+    await playground.locator('.property-tabs').getByRole('tab', { name: zh ? '交互' : 'Interaction', exact: true }).click();
+    const collapsible = playground.getByRole('switch', { name: zh ? '允许折叠' : 'Collapsible panels', exact: true });
+    assert.equal(await collapsible.isChecked(), false, 'basic preview leaves desktop collapse opt-in');
+    await collapsible.check();
     await playground.locator('.property-tabs').getByRole('tab', { name: zh ? '布局' : 'Layout', exact: true }).click();
     await playground.getByRole('radio', { name: zh ? '侧栏通高' : 'Full-height sidebar', exact: true }).check();
     await showPreview(playground);

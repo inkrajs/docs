@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { setPlaygroundControls } from './playground-test-helpers.mjs';
 
 const base = process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180';
 
@@ -31,7 +32,8 @@ async function openFittedCanvas(page) {
   await page.goto(`${base}/docs/components/pan-zoom#preview`);
   const root = page.locator('.component-playground .inkra-pan-zoom').first();
   const viewport = root.locator('.react-transform-wrapper');
-  await root.locator('.pan-zoom-examples__board').waitFor();
+  await root.locator('img').waitFor();
+  await viewport.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => {
     const content = document.querySelector('.component-playground .inkra-pan-zoom .react-transform-component');
     if (!content) return false;
@@ -94,15 +96,21 @@ try {
   assert.equal(pointerTransform.scale, initialPointerTransform.scale, 'initial-fit pointer drag does not depend on zooming first');
   assert(changedPosition(initialPointerTransform, pointerTransform), JSON.stringify({ initialPointerTransform, pointerTransform }));
 
-  const beforeContentAction = await settledTransform(desktop, desktopCanvas.root);
-  const clicks = desktop.locator('.pan-zoom-examples__output').last();
+  const interactiveExample = desktop.locator('#pan-zoom-interactive-content');
+  const interactiveCanvas = interactiveExample.locator('.inkra-pan-zoom');
+  await interactiveCanvas.locator('.pan-zoom-examples__board').waitFor();
+  await interactiveCanvas.scrollIntoViewIfNeeded();
+  const beforeContentAction = await settledTransform(desktop, interactiveCanvas);
+  const clicks = interactiveExample.locator('output');
   const clickCountBefore = Number((await clicks.textContent())?.match(/\d+$/)?.[0] ?? 0);
-  await desktopCanvas.root.getByRole('button', { name: /保留这个想法|Keep this idea/ }).click();
+  await interactiveCanvas.getByRole('button', { name: /保留这个想法|Keep this idea/ }).click();
   const clickCountAfter = Number((await clicks.textContent())?.match(/\d+$/)?.[0] ?? 0);
   assert.equal(clickCountAfter, clickCountBefore + 1, 'content controls remain clickable');
-  assert.deepEqual(await settledTransform(desktop, desktopCanvas.root), beforeContentAction, 'content controls do not start a pan');
+  assert.deepEqual(await settledTransform(desktop, interactiveCanvas), beforeContentAction, 'content controls do not start a pan');
 
-  const controls = desktop.getByRole('group', { name: /属性|Properties/ });
+  const playground = desktop.locator('.component-playground');
+  await setPlaygroundControls(playground, true);
+  const controls = playground.locator('.preview-controls');
   await controls.getByRole('tab', { name: /布局|Layout/ }).click();
   const bounds = controls.getByRole('switch', { name: /限制平移边界|Limit pan bounds/ });
   assert.equal(await bounds.isChecked(), false, 'free canvas starts without pan bounds');

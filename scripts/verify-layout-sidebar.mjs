@@ -23,6 +23,14 @@ try {
     const toggle = frame.locator('[data-sidebar-toggle]');
     const scroll = preview.locator('.layout-viewport__scroll');
     await frame.locator('.layout-notebook').waitFor();
+    await setControls(playground, true);
+    const propertyTabs = playground.locator('.property-tabs');
+    await propertyTabs.getByRole('tab', { name: locale === 'zh-CN' ? '交互' : 'Interaction', exact: true }).click();
+    const collapsible = playground.getByRole('switch', { name: locale === 'zh-CN' ? '允许折叠' : 'Collapsible panels', exact: true });
+    assert.equal(await collapsible.isChecked(), false, 'basic preview leaves desktop collapse opt-in');
+    await collapsible.check();
+    await propertyTabs.getByRole('tab', { name: locale === 'zh-CN' ? '布局' : 'Layout', exact: true }).click();
+    await showPreview(playground);
     const assertBounds = async () => {
       const bounds = await preview.evaluate(node => {
         const rect = element => {

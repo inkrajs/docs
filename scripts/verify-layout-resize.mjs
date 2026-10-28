@@ -16,6 +16,16 @@ try {
     const playground = page.locator('.component-playground');
     const frame = page.frameLocator('.layout-viewport__canvas');
     await frame.locator('.layout-notebook').waitFor();
+    await setControls(playground, true);
+    const propertyTabs = playground.locator('.property-tabs');
+    await propertyTabs.getByRole('tab', { name: '交互', exact: true }).click();
+    for (const name of ['拖拽调宽', '允许折叠']) {
+      const option = playground.getByRole('switch', { name, exact: true });
+      assert.equal(await option.isChecked(), false, `${name} is opt-in in the basic preview`);
+      await option.check();
+    }
+    await propertyTabs.getByRole('tab', { name: '布局', exact: true }).click();
+    await showPreview(playground);
     const choose = async name => {
       await setControls(playground, true);
       const choices = playground.locator('.layout-mode-picker').first();
