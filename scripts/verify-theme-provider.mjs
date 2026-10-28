@@ -129,7 +129,11 @@ try {
     await page.goto(base + '/docs/getting-started');
     assert.equal(await page.locator('#internationalization').count(), 0);
     assert.equal(await page.locator('main a[href="/docs/internationalization"]').count(), 1);
-    assert.equal(await page.locator('main a[href="/docs/theming"]').count(), 1);
+    const footer = page.locator('.docs-page-navigation');
+    assert.equal(await footer.locator('a[rel="prev"]').count(), 0, 'first document has no previous page');
+    await footer.locator('a[rel="next"]').click();
+    await page.waitForURL('**/docs/internationalization');
+    assert.equal(await footer.locator('a[rel="next"]').getAttribute('href'), '/docs/theming', 'theme guide follows internationalization in the shared footer');
     await page.goto(base + '/docs/getting-started#internationalization');
     await page.waitForURL('**/docs/internationalization');
     await page.close();
