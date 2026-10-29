@@ -65,7 +65,9 @@ function references(path, source, files) {
       if (specifier === '@inkra/react' || specifier.startsWith('@inkra/react/')) {
         const clause = node.importClause;
         if (!clause?.isTypeOnly) imports.push({ specifier, names: clause?.namedBindings && ts.isNamedImports(clause.namedBindings)
-          ? clause.namedBindings.elements.filter(element => !element.isTypeOnly).map(element => element.propertyName?.text ?? element.name.text) : null });
+          ? clause.namedBindings.elements.filter(element => !element.isTypeOnly).map(element => element.propertyName?.text ?? element.name.text) : null,
+        bindings: clause?.namedBindings && ts.isNamedImports(clause.namedBindings)
+          ? Object.fromEntries(clause.namedBindings.elements.filter(element => !element.isTypeOnly).map(element => [element.propertyName?.text ?? element.name.text, element.name.text])) : null });
       }
     }
     if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteralLike(node.moduleSpecifier)) add(node.moduleSpecifier.text);
@@ -125,7 +127,7 @@ function eagerModule(refs, source) {
     if (ts.isBinaryExpression(node) && !(node.operatorToken.kind === ts.SyntaxKind.EqualsToken && ts.isPropertyAccessExpression(node.left)
       && node.left.name.text === 'displayName' && ts.isIdentifier(node.left.expression) && lazyReactContainers.has(node.left.expression.text))) unsafe = true;
     if (ts.isElementAccessExpression(node) || ts.isTaggedTemplateExpression(node) || ts.isAwaitExpression(node)
-      || ts.isSpreadElement(node) || ts.isSpreadAssignment(node) || ts.isTemplateExpression(node) || ts.isForOfStatement(node)
+      || ts.isSpreadElement(node) || ts.isSpreadAssignment(node) || ts.isJsxSpreadAttribute(node) || ts.isTemplateExpression(node) || ts.isForOfStatement(node)
       || ts.isForInStatement(node) || ts.isPostfixUnaryExpression(node)
       || (ts.isPrefixUnaryExpression(node) && node.operator !== ts.SyntaxKind.ExclamationToken)) unsafe = true;
     ts.forEachChild(node, visit);
@@ -134,6 +136,78 @@ function eagerModule(refs, source) {
   let skeleton = source;
   for (const [start, end] of spans.sort((a, b) => b[0] - a[0])) skeleton = skeleton.slice(0, start) + '{}' + skeleton.slice(end);
   return { skeleton, unsafe };
+}
+
+function eagerLibraryImports(refs) {
+  const used = new Set(), deferred = new Set(), deferredNodes = new Map();
+  let uncertain = false;
+  const containsFunction = node => {
+    if (ts.isFunctionLike(node)) return true;
+    let found = false;
+    ts.forEachChild(node, child => { if (containsFunction(child)) found = true; });
+    return found;
+  };
+  for (const statement of refs.tree.statements) {
+    if (ts.isFunctionDeclaration(statement) && statement.name) { deferred.add(statement.name.text); deferredNodes.set(statement.name.text, statement); }
+    if (ts.isVariableStatement(statement)) for (const declaration of statement.declarationList.declarations)
+      if (ts.isIdentifier(declaration.name) && declaration.initializer && containsFunction(declaration.initializer)) { deferred.add(declaration.name.text); deferredNodes.set(declaration.name.text, declaration.initializer); }
+  }
+  const visit = node => {
+    if (ts.isImportDeclaration(node) || ts.isTypeNode(node)) return;
+    if (ts.isFunctionLike(node)) {
+      // An unknown eager call may execute a callback immediately. Do not try to
+      // prove its behavior: retain every library import in this module.
+      if (!ts.isFunctionDeclaration(node) && !(ts.isVariableDeclaration(node.parent) && node.parent.initializer === node)) uncertain = true;
+      return;
+    }
+    if (ts.isIdentifier(node)) {
+      const parent = node.parent;
+      if ((ts.isVariableDeclaration(parent) && parent.name === node) || (ts.isPropertyAssignment(parent) && parent.name === node)
+        || (ts.isPropertyAccessExpression(parent) && parent.name === node)) return;
+      used.add(node.text);
+      if (deferred.has(node.text)) {
+        if ((ts.isJsxOpeningElement(parent) || ts.isJsxSelfClosingElement(parent) || ts.isJsxClosingElement(parent)) && parent.tagName === node) {
+          const collect = current => { if (ts.isIdentifier(current)) used.add(current.text); ts.forEachChild(current, collect); };
+          collect(deferredNodes.get(node.text));
+        } else uncertain = true;
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(refs.tree);
+  if (uncertain) return refs.imports;
+  return refs.imports.flatMap(imported => {
+    if (!imported.names || !imported.bindings) return [imported];
+    const names = imported.names.filter(name => used.has(imported.bindings[name]));
+    return names.length ? [{ ...imported, names }] : [];
+  });
+}
+
+function readsOnlyCandidateSource(refs, files) {
+  const bindings = new Set();
+  let imported = false, safe = true;
+  for (const statement of refs.tree.statements) if (ts.isImportDeclaration(statement)
+    && resolveRelative(refs.tree.fileName, statement.moduleSpecifier.text, files) === 'library-candidate.json') {
+    imported = true;
+    if (statement.importClause?.name) bindings.add(statement.importClause.name.text);
+    const named = statement.importClause?.namedBindings;
+    if (named && ts.isNamespaceImport(named)) bindings.add(named.name.text);
+    if (named && ts.isNamedImports(named) && named.elements.some(element => (element.propertyName?.text ?? element.name.text) !== 'source')) safe = false;
+  }
+  if (!imported) return false;
+  const visit = node => {
+    if (ts.isImportDeclaration(node)) return;
+    if (ts.isIdentifier(node) && bindings.has(node.text)) {
+      const parent = node.parent;
+      if (!(ts.isPropertyAccessExpression(parent) && parent.expression === node && parent.name.text === 'source')
+        && !(ts.isElementAccessExpression(parent) && parent.expression === node && ts.isStringLiteralLike(parent.argumentExpression) && parent.argumentExpression.text === 'source')
+        && !(ts.isBinaryExpression(parent) && parent.operatorToken.kind === ts.SyntaxKind.InKeyword && parent.right === node
+          && ts.isStringLiteralLike(parent.left) && parent.left.text === 'source')) safe = false;
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(refs.tree);
+  return safe;
 }
 
 function directOwners(path) {
@@ -173,7 +247,7 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
   // candidate metadata used for rendering the component shell is its source mode;
   // checks of foundation/version UI conservatively retain the complete metadata.
   const candidateContents = contents.get('library-candidate.json');
-  contents.set('library-candidate.json', Buffer.from(JSON.stringify({ source: candidate.source || 'candidate' })));
+  contents.set('library-candidate.json', Buffer.from(JSON.stringify(Object.hasOwn(candidate, 'source') ? { source: candidate.source } : {})));
   const graph = new Map(), reverse = new Map();
   for (const path of docsPaths.filter(isScript)) {
     const refs = references(path, contents.get(path).toString(), files);
@@ -183,6 +257,10 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
       consumers.add(path); reverse.set(target, consumers);
     }
   }
+  // Only normalize publication fields while actual UI consumers provably read
+  // source alone. A future version-aware UI must bind the complete metadata.
+  if ([...graph].some(([path, refs]) => path.startsWith('src/') && refs.local.includes('library-candidate.json')
+    && !readsOnlyCandidateSource(refs, files))) contents.set('library-candidate.json', candidateContents);
   const ownership = new Map();
   const globalOwnership = new Map();
   const reachesGlobal = path => {
@@ -213,6 +291,25 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
   };
   const globals = docsPaths.filter(path => path.startsWith('public/') || (path.startsWith('src/')
     && (path.endsWith('.css') || owners(path).size === 0 || reachesGlobal(path))));
+  // Route modules are statically imported by the docs shell, even on a different
+  // component page. Their eager initialization is therefore global just like a
+  // re-exported library module's initialization. Keep ordinary render bodies
+  // selective; uncertain eager effects include the whole owned helper closure.
+  const globalSet = new Set(globals);
+  const docsEager = new Map([...graph].filter(([path]) => path.startsWith('src/') && !globalSet.has(path))
+    .map(([path, refs]) => [path, eagerModule(refs, contents.get(path).toString())]));
+  const docsEagerRoots = new Set([...docsEager].filter(([, data]) => data.unsafe).map(([path]) => path));
+  const docsEagerFull = new Set(), docsEagerCallees = new Set(), docsEagerPending = [...docsEagerRoots];
+  while (docsEagerPending.length) {
+    const path = docsEagerPending.pop();
+    if (docsEagerFull.has(path)) continue;
+    docsEagerFull.add(path);
+    // Global sources are already fully bound and traversed through their route
+    // ownership boundaries. Expanding App here would erase module selectivity.
+    if (!globalSet.has(path)) for (const target of graph.get(path)?.local ?? []) {
+      docsEagerCallees.add(target); docsEagerPending.push(target);
+    }
+  }
   const configPaths = (await readdir(root)).filter(path => /^(?:index\.html|vite\.config\.[^/]+|tsconfig(?:\.[^/]+)?\.json)$/.test(path));
   const controlPaths = ['browser-reuse.mjs', 'browser-checks.mjs', 'browser-check-runner.mjs', 'browser-impact-registry.mjs',
     'browser-selection.mjs', 'browser-plan.mjs', 'browser-report.mjs', 'browser-local-validation.mjs', 'browser-smoke.mjs',
@@ -245,6 +342,8 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
     { path: '$library-runtime-config', sha256: digest(runtimeConfig) },
     { path: '$library-eager-code', sha256: digest([...eager].map(([path, data]) => ({ path,
       sha256: hash(eagerFull.has(path) ? libraryContents.get(path) : data.skeleton) }))) },
+    { path: '$docs-eager-code', sha256: digest([...docsEager].map(([path, data]) => ({ path,
+      sha256: hash(docsEagerFull.has(path) ? contents.get(path) : data.skeleton) }))) },
   ];
   const pureBarrel = refs => refs && refs.tree.statements.length > 0 && refs.tree.statements.every(statement =>
     ts.isExportDeclaration(statement) && statement.moduleSpecifier && ts.isStringLiteralLike(statement.moduleSpecifier));
@@ -299,7 +398,7 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
     let conservative = (!components.size && !modules.length)
       || /\/(?:docs\/)?components\/\$\{/.test(source)
       || /["'`]\/(?:docs\/)?components\/["'`]\s*\+/.test(source);
-    const docsInputPaths = new Set([...globals, ...configPaths, ...controlPaths, checkPath]);
+    const docsInputPaths = new Set([...globals, ...docsEagerFull, ...configPaths, ...controlPaths, checkPath]);
     for (const path of docsPaths.filter(path => path.startsWith('src/'))) if ([...owners(path)].some(owner => components.has(owner))) docsInputPaths.add(path);
     const pending = [...docsInputPaths];
     const visited = new Set();
@@ -309,6 +408,7 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
       visited.add(path);
       const refs = graph.get(path);
       if (!refs) continue;
+      if (path.startsWith('scripts/') && !controlPaths.includes(path) && refs.local.includes('library-candidate.json')) conservative = true;
       // Generic runner helpers use computed imports/commands; their bytes are
       // global inputs. Unknown runtime imports in a test/app/fixture need all inputs.
       if (refs.unknown.length && !controlPaths.includes(path)) conservative = true;
@@ -323,7 +423,11 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
     const libraryInputs = new Set(libraryPaths.filter(path => !path.endsWith('.d.ts') && !isScript(path) && path !== 'package.json' && !/^(?:README|LICENSE)/.test(path)));
     const importDescriptors = [];
     const libraryPending = [];
-    if (!conservative) for (const path of docsInputPaths) for (const imported of graph.get(path)?.imports ?? []) {
+    if (!conservative) for (const path of docsInputPaths) {
+      const refs = graph.get(path);
+      const eagerOnly = docsEagerRoots.has(path) && !docsEagerCallees.has(path) && !globalSet.has(path)
+        && ![...owners(path)].some(owner => components.has(owner));
+      for (const imported of refs ? eagerOnly ? eagerLibraryImports(refs) : refs.imports : []) {
       const target = exportedPath(imported.specifier);
       if (!target) { conservative = true; break; }
       importDescriptors.push({ specifier: imported.specifier, export: target.target, names: imported.names });
@@ -335,6 +439,7 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
           libraryPending.push(...targets);
         }
       } else libraryPending.push(target.path);
+      }
     }
     while (libraryPending.length && !conservative) {
       const path = libraryPending.pop();
@@ -351,7 +456,8 @@ export async function createBrowserInputInventory({ root = process.cwd(), suite 
     entries.push({ script, fingerprint: digest(inputs), reusable: Boolean(environment), scope: conservative ? 'conservative-runtime' : 'module', inputs });
   }
   const inventory = { schemaVersion: 1, kind: 'inkra-browser-inputs', algorithm: browserReuseAlgorithm, docsRevision, candidateSha256,
-    environment, analysis: { eagerFullModules: [...eagerFull].sort() }, entries };
+    environment, runtime: { node: process.versions.node, platform: process.platform, arch: process.arch },
+    analysis: { eagerFullModules: [...eagerFull].sort(), eagerFullDocsModules: [...docsEagerFull].sort() }, entries };
   return { ...inventory, inventoryDigest: digest(inventory) };
 }
 
@@ -360,12 +466,15 @@ export function validateBrowserInputInventory(inventory, suite) {
   assert.equal(inventory.kind, 'inkra-browser-inputs', 'Wrong browser inventory kind');
   assert.equal(inventory.algorithm, browserReuseAlgorithm, 'Browser input algorithm changed');
   assert(sha.test(inventory.docsRevision) && sha256.test(inventory.candidateSha256), 'Invalid browser input identities');
+  assert.deepEqual(inventory.runtime, { node: process.versions.node, platform: process.platform, arch: process.arch }, 'Browser input runtime differs from the executing job');
   assert.deepEqual(inventory.entries.map(entry => entry.script), suite, 'Browser inventory suite mismatch');
   for (const entry of inventory.entries) {
     assert.equal(typeof entry.reusable, 'boolean', 'Invalid browser reuse eligibility');
     assert(!entry.reusable || Boolean(inventory.environment), 'Unbound browser environment cannot reuse results');
     assert.deepEqual(entry.inputs.map(input => input.path), ordered(entry.inputs.map(input => input.path)), 'Duplicate or unordered browser inputs');
     for (const input of entry.inputs) assert(typeof input.path === 'string' && sha256.test(input.sha256), 'Invalid browser input');
+    assert.equal(entry.inputs.find(input => input.path === '$environment')?.sha256,
+      digest({ environment: inventory.environment, ...inventory.runtime }), 'Browser environment fingerprint mismatch');
     assert.equal(entry.fingerprint, digest(entry.inputs), 'Browser input fingerprint mismatch');
   }
   const { inventoryDigest, ...unsigned } = inventory;

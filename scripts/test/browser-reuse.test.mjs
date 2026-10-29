@@ -272,3 +272,80 @@ test('eager getters, iterable constructors and globally installed callbacks cann
     assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, suite);
   }
 });
+
+test('owned docs initialization is global while ordinary render bodies remain selective', async context => {
+  const root = await fixture(context);
+  let previous = baseline(await inventory(root));
+  await put(root, 'src/components/LogExamples.tsx', 'import { Log } from "@inkra/react"; export const LogExamples = () => [Log];');
+  assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, [suite[0]]);
+  for (const source of [
+    'import { Log } from "@inkra/react"; globalThis.handler = () => "FIRST"; export const LogExamples = () => Log;',
+    'import { Log } from "@inkra/react"; const props = { get value(){return "FIRST";} }; const item = <Log {...props}/>; export const LogExamples = () => item;',
+  ]) {
+    await put(root, 'src/components/LogExamples.tsx', source);
+    previous = baseline(await inventory(root));
+    await put(root, 'src/components/LogExamples.tsx', source.replace('FIRST', 'CHANGED'));
+    assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, suite);
+  }
+});
+
+test('unsafe owned docs initializers bind their local helpers and called library functions globally', async context => {
+  const root = await fixture(context);
+  await put(root, 'src/components/logValue.ts', 'export const value = () => "FIRST";');
+  await put(root, 'src/components/LogExamples.tsx', 'import { value } from "./logValue"; import { Log } from "@inkra/react"; const current = value() + Log(); export const LogExamples = () => current;');
+  let previous = baseline(await inventory(root));
+  await put(root, 'src/components/logValue.ts', 'export const value = () => "CHANGED";');
+  assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, suite);
+  previous = baseline(await inventory(root));
+  await put(root, 'node_modules/@inkra/react/dist/log/index.js', 'import { forwardRef } from "react"; import { shared } from "../shared.js"; export const Log = forwardRef(function Log(){ return shared + "changed-log"; }); Log.displayName = "Log";');
+  assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, suite);
+});
+
+test('an unrelated eager helper call does not globalize imports used only by deferred renders', async context => {
+  const root = await fixture(context);
+  await put(root, 'src/components/icons.ts', 'export const iconPaths = () => "icon";');
+  await put(root, 'src/components/LogExamples.tsx', 'import { iconPaths } from "./icons"; import { Log } from "@inkra/react"; const icon = iconPaths(); export const LogExamples = () => [Log, icon];');
+  const previous = baseline(await inventory(root));
+  await put(root, 'node_modules/@inkra/react/dist/log/index.js', 'import { forwardRef } from "react"; import { shared } from "../shared.js"; export const Log = forwardRef(function Log(){ return shared + "changed-log"; }); Log.displayName = "Log";');
+  assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, [suite[0]]);
+});
+
+test('deferred local functions passed to unknown eager calls retain all potentially executed imports', async context => {
+  const root = await fixture(context);
+  for (const callback of ['function render(){return Log();} const current = unknownCall(render);', 'const current = unknownCall(() => Log());']) {
+    await put(root, 'node_modules/@inkra/react/dist/log/index.js', 'import { forwardRef } from "react"; export const Log = forwardRef(function Log(){ return "first"; }); Log.displayName = "Log";');
+    await put(root, 'src/components/LogExamples.tsx', 'import { Log } from "@inkra/react"; ' + callback + ' export const LogExamples = () => current;');
+    const previous = baseline(await inventory(root));
+    await put(root, 'node_modules/@inkra/react/dist/log/index.js', 'import { forwardRef } from "react"; export const Log = forwardRef(function Log(){ return "changed"; }); Log.displayName = "Log";');
+    assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, suite);
+  }
+});
+
+test('publication metadata remains normalized only while UI consumers read source alone', async context => {
+  const root = await fixture(context);
+  for (const field of ['source', 'version']) {
+    await put(root, 'src/components/FoundationPages.tsx', `import candidate from "../../library-candidate.json"; export function FoundationPage(){ return ${field === 'source' ? "'source' in candidate && candidate.source === 'registry'" : 'candidate.' + field}; }`);
+    await put(root, 'library-candidate.json', { sha256: candidate, source: 'candidate', version: '1.0.0' });
+    const previous = baseline(await inventory(root));
+    await put(root, 'library-candidate.json', { sha256: 'e'.repeat(64), source: 'candidate', version: '1.0.1' });
+    assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, field === 'source' ? [] : suite);
+  }
+});
+
+test('callbacks escaping through globals, object arguments and JSX retain the library bodies they can expose', async context => {
+  const root = await fixture(context);
+  for (const expression of ['globalThis.handler = () => Log();', 'const result = unknownCall({ render: () => Log() });',
+    'globalThis.element = <Log/>;', 'const result = unknownCall(<Log/>);']) {
+    await put(root, 'node_modules/@inkra/react/dist/log/index.js', 'import { forwardRef } from "react"; export const Log = forwardRef(function Log(){ return "first"; }); Log.displayName = "Log";');
+    await put(root, 'src/components/LogExamples.tsx', 'import { Log } from "@inkra/react"; ' + expression + ' export const LogExamples = () => Log;');
+    const previous = baseline(await inventory(root));
+    await put(root, 'node_modules/@inkra/react/dist/log/index.js', 'import { forwardRef } from "react"; export const Log = forwardRef(function Log(){ return "changed"; }); Log.displayName = "Log";');
+    assert.deepEqual(applyBrowserReuse(plan(), await inventory(root), previous).selectedScripts, suite);
+  }
+});
+
+test('workers reject an inventory recorded against a different actual Node runtime', async context => {
+  const inputs = await inventory(await fixture(context));
+  inputs.runtime.node = '0.0.0';
+  assert.throws(() => validateBrowserInputInventory(inputs, suite), /runtime differs/);
+});
