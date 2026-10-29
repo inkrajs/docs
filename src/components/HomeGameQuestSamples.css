@@ -1,0 +1,33 @@
+.home-game-quest,
+.home-game-crafting { display: grid; min-width: 0; gap: 20px; }
+.home-game-quest__heading,
+.home-game-crafting__heading { display: flex; min-width: 0; align-items: center; gap: 12px; }
+.home-game-quest__heading > canvas { flex: none; }
+.home-game-quest h2,
+.home-game-crafting h2 { display: block; margin: 0; font-size: 20px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.home-game-crafting__heading h2 { flex: 1; }
+.home-game-note { color: var(--inkra-ink-muted); font-size: 14px; line-height: 1.65; }
+.home-game-quest p,
+.home-game-crafting p { display: block; margin: 0; overflow-wrap: anywhere; }
+.home-game-quest__tasks { display: grid; gap: 12px; }
+.home-game-quest__wallet { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.home-game-quest__coins { display: flex; align-items: center; gap: 10px; color: var(--inkra-warning-pigment); font-size: 32px; }
+.home-game-quest__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.home-game-quest__status { min-height: 3.3em; }
+.home-game-crafting__recipes { display: flex; flex-wrap: wrap; gap: 8px; }
+.home-game-crafting__recipes .inkra-button { flex: 1 1 auto; }
+.home-game-crafting__materials { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.home-game-crafting__material { display: grid; min-width: 0; justify-items: center; align-content: start; gap: 8px; text-align: center; overflow-wrap: anywhere; }
+.home-game-crafting__material > canvas { margin-bottom: 4px; }
+.home-game-crafting__material--herb { color: var(--inkra-success-pigment); }
+.home-game-crafting__material--water { color: var(--inkra-info-pigment); }
+.home-game-crafting__material--crystal { color: var(--inkra-accent); }
+.home-game-crafting__result { display: grid; min-width: 0; justify-items: center; align-content: center; gap: 10px; text-align: center; }
+.home-game-crafting__bottle { color: var(--inkra-success-pigment); }
+.home-game-crafting[data-recipe="mana"] .home-game-crafting__bottle { color: var(--inkra-info-pigment); }
+.home-game-crafting__bag { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.home-game-crafting__footer { display: grid; min-width: 0; gap: 8px; }
+.home-game-crafting__footer > p { min-height: 3.3em; }
+.home-game-crafting__footer > .inkra-button { justify-self: start; }
+
+.home-game-crafting__bottle { transform-origin: 50% 80%; }

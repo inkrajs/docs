@@ -1,0 +1,31 @@
+.home-game-inventory, .home-game-equipment { display: grid; min-width: 0; gap: 16px; }
+.home-game-inventory h2, .home-game-equipment h2 { margin: 0; font-size: 20px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.home-game-inventory__heading { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.home-game-inventory__health { position: relative; display: flex; min-width: 0; align-items: center; gap: 12px; }
+.home-game-inventory__health > .inkra-progress { flex: 1; min-width: 0; }
+.home-game-inventory__board { justify-content: center; }
+.home-game-inventory__loot { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; }
+.home-game-inventory__loot--potion { color: var(--inkra-coral, var(--inkra-accent)); }
+.home-game-inventory__loot--gem { color: var(--inkra-blue, var(--inkra-accent)); }
+.home-game-inventory__quantity { position: absolute; inset-inline-end: -2px; bottom: -5px; font-size: 10px; line-height: 1; color: var(--inkra-ink); }
+.home-game-inventory__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.home-game-inventory__note { display: block; min-width: 0; margin: 0; color: var(--inkra-ink-muted); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.home-game-equipment__choices { display: flex; flex-wrap: wrap; gap: 4px; }
+.home-game-equipment__preview { display: grid; gap: 12px; text-align: center; }
+.home-game-equipment__illustration { display: flex; justify-content: center; align-items: center; min-height: 84px; color: var(--inkra-accent); }
+.home-game-equipment__preview h3 { margin: 0; font-size: 24px; font-weight: 400; }
+.home-game-equipment__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.home-game-equipment__stats > div { display: grid; min-width: 0; gap: 8px; }
+.home-game-equipment__stats dt { color: var(--inkra-ink-muted); font-size: 13px; }
+.home-game-equipment__stats dd { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin: 0; font-size: 22px; }
+.home-game-equipment__delta { font-size: 12px; color: var(--inkra-ink-muted); }
+.home-game-equipment__delta[data-direction="up"] { color: var(--inkra-success, var(--inkra-accent)); }
+.home-game-equipment__delta[data-direction="down"] { color: var(--inkra-danger); }
+.home-game-equipment__equip { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+.home-game-inventory__heart { display: inline-flex; flex: none; transform-origin: center; }
+.home-game-inventory__recovery { position: absolute; inset-inline-start: -3px; top: 0; color: var(--inkra-success-pigment); font-size: 13px; pointer-events: none; opacity: 0; }
+.home-game-equipment__preview > .home-game-inventory__note { min-height: 3.4em; }
+@media (prefers-reduced-motion: reduce) {
+  .home-game-inventory__recovery { display: none; }
+}

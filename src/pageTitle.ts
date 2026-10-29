@@ -2,6 +2,7 @@ import { foundationComponents, foundationNames } from './componentRoutes.ts';
 
 const pageNames: Record<string, string> = {
   '/blog': '博客',
+  '/blog/from-travel-journal-to-inkra': '从旅行手账，到 Inkra',
   '/ecosystem': '生态',
   '/getting-started': '快速开始',
   '/internationalization': '国际化',

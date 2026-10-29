@@ -15,10 +15,26 @@ try {
     await page.addInitScript(() => localStorage.setItem('inkra-docs-locale', 'zh-CN'));
     const response = await page.goto(new URL('/', baseURL).href);
     assert.equal(response.status(), 200);
-    await page.locator('.home-specimen').first().waitFor();
+    await page.locator('.home-showcase').waitFor();
+    const demos = page.locator('.home-deferred-demo');
+    assert.equal(await demos.count(), 19, 'All homepage placeholders are present');
+    for (let index = 0; index < 19; index++) {
+      const demo = demos.nth(index);
+      await demo.scrollIntoViewIfNeeded();
+      await demo.locator('.home-demo-content[data-revealed="true"]').waitFor({ state: 'visible' });
+    }
+    assert.equal(await page.locator('.home-demo-content > .home-specimen').count(), 18);
+    assert.equal(await page.locator('.home-new-postcard').count(), 1);
+    await page.locator('.home-map').evaluate(node => node.closest('.home-deferred-demo').scrollIntoView({ block: 'center', behavior: 'instant' }));
     await page.locator('.home-map .leaflet-marker-icon').first().waitFor();
+    await page.waitForFunction(() => {
+      const canvas = document.querySelector('.home-map .inkra-journey-map__ink');
+      if (!canvas?.width || !canvas.height) return false;
+      const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+      return data.some((value, index) => index % 4 === 3 && value > 20);
+    });
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator('.home-specimen').count(), 8);
+    assert.equal(await page.locator('.home-specimen').count(), 20, 'Includes both Flip faces');
     assert(await page.locator('.inkra-journey-map__ink').evaluate(canvas => {
       const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
       return data.some((value, index) => index % 4 === 3 && value > 20);
@@ -34,6 +50,22 @@ try {
       await page.locator('.documentation h1').waitFor();
       assert.equal((await page.reload()).status(), 200, `Refresh ${path}`);
       await page.locator('.documentation h1').waitFor();
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path);
+    }
+    for (const [path, selector] of [
+      ['/blog', '.blog-index'],
+      ['/blog/from-travel-journal-to-inkra', '.blog-article'],
+      ['/ecosystem', '.ecosystem-page__empty'],
+    ]) {
+      assert.equal((await page.goto(new URL(path, baseURL).href)).status(), 200, `Direct route ${path}`);
+      await page.locator(selector).waitFor();
+      assert.equal((await page.reload()).status(), 200, `Refresh ${path}`);
+      await page.locator(selector).waitFor();
+      for (const image of await page.locator(`${selector} img`).all()) {
+        await image.scrollIntoViewIfNeeded();
+        await image.evaluate(node => node.decode());
+        assert(await image.evaluate(node => node.naturalWidth > 0), `Image on ${path}`);
+      }
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path);
     }
     assert.deepEqual(errors, []);

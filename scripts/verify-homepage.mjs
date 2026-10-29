@@ -4,6 +4,27 @@ import { setPlaygroundControls } from './playground-controls.mjs';
 
 const browser = await chromium.launch();
 const baseURL = process.env.BASE_URL ?? 'http://127.0.0.1:4180';
+
+async function showExample(page, selector) {
+  const example = page.locator(selector);
+  await example.evaluate(node => node.closest('.home-deferred-demo').scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await example.waitFor({ state: 'visible' });
+  return example;
+}
+
+async function prepareGallery(page) {
+  const demos = page.locator('.home-deferred-demo');
+  assert.equal(await demos.count(), 19, 'All nineteen examples have a stable placeholder');
+  for (let index = 0; index < 19; index++) {
+    const demo = demos.nth(index);
+    await demo.scrollIntoViewIfNeeded();
+    await demo.locator('.home-demo-content[data-revealed="true"]').waitFor({ state: 'visible' });
+  }
+  await page.waitForFunction(() => !document.querySelector('.home-deferred-artwork[data-artwork-visible="false"]'));
+  assert.equal(await page.locator('.home-demo-content > .home-specimen').count(), 18, 'Eighteen ordinary cards');
+  assert.equal(await page.locator('.home-new-postcard').count(), 1, 'One complete Flip example');
+  assert.equal(await page.locator('.home-new-postcard .home-specimen').count(), 2, 'Both postcard faces retain their own card surface');
+}
 try {
   for (const width of [1600, 1305, 800, 390, 320]) {
     for (const locale of ['zh-CN', 'en']) {
@@ -17,17 +38,19 @@ try {
       }, { locale });
       await page.goto(new URL('/', baseURL).href);
       await page.locator('.home-showcase').waitFor();
+      await prepareGallery(page);
+      await showExample(page, '.home-calendar');
       await page.locator('.home-calendar .rdp-month').waitFor();
-      await page.locator('.home-map .leaflet-marker-icon').first().waitFor();
       await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(500);
+      await page.locator('.home-intro').scrollIntoViewIfNeeded();
       assert.equal(await page.locator('main h1').innerText(), 'Inkra');
       const brand = await page.locator('.home-intro__brand .brand-mark').boundingBox();
       const title = await page.locator('main h1').boundingBox();
       assert(brand.x + brand.width <= title.x && brand.width === 72, 'Brand mark precedes the title');
       assert.equal(await page.locator('.home-intro > p').innerText(), locale === 'en' ? 'Build your interface like you draw.' : '像画画一样搭建你的界面');
-      assert.equal(await page.locator('.home-specimen').count(), 8);
+      assert.equal(await page.locator('.home-specimen').count(), 20, 'Eighteen examples plus two Flip faces');
       assert.equal(await page.locator('.home-specimen .home-calendar, .home-specimen .home-map, .home-specimen .inkra-breadcrumb').count(), 3);
+      await showExample(page, '.home-calendar');
       const day = await page.locator('.home-calendar .rdp-day_button').first().boundingBox();
       assert(Math.abs(day.width - day.height) < 1, 'Homepage dates are square');
       assert(day.width >= 44, 'Date targets remain at least 44px');
@@ -39,8 +62,11 @@ try {
       assert(Math.abs(introBox.height - height / 2) < 2, 'Introduction fills half the viewport');
       assert.equal(await page.locator('.home-specimen .inkra-card__header, .home-specimen .inkra-card__footer').count(), 0);
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `No overflow: ${width}/${locale}`);
+      await page.locator('.home-intro').scrollIntoViewIfNeeded();
       assert((await page.locator('.home-specimen').first().boundingBox()).y < height - 30, 'First example is visible in the first viewport');
-      const number = page.getByRole('spinbutton');
+      await showExample(page, '.home-type-tools');
+      const typography = page.locator('.home-deferred-demo').filter({ has: page.locator('.home-type-tools') });
+      const number = typography.getByRole('spinbutton');
       const inputBox = await number.boundingBox();
       const actionBoxes = await page.locator('.home-type-tools .inkra-input-number button').evaluateAll(nodes => nodes.map(node => ({ y: node.getBoundingClientRect().y })));
       assert(actionBoxes.every(box => Math.abs(box.y - inputBox.y) < 3), 'Number controls stay on one line');
@@ -48,6 +74,16 @@ try {
         const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
         return data.some((value, index) => index % 4 === 3 && value > 20);
       }), 'Pencil icons are drawn');
+      await showExample(page, '.home-map');
+      await page.locator('.home-map .leaflet-marker-icon').first().waitFor();
+      await page.waitForFunction(() => {
+        const canvas = document.querySelector('.home-map .inkra-journey-map__ink');
+        if (!canvas?.width || !canvas.height) return false;
+        const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+        let count = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i] > 20) count++;
+        return count > 1000;
+      });
       assert(await page.locator('.inkra-journey-map__ink').evaluate(canvas => {
         const { data } = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
         let count = 0;
@@ -57,11 +93,11 @@ try {
       await page.screenshot({ path: `/tmp/inkra-home-${width}-${locale}.png`, fullPage: true });
 
       if (locale === 'zh-CN' && [1305, 390].includes(width)) {
-        const calendar = page.locator('.home-calendar');
+        const calendar = await showExample(page, '.home-calendar');
         await calendar.locator('.rdp-day_button').filter({ hasText: /^22$/ }).click();
         assert.equal(await calendar.locator('.rdp-day[aria-selected="true"] .rdp-day_button').innerText(), '22');
         assert.equal(await calendar.locator('output').count(), 0);
-        const map = page.locator('.home-map');
+        const map = await showExample(page, '.home-map');
         await map.locator('.leaflet-marker-icon[title="Auckland"]').click();
         assert.equal(await map.locator('.leaflet-marker-icon[title="Auckland"]').getAttribute('aria-pressed'), 'true');
         await map.getByRole('button', { name: '地图来源', exact: true }).click();
@@ -74,11 +110,13 @@ try {
         await map.getByRole('button', { name: '放大', exact: true }).click();
         await page.waitForFunction(old => document.querySelectorAll('.home-map .leaflet-marker-icon')[1].getAttribute('style') !== old, markerBefore);
         await map.getByRole('button', { name: '复位视图', exact: true }).click();
+        await showExample(page, '.home-calendar');
         const month = await calendar.locator('.rdp-caption_label').innerText();
         await calendar.locator('.rdp-button_next').click();
         assert.notEqual(await calendar.locator('.rdp-caption_label').innerText(), month);
         await calendar.locator('.rdp-button_previous').click();
         assert.equal(await calendar.locator('.rdp-caption_label').innerText(), month);
+        await showExample(page, '.home-specimen[aria-label="新建项目"]');
         const form = page.getByRole('region', { name: '新建项目', exact: true });
         await form.getByRole('button', { name: '创建草稿', exact: true }).click();
         assert.equal(await form.locator('output').innerText(), '');
@@ -88,17 +126,20 @@ try {
         await form.getByRole('combobox').click();
         await page.getByRole('option', { name: '团队', exact: true }).click();
         assert.match(await form.getByRole('combobox').innerText(), /团队/);
+        await showExample(page, '.home-checklist');
         const tasks = page.getByRole('region', { name: '一件一件来', exact: true });
         await tasks.getByRole('checkbox', { name: '给细节一点耐心' }).click();
         assert.equal(await tasks.getByRole('progressbar').getAttribute('aria-valuenow'), '2');
+        await showExample(page, '.home-type-tools');
         await number.fill('28');
         await number.press('Tab');
-        assert.equal(await page.getByRole('slider').getAttribute('aria-valuenow'), '28');
-        await page.getByRole('slider').focus();
+        assert.equal(await typography.getByRole('slider').getAttribute('aria-valuenow'), '28');
+        await typography.getByRole('slider').focus();
         await page.keyboard.press('ArrowRight');
         assert.equal(await number.inputValue(), '29');
         await page.getByRole('button', { name: '居中', exact: true }).click();
         assert.equal(await page.locator('.home-type-preview').evaluate(node => getComputedStyle(node).textAlign), 'center');
+        await showExample(page, '.home-files');
         const files = page.getByRole('region', { name: '桌面上的几页纸', exact: true });
         await files.getByRole('tab', { name: '收藏', exact: true }).click();
         await files.getByRole('button', { name: '取消收藏 没写完的好主意', exact: true }).click();
@@ -106,16 +147,46 @@ try {
         assert.equal(await files.locator('[aria-current="page"]').innerText(), '收藏');
         await files.getByRole('link', { name: '我的文件', exact: true }).click();
         assert.equal(await files.getByRole('tab', { name: '最近', exact: true }).getAttribute('aria-selected'), 'true');
+        await showExample(page, '.home-dialog-preview');
         await page.getByRole('button', { name: '编辑标题', exact: true }).click();
         const dialog = page.getByRole('dialog', { name: '换个名字', exact: true });
         await dialog.getByRole('textbox', { name: '标题' }).fill('新的标题');
         await dialog.getByRole('button', { name: '保存', exact: true }).click();
         await dialog.waitFor({ state: 'hidden' });
         await page.getByRole('heading', { name: '新的标题', exact: true }).waitFor();
+        await showExample(page, '.home-dialog-preview');
         await page.getByRole('button', { name: '编辑标题', exact: true }).click();
         await dialog.getByRole('textbox', { name: '标题' }).fill('不保存');
         await dialog.getByRole('button', { name: '取消', exact: true }).click();
         await page.getByRole('heading', { name: '新的标题', exact: true }).waitFor();
+        const inventory = await showExample(page, '.home-game-inventory');
+        await inventory.getByRole('button', { name: '喝药水（2）', exact: true }).click();
+        assert.equal(await inventory.getByRole('progressbar').getAttribute('aria-valuenow'), '83');
+        await inventory.getByRole('button', { name: '喝药水（1）', exact: true }).click();
+        assert.equal(await inventory.getByRole('progressbar').getAttribute('aria-valuenow'), '100');
+        assert.equal(await inventory.locator('[data-inventory-item="potion"]').count(), 0);
+        const equipment = await showExample(page, '.home-game-equipment');
+        await equipment.getByRole('button', { name: '换上这件', exact: true }).click();
+        assert.match(await equipment.locator('.home-game-equipment__equip').innerText(), /已装备：猎弓/);
+        assert.equal(await equipment.getByRole('button', { name: '已装备', exact: true }).isDisabled(), true);
+        const quest = await showExample(page, '.home-game-quest');
+        const reward = quest.getByRole('button', { name: '领取奖励', exact: true });
+        assert.equal(await reward.isDisabled(), true);
+        for (const checkbox of await quest.getByRole('checkbox').all()) await checkbox.check();
+        await reward.click();
+        assert.equal(await quest.getByRole('button', { name: '奖励已领取', exact: true }).isDisabled(), true);
+        assert.match(await quest.getByRole('status').innerText(), /80 枚金币/);
+        const crafting = await showExample(page, '.home-game-crafting');
+        await crafting.getByRole('button', { name: '开始调制', exact: true }).click();
+        assert.match(await crafting.locator('.home-game-crafting__bag').innerText(), /恢复 ×1 · 法力 ×0/);
+        assert.match(await crafting.locator('.home-game-crafting__material--herb').innerText(), /库存 4/);
+        await crafting.getByRole('button', { name: '法力药水', exact: true }).click();
+        await crafting.getByRole('button', { name: '开始调制', exact: true }).click();
+        assert.match(await crafting.locator('.home-game-crafting__bag').innerText(), /恢复 ×1 · 法力 ×1/);
+        await page.locator('.home-intro').scrollIntoViewIfNeeded();
+        await showExample(page, '.home-game-inventory');
+        assert.equal(await inventory.getByRole('progressbar').getAttribute('aria-valuenow'), '100', 'Leaving the viewport preserves inventory state');
+        await showExample(page, '.home-preferences');
         const preferences = page.getByRole('region', { name: '偏好设置', exact: true });
         await preferences.getByRole('tab', { name: '通知', exact: true }).click();
         const updates = preferences.getByRole('switch', { name: '接收更新', exact: true });
@@ -139,6 +210,19 @@ try {
         assert.equal(await breadcrumb.locator('a').nth(1).getAttribute('href'), null);
         await page.getByRole('tab', { name: 'API', exact: true }).click();
         await page.getByRole('region', { name: 'Breadcrumb.Separator API', exact: true }).getByRole('cell', { name: 'children', exact: true }).waitFor();
+        await page.goto(new URL('/blog', baseURL).href);
+        await page.locator('.blog-index').waitFor();
+        assert.equal(await page.locator('.blog-entries > li').count(), 1);
+        await page.locator('.blog-entry__link').click();
+        await page.waitForURL('**/blog/from-travel-journal-to-inkra');
+        await page.locator('.blog-article').waitFor();
+        assert.equal(await page.locator('.blog-article .blog-figure img').count(), 3);
+        await page.locator('.blog-back').first().click();
+        await page.waitForURL('**/blog');
+        await page.locator('.blog-index').waitFor();
+        await page.goto(new URL('/ecosystem', baseURL).href);
+        await page.locator('.ecosystem-page__empty').waitFor();
+        assert.equal(await page.locator('.ecosystem-page__empty a').getAttribute('href'), '/docs/components/button');
       }
       assert.deepEqual(errors, []);
       await page.close();

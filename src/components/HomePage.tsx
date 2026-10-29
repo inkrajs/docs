@@ -1,4 +1,4 @@
-import { lazy, Suspense, useId, useState, type ReactNode } from 'react';
+import { lazy, useId, useState, type ReactNode } from 'react';
 import { Badge, Breadcrumb, Button, ButtonGroup, ButtonLink, Card, Checkbox, Field, Input, InputNumber, Overlay, PencilLine, Progress, Slider, Switch, Tabs, Textarea, Tooltip } from '@inkra/react';
 import { __iconData as arrowIcon } from 'lucide-react/dist/esm/icons/arrow-right.mjs';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
@@ -14,10 +14,22 @@ import { docsLanguages, resolveDocsLocale } from '../docsLocales';
 import { DocsIcon, type LucideIconData } from './DocsIcon';
 import { DocsSelect } from './DocsSelect';
 import { BrandMark } from './BrandMark';
+import { DeferredDemo } from './HomeDemo';
 import './HomePage.css';
 
 const HomeCalendar = lazy(() => import('./HomeTravelSamples').then(module => ({ default: module.HomeCalendar })));
-const HomeMap = lazy(() => import('./HomeTravelSamples').then(module => ({ default: module.HomeMap })));
+const HomeMap = lazy(() => import('./HomeMapSample').then(module => ({ default: module.HomeMap })));
+const HomeNumberSample = lazy(() => import('./HomeCreativeSamples').then(module => ({ default: module.HomeNumberSample })));
+const HomePaletteSample = lazy(() => import('./HomeCreativeSamples').then(module => ({ default: module.HomePaletteSample })));
+const HomeFlipSample = lazy(() => import('./HomeCreativeSamples').then(module => ({ default: module.HomeFlipSample })));
+const HomePackingSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomePackingSample })));
+const HomeLogSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomeLogSample })));
+const HomeRadarSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomeRadarSample })));
+const HomeSkillsSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomeSkillsSample })));
+const HomeInventorySample = lazy(() => import('./HomeGameInventorySamples').then(module => ({ default: module.HomeInventorySample })));
+const HomeEquipmentSample = lazy(() => import('./HomeGameInventorySamples').then(module => ({ default: module.HomeEquipmentSample })));
+const HomeQuestSample = lazy(() => import('./HomeGameQuestSamples').then(module => ({ default: module.HomeQuestSample })));
+const HomeCraftingSample = lazy(() => import('./HomeGameQuestSamples').then(module => ({ default: module.HomeCraftingSample })));
 
 function useHomeText() {
   const { locale } = useLocale();
@@ -178,9 +190,31 @@ export function HomePage({ themeControl }: { themeControl: ReactNode }) {
     </section>
     <Tooltip.Provider delayDuration={350}>
       <section className="home-showcase" aria-label={text('组件示例', 'Component examples')}>
-        <div className="home-showcase__column"><ProjectSample /><TextSample /></div>
-        <div className="home-showcase__column"><Specimen title={text('日历', 'Calendar')}><Suspense fallback={<div className="home-travel-loading" aria-busy="true" />}><HomeCalendar /></Suspense></Specimen><PreferencesSample themeControl={themeControl} /><FilesSample /></div>
-        <div className="home-showcase__column"><Specimen title={text('地图', 'Map')}><Suspense fallback={<div className="home-travel-loading" aria-busy="true" />}><HomeMap /></Suspense></Specimen><TasksSample /><DialogSample /></div>
+        <div className="home-showcase__column">
+          <DeferredDemo order={1} estimatedHeight={458}><ProjectSample /></DeferredDemo>
+          <DeferredDemo order={2} estimatedHeight={382}><TextSample /></DeferredDemo>
+          <DeferredDemo id="home-more" order={10} estimatedHeight={318}><Specimen title={text('让数字动起来', 'Numbers in motion')}><HomeNumberSample /></Specimen></DeferredDemo>
+          <DeferredDemo order={13} estimatedHeight={402}><Specimen title={text('整理出发前的行囊', 'Pack for a little adventure')}><HomePackingSample /></Specimen></DeferredDemo>
+          <DeferredDemo id="home-inventory" order={16} estimatedHeight={443} mobileHeight={480}><Specimen title={text('冒险者的背包', 'An adventurer’s backpack')}><HomeInventorySample /></Specimen></DeferredDemo>
+          <DeferredDemo id="home-crafting" order={19} estimatedHeight={638} mobileHeight={680}><Specimen title={text('营地合成台', 'Camp crafting bench')}><HomeCraftingSample /></Specimen></DeferredDemo>
+        </div>
+        <div className="home-showcase__column">
+          <DeferredDemo order={3} estimatedHeight={416} mobileHeight={416}><Specimen title={text('日历', 'Calendar')}><HomeCalendar /></Specimen></DeferredDemo>
+          <DeferredDemo order={4} estimatedHeight={292}><PreferencesSample themeControl={themeControl} /></DeferredDemo>
+          <DeferredDemo order={5} estimatedHeight={336}><FilesSample /></DeferredDemo>
+          <DeferredDemo order={11} estimatedHeight={385}><Specimen title={text('调一抹自己的颜色', 'A color of your own')}><HomePaletteSample /></Specimen></DeferredDemo>
+          <DeferredDemo order={14} estimatedHeight={383}><Specimen title={text('记录一点小进展', 'A little progress log')}><HomeLogSample /></Specimen></DeferredDemo>
+          <DeferredDemo id="home-quest" order={17} estimatedHeight={561} mobileHeight={600}><Specimen title={text('领取冒险奖励', 'Claim an adventure reward')}><HomeQuestSample /></Specimen></DeferredDemo>
+        </div>
+        <div className="home-showcase__column">
+          <DeferredDemo order={6} estimatedHeight={460}><Specimen title={text('地图', 'Map')}><HomeMap /></Specimen></DeferredDemo>
+          <DeferredDemo order={7} estimatedHeight={295}><TasksSample /></DeferredDemo>
+          <DeferredDemo order={8} estimatedHeight={274}><DialogSample /></DeferredDemo>
+          <DeferredDemo order={12} estimatedHeight={350} mobileHeight={330}><HomeFlipSample /></DeferredDemo>
+          <DeferredDemo order={15} estimatedHeight={498} mobileHeight={492}><Specimen title={text('画出不同的侧面', 'A different shape to every day')}><HomeRadarSample /></Specimen></DeferredDemo>
+          <DeferredDemo id="home-equipment" order={18} estimatedHeight={477} mobileHeight={500}><Specimen title={text('换一件趁手的装备', 'Find your next equipment')}><HomeEquipmentSample /></Specimen></DeferredDemo>
+        </div>
+        <DeferredDemo wide order={20} estimatedHeight={491} mobileHeight={726}><Specimen title={text('把想法连成一棵树', 'Let an idea branch out')}><HomeSkillsSample /></Specimen></DeferredDemo>
       </section>
     </Tooltip.Provider>
     <footer className="home-footer"><PencilLine /><PencilText>Inkra</PencilText><ButtonLink href="/docs/components/icon#preview" variant="link">{text('从一个小图标开始', 'Start with a little icon')}</ButtonLink></footer>

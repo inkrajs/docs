@@ -33,11 +33,34 @@
 .home-dialog-preview h3 { margin: 0; font-weight: 400; font-size: 22px; overflow-wrap: anywhere; }
 .home-footer { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-top: 32px; padding: 20px 0; color: var(--inkra-ink-muted); }
 .home-footer > .inkra-pencil-line { position: absolute; top: 0; opacity: 0.56; }
+.home-deferred-demo { min-width: 0; scroll-margin-top: calc(var(--docs-header-height, var(--inkra-header-height)) + 24px); }
+.home-deferred-demo--wide { grid-column: 1 / -1; }
+.home-demo-content { opacity: 0; min-width: 0; content-visibility: auto; contain-intrinsic-size: auto var(--home-demo-height, 320px); }
+.home-demo-loading { min-height: var(--home-demo-height, 320px); }
 @media (max-width: 64rem) {
   .home-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-showcase__column { display: contents; }
 }
 @media (max-width: 42rem) {
+  .home-demo-loading { min-height: var(--home-demo-mobile-height, var(--home-demo-height, 320px)); }
+  .home-demo-content { contain-intrinsic-size: auto var(--home-demo-mobile-height, var(--home-demo-height, 320px)); }
   .home-intro { padding-top: 28px; padding-bottom: 28px; }
   .home-showcase { grid-template-columns: minmax(0, 1fr); }
+}
+
+.home-demo-content[data-revealed="true"] { opacity: 1; animation: home-demo-enter 520ms cubic-bezier(0.25, 0.1, 0.25, 1); }
+.home-demo-content:focus-within { opacity: 1; animation: none; }
+.home-deferred-artwork { opacity: 0; transition: opacity 520ms ease; }
+.home-deferred-artwork[data-artwork-visible="true"] { opacity: 1; }
+.home-deferred-text > .inkra-pencil-text__source { transition: color 500ms ease; }
+.home-deferred-text[data-pencil-ready="true"] > canvas { animation: home-material-enter 500ms ease; }
+@keyframes home-demo-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes home-material-enter { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .home-demo-content, .home-demo-content[data-revealed="true"] { opacity: 1; animation: none; }
+  .home-deferred-artwork, .home-deferred-text > .inkra-pencil-text__source { transition: none; }
+  .home-deferred-text[data-pencil-ready="true"] > canvas { animation: none; }
 }

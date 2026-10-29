@@ -1,0 +1,56 @@
+.ecosystem-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1160px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 56px 40px 64px;
+  color: var(--inkra-ink);
+}
+
+.ecosystem-page__heading {
+  display: grid;
+  gap: 16px;
+}
+
+.ecosystem-page__heading h1 {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 44px);
+  line-height: 1.25;
+  font-weight: var(--inkra-weight-regular);
+}
+
+.ecosystem-page__heading p {
+  max-width: 640px;
+  margin: 0;
+  color: var(--inkra-ink-muted);
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.ecosystem-page__heading > .inkra-pencil-line {
+  margin-top: 12px;
+  opacity: 0.55;
+}
+
+.ecosystem-page__empty {
+  min-height: min(540px, 65svh);
+  margin-block: 16px;
+  padding-inline: 0;
+}
+
+.ecosystem-page__empty .inkra-empty__description {
+  max-width: 440px;
+  line-height: 1.7;
+}
+
+.ecosystem-page__empty .inkra-empty__actions {
+  margin-top: 12px;
+}
+
+@media (max-width: 42rem) {
+  .ecosystem-page { padding: 32px 20px 40px; }
+  .ecosystem-page__heading p { font-size: 15px; }
+  .ecosystem-page__empty { min-height: 440px; }
+}
