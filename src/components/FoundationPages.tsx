@@ -2,6 +2,7 @@ import { PropertyTabs } from './PropertyTabs';
 import { lazy, Suspense, useState, type ComponentType, type FormEvent } from 'react';
 import { Button, Checkbox, PencilLine, RadioGroup, RadioGroupItem, Switch } from '@inkra/react';
 import { PencilText, useLocale } from '../i18n';
+import libraryCandidate from '../../library-candidate.json';
 import { ComponentExample } from './ComponentExample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentPageTabs, type ComponentPageTab } from './ComponentPageTabs';
@@ -590,6 +591,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
 
 export function FoundationPage({ component, activeTab, onTabChange }: { component: FoundationComponent; activeTab: ComponentPageTab; onTabChange: (tab: ComponentPageTab) => void }) {
   const { locale, t } = useLocale();
+  const fromRegistry = 'source' in libraryCandidate && libraryCandidate.source === 'registry';
   if (isExpansionComponent(component)) return <Suspense fallback={<span role="status">{t('加载中')}</span>}><ExpansionPage component={component} activeTab={activeTab} onTabChange={onTabChange} /></Suspense>;
   const IndependentExamples = independentExamples[component];
   const asyncGuidance = asyncLayoutGuidance(component, locale);
@@ -600,7 +602,7 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
     : getFoundationApiGroups(component, apiRows[component] ?? []);
   return <article className="documentation">
     <PageHeading title={foundationNames[component]} />
-    {component === 'dependency-graph' && <PencilText as="p" role="note">{t('DependencyGraph 当前来自固定源码提交的候选包；公开 npm 0.11.0 尚未包含此组件。', 'DependencyGraph currently comes from a pinned source candidate; the published npm 0.11.0 package does not include it yet.')}</PencilText>}
+    {component === 'dependency-graph' && !fromRegistry && <PencilText as="p" role="note">{t('当前预览使用固定源码提交的候选包；正式可用功能请以已发布的 npm 版本为准。', 'This preview uses a pinned source candidate; published capabilities are defined by the released npm package.')}</PencilText>}
     <ComponentPageTabs name={foundationNames[component]} id={component} value={activeTab} onChange={onTabChange} />
     <PencilLine className="section-divider" />
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>
