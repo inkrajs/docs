@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none"><defs>
+<filter id="pencil" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency=".055" numOctaves="2" seed="17" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale=".7"/></filter>
+<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-27)"><path d="M0 0V7" stroke="#526b58" stroke-opacity=".16" stroke-width=".8"/></pattern>
+<linearGradient id="wash" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#c4d3ae" stop-opacity=".75"/><stop offset="1" stop-color="#7c9e78" stop-opacity=".58"/></linearGradient>
+</defs>
+<g stroke="#745d49" stroke-width="1.65" stroke-linejoin="round" filter="url(#pencil)">
+<path d="M51 22L77 22L76 43Q95 53 95 75L93 102Q92 116 65 117Q37 117 35 103L34 75Q34 53 53 43Z" fill="#e4d0a3" fill-opacity=".25"/>
+<path d="M37 72Q51 68 66 74Q79 78 92 71L90 103Q86 112 65 112Q43 112 39 102Z" fill="#d5ad6c" fill-opacity=".78" stroke="none"/>
+<path d="M38 73Q53 69 66 74Q81 78 92 73M53 32L76 32" fill="none" stroke-width="1.2"/>
+<path d="M49 12Q62 9 78 12L78 25Q63 29 50 25Z" fill="#b59b72" fill-opacity=".85"/>
+<path d="M50 16Q64 20 78 16M58 13L58 23M71 13L71 24" fill="none" stroke-width="1" opacity=".7"/>
+<path d="M47 79Q43 88 46 98" fill="none" stroke="#f1ead4" stroke-width="3" stroke-linecap="round"/>
+<path d="M53 81Q65 76 77 81L77 99Q65 105 53 99Z" fill="#e7d8b3" fill-opacity=".85" stroke-width="1.1"/>
+<path d="M65 84L65 96M59 90L71 90" fill="none" stroke="#798567" stroke-width="2"/>
+</g>
+</svg>

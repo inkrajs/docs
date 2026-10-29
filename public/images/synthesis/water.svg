@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none"><defs>
+<filter id="pencil" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency=".055" numOctaves="2" seed="17" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale=".7"/></filter>
+<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-27)"><path d="M0 0V7" stroke="#526b58" stroke-opacity=".16" stroke-width=".8"/></pattern>
+<linearGradient id="wash" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#c4d3ae" stop-opacity=".75"/><stop offset="1" stop-color="#7c9e78" stop-opacity=".58"/></linearGradient>
+</defs>
+<g stroke="#4e7180" stroke-width="1.7" stroke-linejoin="round" filter="url(#pencil)">
+<path d="M65 14C58 34 35 57 35 78C34 98 47 113 65 113C84 113 97 99 95 79C94 59 72 35 65 14Z" fill="#a5c9d1" fill-opacity=".65"/>
+<path d="M65 15C59 39 45 64 44 81C43 97 53 105 65 107" fill="none" stroke="#e1ecdf" stroke-width="5" stroke-opacity=".75"/>
+<path d="M42 88Q45 102 58 105M69 108Q86 105 89 91" fill="none" stroke-width="1" opacity=".55"/>
+<path d="M53 70Q57 63 59 59" fill="none" stroke="#e9f2e7" stroke-width="3" stroke-linecap="round"/>
+</g>
+</svg>
