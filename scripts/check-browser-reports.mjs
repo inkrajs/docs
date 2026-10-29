@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readdir, readFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { browserSuite } from './browser-checks.mjs';
 import { readBrowserSelectionPlan } from './browser-plan.mjs';
 import { checkBrowserReports, checkFullBrowserReports } from './browser-report.mjs';
+import { createBrowserReuseReceipt } from './browser-reuse.mjs';
 
 const directory = process.argv[2] || '.ci-results';
 const planPath = process.argv[3] || '.ci-plan/browser-selection.json';
@@ -32,6 +33,9 @@ if (fullShardCount !== null) {
     if (browserResult) assert.equal(browserResult, 'skipped', 'Only a trusted empty plan may skip the browser job');
   } else if (browserResult) assert.equal(browserResult, 'success', 'Selected browser shards did not succeed');
   checkBrowserReports(reports, selection, suite);
+  if (selection.historicalReuse) {
+    console.log(selection.historicalReuse.entries.length + ' unchanged browser checks covered by successful historical CI; these were not executed in this run.');
+  }
   if (selection.localValidation) {
     console.log(selection.localValidation.exemptedScripts.length + ' browser checks locally confirmed / CI waived by '
       + selection.localValidation.attestation.actor.login + '; these were not executed online.');
@@ -39,4 +43,11 @@ if (fullShardCount !== null) {
   console.log(selection.selectedCount === 0
     ? `Trusted empty plan ${selection.planDigest}: 0 browser checks selected; browser job correctly skipped.`
     : `All ${selection.selectedCount} selected browser checks passed exactly once across ${selection.shardCount} shards (plan ${selection.planDigest}).`);
+  if (process.env.BROWSER_REUSE_RECEIPT === 'true') {
+    assert.equal(selection.eventName, 'release', 'Only complete release coverage can create reusable history');
+    const receipt = createBrowserReuseReceipt(selection);
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, 'browser-reuse-receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
+    console.log('Published an audited browser coverage receipt; original online run identities are preserved.');
+  }
 }
