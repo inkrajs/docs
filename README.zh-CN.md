@@ -1,8 +1,11 @@
 # Inkra 文档
 
-DependencyGraph 当前使用固定源码提交的未发布组件库候选包。示例安装准备好的候选归档；公开的 0.11.0 包尚不包含此组件。
-
 [English](README.md)
+
+`0.12.0` 新增 DependencyGraph，用于技能树、科技树和合成配方图，支持自动分层布局、
+依赖路径高亮、自定义节点内容与按比例设置连接点。示例包含纯图标、无框图片合成图，
+以及整张卡片翻转的 Flip 组合。NodeGraph 和 DependencyGraph 的画布工具栏可以
+分别关闭内置按钮，也能追加自定义操作。
 
 浏览器测试分片依据 `scripts/browser-timings.mjs` 中本次发布实测耗时分配，
 优先执行耗时较长的检查，每个分片仍最多两个 worker。耗时只影响调度，不影响覆盖：
@@ -17,7 +20,7 @@ inkrajs/inkra 所有；文档验证真实安装包，不通过 Vite 或 TypeScri
 文档位于 `/docs`，博客与生态暂时保留空壳。在本地预览运行时，可执行
 `node scripts/verify-homepage.mjs` 检查首页交互及中英文桌面、移动端布局。
 
-`0.11.0` 新增 NumberTicker 可选的 `animation="morph"` 模式：精确小数位移
+此前 `0.11.0` 新增 NumberTicker 可选的 `animation="morph"` 模式：精确小数位移
 保留固定字宽、移动小数点，新增的零以滑动、淡入和右侧裁剪方式进入，默认 420ms；
 普通数值变化使用按位纵向滚动，原有 count、roll 模式继续保留。Log 的回到底部操作
 改为紧凑的悬浮图标按钮，移除整条底栏。
@@ -40,11 +43,12 @@ CI 支持指定维护者确认本地测试结果，按精确提交、候选包�
 此前 `0.9.0` 的 Guide、Loading、四向 InfiniteScroll、Masonry、数字滚动，以及支持
 自定义配色的填充与彩色图标均继续提供。
 
-当前检出为 DependencyGraph 安装固定源码提交的组件库候选归档。
-`library-candidate.json` 记录完整来源提交、SHA-256 和 SHA-512；
-CI 与网站部署重建该提交并核对归档、锁文件和真实安装包，不引用组件源码。
-公开的 0.11.0 仍是上一个发布基线。文档改动不会自行发布 npm 包或部署网站。
-全新检出先按下文候选流程准备归档，再运行：
+## 本地开发
+
+本仓固定安装公开 npm 正式版本 `@inkra/react@0.12.0`。
+`library-candidate.json` 记录发布源码的完整提交、SHA-256 和 SHA-512；
+CI 与网站部署直接安装该版本并核对归档、锁文件和真实安装包，不引用组件源码。
+文档改动不会自行发布 npm 包或部署网站。全新检出直接运行：
 
 ```sh
 npm ci
@@ -52,10 +56,12 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-正式版本不需要相邻组件源码或 vendor 归档。仅在验证未发布的组件修改时，
-使用以下候选准备流程；准备脚本也会安装依赖。
+正常开发不需要相邻组件源码或 vendor 归档。
 
-先在组件仓检出 library-candidate.json 中的精确提交，运行 npm ci、npm run build，
+## 准备未发布候选包
+
+仅在验证未发布的组件修改时，使用以下流程将 registry 依赖替换为验证过的本地归档；
+准备脚本也会安装依赖。先在组件仓检出需要验证的源码提交，运行 npm ci、npm run build，
 再用 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 打包。在本仓运行：
 
 ```sh
@@ -68,6 +74,8 @@ npm run dev -- --port 4180
 vendor 中的 tarball 不提交。组件仓使用
 `GITHUB_SHA=$(git rev-parse HEAD) npm run check:package` 记录精确源码版本，
 再同步本仓候选信息。组件修改后需要重新构建并准备候选包。
+
+## 检查与发布
 
 `node scripts/verify-property-extensions.mjs` 使用一个浏览器和真实安装包，检查
 树的缩进与状态渲染、分页展示、评分悬停与表单重置、通知关闭、骨架减少动态效果，

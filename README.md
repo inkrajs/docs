@@ -2,7 +2,12 @@
 
 [中文](README.zh-CN.md)
 
-DependencyGraph is currently an unpublished library candidate pinned to an exact source commit. Its examples use the prepared archive; the published 0.11.0 package does not contain this component yet.
+Version 0.12.0 adds DependencyGraph for skill trees, technology trees and synthesis
+recipes. It provides automatic layered layout, dependency-path highlighting,
+custom node content and normalized connection anchors. Examples include icon
+nodes, frameless image recipes and complete Flip cards. NodeGraph and
+DependencyGraph viewport controls can be individually hidden or extended with
+custom actions.
 
 Browser shards are balanced using recorded timings in `scripts/browser-timings.mjs`
 (release run 40398411054). The longest checks start first, with the existing two
@@ -15,7 +20,7 @@ Interactive documentation and examples for the Inkra React component library.
 This repository owns the playground, search, translations and consumer tests.
 Component implementation and API contracts remain in inkrajs/inkra.
 
-The 0.11.0 release adds NumberTicker's optional `animation="morph"` mode:
+The earlier 0.11.0 release added NumberTicker's optional `animation="morph"` mode:
 exact decimal shifts retain fixed-width glyphs, move the decimal point, and
 reveal entering zeros with sliding, fading and right-edge clipping. The default
 duration is 420ms; ordinary changes use place-aligned rolling, and the existing
@@ -52,16 +57,15 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout uses a prepared library candidate pinned to the DependencyGraph source commit.
-`library-candidate.json` records the candidate source revision and archive hashes;
-The full `revision` identifies the source rebuilt by CI and website deployment.
-Build verifies the archive, lockfile and installed package without a source alias.
-The registry version 0.11.0 remains the last published baseline.
+This checkout installs the exact public npm release `@inkra/react@0.12.0`.
+`library-candidate.json` records its released source commit and archive hashes.
+CI and website deployment install that registry version and verify the archive,
+lockfile and installed package without a source alias.
 Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
-Prepare the local candidate using the candidate procedure below, then build and preview:
+Install the pinned registry dependency, then build and preview:
 
 ```sh
 npm ci
@@ -69,8 +73,9 @@ npm run build
 npm run dev -- --port 4180
 ```
 
-Only when testing unpublished library changes, prepare the verified candidate
-archive using the procedure below before installing dependencies.
+No sibling library checkout or vendor archive is needed for normal development.
+Only when testing unpublished library changes, use the separate candidate
+procedure below before installing dependencies.
 
 ## Local Routes And Page Actions
 
@@ -93,7 +98,8 @@ Destination/prompt checks use intercepted calls, not authenticated AI sessions.
 
 ## Prepare An Unpublished Candidate
 
-In an inkrajs/inkra checkout at the revision from library-candidate.json:
+This optional procedure replaces the registry dependency with a verified local
+archive. In an inkrajs/inkra checkout at the source revision you want to test:
 
 ```sh
 npm ci
