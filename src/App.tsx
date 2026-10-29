@@ -52,11 +52,13 @@ import { CodeBlock } from './components/CodeBlock';
 import { ComponentExample } from './components/ComponentExample';
 import { CodeSample } from './components/CodeSample';
 import { HomePage } from './components/HomePage';
+import { BlogPage, originBlogPath } from './components/BlogPage';
+import { EcosystemPage } from './components/EcosystemPage';
 import { PropertyTabs } from './components/PropertyTabs';
 import { DocsIcon, type LucideIconData } from './components/DocsIcon';
 
 type Theme = 'auto' | 'light' | 'dark';
-type RoutePath = '/' | '/blog' | '/ecosystem' | '/getting-started' | '/internationalization' | '/theming' | '/components/button' | '/design-standard' | '/usage-guide' | `/components/${FoundationComponent}`;
+type RoutePath = '/' | '/blog' | typeof originBlogPath | '/ecosystem' | '/getting-started' | '/internationalization' | '/theming' | '/components/button' | '/design-standard' | '/usage-guide' | `/components/${FoundationComponent}`;
 type ButtonTab = 'preview' | 'api' | 'accessibility';
 type PreviewTab = 'preview' | 'code';
 type ExampleKind = 'appearance' | 'size' | 'icon-size' | 'icons' | 'state' | 'link' | 'group' | 'rtl';
@@ -152,9 +154,13 @@ const themeOptions: Array<{ value: Theme; label: string; icon: LucideIconData }>
   { value: 'dark', label: '深色主题', icon: moonIcon },
 ];
 
+function isBlogPath(pathname: string): boolean {
+  return pathname === '/blog' || pathname === originBlogPath;
+}
+
 function validPath(pathname: string): RoutePath {
   pathname = pathname.replace(/\/+$/, '') || '/';
-  if (pathname === '/' || pathname === '/blog' || pathname === '/ecosystem') return pathname;
+  if (pathname === '/' || pathname === '/blog' || pathname === originBlogPath || pathname === '/ecosystem') return pathname;
   pathname = pathname.replace(/^\/docs(?=\/|$)/, '') || '/getting-started';
   if (foundationComponents.some(name => pathname === `/components/${name}`)) return pathname as RoutePath;
   if (pathname === '/components/button' || pathname === '/design-standard' || pathname === '/usage-guide' || pathname === '/internationalization' || pathname === '/theming') return pathname;
@@ -162,7 +168,7 @@ function validPath(pathname: string): RoutePath {
 }
 
 function routeHref(path: RoutePath): string {
-  return path === '/' || path === '/blog' || path === '/ecosystem' ? path : `/docs${path}`;
+  return path === '/' || isBlogPath(path) || path === '/ecosystem' ? path : `/docs${path}`;
 }
 
 function legacyLocation(): { path: RoutePath; tab?: ButtonTab } {
@@ -499,7 +505,8 @@ function AppHeader({
   onOpenMenu: () => void;
 }) {
   const { t } = useLocale();
-  const docsActive = currentPath !== '/' && currentPath !== '/blog' && currentPath !== '/ecosystem';
+  const docsActive = currentPath !== '/' && !isBlogPath(currentPath) && currentPath !== '/ecosystem';
+  const activeSection = docsActive ? '/getting-started' : isBlogPath(currentPath) ? '/blog' : currentPath;
   const links = [{ path: '/getting-started', label: '文档' }, { path: '/blog', label: '博客' }, { path: '/ecosystem', label: '生态' }] as const;
   const brand = <a className="brand" href="/" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return; event.preventDefault(); onNavigate('/'); }}>
     <BrandMark />
@@ -515,7 +522,7 @@ function AppHeader({
         <nav className="site-navigation inkra-tabs" data-size="md" aria-label={t('主导航')}>
           {links.map(({ path, label }, index) => <div className="site-navigation__item" key={path}>
             {index > 0 && <PencilLine className="site-navigation__divider" orientation="vertical" seed={`site-divider-${path}`} />}
-            <a className="inkra-tabs__trigger" data-state={(path === '/getting-started' ? docsActive : path === currentPath) ? 'active' : 'inactive'} href={routeHref(path)} aria-current={(path === '/getting-started' ? docsActive : path === currentPath) ? 'page' : undefined}
+            <a className="inkra-tabs__trigger" data-state={path === activeSection ? 'active' : 'inactive'} href={routeHref(path)} aria-current={path === activeSection ? 'page' : undefined}
               onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return; event.preventDefault(); onNavigate(path); }}>
               <PencilSurface as="span" aria-hidden="true" className="inkra-tabs__selection" variant="selection" seed={`site-tab-${path}`} />
               <PencilSurface as="span" aria-hidden="true" className="inkra-tabs__focus-ring" variant="outline" seed={`site-tab-${path}-focus`} />
@@ -936,7 +943,7 @@ export function App() {
   const [sidebarWidth, setSidebarWidth] = useState(240);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const cancelAnchorScroll = useRef<() => void>(() => {});
-  const isDocs = route !== '/' && route !== '/blog' && route !== '/ecosystem';
+  const isDocs = route !== '/' && !isBlogPath(route) && route !== '/ecosystem';
   const { t } = useLocale();
 
   useEffect(() => {
@@ -1035,9 +1042,7 @@ export function App() {
         </Layout.Content>
         </Resizable.Panel>
         </Resizable.Root>
-      </Layout.Body> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : <main id="main-content" className="site-section" aria-label={t(route === '/blog' ? '博客' : '生态')}>
-        <h1 className="visually-hidden">{t(route === '/blog' ? '博客' : '生态')}</h1>
-      </main>}
+      </Layout.Body> : route === '/' ? <HomePage themeControl={<ThemeControl theme={theme} onChange={setTheme} />} /> : isBlogPath(route) ? <BlogPage article={route === originBlogPath} onNavigate={navigate} /> : <EcosystemPage />}
       </Layout.Root>
       {isDocs && <MobileDrawer currentPath={route} onClose={closeDrawer} onNavigate={navigate} onThemeChange={setTheme} open={drawerOpen} theme={theme} />}
     </div>

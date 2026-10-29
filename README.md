@@ -83,8 +83,9 @@ The brand links to `/`, a half-viewport introduction and interactive component
 gallery, including Breadcrumb, Calendar and JourneyMap. Samples have their own
 content layouts, not mandatory card headers and footers.
 Drafts, tasks, text settings, favorites and dialog edits stay in page memory;
-theme and language reuse the site's persistent preferences. `/blog` and
-`/ecosystem` remain empty shells. Documentation lives under `/docs`, starting
+theme and language reuse the site's persistent preferences. `/blog` lists project
+stories with individual article pages; `/ecosystem` is an empty resource page.
+Documentation lives under `/docs`, starting
 at `/docs/getting-started`; previous root-level documentation URLs remain
 compatible and normalize to the new prefix. Header navigation uses real links
 with the shared pencil selection and focus styling.

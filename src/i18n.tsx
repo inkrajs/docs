@@ -5,6 +5,7 @@ import { lookupDocsMessage, resolveDocsLocale, type DocsLocale } from './docsLoc
 
 type Locale = DocsLocale;
 const english: Record<string, string> = {
+  '从旅行手账，到 Inkra': 'From a travel journal to Inkra',
   '语言与自定义字典': 'Languages and custom dictionaries',
   '组件语言': 'Component language',
   '自定义字典': 'Custom dictionary',

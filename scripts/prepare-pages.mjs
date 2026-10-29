@@ -7,7 +7,7 @@ const dist = new URL('../dist/', import.meta.url);
 const html = await readFile(new URL('index.html', dist), 'utf8');
 const documentation = ['getting-started', 'internationalization', 'theming', 'design-standard', 'usage-guide',
   ...['button', ...foundationComponents].map(name => `components/${name}`)];
-const routes = ['blog', 'ecosystem', 'docs', ...documentation,
+const routes = ['blog', 'blog/from-travel-journal-to-inkra', 'ecosystem', 'docs', ...documentation,
   ...documentation.map(path => `docs/${path}`)];
 assert.equal(new Set(routes).size, routes.length);
 // Pages serves real directories on direct navigation, including legacy URLs.
