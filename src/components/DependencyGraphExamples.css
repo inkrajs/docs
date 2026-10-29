@@ -1,0 +1,31 @@
+.dependency-graph-examples { display: grid; gap: var(--inkra-space-5); min-inline-size: 0; }
+.dependency-graph-examples .inkra-dependency-graph { inline-size: 100%; block-size: 30rem; }
+.dependency-graph-examples .preview-stage > .inkra-dependency-graph { min-inline-size: 0; }
+.dependency-graph-examples__frame { inline-size: 100%; min-inline-size: 0; }
+.dependency-graph-examples__tools { display: flex; align-items: end; flex-wrap: wrap; gap: 16px; margin-block-end: 16px; }
+.dependency-graph-examples__custom { display: flex; align-items: center; justify-content: space-between; gap: 12px; inline-size: 100%; }
+.dependency-graph-examples__custom > :first-child { min-inline-size: 0; }
+.dependency-graph-examples__diagnostics { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+.dependency-graph-examples__flip.inkra-flip,
+.dependency-graph-examples__flip > .inkra-flip__scene,
+.dependency-graph-examples__flip .inkra-flip__face { inline-size: 100%; block-size: 100%; }
+.dependency-graph-examples__skill-face { block-size: 100%; box-sizing: border-box; padding: 12px; display: grid; grid-template-rows: 44px 1fr 44px; gap: 8px; }
+.dependency-graph-examples__skill-face > header { display: flex; align-items: center; justify-content: space-between; gap: 4px; min-inline-size: 0; }
+.dependency-graph-examples__skill-face > header > .inkra-pencil-text { font-weight: 600; }
+.dependency-graph-examples__skill-face > .inkra-pencil-text { font-size: var(--inkra-text-sm); align-self: center; }
+.dependency-graph-examples__skill-face > footer { justify-self: start; align-self: end; }
+.dependency-graph-examples__skill-title { min-inline-size: 0; padding-inline: 4px; }
+.dependency-graph-examples__synthesis .inkra-dependency-graph { block-size: 42rem; }
+.dependency-graph-examples__ingredient { position: relative; box-sizing: border-box; inline-size: 100%; block-size: 100%; margin: 0; padding: 0; border: 0; background: none; font: inherit; color: var(--inkra-ink); display: grid; grid-template-rows: 128px 24px 20px; justify-items: center; align-items: center; cursor: pointer; pointer-events: auto; }
+.dependency-graph-examples__ingredient > img { display: block; inline-size: 128px; block-size: 128px; object-fit: contain; user-select: none; }
+.dependency-graph-examples__ingredient > .inkra-pencil-text { max-inline-size: 100%; }
+.dependency-graph-examples__ingredient[data-selected] > .inkra-pencil-text { color: var(--inkra-accent-strong); font-weight: 600; }
+.dependency-graph-examples__ingredient-quantity { font-size: var(--inkra-text-sm); color: var(--inkra-ink-muted); }
+.dependency-graph-examples__ingredient:focus-visible { outline: 0; }
+.dependency-graph-examples__ingredient-focus { position: absolute !important; inset: 1px; pointer-events: none; opacity: 0; --inkra-accent-strong: var(--inkra-focus); }
+.dependency-graph-examples__ingredient:focus-visible > .dependency-graph-examples__ingredient-focus { opacity: 1; }
+@media (forced-colors: active) {
+  .dependency-graph-examples__ingredient:focus-visible { outline: var(--inkra-focus-width) solid Highlight; outline-offset: 2px; }
+  .dependency-graph-examples__ingredient-focus { display: none !important; }
+}
+@media (max-width: 48rem) { .dependency-graph-examples .inkra-dependency-graph { block-size: 26rem; } }

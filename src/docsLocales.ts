@@ -10,6 +10,8 @@ export function resolveDocsLocale(value: unknown): DocsLocale {
 
 // Chinese source keys stay stable. Untranslated reference prose falls back to English.
 export const docsMessages: Record<string, readonly [string, string, string, string]> = {
+  '节点保留原生按钮与键盘操作，选中状态和业务状态用文字说明。Tab 移动焦点，Enter 或 Space 选择；缩放和适应视图有具名控件。前置条件由业务数据决定，锁定节点仍可查看详情，disabled 节点不可激活。': ['Nodes retain native button and keyboard behavior. Selection and business status are described in text. Tab moves focus; Enter or Space selects. Zoom and fit controls have names. Prerequisites come from application data; locked nodes remain inspectable, while disabled nodes cannot activate.', 'ノードはボタンとキーボード操作に対応します。Tab で移動し、Enter または Space で選択できます。状態を文字で示し、ズーム操作にも名前を付けます。前提条件はアプリ側で管理し、ロック中も詳細を確認できます。disabled のノードは操作できません。', '노드는 기본 버튼과 키보드 동작을 유지합니다. Tab으로 이동하고 Enter 또는 Space로 선택합니다. 상태와 확대/축소 동작에는 이름이 있습니다. 선행 조건은 앱이 관리하며 잠긴 노드도 확인할 수 있지만 disabled 노드는 활성화할 수 없습니다.', 'Les nœuds conservent les interactions clavier des boutons. Tab déplace le focus, Entrée ou Espace sélectionne. Les états et les commandes de zoom sont nommés. Les prérequis viennent des données de l’application ; un nœud verrouillé reste consultable, un nœud disabled ne peut pas être activé.'],
+
   '文档页导航': ['Documentation pages', 'ドキュメントのページ移動', '문서 페이지 탐색', 'Navigation des pages de documentation'],
   '上一页': ['Previous page', '前のページ', '이전 페이지', 'Page précédente'],
   '下一页': ['Next page', '次のページ', '다음 페이지', 'Page suivante'],

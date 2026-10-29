@@ -52,6 +52,7 @@ import { ImageCropperExamples } from './ImageCropperExamples';
 import { ImageViewerExamples } from './ImageViewerExamples';
 import { KeypadExamples } from './KeypadExamples';
 import { NodeGraphExamples } from './NodeGraphExamples';
+import { DependencyGraphExamples } from './DependencyGraphExamples';
 import { OverflowListExamples } from './OverflowListExamples';
 import { PanZoomExamples } from './PanZoomExamples';
 import { RadarExamples } from './RadarExamples';
@@ -101,6 +102,7 @@ const independentExamples: Partial<Record<FoundationComponent, ComponentType>> =
   markdown: MarkdownExamples,
   keypad: KeypadExamples,
   'node-graph': NodeGraphExamples,
+  'dependency-graph': DependencyGraphExamples,
   'overflow-list': OverflowListExamples,
   'pan-zoom': PanZoomExamples,
   radar: RadarExamples,
@@ -568,6 +570,7 @@ const additionalGuidance: Partial<Record<FoundationComponent, string>> = {
   'image-viewer': '全屏查看器保留隐藏标题、焦点管理、Escape 关闭和焦点返回，不显示顶部标题栏。图片提供替代文本；视频控制与缩略图有名称，切换资源或关闭时停止播放。加载失败与空列表保留关闭入口。',
   guide: '打开后焦点进入引导面板；Tab 遍历操作，左右方向键切换步骤，Escape 按配置关闭。关闭、跳过与完成后焦点返回触发器或打开前的焦点；目标缺失时面板仍可操作且不绘制错误高亮。',
   keypad: '每个按键都是原生按钮并有稳定名称；输入、删除与确认提供可读反馈。列跨度仅影响布局，不改变按键顺序。',
+  'dependency-graph': '节点保留原生按钮与键盘操作，选中状态和业务状态用文字说明。Tab 移动焦点，Enter 或 Space 选择；缩放和适应视图有具名控件。前置条件由业务数据决定，锁定节点仍可查看详情，disabled 节点不可激活。',
   'node-graph': '节点与边保留可读名称和键盘可达操作；画布手势不是唯一入口。缩放、适配与连接状态通过有名称控件提供。',
   'overflow-list': '被收纳项目仍通过菜单可达；测量副本对读屏和焦点隐藏。当前焦点项目被收纳时，焦点转移到更多菜单。',
   'pan-zoom': '可聚焦视口提供方向键平移、加减号缩放和 0 复位；按钮、链接和表单控件不触发拖动。普通滚轮默认留给页面。',
@@ -597,6 +600,7 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
     : getFoundationApiGroups(component, apiRows[component] ?? []);
   return <article className="documentation">
     <PageHeading title={foundationNames[component]} />
+    {component === 'dependency-graph' && <PencilText as="p" role="note">{t('DependencyGraph 当前来自固定源码提交的候选包；公开 npm 0.11.0 尚未包含此组件。', 'DependencyGraph currently comes from a pinned source candidate; the published npm 0.11.0 package does not include it yet.')}</PencilText>}
     <ComponentPageTabs name={foundationNames[component]} id={component} value={activeTab} onChange={onTabChange} />
     <PencilLine className="section-divider" />
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>

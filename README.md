@@ -2,6 +2,8 @@
 
 [中文](README.zh-CN.md)
 
+DependencyGraph is currently an unpublished library candidate pinned to an exact source commit. Its examples use the prepared archive; the published 0.11.0 package does not contain this component yet.
+
 Browser shards are balanced using recorded timings in `scripts/browser-timings.mjs`
 (release run 40398411054). The longest checks start first, with the existing two
 workers per shard. Timings affect scheduling only: new checks receive a default
@@ -20,7 +22,7 @@ duration is 420ms; ordinary changes use place-aligned rolling, and the existing
 count and roll modes remain available. Log's latest-record action is now a compact
 floating icon button instead of a full-width footer.
 
-All 87 component pages start with basic usage and progress through common options,
+Component pages start with basic usage and progress through common options,
 composition, custom rendering and boundary cases. CI supports explicit local-test
 confirmations from configured maintainers, bound to the exact commit, candidate,
 test group and environment; required package/build and coverage gates remain.
@@ -50,16 +52,16 @@ The InfiniteScroll examples compose actual Loading and Masonry components.
 Each new component has an installed-package browser check registered in the
 shared suite. Mobile gesture checks use Chromium touch input, not real devices.
 
-This checkout consumes the published `@inkra/react@0.11.0` package from npm.
-`library-candidate.json` pins the released source commit, SHA-256 and SHA-512
-integrity. Build verifies the public archive, lockfile and installed package
-without a source alias. A sibling library checkout and vendor archive are not
-needed for this registry release.
+This checkout uses a prepared library candidate pinned to the DependencyGraph source commit.
+`library-candidate.json` records the candidate source revision and archive hashes;
+The full `revision` identifies the source rebuilt by CI and website deployment.
+Build verifies the archive, lockfile and installed package without a source alias.
+The registry version 0.11.0 remains the last published baseline.
 Documentation changes do not publish npm packages or deploy the website.
 
 ## Local Development
 
-Install the exact registry dependencies, then build and preview:
+Prepare the local candidate using the candidate procedure below, then build and preview:
 
 ```sh
 npm ci

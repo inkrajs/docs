@@ -51,6 +51,7 @@ export const componentIntroductions: Record<string, { zh: string; en: string }> 
   ImageCropper: { zh: '把重点留下，边边角角先放下。', en: 'Keep the subject. Let the edges go.' },
   ImageViewer: { zh: '放大看看，细节不该靠猜。', en: 'Zoom in. Details should not be a guessing game.' },
   Keypad: { zh: '按键自己排，输入规则你来定。', en: 'Your keys, your layout, your input rules.' },
+  DependencyGraph: { zh: '先点亮基础，再看下一步能到哪里。', en: 'Start with the foundations. See what becomes possible next.' },
   NodeGraph: { zh: '点和线一多，关系终于看得见。', en: 'Enough nodes and edges, and the relationships become visible.' },
   OverflowList: { zh: '放不下的先收好，不是直接消失。', en: 'What does not fit gets tucked away, not erased.' },
   PanZoom: { zh: '画布太大？拖一拖，缩一缩。', en: 'Canvas too big? Pan a little. Zoom a little.' },
