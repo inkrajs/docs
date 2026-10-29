@@ -69,6 +69,15 @@ test('unknown, candidate, lockfile, config and missing base changes fall back to
   assert(missing.reasons.some(item => item.code === 'missing-base'));
 });
 
+test('candidate metadata imports resolve while metadata changes retain full coverage', async () => {
+  const unchanged = await changed({ status: 'M', path: 'README.md' });
+  assert.equal(unchanged.mode, 'incremental');
+  assert(!unchanged.reasons.some(item => item.code === 'unresolved-local-import'));
+  const candidate = await changed({ status: 'M', path: 'library-candidate.json' });
+  assert.equal(candidate.mode, 'full');
+  assert(candidate.reasons.some(item => item.code === 'full-impact-path'));
+});
+
 test('non-PR runs remain full and known documentation-only changes produce a trusted empty plan', async () => {
   const main = await createBrowserSelectionPlan({ suite, eventName: 'push', testedRevision: revision });
   assert.equal(main.mode, 'full');

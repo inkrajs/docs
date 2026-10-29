@@ -45,7 +45,9 @@ export function parseGitNameStatusZ(output) {
 }
 
 async function listRepositoryFiles(root, directories = ['scripts', 'src']) {
-  const files = [];
+  // Foundation pages render candidate source mode. Resolve that real root
+  // dependency instead of treating every PR as an unknown-import full fallback.
+  const files = (await readdir(root)).filter(path => path === 'library-candidate.json');
   async function visit(path) {
     for (const entry of await readdir(join(root, path), { withFileTypes: true })) {
       const next = posix.join(path, entry.name);

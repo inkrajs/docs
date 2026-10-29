@@ -165,7 +165,7 @@ test('CLI writes a resealed trusted plan, dynamic job outputs and an explicit lo
   t.after(() => rm(root, { recursive: true, force: true }));
   await mkdir(join(root, 'scripts'));
   await mkdir(join(root, '.github'));
-  for (const file of ['browser-local-validation.mjs', 'browser-plan.mjs', 'browser-checks.mjs']) {
+  for (const file of ['browser-local-validation.mjs', 'browser-plan.mjs', 'browser-checks.mjs', 'browser-reuse.mjs', 'browser-impact-registry.mjs']) {
     await copyFile(new URL(`../${file}`, import.meta.url), join(root, 'scripts', file));
   }
   await writeFile(join(root, '.github/local-validation-policy.json'), JSON.stringify({ browser_groups: allowedGroups }));
