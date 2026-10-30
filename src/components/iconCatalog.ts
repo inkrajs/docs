@@ -614,7 +614,7 @@ export const docsIconCatalog = [
 
 export function navigationIcon(label: string) {
   const aliases: Record<string, string> = {
-    '国际化': '语言', '主题定制': '设计规范',
+    '国际化': '语言', '主题定制': '设计规范', '博客': '使用指南', '生态': '网络节点',
     Breadcrumb: '下一项', Calendar: '日历', DayAgenda: '日程', JourneyMap: '地图',
     Stack: '组件', Flex: 'Tabs', Grid: 'Table', Container: 'Card', Layout: 'Tabs', '布局': 'Tabs',
     InventoryGrid: '背包',

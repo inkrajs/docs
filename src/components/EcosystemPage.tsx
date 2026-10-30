@@ -1,16 +1,16 @@
-import { ButtonLink, Empty, PencilLine } from '@inkra/react';
-import { PencilText, useLocale } from '../i18n';
+import { ButtonLink, Empty } from '@inkra/react';
+import { useLocale } from '../i18n';
+import { PageHeading } from './PageHeading';
 import './EcosystemPage.css';
 
 export function EcosystemPage() {
   const { t } = useLocale();
 
-  return <main id="main-content" className="ecosystem-page" aria-labelledby="ecosystem-page-title">
-    <header className="ecosystem-page__heading">
-      <PencilText as="h1" id="ecosystem-page-title">{t('生态', 'Ecosystem')}</PencilText>
-      <PencilText as="p">{t('用 Inkra 做出的作品，以及可以带走的模板与资源。', 'Things made with Inkra, and templates and resources to make your own.')}</PencilText>
-      <PencilLine seed="ecosystem-heading" />
-    </header>
+  return <main id="main-content" className="ecosystem-page site-page" aria-labelledby="ecosystem-page-title">
+    <PageHeading title="生态" titleId="ecosystem-page-title" showActions={false} description={{
+      zh: '用 Inkra 做出的作品，以及可以带走的模板与资源。',
+      en: 'Things made with Inkra, and templates and resources to make your own.',
+    }} />
 
     <Empty.Root size="lg" className="ecosystem-page__empty" aria-labelledby="ecosystem-empty-title">
       <Empty.Icon illustration="folder" />

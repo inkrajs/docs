@@ -4,6 +4,7 @@ import { __iconData as arrowLeftIcon } from 'lucide-react/dist/esm/icons/arrow-l
 import { __iconData as arrowRightIcon } from 'lucide-react/dist/esm/icons/arrow-right.mjs';
 import { PencilText, useLocale } from '../i18n';
 import { DocsIcon } from './DocsIcon';
+import { PageHeading } from './PageHeading';
 import './BlogPage.css';
 
 export const originBlogPath = '/blog/from-travel-journal-to-inkra' as const;
@@ -41,12 +42,11 @@ export function BlogPage({ article = false, onNavigate }: BlogPageProps) {
     'How pencil strokes and lettering from a travel planning website grew into a reusable component library.',
   );
 
-  if (!article) return <main id="main-content" className="blog-page blog-index">
-    <header className="blog-heading">
-      <PencilText as="h1">{text('博客', 'Blog')}</PencilText>
-      <PencilText as="p">{text('记下 Inkra 的来处，和一路做东西的过程。', 'Notes on where Inkra began, and the things we make along the way.')}</PencilText>
-    </header>
-    <PencilLine className="blog-rule" seed="blog-index-heading" />
+  if (!article) return <main id="main-content" className="blog-page blog-index site-page" aria-labelledby="blog-page-title">
+    <PageHeading title="博客" titleId="blog-page-title" showActions={false} description={{
+      zh: '记下 Inkra 的来处，和一路做东西的过程。',
+      en: 'Notes on where Inkra began, and the things we make along the way.',
+    }} />
     <ol className="blog-entries" aria-label={text('博客文章', 'Blog posts')}>
       <li>
         <article className="blog-entry">
