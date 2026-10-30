@@ -13,7 +13,12 @@ import { componentIntroductions } from './componentIntroductions';
 import { pageMarkdown } from './pageMarkdown';
 import { assistantServices, assistantUrl } from './assistantLinks';
 
-export function PageHeading({ title, description }: { title: string; description?: string | { zh: string; en: string } }) {
+export function PageHeading({ title, description, showActions = true, titleId }: {
+  title: string;
+  description?: string | { zh: string; en: string };
+  showActions?: boolean;
+  titleId?: string;
+}) {
   const { locale, t } = useLocale();
   const en = locale !== 'zh-CN';
   const header = useRef<HTMLElement>(null);
@@ -59,9 +64,9 @@ export function PageHeading({ title, description }: { title: string; description
     <div className="page-heading__row">
       <div className="page-heading__title">
         <DocsIcon data={navigationIcon(title)} size={32} />
-        <PencilText as="h1" seed={`${title}-title`}>{title}</PencilText>
+        <PencilText as="h1" id={titleId} seed={`${title}-title`}>{title}</PencilText>
       </div>
-      <ButtonGroup className="page-heading__actions" aria-label={t("页面操作", "Page actions")} variant="outline">
+      {showActions && <ButtonGroup className="page-heading__actions" aria-label={t("页面操作", "Page actions")} variant="outline">
         <Button startIcon={<DocsIcon data={copyIcon} />} onClick={() => void copy(content())}>{t("复制页面", "Copy page")}</Button>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild><Button ref={menu} size="icon" aria-label={t("更多页面操作", "More page actions")} title={t("更多页面操作", "More page actions")}><DocsIcon data={chevronDownIcon} size={26} /></Button></DropdownMenu.Trigger>
@@ -75,18 +80,18 @@ export function PageHeading({ title, description }: { title: string; description
             <DropdownMenu.Item icon={<DocsIcon data={linkIcon} />} onSelect={() => void copy(window.location.href)}>{t("复制页面链接", "Copy page link")}</DropdownMenu.Item>
           </DropdownMenu.Content></DropdownMenu.Portal>
         </DropdownMenu.Root>
-      </ButtonGroup>
+      </ButtonGroup>}
     </div>
     {intro && <PencilText as="p" seed={`${title}-description`}>{intro}</PencilText>}
-    <span className="page-heading__status" role="status">{status}</span>
+    {showActions && <span className="page-heading__status" role="status">{status}</span>}
     <PencilLine className="page-heading__divider" seed={`${title}-divider`} />
-    <Overlay.Root open={markdown !== null} onOpenChange={open => { if (!open) setMarkdown(null); }}>
+    {showActions && <Overlay.Root open={markdown !== null} onOpenChange={open => { if (!open) setMarkdown(null); }}>
       <Overlay.Portal><Overlay.Backdrop /><Overlay.Content layout="sections" aria-describedby={undefined}
         onCloseAutoFocus={event => { event.preventDefault(); menu.current?.focus(); }}>
         <Overlay.Header closeLabel={t("关闭", "Close")}><Overlay.Title>{`${title} · Markdown`}</Overlay.Title></Overlay.Header>
         <Overlay.Body><pre className="page-markdown">{markdown}</pre></Overlay.Body>
         <Overlay.Footer><Button startIcon={<DocsIcon data={copyIcon} />} onClick={() => void copy(markdown ?? '')}>{t("复制", "Copy")}</Button></Overlay.Footer>
       </Overlay.Content></Overlay.Portal>
-    </Overlay.Root>
+    </Overlay.Root>}
   </header>;
 }
