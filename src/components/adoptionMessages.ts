@@ -1,0 +1,86 @@
+import type { DocsLocale } from '../docsLocales';
+
+type AdoptionCopy = {
+  everyday: string; example: string; skills: string; entry: string; install: string;
+  scope: string; archives: string; directories: string; persistence: string;
+  versions: string; versionNote: string; package: string; styles: string;
+  firstComponent: string; fontNote: string;
+};
+
+export const adoptionMessages: Record<DocsLocale, AdoptionCopy> = {
+  'zh-CN': {
+    everyday: '直接描述你想做的事',
+    example: '给这个 React 项目做一个任务面板，包含任务列表、完成进度和领取奖励。沿用现有主题，手机上改为单列，操作要真实更新状态。',
+    skills: '三个独立的 skill',
+    entry: '统一入口。根据当前任务发现并组合组件文档与设计指引，用户不需要先选组件或记住其他 skill 的名字。',
+    install: '需要手动管理时',
+    scope: '默认仅安装到当前项目，CLI 会识别或提示选择 Agent。可用 --agent codex 或 --agent claude-code 明确指定。希望跨项目使用时才添加 -g；无需安装 Inkra 专用 CLI。',
+    archives: '也可以用独立 ZIP',
+    directories: '项目级原生位置：Codex 使用 .agents/skills/inkra，Claude Code 使用 .claude/skills/inkra；CLI 可能通过共享目录和链接组织它们。只配置当前工具，其他 Agent 按其官方说明选择支持的位置。更新前保留本地自定义。',
+    persistence: '直接读取线上说明可服务当前对话，但不代表已安装、也不保证后续自动发现。安装后按工具支持的方式重新发现；不必强制重开对话，当前 Agent 可以先读取文件继续。',
+    versions: '以项目实际版本为准',
+    versionNote: '项目安装的组件库版本、npm 最新发布版本、文档站展示版本分别核对。skill 用于提供指引，不会自动安装整套 skill 或升级已有组件库；新 API 是否可用，以实际包的导出与类型为准。',
+    package: '安装组件库', styles: '导入样式', firstComponent: '放一个按钮',
+    fontNote: 'styles.css 已包含默认字体与设计变量，在应用入口导入一次即可。保留已有项目结构和主题；需要调整时再查看主题定制。',
+  },
+  en: {
+    everyday: 'Describe the outcome you want',
+    example: 'Build a task panel in this React project with a task list, completion progress and reward collection. Preserve the existing theme, use one column on phones, and connect actions to real state updates.',
+    skills: 'Three independent skills',
+    entry: 'The single entry point. It discovers and combines component documentation and design guidance for the task, without asking you to choose components or remember other skill names.',
+    install: 'When you want to manage installation',
+    scope: 'Installation is project-scoped by default. The CLI detects your agent or asks you to select one. Specify --agent codex or --agent claude-code when needed. Add -g only for use across projects; no Inkra-specific CLI is required.',
+    archives: 'Independent ZIP downloads',
+    directories: 'Native project locations: .agents/skills/inkra for Codex and .claude/skills/inkra for Claude Code. The CLI may organize these through a shared directory and links. Configure only your current tool; follow official guidance for other agents. Preserve local customizations before updating.',
+    persistence: 'Reading online instructions serves the current conversation; it is not installation or proof of future discovery. Use your tool’s supported reload mechanism after installation. A new conversation is not mandatory: the current agent can read the files and continue.',
+    versions: 'Use the version installed in your project',
+    versionNote: 'Check the installed package, latest npm release and documentation snapshot separately. Skills provide guidance without installing the entire collection or upgrading your library. Confirm new APIs against the actual package exports and types.',
+    package: 'Install the library', styles: 'Import the stylesheet', firstComponent: 'Add a button',
+    fontNote: 'styles.css includes the default fonts and design tokens. Import it once at the application entry. Preserve the existing structure and theme; consult theme customization when changes are needed.',
+  },
+  ja: {
+    everyday: '作りたいものをそのまま伝える',
+    example: 'この React プロジェクトに、タスク一覧・完了状況・報酬の受け取りを備えたパネルを作ってください。既存のテーマを保ち、スマートフォンでは 1 列にし、操作で状態を実際に更新してください。',
+    skills: '独立した 3 つの skill',
+    entry: '統一された入口です。依頼に応じてコンポーネント文書とデザイン指針を組み合わせます。部品の選択や他の skill 名を覚える必要はありません。',
+    install: '手動で管理する場合',
+    scope: '標準では現在のプロジェクトだけに導入し、CLI が Agent を検出または選択を案内します。必要なら --agent codex または --agent claude-code を指定できます。プロジェクト間で使う場合だけ -g を追加します。Inkra 専用 CLI は不要です。',
+    archives: '独立した ZIP も利用可能',
+    directories: 'プロジェクト用の場所は Codex が .agents/skills/inkra、Claude Code が .claude/skills/inkra です。CLI が共有ディレクトリとリンクで構成する場合もあります。現在のツールだけを設定し、他の Agent は公式の手順に従います。更新前にローカルの変更を保全してください。',
+    persistence: 'オンライン文書の参照は現在の会話に役立ちますが、インストールや次回の自動検出を意味しません。導入後はツール対応の再読み込みを使えます。新しい会話は必須ではなく、現在の Agent がファイルを読んで続行できます。',
+    versions: 'プロジェクトの導入済みバージョンを使う',
+    versionNote: '導入済みパッケージ、npm の最新公開版、文書の対象版を区別します。skill は一式の導入やライブラリーの更新を自動実行しません。新 API は実際の公開エクスポートと型で確認します。',
+    package: 'ライブラリーをインストール', styles: 'スタイルを読み込む', firstComponent: 'ボタンを置く',
+    fontNote: 'styles.css に標準フォントとデザイン変数が含まれます。アプリの入口で一度読み込んでください。既存の構成とテーマを保ち、変更が必要なときにテーマ設定を参照します。',
+  },
+  ko: {
+    everyday: '원하는 결과를 설명하세요',
+    example: '이 React 프로젝트에 작업 목록, 완료 진행률, 보상 받기가 있는 패널을 만들어 주세요. 기존 테마를 유지하고 휴대폰에서는 한 열로 배치하며 동작이 실제 상태를 바꾸도록 해 주세요.',
+    skills: '독립적인 세 가지 skill',
+    entry: '하나의 진입점입니다. 작업에 필요한 컴포넌트 문서와 디자인 지침을 찾아 조합합니다. 컴포넌트를 미리 선택하거나 다른 skill 이름을 외울 필요가 없습니다.',
+    install: '직접 설치를 관리하려면',
+    scope: '기본 설치 범위는 현재 프로젝트이며 CLI가 Agent를 찾거나 선택을 안내합니다. 필요하면 --agent codex 또는 --agent claude-code로 지정하세요. 여러 프로젝트에서 사용할 때만 -g를 추가하면 됩니다. Inkra 전용 CLI는 필요하지 않습니다.',
+    archives: '개별 ZIP으로 설치하기',
+    directories: '프로젝트 경로는 Codex의 .agents/skills/inkra와 Claude Code의 .claude/skills/inkra입니다. CLI가 공유 디렉터리와 링크로 구성할 수도 있습니다. 현재 도구만 설정하고 다른 Agent는 공식 안내를 따르세요. 업데이트 전 로컬 사용자 설정을 보존하세요.',
+    persistence: '온라인 안내를 읽는 것은 현재 대화에만 적용되며 설치나 향후 자동 검색을 보장하지 않습니다. 설치 후 도구가 지원하는 새로 고침을 사용하세요. 새 대화가 필수는 아니며 현재 Agent가 파일을 읽고 계속할 수 있습니다.',
+    versions: '프로젝트에 설치된 버전 기준',
+    versionNote: '설치된 패키지, npm 최신 배포, 문서 사이트의 버전을 따로 확인합니다. skill은 전체 skill 설치나 라이브러리 업그레이드를 자동 수행하지 않습니다. 새 API는 실제 패키지의 내보내기와 타입으로 확인하세요.',
+    package: '라이브러리 설치', styles: '스타일 불러오기', firstComponent: '버튼 추가',
+    fontNote: 'styles.css에는 기본 글꼴과 디자인 토큰이 포함됩니다. 앱 진입점에서 한 번 불러오세요. 기존 구조와 테마를 유지하고 변경이 필요할 때 테마 사용자 지정을 참고하세요.',
+  },
+  fr: {
+    everyday: 'Décrivez le résultat souhaité',
+    example: 'Crée un panneau de tâches dans ce projet React avec une liste, la progression et la récupération des récompenses. Conserve le thème, utilise une colonne sur téléphone et relie les actions aux changements d’état réels.',
+    skills: 'Trois skills indépendants',
+    entry: 'Le point d’entrée unique. Il trouve et combine la documentation des composants et les conseils de conception utiles, sans vous demander de choisir les composants ou de retenir d’autres noms de skills.',
+    install: 'Pour gérer l’installation vous-même',
+    scope: 'L’installation concerne le projet courant par défaut. Le CLI détecte l’Agent ou propose de le choisir. Utilisez --agent codex ou --agent claude-code pour le préciser. Ajoutez -g uniquement pour plusieurs projets ; aucun CLI propre à Inkra n’est nécessaire.',
+    archives: 'Archives ZIP indépendantes',
+    directories: 'Emplacements du projet : .agents/skills/inkra pour Codex et .claude/skills/inkra pour Claude Code. Le CLI peut utiliser un répertoire partagé et des liens. Configurez uniquement votre outil actuel ; consultez les instructions officielles des autres Agents. Préservez vos modifications avant une mise à jour.',
+    persistence: 'Lire les instructions en ligne sert à la conversation actuelle ; cela ne constitue pas une installation ni une garantie de détection future. Utilisez le rechargement pris en charge par votre outil après installation. Une nouvelle conversation n’est pas obligatoire : l’Agent peut lire les fichiers et continuer.',
+    versions: 'Respecter la version du projet',
+    versionNote: 'Vérifiez séparément le paquet installé, la dernière publication npm et la version documentée. Les skills ne déclenchent ni l’installation de toute la collection ni la mise à jour de la bibliothèque. Confirmez les nouvelles API dans les exports et les types du paquet réel.',
+    package: 'Installer la bibliothèque', styles: 'Importer les styles', firstComponent: 'Ajouter un bouton',
+    fontNote: 'styles.css inclut les polices et les variables de conception par défaut. Importez-le une seule fois à l’entrée de l’application. Conservez la structure et le thème existants ; consultez la personnalisation du thème pour les modifier.',
+  },
+};

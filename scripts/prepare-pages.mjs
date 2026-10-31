@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { foundationComponents } from '../src/componentRoutes.ts';
 import { pageTitle } from '../src/pageTitle.ts';
+import { generateAgentDocs } from './generate-agent-docs.mjs';
 
 const dist = new URL('../dist/', import.meta.url);
 const html = await readFile(new URL('index.html', dist), 'utf8');
-const documentation = ['getting-started', 'internationalization', 'theming', 'design-standard', 'usage-guide',
+const documentation = ['getting-started', 'ai-guide', 'installation', 'internationalization', 'theming', 'design-standard', 'usage-guide',
   ...['button', ...foundationComponents].map(name => `components/${name}`)];
 const routes = ['blog', 'blog/from-travel-journal-to-inkra', 'ecosystem', 'docs', ...documentation,
   ...documentation.map(path => `docs/${path}`)];
@@ -34,3 +35,6 @@ for (const [source, destination] of [
   await copyFile(new URL('../' + source, import.meta.url), new URL(destination, notices));
 }
 console.log(`Prepared ${routes.length} direct-entry routes for GitHub Pages.`);
+
+const agentDocs = await generateAgentDocs();
+console.log(`Prepared ${agentDocs.catalog.components.length} component documents and ${agentDocs.declarationCount} declaration files for agents.`);

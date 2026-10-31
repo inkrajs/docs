@@ -63,6 +63,33 @@ CI and website deployment install that registry version and verify the archive,
 lockfile and installed package without a source alias.
 Documentation changes do not publish npm packages or deploy the website.
 
+## Agent documentation and skills
+
+The human quick start copies a request pointing to `/start.md`. This curated
+agent entry detects the runtime and consumer workspace, reuses existing setup,
+and chooses project-local native discovery or reference-reading mode before
+continuing application integration. Keep installer commands in advanced details.
+Local previews copy their own explicit origin; public README requests use the
+production URL, which becomes available when these docs are deployed.
+
+The build generates `llms.txt`, a versioned component directory and per-component
+Markdown/type references under `ai/` from the current documentation sources and
+installed public package. These describe the package documented by this build;
+compare it with the consumer's installed version before coding.
+
+Skill sources live independently in `inkrajs/inkra/skills`. After an authorized
+skill change, explicitly prepare their public copies and individual downloads:
+
+```sh
+npm run prepare:skills -- /path/to/inkra/skills
+```
+
+This preparation uses Node.js and Python 3 and records content digests in
+`public/skills/manifest.json`. Commit those prepared assets with the docs change.
+Normal builds validate these checked-in assets and do not read a sibling checkout
+or download unpinned skill content. Consumers install only the entry skill if
+preferred; related skills remain independently available and discoverable.
+
 ## Local Development
 
 Install the pinned registry dependency, then build and preview:
