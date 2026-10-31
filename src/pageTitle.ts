@@ -5,6 +5,8 @@ const pageNames: Record<string, string> = {
   '/blog/from-travel-journal-to-inkra': '从旅行手账，到 Inkra',
   '/ecosystem': '生态',
   '/getting-started': '快速开始',
+  '/ai-guide': '与 AI 一起开发',
+  '/installation': '手动接入',
   '/internationalization': '国际化',
   '/theming': '主题定制',
   '/design-standard': '设计规范',

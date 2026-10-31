@@ -54,6 +54,8 @@ const navGroups: NavGroup[] = [
     label: '开始',
     items: [
       { path: '/getting-started', label: '快速开始', description: '安装、样式与基础用法' },
+      { path: '/ai-guide', label: '与 AI 一起开发', description: '用自然语言接入、组合与设计' },
+      { path: '/installation', label: '手动接入', description: '安装组件库、导入样式并开始使用' },
       { path: '/internationalization', label: '国际化', description: '语言与自定义字典' },
       { path: '/theming', label: '主题定制', description: '主题模式、局部变量与笔触' },
     ],
@@ -161,7 +163,7 @@ function validPath(pathname: string): RoutePath {
   if (pathname === '/' || pathname === '/blog' || pathname === originBlogPath || pathname === '/ecosystem') return pathname;
   pathname = pathname.replace(/^\/docs(?=\/|$)/, '') || '/getting-started';
   if (foundationComponents.some(name => pathname === `/components/${name}`)) return pathname as RoutePath;
-  if (pathname === '/components/button' || pathname === '/design-standard' || pathname === '/usage-guide' || pathname === '/internationalization' || pathname === '/theming') return pathname;
+  if (pathname === '/components/button' || pathname === '/design-standard' || pathname === '/usage-guide' || pathname === '/internationalization' || pathname === '/theming' || pathname === '/ai-guide' || pathname === '/installation') return pathname;
   return '/getting-started';
 }
 

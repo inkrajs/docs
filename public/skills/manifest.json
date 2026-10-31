@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "prepare-skills",
+  "sourceRepository": "inkrajs/inkra",
+  "sourceRevision": null,
+  "sourceTreeSha256": "a4e4d0269c20e175fbfcbcf61785978899872fc447f9b357d394458ce27e19d6",
+  "files": [
+    {
+      "path": "inkra/LICENSE",
+      "bytes": 1075,
+      "sha256": "f32ae4c39f96b6bc41bc01201a101dccc74c2b723a8a30cfa39d494a3cbdcd05"
+    },
+    {
+      "path": "inkra/README.md",
+      "bytes": 3300,
+      "sha256": "23471912207eb919866f8a41e4c29c36bfc31c2d0d1c6657fbd5428a01d179ba"
+    },
+    {
+      "path": "inkra/SKILL.md",
+      "bytes": 4058,
+      "sha256": "1f01193b670129c5b086cc3d97a6451ed026e4b245acbd1fe692835a0d910f11"
+    },
+    {
+      "path": "inkra/agents/openai.yaml",
+      "bytes": 203,
+      "sha256": "2fad3c3461c7393eb45fcdcb41654d063f24f778438802ce479de891db588ad0"
+    },
+    {
+      "path": "inkra-design/LICENSE",
+      "bytes": 1075,
+      "sha256": "f32ae4c39f96b6bc41bc01201a101dccc74c2b723a8a30cfa39d494a3cbdcd05"
+    },
+    {
+      "path": "inkra-design/README.md",
+      "bytes": 3789,
+      "sha256": "697c2dc5e2ce27a7ea89b1dff61247486ab3a783c8410d932cedeaf7462ad66b"
+    },
+    {
+      "path": "inkra-design/SKILL.md",
+      "bytes": 4588,
+      "sha256": "c8cba01454c79e1e9666be61c20d8739f6cd0fc3af340db3ad39eda16f5001ea"
+    },
+    {
+      "path": "inkra-design/agents/openai.yaml",
+      "bytes": 218,
+      "sha256": "f21d15d35a2e358713b3e033cfcc308c84190bc075e54bffe2a9c1c870360032"
+    },
+    {
+      "path": "inkra-design/references/composition.md",
+      "bytes": 4558,
+      "sha256": "1fefee942eb6ba740102e4ec210e8902ab1c5a6f7751872e809264893ac7e5c6"
+    },
+    {
+      "path": "inkra-design/references/icons.md",
+      "bytes": 5349,
+      "sha256": "cd29848e10586eeb11044a747d7e8b878c56d79fa0fc23e26c101bed2c39427e"
+    },
+    {
+      "path": "inkra-design/references/interfaces.md",
+      "bytes": 8739,
+      "sha256": "0ecb5a25980bf4f822ebca822d3423b3eca8117d09ef444e114abd60c7091573"
+    },
+    {
+      "path": "inkra-design.zip",
+      "bytes": 14598,
+      "sha256": "81b03d81f7febee341a05bf7f69d8d28a70ecebc40115adf39acaa49fb72ed50"
+    },
+    {
+      "path": "inkra-docs/LICENSE",
+      "bytes": 1075,
+      "sha256": "f32ae4c39f96b6bc41bc01201a101dccc74c2b723a8a30cfa39d494a3cbdcd05"
+    },
+    {
+      "path": "inkra-docs/README.md",
+      "bytes": 2327,
+      "sha256": "9dac0c77539088d9be51f1d0a76efb8da080d7899205d219ae65e606fa990168"
+    },
+    {
+      "path": "inkra-docs/SKILL.md",
+      "bytes": 3539,
+      "sha256": "60cc715bc7c723dfa672d3569d5792a19e58af246a4cd1622efe5125dcb6fb62"
+    },
+    {
+      "path": "inkra-docs/agents/openai.yaml",
+      "bytes": 217,
+      "sha256": "e3e068e163439b9cc97b347c39ef01a5f53a117086de21abfd1f11d1c90ea9a4"
+    },
+    {
+      "path": "inkra-docs/references/discovery.md",
+      "bytes": 5826,
+      "sha256": "d6fe07bfebf6b3c376e8ee92be5295fbc8187b04dbee1d7e349628397667b948"
+    },
+    {
+      "path": "inkra-docs.zip",
+      "bytes": 7118,
+      "sha256": "2b2509b31fd9ec574d639dd3543eff737e2425ec7b9dbd8ee1116d2c50ad71cb"
+    },
+    {
+      "path": "inkra.zip",
+      "bytes": 4831,
+      "sha256": "de9fe6a78cb4bddfa6e29726a7eb8340d0e842ed19fa616b1f886a547288b957"
+    },
+    {
+      "path": "registry.json",
+      "bytes": 1217,
+      "sha256": "d6dea336bdf593b5f901bfe7988e85234dd356d68175a70fd240d9342a8a30ca"
+    }
+  ]
+}

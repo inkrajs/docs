@@ -10,16 +10,17 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "node scripts/check-candidate.mjs && tsc --noEmit && vite build && node --experimental-strip-types scripts/prepare-pages.mjs",
+    "build": "node scripts/check-candidate.mjs && node scripts/prepare-skills.mjs --check && tsc --noEmit && vite build && node --experimental-strip-types scripts/prepare-pages.mjs",
     "test:contracts": "node --test scripts/test/*.test.mjs",
     "check:candidate": "node scripts/check-candidate.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
     "test:expansion": "node scripts/browser-expansion.mjs",
     "prepare:library": "node scripts/prepare-library.mjs",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "prepare:skills": "node scripts/prepare-skills.mjs"
   },
   "dependencies": {
-    "@inkra/react": "0.12.0",
+    "@inkra/react": "file:vendor/inkra.tgz",
     "lucide-react": "1.60.0",
     "prismjs": "1.30.0",
     "react": "19.3.1",

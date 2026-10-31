@@ -1,0 +1,5 @@
+.getting-started-skill { margin-block-end: var(--inkra-space-8); }
+
+.getting-started-skill__copy {
+  margin-block: var(--inkra-space-4) var(--inkra-space-5);
+}
