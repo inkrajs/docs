@@ -50,13 +50,14 @@ export function scrollToDocumentAnchor(hash: string): () => void {
     if (!frame && !stopped) frame = window.requestAnimationFrame(scroll);
   };
   observer = new MutationObserver(schedule);
-  observer.observe(document.getElementById('main-content') ?? document.body, {
+  // The route may replace <main> while a lazy chunk is still loading.
+  observer.observe(document.body, {
     childList: true,
     subtree: true,
     attributes: true,
     attributeFilter: ['hidden'],
   });
-  timeout = setTimeout(stop, 8000);
+  timeout = setTimeout(stop, 30000);
   // React commits route/tab updates before the next frame, including cached lazy pages.
   schedule();
   return stop;

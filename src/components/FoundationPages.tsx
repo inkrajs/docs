@@ -14,62 +14,63 @@ import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.m
 import { __iconData as sunIcon } from 'lucide-react/dist/esm/icons/sun.mjs';
 import { __iconData as moonIcon } from 'lucide-react/dist/esm/icons/moon.mjs';
 import { DocsIcon } from './DocsIcon';
-import { SelectExamples } from './SelectExamples';
-import { FormInputExamples } from './InputExamples';
-import { InputNumberExamples } from './InputNumberExamples';
-import { SliderExamples } from './SliderExamples';
-import { SwitchCircularExamples } from './SwitchCircularExamples';
-import { IconExamples } from './IconExamples';
-import { PopoverExamples } from './PopoverExamples';
-import { OverlayExamples } from './OverlayExamples';
-import { GuideExamples } from './GuideExamples';
-import { LoadingExamples } from './LoadingExamples';
-import { InfiniteScrollExamples } from './InfiniteScrollExamples';
-import { MasonryExamples } from './MasonryExamples';
+const SelectExamples = lazy(() => import('./SelectExamples').then(module => ({ default: module.SelectExamples })));
+const FormInputExamples = lazy(() => import('./InputExamples').then(module => ({ default: module.FormInputExamples })));
+const InputNumberExamples = lazy(() => import('./InputNumberExamples').then(module => ({ default: module.InputNumberExamples })));
+const SliderExamples = lazy(() => import('./SliderExamples').then(module => ({ default: module.SliderExamples })));
+const SwitchCircularExamples = lazy(() => import('./SwitchCircularExamples').then(module => ({ default: module.SwitchCircularExamples })));
+const IconExamples = lazy(() => import('./IconExamples').then(module => ({ default: module.IconExamples })));
+const PopoverExamples = lazy(() => import('./PopoverExamples').then(module => ({ default: module.PopoverExamples })));
+const OverlayExamples = lazy(() => import('./OverlayExamples').then(module => ({ default: module.OverlayExamples })));
+const GuideExamples = lazy(() => import('./GuideExamples').then(module => ({ default: module.GuideExamples })));
+const LoadingExamples = lazy(() => import('./LoadingExamples').then(module => ({ default: module.LoadingExamples })));
+const InfiniteScrollExamples = lazy(() => import('./InfiniteScrollExamples').then(module => ({ default: module.InfiniteScrollExamples })));
+const MasonryExamples = lazy(() => import('./MasonryExamples').then(module => ({ default: module.MasonryExamples })));
 import { getLoadingApiGroups } from './loadingApi';
 import { getInfiniteScrollApiGroups } from './infiniteScrollApi';
 import { getMasonryApiGroups } from './masonryApi';
 import { asyncLayoutGuidance } from './asyncLayoutGuidance';
-import { TabsExamples } from './TabsExamples';
-import { MoreExamples } from './MoreExamples';
-import { ContentExamples } from './ContentExamples';
-import { BreadcrumbExamples } from './BreadcrumbExamples';
-import { SlotExamples } from './SlotExamples';
-import { LogExamples } from './LogExamples';
-import { HotkeyExamples } from './HotkeyExamples';
-import { NumberTickerExamples } from './NumberTickerExamples';
-import { AudioPlayerExamples } from './AudioPlayerExamples';
-import { CarouselExamples } from './CarouselExamples';
-import { ChoiceGridExamples } from './ChoiceGridExamples';
-import { ColorPickerExamples } from './ColorPickerExamples';
-import { ColorSwatchExamples } from './ColorSwatchExamples';
-import { ContextMenuExamples } from './ContextMenuExamples';
-import { DockablePanelExamples } from './DockablePanelExamples';
-import { EditableExamples } from './EditableExamples';
-import { FlipExamples } from './FlipExamples';
-import { HeatmapExamples } from './HeatmapExamples';
-import { HoverCardExamples } from './HoverCardExamples';
-import { ImageCropperExamples } from './ImageCropperExamples';
-import { ImageViewerExamples } from './ImageViewerExamples';
-import { KeypadExamples } from './KeypadExamples';
-import { NodeGraphExamples } from './NodeGraphExamples';
-import { DependencyGraphExamples } from './DependencyGraphExamples';
-import { OverflowListExamples } from './OverflowListExamples';
-import { PanZoomExamples } from './PanZoomExamples';
-import { RadarExamples } from './RadarExamples';
-import { RangeSliderExamples } from './RangeSliderExamples';
-import { RatingExamples } from './RatingExamples';
-import { ResizableExamples } from './ResizableExamples';
-import { ScrollAreaExamples } from './ScrollAreaExamples';
-import { SegmentedProgressExamples } from './SegmentedProgressExamples';
-import { SortableExamples } from './SortableExamples';
-import { SparklineExamples } from './SparklineExamples';
-import { TagInputExamples } from './TagInputExamples';
-import { TransferExamples } from './TransferExamples';
-import { TreeSelectExamples } from './TreeSelectExamples';
-import { TypewriterExamples } from './TypewriterExamples';
-import { VirtualListExamples } from './VirtualListExamples';
-import { MarkdownExamples, markdownAccessibility } from './MarkdownExamples';
+const TabsExamples = lazy(() => import('./TabsExamples').then(module => ({ default: module.TabsExamples })));
+const MoreExamples = lazy(() => import('./MoreExamples').then(module => ({ default: module.MoreExamples })));
+const ContentExamples = lazy(() => import('./ContentExamples').then(module => ({ default: module.ContentExamples })));
+const BreadcrumbExamples = lazy(() => import('./BreadcrumbExamples').then(module => ({ default: module.BreadcrumbExamples })));
+const SlotExamples = lazy(() => import('./SlotExamples').then(module => ({ default: module.SlotExamples })));
+const LogExamples = lazy(() => import('./LogExamples').then(module => ({ default: module.LogExamples })));
+const HotkeyExamples = lazy(() => import('./HotkeyExamples').then(module => ({ default: module.HotkeyExamples })));
+const NumberTickerExamples = lazy(() => import('./NumberTickerExamples').then(module => ({ default: module.NumberTickerExamples })));
+const AudioPlayerExamples = lazy(() => import('./AudioPlayerExamples').then(module => ({ default: module.AudioPlayerExamples })));
+const CarouselExamples = lazy(() => import('./CarouselExamples').then(module => ({ default: module.CarouselExamples })));
+const ChoiceGridExamples = lazy(() => import('./ChoiceGridExamples').then(module => ({ default: module.ChoiceGridExamples })));
+const ColorPickerExamples = lazy(() => import('./ColorPickerExamples').then(module => ({ default: module.ColorPickerExamples })));
+const ColorSwatchExamples = lazy(() => import('./ColorSwatchExamples').then(module => ({ default: module.ColorSwatchExamples })));
+const ContextMenuExamples = lazy(() => import('./ContextMenuExamples').then(module => ({ default: module.ContextMenuExamples })));
+const DockablePanelExamples = lazy(() => import('./DockablePanelExamples').then(module => ({ default: module.DockablePanelExamples })));
+const EditableExamples = lazy(() => import('./EditableExamples').then(module => ({ default: module.EditableExamples })));
+const FlipExamples = lazy(() => import('./FlipExamples').then(module => ({ default: module.FlipExamples })));
+const HeatmapExamples = lazy(() => import('./HeatmapExamples').then(module => ({ default: module.HeatmapExamples })));
+const HoverCardExamples = lazy(() => import('./HoverCardExamples').then(module => ({ default: module.HoverCardExamples })));
+const ImageCropperExamples = lazy(() => import('./ImageCropperExamples').then(module => ({ default: module.ImageCropperExamples })));
+const ImageViewerExamples = lazy(() => import('./ImageViewerExamples').then(module => ({ default: module.ImageViewerExamples })));
+const KeypadExamples = lazy(() => import('./KeypadExamples').then(module => ({ default: module.KeypadExamples })));
+const NodeGraphExamples = lazy(() => import('./NodeGraphExamples').then(module => ({ default: module.NodeGraphExamples })));
+const DependencyGraphExamples = lazy(() => import('./DependencyGraphExamples').then(module => ({ default: module.DependencyGraphExamples })));
+const OverflowListExamples = lazy(() => import('./OverflowListExamples').then(module => ({ default: module.OverflowListExamples })));
+const PanZoomExamples = lazy(() => import('./PanZoomExamples').then(module => ({ default: module.PanZoomExamples })));
+const RadarExamples = lazy(() => import('./RadarExamples').then(module => ({ default: module.RadarExamples })));
+const RangeSliderExamples = lazy(() => import('./RangeSliderExamples').then(module => ({ default: module.RangeSliderExamples })));
+const RatingExamples = lazy(() => import('./RatingExamples').then(module => ({ default: module.RatingExamples })));
+const ResizableExamples = lazy(() => import('./ResizableExamples').then(module => ({ default: module.ResizableExamples })));
+const ScrollAreaExamples = lazy(() => import('./ScrollAreaExamples').then(module => ({ default: module.ScrollAreaExamples })));
+const SegmentedProgressExamples = lazy(() => import('./SegmentedProgressExamples').then(module => ({ default: module.SegmentedProgressExamples })));
+const SortableExamples = lazy(() => import('./SortableExamples').then(module => ({ default: module.SortableExamples })));
+const SparklineExamples = lazy(() => import('./SparklineExamples').then(module => ({ default: module.SparklineExamples })));
+const TagInputExamples = lazy(() => import('./TagInputExamples').then(module => ({ default: module.TagInputExamples })));
+const TransferExamples = lazy(() => import('./TransferExamples').then(module => ({ default: module.TransferExamples })));
+const TreeSelectExamples = lazy(() => import('./TreeSelectExamples').then(module => ({ default: module.TreeSelectExamples })));
+const TypewriterExamples = lazy(() => import('./TypewriterExamples').then(module => ({ default: module.TypewriterExamples })));
+const VirtualListExamples = lazy(() => import('./VirtualListExamples').then(module => ({ default: module.VirtualListExamples })));
+const MarkdownExamples = lazy(() => import('./MarkdownExamples').then(module => ({ default: module.MarkdownExamples })));
+const MarkdownAccessibility = lazy(() => import('./MarkdownGuidance'));
 import { GuidanceMarkdown } from './GuidanceMarkdown';
 const LazyTravelExamples = lazy(() => import('./TravelExamples').then(module => ({ default: module.TravelExamples })));
 function TravelExamples(props: { kind: 'calendar' | 'day-agenda' | 'journey-map' }) {
@@ -606,11 +607,11 @@ export function FoundationPage({ component, activeTab, onTabChange }: { componen
     <ComponentPageTabs name={foundationNames[component]} id={component} value={activeTab} onChange={onTabChange} />
     <PencilLine className="section-divider" />
     <section className="content-section component-examples" role="tabpanel" id={`${component}-panel-${activeTab}`} aria-labelledby={`${component}-tab-${activeTab}`}>
+      <Suspense fallback={<span role="status">{t('加载中')}</span>}>
       {activeTab === 'preview' && (component === 'breadcrumb' ? <BreadcrumbExamples /> : IndependentExamples ? <IndependentExamples /> : component === 'progress' ? <><MoreExamples kind="progress" /><SegmentedProgressExamples /></> : component === 'slot' ? <SlotExamples /> : component === 'log' ? <LogExamples /> : component === 'hotkey' ? <HotkeyExamples /> : component === 'number-ticker' ? <NumberTickerExamples /> : component === 'icon' ? <IconExamples /> : component === 'input-number' ? <InputNumberExamples /> : component === 'slider' ? <SliderExamples /> : component === 'calendar' || component === 'day-agenda' || component === 'journey-map' ? <TravelExamples key={component} kind={component} /> : component === 'dropdown-menu' || component === 'alert' || component === 'avatar' || component === 'card' || component === 'table' ? <ContentExamples kind={component} /> : component === 'tooltip' || component === 'accordion' || component === 'badge' || component === 'separator' || component === 'skeleton' ? <MoreExamples kind={component} /> : component === 'tabs' ? <TabsExamples /> : component === 'select' ? <SelectExamples /> : component === 'popover' ? <PopoverExamples /> : component === 'overlay' ? <OverlayExamples /> : component === 'field' || component === 'input' || component === 'textarea' ? <FormInputExamples key={component} kind={component} /> : component === 'checkbox' || component === 'radio-group' || component === 'switch' ? <SelectionExamples key={component} kind={component} /> : null)}
     {activeTab === 'api' && <section className="component-api">{groups ? <ApiGroups component={component} groups={groups} /> : <ApiTable rows={apiRows[component] ?? [['component', foundationNames[component]]]} component={component} label={`${foundationNames[component]} API`} />}</section>}
-      {activeTab === 'accessibility' && <section className="component-api"><GuidanceMarkdown source={asyncGuidance ? asyncGuidance : component === 'markdown'
-        ? markdownAccessibility[locale === 'en' ? 'en' : 'zh']
-        : t(additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。'))} /></section>}
+      {activeTab === 'accessibility' && <section className="component-api">{component === 'markdown' ? <MarkdownAccessibility /> : <GuidanceMarkdown source={asyncGuidance ? asyncGuidance : t(additionalGuidance[component] ?? (component === 'select' ? '方向键浏览选项，输入文字定位，Enter 确认，Escape 关闭并返回触发器；禁用项不可选择。' : component === 'popover' || component === 'overlay' ? 'Escape 关闭当前浮层并返回触发器；模态浮层限制焦点，非模态浮层允许外部交互。' : component === 'radio-group' ? '方向键切换选项，Tab 进入或离开分组；禁用项不可选择。' : component === 'checkbox' || component === 'switch' ? 'Tab 聚焦，Space 切换；标签与描述关联原生输入，禁用项不提交表单。' : '标签、描述和错误关联输入；支持原生键盘编辑、表单提交与只读状态。'))} />}</section>}
+      </Suspense>
     </section>
   </article>;
 }

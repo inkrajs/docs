@@ -140,8 +140,8 @@ test('every shared example declares a stable, non-tab anchor', () => {
 });
 
 test('Button comparison groups use the same example shell and retain published anchor identities', () => {
-  const content = readFileSync(new URL('../../src/App.tsx', import.meta.url), 'utf8');
-  const syntax = ts.createSourceFile('App.tsx', content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const content = readFileSync(new URL('../../src/components/ButtonDocumentation.tsx', import.meta.url), 'utf8');
+  const syntax = ts.createSourceFile('ButtonDocumentation.tsx', content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const group = syntax.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'ComparisonGroup');
   assert(group, 'ComparisonGroup remains the Button business-content wrapper');
   const wrappers = [];

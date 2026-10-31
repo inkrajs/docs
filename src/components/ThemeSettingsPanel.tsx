@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useState } from 'react';
 import { Button, CircularSlider, ColorPicker, ColorSwatch, Popover, PencilLine, RadioGroup, RadioGroupItem, Switch, Tabs } from '@inkra/react';
 import type { InkraTheme } from '@inkra/react/theme';
 import { DocsIcon, type LucideIconData } from './DocsIcon';
-import { themeScales } from './ColorSystem';
+import { themeScales } from './themeColors';
 import { customPaletteId, normalizeThemeColor, rememberCustomColor } from './themeColors';
 import { PencilText, useLocale } from '../i18n';
 import { themeRenderControls as controls } from './themeControls';

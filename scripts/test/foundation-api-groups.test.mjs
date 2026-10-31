@@ -120,6 +120,6 @@ test('standalone pages remain flat and Button, ButtonLink and ButtonGroup have d
   assert(buttonApiGroups[1].rows.some(row => row[0] === 'href / target / rel / download'));
   assert(!buttonApiGroups[1].rows.some(row => row[0] === 'type / name / value / form'));
   assert.match(source, /groups \? <ApiGroups/);
-  const app = readFileSync(new URL('src/App.tsx', root), 'utf8');
-  assert.match(app, /<ApiGroups component="button" groups=\{buttonApiGroups\}/);
+  const button = readFileSync(new URL('src/components/ButtonDocumentation.tsx', root), 'utf8');
+  assert.match(button, /<ApiGroups component="button" groups=\{buttonApiGroups\}/);
 });

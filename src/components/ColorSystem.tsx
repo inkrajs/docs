@@ -7,6 +7,9 @@ import { __iconData as monitorIcon } from 'lucide-react/dist/esm/icons/monitor.m
 import { __iconData as sunIcon } from 'lucide-react/dist/esm/icons/sun.mjs';
 import { __iconData as moonIcon } from 'lucide-react/dist/esm/icons/moon.mjs';
 
+import { useResolvedTheme } from './useResolvedTheme';
+export { useResolvedTheme } from './useResolvedTheme';
+
 import './ColorSystem.css';
 
 type ThemeName = 'light' | 'dark';
@@ -198,17 +201,6 @@ export function CardListDemo({ scale = themeScales[0] }: { scale?: Palette }) {
   </section>;
 }
 
-export function useResolvedTheme(theme: ThemeName | 'auto'): ThemeName {
-  const [systemDark, setSystemDark] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-color-scheme: dark)');
-    const update = () => setSystemDark(query.matches);
-    update();
-    query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
-  }, []);
-  return theme === 'auto' ? systemDark ? 'dark' : 'light' : theme;
-}
 
 export function ColorSystem({ theme }: { theme: ThemeName | 'auto' }) {
   const { t } = useLocale();
