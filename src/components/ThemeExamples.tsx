@@ -9,7 +9,7 @@ import { ApiTable } from './ApiTable';
 import { CodeSample } from './CodeSample';
 import { ComponentPlayground } from './ComponentPlayground';
 import { DocsIcon } from './DocsIcon';
-import { useResolvedTheme } from './ColorSystem';
+import { useResolvedTheme } from './useResolvedTheme';
 import { paletteTokens } from './themeColors';
 import { themeRenderTokens } from './themeControls';
 import { defaultThemeSettings, fontSpecimen, fontStack } from './themeFonts';

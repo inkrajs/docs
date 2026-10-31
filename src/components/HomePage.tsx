@@ -1,4 +1,4 @@
-import { lazy, useId, useState, type ReactNode } from 'react';
+import { lazy, useEffect, useId, useState, type ReactNode } from 'react';
 import { Badge, Breadcrumb, Button, ButtonGroup, ButtonLink, Card, Checkbox, Field, Input, InputNumber, Overlay, PencilLine, Progress, Slider, Switch, Tabs, Textarea, Tooltip } from '@inkra/react';
 import { __iconData as arrowIcon } from 'lucide-react/dist/esm/icons/arrow-right.mjs';
 import { __iconData as plusIcon } from 'lucide-react/dist/esm/icons/plus.mjs';
@@ -17,19 +17,66 @@ import { BrandMark } from './BrandMark';
 import { DeferredDemo } from './HomeDemo';
 import './HomePage.css';
 
-const HomeCalendar = lazy(() => import('./HomeTravelSamples').then(module => ({ default: module.HomeCalendar })));
-const HomeMap = lazy(() => import('./HomeMapSample').then(module => ({ default: module.HomeMap })));
-const HomeNumberSample = lazy(() => import('./HomeCreativeSamples').then(module => ({ default: module.HomeNumberSample })));
-const HomePaletteSample = lazy(() => import('./HomeCreativeSamples').then(module => ({ default: module.HomePaletteSample })));
-const HomeFlipSample = lazy(() => import('./HomeCreativeSamples').then(module => ({ default: module.HomeFlipSample })));
-const HomePackingSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomePackingSample })));
-const HomeLogSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomeLogSample })));
-const HomeRadarSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomeRadarSample })));
-const HomeSkillsSample = lazy(() => import('./HomeWorkspaceSamples').then(module => ({ default: module.HomeSkillsSample })));
-const HomeInventorySample = lazy(() => import('./HomeGameInventorySamples').then(module => ({ default: module.HomeInventorySample })));
-const HomeEquipmentSample = lazy(() => import('./HomeGameInventorySamples').then(module => ({ default: module.HomeEquipmentSample })));
-const HomeQuestSample = lazy(() => import('./HomeGameQuestSamples').then(module => ({ default: module.HomeQuestSample })));
-const HomeCraftingSample = lazy(() => import('./HomeGameQuestSamples').then(module => ({ default: module.HomeCraftingSample })));
+// Share each module promise between visible examples and optional idle warming.
+function homeModule<T>(load: () => Promise<T>) {
+  let pending: Promise<T> | undefined;
+  return () => pending ??= load().catch(error => { pending = undefined; throw error; });
+}
+const loadCalendar = homeModule(() => import('./HomeTravelSamples'));
+const loadMap = homeModule(() => import('./HomeMapSample'));
+const loadCreative = homeModule(() => import('./HomeCreativeSamples'));
+const loadWorkspace = homeModule(() => import('./HomeWorkspaceSamples'));
+const loadInventory = homeModule(() => import('./HomeGameInventorySamples'));
+const loadQuest = homeModule(() => import('./HomeGameQuestSamples'));
+const homeModules: Array<() => Promise<unknown>> = [loadCalendar, loadMap, loadCreative, loadWorkspace, loadInventory, loadQuest];
+
+const HomeCalendar = lazy(() => loadCalendar().then(module => ({ default: module.HomeCalendar })));
+const HomeMap = lazy(() => loadMap().then(module => ({ default: module.HomeMap })));
+const HomeNumberSample = lazy(() => loadCreative().then(module => ({ default: module.HomeNumberSample })));
+const HomePaletteSample = lazy(() => loadCreative().then(module => ({ default: module.HomePaletteSample })));
+const HomeFlipSample = lazy(() => loadCreative().then(module => ({ default: module.HomeFlipSample })));
+const HomePackingSample = lazy(() => loadWorkspace().then(module => ({ default: module.HomePackingSample })));
+const HomeLogSample = lazy(() => loadWorkspace().then(module => ({ default: module.HomeLogSample })));
+const HomeRadarSample = lazy(() => loadWorkspace().then(module => ({ default: module.HomeRadarSample })));
+const HomeSkillsSample = lazy(() => loadWorkspace().then(module => ({ default: module.HomeSkillsSample })));
+const HomeInventorySample = lazy(() => loadInventory().then(module => ({ default: module.HomeInventorySample })));
+const HomeEquipmentSample = lazy(() => loadInventory().then(module => ({ default: module.HomeEquipmentSample })));
+const HomeQuestSample = lazy(() => loadQuest().then(module => ({ default: module.HomeQuestSample })));
+const HomeCraftingSample = lazy(() => loadQuest().then(module => ({ default: module.HomeCraftingSample })));
+
+function useIdleHomeModules() {
+  useEffect(() => {
+    // Multi-column galleries benefit from warming nearby code. In the stacked
+    // mobile/tablet layout, retain on-demand loading to avoid warming distant demos.
+    const wide = window.matchMedia('(min-width: 1025px)');
+    if (!wide.matches || typeof window.requestIdleCallback !== 'function') return;
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string; downlink?: number } }).connection;
+    const limited = () => !wide.matches || connection?.saveData || /^(slow-2g|2g|3g)$/.test(connection?.effectiveType ?? '')
+      || (connection?.downlink !== undefined && connection.downlink < 2);
+    if (limited()) return;
+    let disposed = false, idle = 0, frame = 0, index = 0;
+    const schedule = () => {
+      if (disposed || limited() || index === homeModules.length) return;
+      idle = window.requestIdleCallback(deadline => {
+        if (disposed || limited()) return;
+        if (deadline.timeRemaining() < 8) { frame = requestAnimationFrame(schedule); return; }
+        // Import only: existing viewport observers still control every mount.
+        void homeModules[index++]().catch(() => { /* A later visible import can retry. */ }).then(() => {
+          if (!disposed) frame = requestAnimationFrame(schedule);
+        });
+      });
+    };
+    const afterLoad = () => { void (document.fonts?.ready ?? Promise.resolve()).then(schedule); };
+    if (document.readyState === 'complete') afterLoad();
+    else window.addEventListener('load', afterLoad, { once: true });
+    return () => {
+      disposed = true;
+      window.removeEventListener('load', afterLoad);
+      window.cancelIdleCallback(idle);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+}
 
 function useHomeText() {
   const { locale } = useLocale();
@@ -178,6 +225,7 @@ function DialogSample() {
 }
 
 export function HomePage({ themeControl }: { themeControl: ReactNode }) {
+  useIdleHomeModules();
   const text = useHomeText();
   return <main id="main-content" className="home-page">
     <section className="home-intro" aria-labelledby="home-title">

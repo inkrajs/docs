@@ -75,12 +75,14 @@ test('Markdown API and accessibility copy are bilingual and security-specific', 
 });
 
 test('all component accessibility panels use the shared Markdown guidance renderer', () => {
-  const app = read('App.tsx');
+  const button = read('components/ButtonDocumentation.tsx');
   const foundation = read('components/FoundationPages.tsx');
   const expansion = read('components/expansion/ExpansionPage.tsx');
   const guidance = read('components/GuidanceMarkdown.tsx');
-  assert.match(app, /<GuidanceMarkdown source=\{buttonAccessibilityGuidance/);
-  assert.match(foundation, /<GuidanceMarkdown source=\{asyncGuidance \? asyncGuidance : component === 'markdown'/);
+  assert.match(button, /<GuidanceMarkdown source=\{buttonAccessibilityGuidance/);
+  assert.match(foundation, /component === 'markdown' \? <MarkdownAccessibility \/> : <GuidanceMarkdown source=\{asyncGuidance \? asyncGuidance : t\(/);
+  assert.match(foundation, /const MarkdownAccessibility = lazy\(\(\) => import\('\.\/MarkdownGuidance'\)\)/);
+  assert.match(read('components/MarkdownGuidance.tsx'), /<GuidanceMarkdown source=\{markdownAccessibility\[locale === 'en' \? 'en' : 'zh'\]\}/);
   assert.match(foundation, /asyncLayoutGuidance\(component, locale\)/);
   assert.match(expansion, /<GuidanceMarkdown source=\{doc\.a11y\[language\]\}/);
   assert.match(guidance, /<Markdown/);
@@ -96,7 +98,13 @@ test('all component accessibility panels use the shared Markdown guidance render
 test('new documentation TypeScript files are syntactically valid', () => {
   for (const file of [
     'App.tsx',
+    'routes.ts',
     'componentRoutes.ts',
+    'components/DocumentRoute.tsx',
+    'components/ButtonDocumentation.tsx',
+    'components/GettingStartedPage.tsx',
+    'components/DesignStandardPage.tsx',
+    'components/MarkdownGuidance.tsx',
     'components/FoundationPages.tsx',
     'components/GuidanceMarkdown.tsx',
     'components/MarkdownExamples.tsx',

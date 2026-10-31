@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Button, Card, Drawer, PencilLine, PencilText as FontText, Tooltip } from '@inkra/react';
 import { __iconData as paletteIcon } from 'lucide-react/dist/esm/icons/palette.mjs';
 import { __iconData as resetIcon } from 'lucide-react/dist/esm/icons/rotate-ccw.mjs';
 import { __iconData as heartIcon } from 'lucide-react/dist/esm/icons/heart.mjs';
 import { DocsIcon } from './DocsIcon';
-import { themeScales, useResolvedTheme } from './ColorSystem';
+import { themeScales } from './themeColors';
+import { useResolvedTheme } from './useResolvedTheme';
 import { customPaletteId, normalizeThemeColor, paletteTokens, rememberCustomColor } from './themeColors';
 import { useLocale } from '../i18n';
 import { themeRenderControls as controls, themeRenderTokens } from './themeControls';
-import { ThemeSettingsPanel } from './ThemeSettingsPanel';
+const ThemeSettingsPanel = lazy(() => import('./ThemeSettingsPanel').then(module => ({ default: module.ThemeSettingsPanel })));
 import { useThemeDraft } from './useThemeDraft';
 import { defaultThemeSettings as defaults, fontSpecimen, fontStack, getThemeFont, loadThemeFont, readThemeSettings, type ThemeSettings as Settings } from './themeFonts';
 import './ThemeCustomizer.css';
@@ -149,7 +150,7 @@ export function ThemeCustomizer({ theme, onThemeChange, renderTrigger, triggerVa
             {sample}
           </section>
           <PencilLine className="theme-customizer__separator" seed="customizer-settings-divider" />
-          <ThemeSettingsPanel editor={editor} active={open} />
+          <Suspense fallback={<p role="status">{t("加载中")}</p>}><ThemeSettingsPanel editor={editor} active={open} /></Suspense>
           {storageError && <p role="status">{t("设置已生效，但暂时无法保存到本机。", "Changes apply now, but could not be saved on this device.")}</p>}
         </Drawer.Body>
         <Drawer.Footer align="end">
