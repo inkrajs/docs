@@ -58,3 +58,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Monaco street demonstration data — OpenStreetMap (ODbL-1.0)
+
+`src/data/street-reference.json` contains a clipped historical OpenStreetMap
+excerpt, © OpenStreetMap contributors, available under the Open Database License
+1.0: https://www.openstreetmap.org/copyright and
+https://opendatacommons.org/licenses/odbl/1-0/ . This data retains its own licence,
+separate from the application code.
+
+Source: GraphHopper's `core/files/monaco.osm.gz` at commit
+`92dca7ceacdd2f98abe3cacd8c20e08c38324c32`:
+https://raw.githubusercontent.com/graphhopper/graphhopper/92dca7ceacdd2f98abe3cacd8c20e08c38324c32/core/files/monaco.osm.gz
+
+The latest object timestamp in that fixture is 2012-07-06. It is a historical
+geometry demonstration, not current navigation data. The source archive's SHA-256,
+bounding box and processing details are retained in the JSON metadata. Surface
+streets and building footprints are clipped and lightly simplified; underground
+roads are excluded. No fictional buildings, routes or street geometry are added.
+
+Rebuild using Python with Shapely 2 installed in a separate tools environment:
+`python scripts/import-street-reference.py /path/to/monaco.osm.gz`.
+The generated JSON is checked in; normal builds and map interaction need neither
+Python nor an external data API. The map shows a compact linked OSM credit.
