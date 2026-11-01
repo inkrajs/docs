@@ -23,11 +23,12 @@ const places: JourneyPlace[] = [
   { id: 'ridge', label: 'Queenstown', latitude: -45.031, longitude: 168.662 },
 ];
 const mapRenderingCopy: Record<DocsLocale, {
-  tab: string; mode: string; auto: string; legacy: string; custom: string;
+  motion: string; focus: string; magnification: string; tab: string; mode: string; auto: string; legacy: string; custom: string;
   boundary: string; terrain: string; canvas: string; cache: string; title: string;
   defaults: string; switches: string; invalidation: string; budget: string; validation: string;
 }> = {
   'zh-CN': {
+    motion: "\u89c6\u56fe\u52a8\u753b", focus: "\u9009\u70b9\u81ea\u52a8\u7f29\u653e", magnification: "\u7f29\u653e\u500d\u6570",
     validation: "Chrome \u4e0e WebKit \u7684\u5c40\u90e8\u5bf9\u6bd4\u5747\u6709\u6539\u5584\uff0c\u56e0\u6b64\u5f53\u524d\u4e0d\u6309\u6d4f\u89c8\u5668\u5206\u6d41\u3002WebKit \u4e0d\u7b49\u540c\u4e8e\u771f\u5b9e Safari\uff1b\u771f\u5b9e Safari \u9a8c\u6536\u4ecd\u672a\u5b8c\u6210\uff0c\u4e5f\u6ca1\u6709\u65b0\u589e Safari CI\u3002legacy \u4ecd\u9075\u5faa\u5185\u5b58\u9884\u7b97\u4e0e\u6062\u590d\u89c4\u5219\u3002",
     tab: '渲染', mode: '渲染策略', auto: '自动', legacy: '原实现', custom: '自定义',
     boundary: '裁剪屏外边界笔触', terrain: '省略地表外纹理', canvas: '复用画布缓冲', cache: '缓存静态底图', title: '渲染配置',
@@ -37,6 +38,7 @@ const mapRenderingCopy: Record<DocsLocale, {
     budget: '缓存最多 3 Mi 像素（约 12 MiB RGBA），超出时直接绘制；主图与缓存合计最多 6 Mi 像素。主画布单边上限 8192、单层最多 4 Mi 像素，必要时降低像素比。',
   },
   en: {
+    motion: "View animations", focus: "Auto-focus places", magnification: "Focus magnification",
     validation: "Focused Chrome and WebKit comparisons improved, so the defaults do not branch by browser. WebKit is not branded Safari; real Safari acceptance remains unverified, and no Safari CI was added. legacy still follows memory limits and recovery rules.",
     tab: 'Rendering', mode: 'Rendering strategy', auto: 'Auto', legacy: 'Legacy', custom: 'Custom',
     boundary: 'Clip offscreen boundary strokes', terrain: 'Skip terrain outside polygons', canvas: 'Reuse canvas buffer', cache: 'Cache the static base', title: 'Rendering configuration',
@@ -46,6 +48,7 @@ const mapRenderingCopy: Record<DocsLocale, {
     budget: 'The cache is limited to 3 Mi pixels (about 12 MiB RGBA); larger bases draw directly. Main canvas plus cache is limited to 6 Mi pixels. The main canvas is capped at 8192 per side and 4 Mi pixels per layer, reducing pixel ratio when needed.',
   },
   ja: {
+    motion: "\u8996\u70b9\u306e\u30a2\u30cb\u30e1\u30fc\u30b7\u30e7\u30f3", focus: "\u5730\u70b9\u9078\u629e\u3067\u81ea\u52d5\u30ba\u30fc\u30e0", magnification: "\u30ba\u30fc\u30e0\u500d\u7387",
     validation: "Chrome \u3068 WebKit \u306e\u5c40\u6240\u6bd4\u8f03\u3067\u6539\u5584\u3057\u305f\u305f\u3081\u3001\u6a19\u6e96\u8a2d\u5b9a\u306f\u30d6\u30e9\u30a6\u30b6\u30fc\u5225\u306b\u5206\u5c90\u3057\u307e\u305b\u3093\u3002WebKit \u306f\u5b9f\u969b\u306e Safari \u3067\u306f\u306a\u304f\u3001\u5b9f\u6a5f Safari \u306e\u691c\u8a3c\u306f\u672a\u5b8c\u4e86\u3067\u3059\u3002Safari CI \u306f\u8ffd\u52a0\u3057\u3066\u3044\u307e\u305b\u3093\u3002legacy \u306b\u3082\u30e1\u30e2\u30ea\u30fc\u5236\u9650\u3068\u5fa9\u5143\u51e6\u7406\u304c\u9069\u7528\u3055\u308c\u307e\u3059\u3002",
     tab: '描画', mode: '描画方式', auto: '自動', legacy: '従来方式', custom: 'カスタム',
     boundary: '画面外の境界線を省略', terrain: '地形外の模様を省略', canvas: 'Canvas バッファーを再利用', cache: '静的な地図をキャッシュ', title: '描画設定',
@@ -55,6 +58,7 @@ const mapRenderingCopy: Record<DocsLocale, {
     budget: 'キャッシュは最大 3 Mi ピクセル（RGBA 約 12 MiB）で、超過時は直接描画します。主 Canvas と合わせて最大 6 Mi ピクセルです。主 Canvas は一辺 8192、1 層 4 Mi ピクセルまでとし、必要に応じてピクセル比を下げます。',
   },
   ko: {
+    motion: "\ubdf0 \uc560\ub2c8\uba54\uc774\uc158", focus: "\uc7a5\uc18c \uc120\ud0dd \uc2dc \uc790\ub3d9 \ud655\ub300", magnification: "\ud655\ub300 \ubc30\uc728",
     validation: "Chrome\uacfc WebKit\uc758 \ud574\ub2f9 \ube44\uad50\uc5d0\uc11c \uac1c\uc120\ub418\uc5b4 \uae30\ubcf8 \uc124\uc815\uc740 \ube0c\ub77c\uc6b0\uc800\ubcc4\ub85c \ub098\ub204\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4. WebKit\uc740 \uc2e4\uc81c Safari\uac00 \uc544\ub2c8\uba70 \uc2e4\uc81c Safari \uac80\uc99d\uc740 \uc544\uc9c1 \uc644\ub8cc\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. Safari CI\ub294 \ucd94\uac00\ud558\uc9c0 \uc54a\uc558\uace0 legacy\uc5d0\ub3c4 \uba54\ubaa8\ub9ac \uc81c\ud55c\uacfc \ubcf5\uc6d0 \uaddc\uce59\uc774 \uc801\uc6a9\ub429\ub2c8\ub2e4.",
     tab: '렌더링', mode: '렌더링 방식', auto: '자동', legacy: '기존 방식', custom: '사용자 설정',
     boundary: '화면 밖 경계선 생략', terrain: '지형 밖 무늬 생략', canvas: '캔버스 버퍼 재사용', cache: '정적 배경 캐시', title: '렌더링 설정',
@@ -64,6 +68,7 @@ const mapRenderingCopy: Record<DocsLocale, {
     budget: '캐시는 최대 3 Mi 픽셀(RGBA 약 12 MiB)이며 초과하면 직접 그립니다. 주 캔버스와 캐시 합계는 최대 6 Mi 픽셀입니다. 주 캔버스는 변당 8192, 층당 4 Mi 픽셀로 제한하며 필요하면 픽셀 비율을 낮춥니다.',
   },
   fr: {
+    motion: "Animations de la vue", focus: "Zoom automatique sur le lieu", magnification: "Facteur de zoom",
     validation: "Les comparaisons cibl\u00e9es dans Chrome et WebKit montrent un gain : les r\u00e9glages par d\u00e9faut ne varient donc pas selon le navigateur. WebKit n\u2019est pas Safari ; la validation dans Safari reste \u00e0 faire et aucun CI Safari n\u2019a \u00e9t\u00e9 ajout\u00e9. legacy conserve les limites m\u00e9moire et la restauration.",
     tab: 'Rendu', mode: 'Stratégie de rendu', auto: 'Auto', legacy: 'Ancien rendu', custom: 'Personnalisé',
     boundary: 'Limiter les contours hors écran', terrain: 'Éviter les textures hors terrain', canvas: 'Réutiliser le tampon canvas', cache: 'Mettre le fond en cache', title: 'Configuration du rendu',
@@ -102,7 +107,9 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
   const [controls, setControls] = useState(true);
   const [placeList, setPlaceList] = useState(false);
   const [attributionDisplay, setAttributionDisplay] = useState<'inline' | 'popover'>('popover');
-  const [focusPlace, setFocusPlace] = useState(false);
+  const [focusPlace, setFocusPlace] = useState(true);
+  const [focusScale, setFocusScale] = useState('2');
+  const [animate, setAnimate] = useState(true);
   const [renderingMode, setRenderingMode] = useState<'auto' | 'legacy' | 'custom'>('auto');
   const [boundaryViewport, setBoundaryViewport] = useState(true);
   const [terrainViewport, setTerrainViewport] = useState(true);
@@ -185,7 +192,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
       <ComponentPlayground code={`<JourneyMap places={places} geography={geography} landCover={landCover} water={water}
   height={600} selectedPlace="${place}" attributionDisplay="${attributionDisplay}"
   interactive={${interactive}} scrollWheelZoom={${wheelZoom}}
-  showControls={${controls}} showPlaceList={${placeList}} focusSelectedPlace={${focusPlace}}
+  showControls={${controls}} showPlaceList={${placeList}} focusSelectedPlace={${focusPlace}} focusZoomScale={${Number(focusScale)}} animate={${animate}}
   onPlaceSelect={place => setPlace(place.id)}${renderingCode}
   attribution="Natural Earth (public domain); ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." />`} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
@@ -197,7 +204,9 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
       { label: '交互', content: <>
         <Switch label={t('地图手势')} checked={interactive} onCheckedChange={setInteractive} />
         <Switch label={t('滚轮缩放')} checked={wheelZoom} onCheckedChange={setWheelZoom} />
-        <Switch label={t('跟随选中地点')} checked={focusPlace} onCheckedChange={setFocusPlace} />
+        <Switch label={renderingCopy.motion} checked={animate} onCheckedChange={setAnimate} />
+        <Switch label={renderingCopy.focus} checked={focusPlace} onCheckedChange={setFocusPlace} />
+        {focusPlace && <DocsSelect label={renderingCopy.magnification} value={focusScale} onValueChange={setFocusScale} options={[1, 2, 4, 8, 10].map(value => [String(value), `${value} \u00d7`] as const)} />}
       </> },
       { label: renderingCopy.tab, content: <>
         <DocsSelect label={renderingCopy.mode} value={renderingMode} onValueChange={value => setRenderingMode(value as typeof renderingMode)} options={[["auto", renderingCopy.auto], ["legacy", renderingCopy.legacy], ["custom", renderingCopy.custom]]} />
@@ -209,9 +218,8 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
         </>}
       </> },
     ]} />}>
-        <JourneyMap places={places} geography={geography} landCover={landCover} water={water} rendering={rendering} height={600} interactive={interactive} scrollWheelZoom={wheelZoom} showControls={controls} showPlaceList={placeList} focusSelectedPlace={focusPlace} selectedPlace={place} onPlaceSelect={item => setPlace(item.id)} attributionDisplay={attributionDisplay} attribution="Natural Earth (public domain) · ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." aria-label={t('行程地图')} labels={{ zoomIn: t('放大'), zoomOut: t('缩小'), reset: t('复位视图'), unavailable: t('地图不可用，请使用地点列表'), attribution: t('地图来源') }} />
+        <JourneyMap places={places} geography={geography} landCover={landCover} water={water} rendering={rendering} height={600} interactive={interactive} scrollWheelZoom={wheelZoom} showControls={controls} showPlaceList={placeList} focusSelectedPlace={focusPlace} focusZoomScale={Number(focusScale)} animate={animate} selectedPlace={place} onPlaceSelect={item => setPlace(item.id)} attributionDisplay={attributionDisplay} attribution="Natural Earth (public domain) · ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." aria-label={t('行程地图')} labels={{ zoomIn: t('放大'), zoomOut: t('缩小'), reset: t('复位视图'), unavailable: t('地图不可用，请使用地点列表'), attribution: t('地图来源') }} />
       </ComponentPlayground>
-      <div role="status" className="travel-examples__detail"><PencilText>{places.find(item => item.id === place)?.label ?? ''}</PencilText></div>
       <StreetMapExample />
       <ComponentExample id="journey-map-rendering" title={renderingCopy.title} code={`// auto is the default. Override only the options needed for this map.
 <JourneyMap places={places} geography={geography} landCover={landCover} water={water}

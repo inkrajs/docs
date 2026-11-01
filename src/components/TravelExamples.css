@@ -6,8 +6,10 @@
 .travel-examples__detail { min-height: 44px; display: flex; align-items: center; }
 .travel-examples--journey-map .preview-stage { padding: 8px; }
 .travel-examples .code-panel { height: 520px; }
-.travel-examples--calendar .preview-display, .travel-examples--calendar .code-panel,
-.travel-examples--journey-map .preview-display, .travel-examples--journey-map .code-panel { height: 700px; min-height: 700px; }
+.travel-examples--calendar .preview-display, .travel-examples--calendar .code-panel { height: 700px; min-height: 700px; }
+.travel-examples--journey-map .preview-display { height: auto; min-height: 0; }
+.travel-examples--journey-map .preview-stage { min-height: 0; }
+.travel-examples--journey-map .preview-display > .code-panel { height: 100%; min-height: 0; }
 .travel-examples--day-agenda .preview-stage { height: 100%; box-sizing: border-box; }
 .travel-examples--calendar .preview-stage, .travel-examples--journey-map .preview-stage { padding: 8px; }
 
