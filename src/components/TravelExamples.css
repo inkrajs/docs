@@ -10,3 +10,8 @@
 .travel-examples--journey-map .preview-display, .travel-examples--journey-map .code-panel { height: 700px; min-height: 700px; }
 .travel-examples--day-agenda .preview-stage { height: 100%; box-sizing: border-box; }
 .travel-examples--calendar .preview-stage, .travel-examples--journey-map .preview-stage { padding: 8px; }
+
+.street-map-example { display: grid; gap: 16px; min-inline-size: 0; inline-size: 100%; }
+.street-map-example p, .street-map-example h3 { margin: 0; }
+.street-map-example__map { position: relative; min-block-size: 460px; min-inline-size: 0; }
+.street-map-example__credit { position: absolute; inset-inline-start: 8px; inset-block-start: 8px; z-index: 2; max-inline-size: calc(100% - 64px); padding: 2px 4px; background: var(--inkra-paper); color: var(--inkra-ink-muted); font-size: 12px; line-height: 1.5; text-underline-offset: 3px; }

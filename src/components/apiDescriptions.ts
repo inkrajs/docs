@@ -3,6 +3,8 @@ import { iconFillCopy } from './iconFillCopy';
 
 type Copy = readonly [string, string];
 const descriptions: Record<string, Copy> = {
+  'journey-map:background': ['底图背景，默认 sea 绘制海面纹理；paper 保留主题纸面，适合街区或没有海洋的示意图。', 'Base background: sea draws the ocean texture by default; paper retains the themed paper for street districts or diagrams without an ocean.'],
+  'journey-map:maxFitZoom': ['初始适应与复位视图的缩放上限，默认 12；街道级数据可设为 18。有限值限制在 0–20，非法值回退到 12；不限制用户手动缩放。', 'Maximum zoom for initial fit and reset, default 12; use 18 for street-scale data. Finite values are clamped to 0–20, invalid values fall back to 12. Manual zoom is unaffected.'],
   'markdown:children': ['要解析的 Markdown 原文。输出保留语义 DOM 和可选择文字。', 'Markdown source to parse into semantic DOM with selectable text.'],
   'markdown:headingLevelOffset': ['整体调整标题层级并限制在 h1 到 h6，便于嵌入已有页面结构。', 'Shift heading levels, clamped from h1 to h6, when embedding below existing page headings.'],
   'markdown:labels': ['为可聚焦的代码块、表格滚动区域及任务清单的已完成/未完成状态提供本地化名称；也可配置纯文本语言标签、复制按钮及成功/失败反馈。', 'Localize accessible names for focusable code blocks and table regions, plus completed and incomplete task-list states. Also configure the plain-text language label, copy action and success/failure feedback.'],

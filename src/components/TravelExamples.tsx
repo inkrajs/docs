@@ -9,6 +9,7 @@ import { DocsSelect } from './DocsSelect';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 import './TravelExamples.css';
+import { StreetMapExample } from './StreetMapExample';
 import tripGeography from '../data/pencil-geography.json';
 import tripLandCover from '../data/pencil-land-cover.json';
 
@@ -48,7 +49,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
   const [wheelZoom, setWheelZoom] = useState(false);
   const [controls, setControls] = useState(true);
   const [placeList, setPlaceList] = useState(false);
-  const [attributionDisplay, setAttributionDisplay] = useState<'inline' | 'popover'>('inline');
+  const [attributionDisplay, setAttributionDisplay] = useState<'inline' | 'popover'>('popover');
   const [focusPlace, setFocusPlace] = useState(false);
   const events: AgendaEvent[] = [
     { id: 'stay', title: t('湖畔住宿'), startMinute: -120, endMinute: 480, kind: 'stay', description: t('从前一天延续') },
@@ -140,6 +141,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
         <JourneyMap places={places} geography={geography} landCover={landCover} water={water} height={600} interactive={interactive} scrollWheelZoom={wheelZoom} showControls={controls} showPlaceList={placeList} focusSelectedPlace={focusPlace} selectedPlace={place} onPlaceSelect={item => setPlace(item.id)} attributionDisplay={attributionDisplay} attribution="Natural Earth (public domain) · ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." aria-label={t('行程地图')} labels={{ zoomIn: t('放大'), zoomOut: t('缩小'), reset: t('复位视图'), unavailable: t('地图不可用，请使用地点列表'), attribution: t('地图来源') }} />
       </ComponentPlayground>
       <div role="status" className="travel-examples__detail"><PencilText>{places.find(item => item.id === place)?.label ?? ''}</PencilText></div>
+      <StreetMapExample />
     </>}
   </div>;
 }
