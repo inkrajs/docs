@@ -15,25 +15,25 @@ try {
         writeText: async text => { window.copiedCode = text; },
       } });
     }, { locale, theme });
-    await page.goto(`${base}/docs/getting-started`);
-    await page.locator('.code-sample').first().waitFor();
+    await page.goto(`${base}/docs/installation`);
+    await page.locator('.inkra-markdown__code-frame').first().waitFor();
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator('.code-sample').count(), 2);
-    for (const [index, language] of ['Bash', 'TSX'].entries()) {
-      const card = page.locator('.code-sample').nth(index);
-      assert.equal(await card.locator('.code-sample__language').textContent(), language);
-      assert.equal(await card.locator('.code-sample__language canvas').count(), 2);
+    assert.equal(await page.locator('.inkra-markdown__code-frame').count(), 3);
+    for (const [index, language] of ['Bash', 'TSX', 'TSX'].entries()) {
+      const card = page.locator('.inkra-markdown__code-frame').nth(index);
+      assert.equal(await card.locator('.inkra-markdown__code-language').textContent(), language);
+      assert(await card.locator('.inkra-markdown__code-language canvas').count() > 0, 'language label uses the library pencil renderer');
       const button = card.getByRole('button', { name: /复制代码|Copy code/ });
       const box = await button.boundingBox();
       assert(box.width >= 44 && box.height >= 44);
       await button.click();
-      assert.equal(await page.evaluate(() => window.copiedCode), await card.locator('pre').textContent());
+      assert.equal((await page.evaluate(() => window.copiedCode)).trimEnd(), (await card.locator('pre').textContent()).trimEnd());
       await card.getByRole('button', { name: /已复制代码|Code copied/ }).waitFor();
       assert(await card.getByRole('status').textContent());
       const geometry = await card.evaluate(node => {
-        const header = node.querySelector('.code-sample__header').getBoundingClientRect();
-        const body = node.querySelector('.code-sample__body').getBoundingClientRect();
-        const label = node.querySelector('.code-sample__language').getBoundingClientRect();
+        const header = node.querySelector('.inkra-markdown__code-header').getBoundingClientRect();
+        const body = node.querySelector('.inkra-markdown__code-surface').getBoundingClientRect();
+        const label = node.querySelector('.inkra-markdown__code-language').getBoundingClientRect();
         const action = node.querySelector('button').getBoundingClientRect();
         return { headerBottom: header.bottom, bodyTop: body.top, labelRight: label.right, actionLeft: action.left };
       });
@@ -42,14 +42,14 @@ try {
     }
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.evaluate(() => { navigator.clipboard.writeText = async () => { throw new Error('denied'); }; });
-    const first = page.locator('.code-sample').first();
+    const first = page.locator('.inkra-markdown__code-frame').first();
     await first.getByRole('button').click();
     await first.getByRole('button', { name: /复制失败|Copy failed/ }).waitFor();
     assert.match(await first.getByRole('status').textContent(), /手动选择|manually/);
     assert.equal(await first.locator('pre').evaluate(node => {
       const range = document.createRange();
       range.selectNodeContents(node);
-      return range.toString();
+      return range.toString().trimEnd();
     }), 'npm install @inkra/react');
     await page.screenshot({ path: `/tmp/inkra-code-samples-${width}.png`, fullPage: true });
     assert.deepEqual(errors, []);

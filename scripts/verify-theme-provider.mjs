@@ -128,11 +128,17 @@ try {
     }
     await page.goto(base + '/docs/getting-started');
     assert.equal(await page.locator('#internationalization').count(), 0);
-    assert.equal(await page.locator('main a[href="/docs/internationalization"]').count(), 1);
+    await page.locator('.getting-started-content').waitFor();
+    for (const href of ['/docs/ai-guide', '/docs/installation']) {
+      assert.equal(await page.locator(`.getting-started-content a[href="${href}"]`).count(), 1, 'quick start links to the dedicated adoption guides');
+    }
     const footer = page.locator('.docs-page-navigation');
     assert.equal(await footer.locator('a[rel="prev"]').count(), 0, 'first document has no previous page');
-    await footer.locator('a[rel="next"]').click();
-    await page.waitForURL('**/docs/internationalization');
+    for (const next of ['/docs/ai-guide', '/docs/installation', '/docs/internationalization']) {
+      assert.equal(await footer.locator('a[rel="next"]').getAttribute('href'), next);
+      await footer.locator('a[rel="next"]').click();
+      await page.waitForURL(`**${next}`);
+    }
     assert.equal(await footer.locator('a[rel="next"]').getAttribute('href'), '/docs/theming', 'theme guide follows internationalization in the shared footer');
     await page.goto(base + '/docs/getting-started#internationalization');
     await page.waitForURL('**/docs/internationalization');
