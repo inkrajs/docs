@@ -3,8 +3,6 @@ import { iconFillCopy } from './iconFillCopy';
 
 type Copy = readonly [string, string];
 const descriptions: Record<string, Copy> = {
-  'journey-map:background': ['底图背景，默认 sea 绘制海面纹理；paper 保留主题纸面，适合街区或没有海洋的示意图。', 'Base background: sea draws the ocean texture by default; paper retains the themed paper for street districts or diagrams without an ocean.'],
-  'journey-map:maxFitZoom': ['初始适应与复位视图的缩放上限，默认 12；街道级数据可设为 18。有限值限制在 0–20，非法值回退到 12；不限制用户手动缩放。', 'Maximum zoom for initial fit and reset, default 12; use 18 for street-scale data. Finite values are clamped to 0–20, invalid values fall back to 12. Manual zoom is unaffected.'],
   'markdown:children': ['要解析的 Markdown 原文。输出保留语义 DOM 和可选择文字。', 'Markdown source to parse into semantic DOM with selectable text.'],
   'markdown:headingLevelOffset': ['整体调整标题层级并限制在 h1 到 h6，便于嵌入已有页面结构。', 'Shift heading levels, clamped from h1 to h6, when embedding below existing page headings.'],
   'markdown:labels': ['为可聚焦的代码块、表格滚动区域及任务清单的已完成/未完成状态提供本地化名称；也可配置纯文本语言标签、复制按钮及成功/失败反馈。', 'Localize accessible names for focusable code blocks and table regions, plus completed and incomplete task-list states. Also configure the plain-text language label, copy action and success/failure feedback.'],
@@ -488,6 +486,13 @@ const descriptions: Record<string, Copy> = {
   showControls: ['显示地图缩放和复位操作。', 'Show map zoom and reset controls.'],
   showPlaceList: ['地图就绪后是否显示地点列表；失败后备列表仍保留。', 'Show the place list after loading; the failure fallback remains available.'],
   focusSelectedPlace: ['选择地点时聚焦该地点，并遵循减少动态效果偏好。', 'Focus the selected place, respecting reduced motion.'],
+  'journey-map:background': ['底图背景，默认 sea 绘制海面纹理；paper 保留主题纸面，适合街区或没有海洋的示意图。', 'Base background: sea draws the ocean texture by default; paper retains the themed paper for street districts or diagrams without an ocean.'],
+  'journey-map:maxFitZoom': ['初始适应与复位视图的缩放上限，默认 12；街道级数据可设为 18。有限值限制在 0–20，非法值回退到 12；不限制用户手动缩放。', 'Maximum zoom for initial fit and reset, default 12; use 18 for street-scale data. Finite values are clamped to 0–20, invalid values fall back to 12. Manual zoom is unaffected.'],
+  'journey-map:rendering': ['默认 auto 开启四项优化，Chrome 与 Safari 规则相同；legacy 全部关闭以便对照。对象仅覆盖指定项，其余沿用 auto。切换只重绘，不复位地图；SSR 不读取浏览器信息。', 'auto enables all four optimizations, equally in Chrome and Safari; legacy disables them for comparison. An object overrides specified flags only. Switching redraws without resetting the map; SSR does not read browser information.'],
+  'journey-map:rendering.boundaryViewport': ['跳过屏外边界和路线的 Canvas 笔触提交；保留原始路径采样，不裁切或改变纹理相位。', 'Skip offscreen boundary and route Canvas strokes while preserving original path sampling and texture phase.'],
+  'journey-map:rendering.terrainViewport': ['以保守的多边形行边界跳过不会出现在地表内的纹理，保留原网格、随机种子和笔触样式。', 'Conservatively skip terrain cells outside polygon row envelopes, preserving grid indices, seeds and stroke appearance.'],
+  'journey-map:rendering.reuseCanvas': ['尺寸未变时复用画布缓冲，减少重复分配。', 'Reuse canvas buffers while dimensions are unchanged, reducing repeated allocation.'],
+  'journey-map:rendering.cacheBase': ['缓存静态底图，选点时复用；数据、主题、尺寸/DPR、视图和上下文恢复会更新缓存。每实例一条，最多 3 Mi 像素，超出直接绘制，卸载时释放。', 'Cache the static base across place selections; data, theme, dimensions/DPR, view and context restoration refresh it. One entry per instance, up to 3 Mi pixels; larger bases draw directly and unmount releases the cache.'],
   labels: ['本地化组件内的操作与状态文字。', 'Localize the component’s actions and status text.'],
   'slot:interactive': ['启用原生按钮语义与键盘激活；关闭时保持普通容器。', 'Enable native button semantics and keyboard activation; otherwise remain a plain container.'],
   'empty / emptyContent': ['显示空态内容，并保持槽位尺寸不变。', 'Show empty-state content without changing the slot geometry.'],
