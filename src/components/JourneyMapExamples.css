@@ -7,3 +7,12 @@
 .journey-scenario__details { display: grid; gap: 16px; padding: 20px; min-width: 0; align-content: start; }
 .journey-scenario__details > h3, .journey-scenario__details > p { margin: 0; }
 @media (max-width: 800px) { .journey-scenario__layout[data-details="true"] { grid-template-columns: minmax(0, 1fr); } }
+
+.journey-motion { display: grid; gap: 16px; min-width: 0; width: 100%; }
+.journey-motion > p { margin: 0; }
+.journey-motion > .inkra-button { justify-self: start; }
+
+.journey-motion__map { min-width: 0; min-height: 440px; }
+.journey-palette-example { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); gap: 20px; min-width: 0; align-items: start; }
+.journey-palette-example__map { min-width: 0; min-height: 440px; }
+@media (max-width: 850px) { .journey-palette-example { grid-template-columns: minmax(0, 1fr); } }

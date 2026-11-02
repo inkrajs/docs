@@ -1,0 +1,14 @@
+.docs-color-control { display: grid; gap: 8px; min-width: 0; }
+.docs-color-control__swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.docs-color-control__popover { width: min(280px, calc(100vw - 48px)); max-width: calc(100vw - 24px); }
+.docs-color-control__popover .inkra-color-picker { width: 100%; min-width: 0; }
+.docs-number-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px 8px; min-width: 0; align-items: start; }
+.docs-number-control, .docs-number-controls > .inkra-switch--circular { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 120px minmax(44px, auto); justify-items: center; align-items: center; align-content: start; min-width: 0; width: 100%; gap: 0; }
+.docs-number-control__caption { position: relative; margin: 0; inline-size: 100%; max-inline-size: 100%; min-inline-size: 0; font-size: var(--inkra-text-sm); line-height: var(--inkra-line-ui); text-align: center; }
+.docs-number-control__caption .inkra-editable__display { justify-content: center; padding-inline: 0; text-align: center; }
+.docs-number-control__caption .inkra-editable__display > .inkra-pencil-text { max-inline-size: 100%; }
+.docs-number-control__caption .inkra-editable__frame { gap: 0; }
+.docs-number-controls > .inkra-switch--circular > .inkra-selection-control__copy { display: grid; place-items: center; align-self: stretch; width: 100%; min-height: 44px; padding: 0; margin: 0; }
+.docs-number-controls > .inkra-switch--circular > .inkra-selection-control__input { inset-inline-start: 50%; transform: translateX(-50%); }
+.docs-number-controls .inkra-selection-control__label { font-size: var(--inkra-text-sm); line-height: var(--inkra-line-ui); text-align: center; }
+.docs-number-control .inkra-circular-slider__value, .docs-number-controls .inkra-switch__circular-value { font-size: var(--inkra-text-sm); line-height: var(--inkra-line-ui); font-variant-numeric: tabular-nums; }

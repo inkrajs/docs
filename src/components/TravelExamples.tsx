@@ -1,15 +1,22 @@
 import { PropertyTabs } from './PropertyTabs';
 import { useState } from 'react';
-import { Calendar, DayAgenda, JourneyMap, Switch, type AgendaEvent, type JourneyPlace } from '@inkra/react';
+import { Calendar, DayAgenda, JourneyMap, Switch, Checkbox, type AgendaEvent, type JourneyPlace, type JourneyMapPalette } from '@inkra/react';
 import { enUS, zhCN } from 'react-day-picker/locale';
 import type { DateRange } from 'react-day-picker';
 import type { GeoJsonObject } from 'geojson';
 import { useLocale, PencilText } from '../i18n';
 import type { DocsLocale } from '../docsLocales';
+import { DocsColorControl, DocsNumberControl } from './DocsAppearanceControls';
+import { DocsIcon } from './DocsIcon';
+import { __iconData as typeIcon } from 'lucide-react/dist/esm/icons/type.mjs';
+import { __iconData as pinIcon } from 'lucide-react/dist/esm/icons/map-pin.mjs';
+import { __iconData as penIcon } from 'lucide-react/dist/esm/icons/pen.mjs';
+import { __iconData as zoomIcon } from 'lucide-react/dist/esm/icons/zoom-in.mjs';
 import { DocsSelect } from './DocsSelect';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 import './TravelExamples.css';
+import { JourneyPalettePreset } from './JourneyMapPaletteEditor';
 import { JourneyMapExamples } from './JourneyMapExamples';
 import tripGeography from '../data/pencil-geography.json';
 import tripLandCover from '../data/pencil-land-cover.json';
@@ -22,6 +29,13 @@ const places: JourneyPlace[] = [
   { id: 'lake', label: 'Lake Tekapo', latitude: -44.004, longitude: 170.477 },
   { id: 'ridge', label: 'Queenstown', latitude: -45.031, longitude: 168.662 },
 ];
+const mapHaloCopy = {
+  'zh-CN': { tab: '外观', fontSize: '字号', fontColor: '文字颜色', pinColor: '图钉颜色', pinSize: '图钉大小', enabled: '文字描边', width: '描边宽度', color: '描边颜色', theme: '跟随主题', light: '白色', dark: '深墨色', warm: '暖黄色' },
+  en: { tab: 'Appearance', fontSize: 'Font size', fontColor: 'Text color', pinColor: 'Pin color', pinSize: 'Pin size', enabled: 'Label halo', width: 'Halo width', color: 'Halo color', theme: 'Follow theme', light: 'White', dark: 'Dark ink', warm: 'Warm yellow' },
+  ja: { tab: '外観', fontSize: '文字サイズ', fontColor: '文字色', pinColor: 'ピンの色', pinSize: 'ピンのサイズ', enabled: '文字の縁取り', width: '縁取りの太さ', color: '縁取りの色', theme: 'テーマに合わせる', light: '白', dark: '濃い墨色', warm: '暖かい黄色' },
+  ko: { tab: '모양', fontSize: '글자 크기', fontColor: '글자 색상', pinColor: '핀 색상', pinSize: '핀 크기', enabled: '글자 테두리', width: '테두리 두께', color: '테두리 색상', theme: '테마 따르기', light: '흰색', dark: '짙은 잉크색', warm: '따뜻한 노란색' },
+  fr: { tab: 'Apparence', fontSize: 'Taille du texte', fontColor: 'Couleur du texte', pinColor: 'Couleur des repères', pinSize: 'Taille des repères', enabled: 'Contour du texte', width: 'Épaisseur du contour', color: 'Couleur du contour', theme: 'Suivre le thème', light: 'Blanc', dark: 'Encre foncée', warm: 'Jaune chaud' },
+};
 const mapRenderingCopy: Record<DocsLocale, {
   motion: string; focus: string; magnification: string; tab: string; mode: string; auto: string; legacy: string; custom: string;
   boundary: string; terrain: string; canvas: string; cache: string; title: string;
@@ -108,8 +122,22 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
   const [placeList, setPlaceList] = useState(false);
   const [attributionDisplay, setAttributionDisplay] = useState<'inline' | 'popover'>('popover');
   const [focusPlace, setFocusPlace] = useState(true);
-  const [focusScale, setFocusScale] = useState('2');
+  const [focusScale, setFocusScale] = useState(2);
   const [animate, setAnimate] = useState(true);
+  const [haloEnabled, setHaloEnabled] = useState(true);
+  const [haloWidth, setHaloWidth] = useState(3);
+  const [labelFontSize, setLabelFontSize] = useState(12);
+  const [pinSize, setPinSize] = useState(18);
+  const [labelPosition, setLabelPosition] = useState<'top' | 'bottom' | 'left' | 'right'>('bottom');
+  const [labelGap, setLabelGap] = useState(0);
+  const [mapPalette, setMapPalette] = useState<JourneyMapPalette>({});
+  const [haloColor, setHaloColor] = useState('auto');
+  const [labelColor, setLabelColor] = useState('auto');
+  const [pinColor, setPinColor] = useState('#4c7952');
+  const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
+  const [selectedPlaces, setSelectedPlaces] = useState<readonly string[]>([]);
+  const haloCopy = mapHaloCopy[locale];
+  const labelHalo = haloEnabled ? { width: Number(haloWidth), ...(haloColor === 'auto' ? {} : { color: haloColor }) } : false;
   const [renderingMode, setRenderingMode] = useState<'auto' | 'legacy' | 'custom'>('auto');
   const [boundaryViewport, setBoundaryViewport] = useState(true);
   const [terrainViewport, setTerrainViewport] = useState(true);
@@ -193,22 +221,38 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
   height={600} selectedPlace="${place}" attributionDisplay="${attributionDisplay}"
   interactive={${interactive}} scrollWheelZoom={${wheelZoom}}
   showControls={${controls}} showPlaceList={${placeList}} focusSelectedPlace={${focusPlace}} focusZoomScale={${Number(focusScale)}} animate={${animate}}
-  onPlaceSelect={place => setPlace(place.id)}${renderingCode}
+  labelHalo={${JSON.stringify(labelHalo)}} labelFontSize={${labelFontSize}} pinSize={${pinSize}} labelPosition="${labelPosition}" labelGap={${labelGap}}${labelColor === 'auto' ? '' : ` labelColor=${JSON.stringify(labelColor)}`}${` pinColor=${JSON.stringify(pinColor === 'auto' ? 'var(--inkra-accent-strong)' : pinColor)}`}${selectionMode === 'multiple' ? '\n  selectionMode="multiple" selectedPlaces={selectedPlaces} onSelectedPlacesChange={setSelectedPlaces}' : ''}
+  onPlaceSelect={place => setPlace(place.id)}${renderingCode}${Object.keys(mapPalette).length ? `\n  palette={${JSON.stringify(mapPalette)}}` : ''}
   attribution="Natural Earth (public domain); ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." />`} controls={<PropertyTabs groups={[
       { label: '基础', content: <>
-        <DocsSelect label="地点" value={place} onValueChange={setPlace} options={places.map(item => [item.id, item.label] as const)} />
+        {selectionMode === 'multiple' ? <div role="group" aria-label={t('地点', 'Places')}>{places.map(item => <Checkbox key={item.id} label={item.label} checked={selectedPlaces.includes(item.id)} onCheckedChange={checked => setSelectedPlaces(previous => checked ? [...previous.filter(id => id !== item.id), item.id] : previous.filter(id => id !== item.id))} />)}</div> : <DocsSelect label="地点" value={place} onValueChange={setPlace} options={places.map(item => [item.id, item.label] as const)} />}
         <DocsSelect label="来源显示" value={attributionDisplay} onValueChange={value => setAttributionDisplay(value as typeof attributionDisplay)} options={[["inline", "正文"], ["popover", "信息按钮"]]} />
         <Switch label={t('地图工具栏')} checked={controls} onCheckedChange={setControls} />
         <Switch label={t('地点列表')} checked={placeList} onCheckedChange={setPlaceList} />
       </> },
+      { label: haloCopy.tab, category: '外观', content: <>
+        <div className="docs-number-controls">
+          <Switch variant="circular" diameter={120} label={haloCopy.enabled} checked={haloEnabled} onCheckedChange={setHaloEnabled} centerIcon={<DocsIcon data={penIcon} size={20} />} />
+          <DocsNumberControl label={haloCopy.width} value={haloWidth} onValueChange={setHaloWidth} min={0} max={12} step={0.25} unit="px" expandable disabled={!haloEnabled} icon={<DocsIcon data={penIcon} size={20} />} />
+          <DocsNumberControl label={haloCopy.fontSize} value={labelFontSize} onValueChange={setLabelFontSize} min={8} max={96} unit="px" icon={<DocsIcon data={typeIcon} size={20} />} />
+          <DocsNumberControl label={haloCopy.pinSize} value={pinSize} onValueChange={setPinSize} min={16} max={128} unit="px" icon={<DocsIcon data={pinIcon} size={20} />} />
+        </div>
+        <DocsColorControl label={haloCopy.fontColor} value={labelColor} onValueChange={setLabelColor} defaultColor="var(--inkra-ink)" defaultLabel={haloCopy.theme} />
+        <DocsColorControl label={haloCopy.pinColor} value={pinColor} onValueChange={setPinColor} defaultColor="var(--inkra-accent-strong)" defaultLabel={haloCopy.theme} />
+        {haloEnabled && <DocsColorControl label={haloCopy.color} value={haloColor} onValueChange={setHaloColor} defaultLabel={haloCopy.theme} />}
+        <DocsSelect label={t('信息位置', 'Following content position')} value={labelPosition} onValueChange={value => setLabelPosition(value as typeof labelPosition)} options={[["top", t('上方', 'Top')], ["bottom", t('下方', 'Bottom')], ["left", t('左侧', 'Left')], ["right", t('右侧', 'Right')]]} />
+        <div className="docs-number-controls"><DocsNumberControl label={t('信息间距', 'Following content gap')} value={labelGap} onValueChange={setLabelGap} min={-32} max={128} unit="px" icon={<DocsIcon data={typeIcon} size={20} />} /></div>
+        <JourneyPalettePreset value={mapPalette} onValueChange={setMapPalette} />
+      </> },
       { label: '交互', content: <>
+        <DocsSelect label={t('选择模式', 'Selection mode')} value={selectionMode} onValueChange={value => setSelectionMode(value as typeof selectionMode)} options={[["single", t('单选', 'Single')], ["multiple", t('多选', 'Multiple')]]} />
         <Switch label={t('地图手势')} checked={interactive} onCheckedChange={setInteractive} />
         <Switch label={t('滚轮缩放')} checked={wheelZoom} onCheckedChange={setWheelZoom} />
         <Switch label={renderingCopy.motion} checked={animate} onCheckedChange={setAnimate} />
         <Switch label={renderingCopy.focus} checked={focusPlace} onCheckedChange={setFocusPlace} />
-        {focusPlace && <DocsSelect label={renderingCopy.magnification} value={focusScale} onValueChange={setFocusScale} options={[1, 2, 4, 8, 10].map(value => [String(value), `${value} \u00d7`] as const)} />}
+        <div className="docs-number-controls"><DocsNumberControl label={renderingCopy.magnification} value={focusScale} onValueChange={setFocusScale} min={1} max={64} step={0.25} unit="×" disabled={!focusPlace} icon={<DocsIcon data={zoomIcon} size={20} />} /></div>
       </> },
-      { label: renderingCopy.tab, content: <>
+      { label: renderingCopy.tab, category: '渲染', content: <>
         <DocsSelect label={renderingCopy.mode} value={renderingMode} onValueChange={value => setRenderingMode(value as typeof renderingMode)} options={[["auto", renderingCopy.auto], ["legacy", renderingCopy.legacy], ["custom", renderingCopy.custom]]} />
         {renderingMode === 'custom' && <>
           <Switch label={renderingCopy.boundary} checked={boundaryViewport} onCheckedChange={setBoundaryViewport} />
@@ -218,7 +262,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
         </>}
       </> },
     ]} />}>
-        <JourneyMap places={places} geography={geography} landCover={landCover} water={water} rendering={rendering} height={600} interactive={interactive} scrollWheelZoom={wheelZoom} showControls={controls} showPlaceList={placeList} focusSelectedPlace={focusPlace} focusZoomScale={Number(focusScale)} animate={animate} selectedPlace={place} onPlaceSelect={item => setPlace(item.id)} attributionDisplay={attributionDisplay} attribution="Natural Earth (public domain) · ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." aria-label={t('行程地图')} labels={{ zoomIn: t('放大'), zoomOut: t('缩小'), reset: t('复位视图'), unavailable: t('地图不可用，请使用地点列表'), attribution: t('地图来源') }} />
+        <JourneyMap labelPosition={labelPosition} labelGap={labelGap} palette={mapPalette} places={places} geography={geography} landCover={landCover} water={water} selectionMode={selectionMode} selectedPlaces={selectedPlaces} onSelectedPlacesChange={setSelectedPlaces} labelColor={labelColor === 'auto' ? undefined : labelColor} pinColor={pinColor === 'auto' ? 'var(--inkra-accent-strong)' : pinColor} labelFontSize={labelFontSize} pinSize={pinSize} labelHalo={labelHalo} rendering={rendering} height={600} interactive={interactive} scrollWheelZoom={wheelZoom} showControls={controls} showPlaceList={placeList} focusSelectedPlace={focusPlace} focusZoomScale={Number(focusScale)} animate={animate} selectedPlace={place} onPlaceSelect={item => setPlace(item.id)} attributionDisplay={attributionDisplay} attribution="Natural Earth (public domain) · ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." aria-label={t('行程地图')} labels={{ zoomIn: t('放大'), zoomOut: t('缩小'), reset: t('复位视图'), unavailable: t('地图不可用，请使用地点列表'), attribution: t('地图来源') }} />
       </ComponentPlayground>
       <JourneyMapExamples />
       <ComponentExample id="journey-map-rendering" title={renderingCopy.title} code={`// auto is the default. Override only the options needed for this map.

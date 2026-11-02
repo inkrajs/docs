@@ -7,9 +7,9 @@ const roads = reference.roads as FeatureCollection<LineString>;
 const buildings = reference.buildings as FeatureCollection<Polygon>;
 const parks = reference.parks as FeatureCollection<Polygon>;
 export const streetGeography: FeatureCollection = {
-  type: 'FeatureCollection', features: [...roads.features, ...buildings.features.flatMap(feature =>
+  type: 'FeatureCollection', features: [...roads.features.map(feature => ({ ...feature, properties: { ...feature.properties, mapRole: 'road' } })), ...buildings.features.flatMap(feature =>
     feature.geometry.coordinates.map(ring => ({
-      type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates: ring },
+      type: 'Feature' as const, properties: { mapRole: 'boundary' }, geometry: { type: 'LineString' as const, coordinates: ring },
     })))],
 };
 export const streetBuildingFeatures = buildings.features;
