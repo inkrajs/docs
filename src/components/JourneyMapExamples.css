@@ -1,0 +1,9 @@
+.journey-scenario { min-width: 0; width: 100%; }
+.journey-scenario__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
+.journey-scenario__layout[data-details="true"] { grid-template-columns: minmax(0, 1fr) minmax(180px, .38fr); }
+.journey-scenario__map { position: relative; min-height: 380px; min-width: 0; }
+.journey-scenario__map[data-features="true"] { min-height: 440px; }
+.journey-scenario__credit { position: absolute; top: 8px; left: 8px; z-index: 2; max-width: calc(100% - 64px); background: var(--inkra-paper); color: var(--inkra-ink-muted); font-size: 11px; line-height: 1.5; padding: 2px 4px; text-underline-offset: 3px; }
+.journey-scenario__details { display: grid; gap: 16px; padding: 20px; min-width: 0; align-content: start; }
+.journey-scenario__details > h3, .journey-scenario__details > p { margin: 0; }
+@media (max-width: 800px) { .journey-scenario__layout[data-details="true"] { grid-template-columns: minmax(0, 1fr); } }
