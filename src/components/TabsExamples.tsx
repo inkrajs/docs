@@ -6,6 +6,9 @@ import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 import { DocsSelect } from './DocsSelect';
 import { DocsIcon } from './DocsIcon';
+import { __iconData as paletteIcon } from 'lucide-react/dist/esm/icons/palette.mjs';
+import { __iconData as pointerIcon } from 'lucide-react/dist/esm/icons/mouse-pointer-2.mjs';
+import { __iconData as cpuIcon } from 'lucide-react/dist/esm/icons/cpu.mjs';
 import { __iconData as fileIcon } from 'lucide-react/dist/esm/icons/file-text.mjs';
 
 export function TabsExamples() {
@@ -13,6 +16,8 @@ export function TabsExamples() {
   const text = (zh: string, en: string) => locale === 'zh-CN' ? zh : en;
   const [overflow, setOverflow] = useState<TabsOverflow>('scroll');
   const [width, setWidth] = useState('360');
+  const [compact, setCompact] = useState(true);
+  const adaptiveTabs = [['base', text('基础设置', 'Basic'), fileIcon], ['appearance', text('外观样式', 'Appearance'), paletteIcon], ['interaction', text('交互行为', 'Behavior'), pointerIcon], ['rendering', text('渲染配置', 'Rendering'), cpuIcon]] as const;
   const extraTabs = [
     ['favorites', text('收藏', 'Favorites')], ['shared', text('共享空间', 'Shared space')],
     ['archive', text('归档', 'Archive')], ['history', text('历史记录', 'History')],
@@ -71,6 +76,21 @@ export function TabsExamples() {
         <Tabs.List divided aria-label={t('分割线')}><Tabs.Trigger value="notes">{t('笔记')}</Tabs.Trigger><Tabs.Trigger value="drafts">{t('草稿')}</Tabs.Trigger></Tabs.List>
         <Tabs.Content value="notes">{t('笔记内容')}</Tabs.Content>
         <Tabs.Content value="drafts">{t('草稿内容')}</Tabs.Content>
+      </Tabs.Root>
+    </ComponentExample>
+
+    <ComponentExample id="tabs-adaptive-labels" title={text('空间不足时显示图标', 'Adaptive icon labels')} code={`<Tabs.Root defaultValue="base">
+  <Tabs.List fullWidth labelVisibility="auto" aria-label="Settings">
+    <Tabs.Trigger value="base" startIcon={<SettingsIcon />}>Basic settings</Tabs.Trigger>
+    <Tabs.Trigger value="appearance" startIcon={<PaletteIcon />}>Appearance</Tabs.Trigger>
+  </Tabs.List>
+</Tabs.Root>`}>
+      <Switch label={text('窄容器', 'Narrow container')} checked={compact} onCheckedChange={setCompact} />
+      <Tabs.Root defaultValue="base" style={{ width: compact ? 240 : 680, maxWidth: '100%' }}>
+        <Tabs.List fullWidth labelVisibility="auto" aria-label={text('自适应标签', 'Adaptive labels')}>
+          {adaptiveTabs.map(([id, label, icon]) => <Tabs.Trigger key={id} value={id} startIcon={<DocsIcon data={icon} size={20} />}>{label}</Tabs.Trigger>)}
+        </Tabs.List>
+        {adaptiveTabs.map(([id, label]) => <Tabs.Content key={id} value={id}>{label}</Tabs.Content>)}
       </Tabs.Root>
     </ComponentExample>
 
