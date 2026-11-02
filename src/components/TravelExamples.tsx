@@ -10,7 +10,7 @@ import { DocsSelect } from './DocsSelect';
 import { ComponentPlayground } from './ComponentPlayground';
 import { ComponentExample } from './ComponentExample';
 import './TravelExamples.css';
-import { StreetMapExample } from './StreetMapExample';
+import { JourneyMapExamples } from './JourneyMapExamples';
 import tripGeography from '../data/pencil-geography.json';
 import tripLandCover from '../data/pencil-land-cover.json';
 
@@ -220,7 +220,7 @@ export function TravelExamples({ kind }: { kind: 'calendar' | 'day-agenda' | 'jo
     ]} />}>
         <JourneyMap places={places} geography={geography} landCover={landCover} water={water} rendering={rendering} height={600} interactive={interactive} scrollWheelZoom={wheelZoom} showControls={controls} showPlaceList={placeList} focusSelectedPlace={focusPlace} focusZoomScale={Number(focusScale)} animate={animate} selectedPlace={place} onPlaceSelect={item => setPlace(item.id)} attributionDisplay={attributionDisplay} attribution="Natural Earth (public domain) · ESA WorldCover 2021 (CC BY 4.0). Contains modified Copernicus Sentinel data (2021), processed by ESA WorldCover consortium." aria-label={t('行程地图')} labels={{ zoomIn: t('放大'), zoomOut: t('缩小'), reset: t('复位视图'), unavailable: t('地图不可用，请使用地点列表'), attribution: t('地图来源') }} />
       </ComponentPlayground>
-      <StreetMapExample />
+      <JourneyMapExamples />
       <ComponentExample id="journey-map-rendering" title={renderingCopy.title} code={`// auto is the default. Override only the options needed for this map.
 <JourneyMap places={places} geography={geography} landCover={landCover} water={water}
   rendering={{ cacheBase: false }}
