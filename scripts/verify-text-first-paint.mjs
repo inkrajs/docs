@@ -22,8 +22,20 @@ try {
             && node.checkVisibility({ visibilityProperty: true });
         });
         if (nodes.length && window.textFrames.length < 180) {
-          window.textFrames.push({ time: performance.now(), total: nodes.length,
-            missing: nodes.filter(node => node.dataset.pencilReady !== 'true').map(node => node.textContent) });
+          // The docs deliberately show readable DOM text during font warm-up.
+          // Once pencil rendering is enabled, ink must exist on its first frame.
+          const pencil = nodes.filter(node => getComputedStyle(node).getPropertyValue('--inkra-letter-effect').trim() !== '0');
+          const plain = nodes.filter(node => !pencil.includes(node));
+          const unreadablePlain = plain.filter(node => {
+            const source = node.querySelector('.inkra-pencil-text__source');
+            if (!source) return true;
+            const style = getComputedStyle(source);
+            return style.visibility === 'hidden' || Number(style.opacity) === 0
+              || style.color === 'transparent' || style.color === 'rgba(0, 0, 0, 0)';
+          });
+          window.textFrames.push({ time: performance.now(), total: nodes.length, pencil: pencil.length,
+            unreadablePlain: unreadablePlain.map(node => node.textContent),
+            missing: pencil.filter(node => node.dataset.pencilReady !== 'true').map(node => node.textContent) });
         }
         requestAnimationFrame(sample);
       };
@@ -41,16 +53,19 @@ try {
     await page.waitForFunction(() => window.textFrames.length > 0);
     releaseFont?.();
     await page.evaluate(() => document.fonts.ready);
-    await page.waitForFunction(() => window.textFrames.length >= 30);
+    await page.waitForFunction(() => window.textFrames.length >= 30 && window.textFrames.some(frame => frame.pencil > 0));
     const frames = await page.evaluate(() => window.textFrames);
     assert.deepEqual(frames[0].missing, [], `first frame at ${width}px: ${JSON.stringify(frames[0])}`);
-    assert(frames.every(frame => frame.missing.length === 0), `font readiness must not flash plain text: ${JSON.stringify(frames.filter(frame => frame.missing.length))}`);
+    assert(frames.every(frame => frame.unreadablePlain.length === 0), 'font warm-up must keep DOM text readable');
+    assert(frames.some(frame => frame.pencil > 0), 'pencil rendering must be enabled after font warm-up');
+    assert(frames.every(frame => frame.missing.length === 0), `enabled pencil text must paint without a blank frame: ${JSON.stringify(frames.filter(frame => frame.missing.length))}`);
     const config = page.locator('.playground-config-toggle');
     if (await config.getAttribute('aria-expanded') === 'false') {
       await page.evaluate(() => { window.textFrames = []; });
       await config.click();
       await page.waitForFunction(() => window.textFrames.length >= 30);
       const reveal = await page.evaluate(() => window.textFrames);
+      assert(reveal.every(frame => frame.unreadablePlain.length === 0), 'revealed plain text remains readable');
       assert(reveal.every(frame => frame.missing.length === 0), `revealed controls must paint on their first visible frame: ${JSON.stringify(reveal.filter(frame => frame.missing.length))}`);
       await config.click();
     }
@@ -62,7 +77,7 @@ try {
     }
     await page.locator('#home-title[data-pencil-ready="true"]').waitFor();
     assert.deepEqual(errors, []);
-    console.log(`${width}px${slowFont ? ' delayed font' : ''} first visible frame: ${frames[0].total} pencil labels ready.`);
+    console.log(`${width}px${slowFont ? ' delayed font' : ''} first visible frame: ${frames[0].total} labels readable during warm-up; enabled pencil labels ready.`);
     await context.close();
   }
 

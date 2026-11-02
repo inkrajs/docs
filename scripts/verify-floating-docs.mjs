@@ -62,6 +62,7 @@ try {
 
     await page.goto(`${base}/docs/components/tooltip#preview`);
     const directions = page.locator('.component-example .more-examples__row');
+    await directions.getByRole('button').first().waitFor();
     assert.deepEqual(await directions.getByRole('button').allTextContents(), zh ? ['上', '右', '下', '左'] : ['Top', 'Right', 'Bottom', 'Left']);
     const tip = directions.getByRole('button').first();
     await page.keyboard.press('Tab');

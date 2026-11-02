@@ -5,6 +5,7 @@ const browser = await chromium.launch();
 try {
   const page = await browser.newPage({ viewport: { width: 1305, height: 954 }, reducedMotion: 'reduce' });
   await page.goto(`${process.env.INKRA_DOCS_URL || 'http://127.0.0.1:4180'}/docs/design-standard`);
+  await page.locator('.color-palette__applications [data-inkra-theme="light"] .inkra-pencil-surface--action .inkra-pencil-text').first().waitFor();
   const selected = page.locator('.nav-link[aria-current="page"]');
   await selected.scrollIntoViewIfNeeded();
   for (const theme of ['light', 'dark']) {

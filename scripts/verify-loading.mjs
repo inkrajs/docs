@@ -255,6 +255,7 @@ try {
     localStorage.setItem('inkra-docs-theme', 'light');
   });
   await chinese.goto(`${base}/docs/components/loading`);
+  await chinese.locator('[data-scene-example] .loading-preset-preview .inkra-loading__title').first().waitFor();
   const chineseTitles = await chinese.locator('[data-scene-example] .loading-preset-preview .inkra-loading__title').allTextContents();
   assert.deepEqual(chineseTitles, ['品牌居中', '场景底部', '信息面板', '分阶段', '边缘', '骨架']);
   await chinese.close();
