@@ -12,6 +12,7 @@ export const streetGeography: FeatureCollection = {
       type: 'Feature' as const, properties: {}, geometry: { type: 'LineString' as const, coordinates: ring },
     })))],
 };
+export const streetBuildingFeatures = buildings.features;
 export const streetLandCover: FeatureCollection = {
   type: 'FeatureCollection', features: [...buildings.features, ...parks.features],
 };

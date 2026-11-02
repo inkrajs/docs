@@ -488,7 +488,7 @@ const descriptions: Record<string, Copy> = {
   attributionDisplay: ['直接显示来源，或通过信息按钮查看完整来源。', 'Show credits inline or expose full credits through an info button.'],
   height: ['地图显示高度，单位为 px。', 'Displayed map height in pixels.'],
   interactive: ['允许地图视口手势，不会禁止显式按钮或地点选择。', 'Enable map gestures without disabling explicit controls or place selection.'],
-  scrollWheelZoom: ['允许滚轮缩放，需要同时启用 interactive。', 'Enable wheel zoom; also requires interactive.'],
+  scrollWheelZoom: ['仅控制普通鼠标滚轮或双指滚动，默认关闭以便滚动页面。触控板双指捏合独立支持 Chrome 的 ctrl+wheel 和 Safari 的 gesture 事件；interactive=false 时一起关闭。手机触屏捏合继续使用原生地图手势。', 'Controls ordinary mouse-wheel or two-finger scrolling, disabled by default so the page can scroll. Trackpad pinch is independent: Chrome ctrl+wheel and Safari gesture events are supported while interactive=true. Touchscreen pinch retains the native map handler.'],
   showControls: ['显示地图缩放和复位操作。', 'Show map zoom and reset controls.'],
   showPlaceList: ['地图就绪后是否显示地点列表；失败后备列表仍保留。', 'Show the place list after loading; the failure fallback remains available.'],
   focusSelectedPlace: ['默认开启。点选图钉、地点列表或更新 selectedPlace 时自动聚焦；关闭后仍可选择地点。首次挂载保留全景，不因初始选中值自动缩放。', 'Enabled by default: focus pin/list clicks and later selectedPlace changes. Disabling it retains selection. Initial mounting keeps the overview rather than zooming to the initial selection.'],
