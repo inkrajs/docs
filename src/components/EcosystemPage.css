@@ -1,20 +1,39 @@
 .ecosystem-page { color: var(--inkra-ink); }
 
-.ecosystem-page__empty {
-  min-height: min(540px, 65svh);
-  margin-block: 0 16px;
-  padding-inline: 0;
+.ecosystem-projects { margin: 0; padding: 0; list-style: none; }
+.ecosystem-project { padding-block: 0 32px; }
+.ecosystem-project__category,
+.ecosystem-project__title,
+.ecosystem-project__description { display: block; }
+.ecosystem-project__category {
+  margin: 0 0 12px;
+  color: var(--inkra-ink-muted);
+  font-size: 13px;
+  line-height: 1.6;
 }
-
-.ecosystem-page__empty .inkra-empty__description {
-  max-width: 440px;
-  line-height: 1.7;
+.ecosystem-project__title {
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
-
-.ecosystem-page__empty .inkra-empty__actions {
-  margin-top: 12px;
+.ecosystem-project__description {
+  max-width: 760px;
+  margin: 0;
+  color: var(--inkra-ink-muted);
+  font-size: 17px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
 }
+.ecosystem-project__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.ecosystem-project__rule { width: 100%; opacity: 0.56; }
 
-@media (max-width: 42rem) {
-  .ecosystem-page__empty { min-height: 440px; }
+@media (max-width: 26rem) {
+  .ecosystem-project__title { font-size: 24px; }
 }

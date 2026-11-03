@@ -1,4 +1,4 @@
-import { ButtonLink, Empty } from '@inkra/react';
+import { ButtonLink, PencilLine, PencilText } from '@inkra/react';
 import { useLocale } from '../i18n';
 import { PageHeading } from './PageHeading';
 import './EcosystemPage.css';
@@ -12,13 +12,22 @@ export function EcosystemPage() {
       en: 'Things made with Inkra, and templates and resources to make your own.',
     }} />
 
-    <Empty.Root size="lg" className="ecosystem-page__empty" aria-labelledby="ecosystem-empty-title">
-      <Empty.Icon illustration="folder" />
-      <Empty.Title as="h2" id="ecosystem-empty-title">{t('还没有收录内容', 'Nothing here just yet')}</Empty.Title>
-      <Empty.Description>{t('作品与资源准备好后，会陆续放到这里。', 'We will add projects and resources here as they become available.')}</Empty.Description>
-      <Empty.Actions>
-        <ButtonLink href="/docs/components/button" variant="outline">{t('先看看组件', 'Explore the components')}</ButtonLink>
-      </Empty.Actions>
-    </Empty.Root>
+    <ul className="ecosystem-projects">
+      <li>
+        <article className="ecosystem-project" aria-labelledby="ecosystem-wand-defense-title">
+          <PencilText as="p" className="ecosystem-project__category">{t('小游戏 · PWA', 'Game · PWA')}</PencilText>
+          <PencilText as="h2" id="ecosystem-wand-defense-title" className="ecosystem-project__title">{t('无尽巫师', 'Endless Wizard')}</PencilText>
+          <PencilText as="p" className="ecosystem-project__description">{t(
+            '用 Inkra 搭起的手绘风格小游戏。把法术与奥术编排进法杖，在自动战斗中迎接一波波怪物；支持作为 PWA 安装，随时继续冒险。',
+            'A hand-drawn game built with Inkra. Arrange spells and arcana in your wand, then face waves of monsters in automatic combat. Install it as a PWA to keep the adventure close at hand.',
+          )}</PencilText>
+          <div className="ecosystem-project__actions">
+            <ButtonLink href="https://inkrajs.github.io/wand-defense/">{t('开始试玩', 'Play the game')}</ButtonLink>
+            <ButtonLink href="https://github.com/inkrajs/wand-defense" variant="outline">{t('查看源码', 'View source')}</ButtonLink>
+          </div>
+        </article>
+        <PencilLine className="ecosystem-project__rule" seed="ecosystem-wand-defense" />
+      </li>
+    </ul>
   </main>;
 }
