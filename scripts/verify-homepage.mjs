@@ -221,8 +221,10 @@ try {
         await page.waitForURL('**/blog');
         await page.locator('.blog-index').waitFor();
         await page.goto(new URL('/ecosystem', baseURL).href);
-        await page.locator('.ecosystem-page__empty').waitFor();
-        assert.equal(await page.locator('.ecosystem-page__empty a').getAttribute('href'), '/docs/components/button');
+        const project = page.locator('.ecosystem-project').filter({ has: page.locator('#ecosystem-wand-defense-title') });
+        await project.waitFor();
+        assert.equal(await project.getByRole('link', { name: '开始试玩', exact: true }).getAttribute('href'), 'https://inkrajs.github.io/wand-defense/');
+        assert.equal(await project.getByRole('link', { name: '查看源码', exact: true }).getAttribute('href'), 'https://github.com/inkrajs/wand-defense');
       }
       assert.deepEqual(errors, []);
       await page.close();

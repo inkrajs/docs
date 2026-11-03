@@ -55,12 +55,18 @@ try {
     for (const [path, selector] of [
       ['/blog', '.blog-index'],
       ['/blog/from-travel-journal-to-inkra', '.blog-article'],
-      ['/ecosystem', '.ecosystem-page__empty'],
+      ['/ecosystem', '.ecosystem-projects'],
     ]) {
       assert.equal((await page.goto(new URL(path, baseURL).href)).status(), 200, `Direct route ${path}`);
       await page.locator(selector).waitFor();
       assert.equal((await page.reload()).status(), 200, `Refresh ${path}`);
       await page.locator(selector).waitFor();
+      if (path === '/ecosystem') {
+        const project = page.locator('.ecosystem-project').filter({ has: page.locator('#ecosystem-wand-defense-title') });
+        assert.equal(await project.count(), 1, 'Endless Wizard ecosystem entry');
+        assert.equal(await project.getByRole('link', { name: '开始试玩', exact: true }).getAttribute('href'), 'https://inkrajs.github.io/wand-defense/');
+        assert.equal(await project.getByRole('link', { name: '查看源码', exact: true }).getAttribute('href'), 'https://github.com/inkrajs/wand-defense');
+      }
       for (const image of await page.locator(`${selector} img`).all()) {
         await image.scrollIntoViewIfNeeded();
         await image.evaluate(node => node.decode());
